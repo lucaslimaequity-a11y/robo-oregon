@@ -1,0 +1,420 @@
+{
+  "_leia": "Configuração do robô. Pode editar no próprio GitHub (lápis no canto do arquivo). Limites em p.p. para juros e em % para preços.",
+  "fuso": "America/Sao_Paulo",
+  "limites": {
+    "fatores": {
+      "selic": 0.01,
+      "pre": 0.15,
+      "real": 0.1,
+      "ust2": 0.1,
+      "ust10": 0.1,
+      "usd": 1.0,
+      "ibov": 1.5,
+      "sp": 1.5,
+      "em": 2.0,
+      "brent": 4.0,
+      "btc": 6.0
+    },
+    "ativos": {
+      "acao": 4.0,
+      "fii": 2.5,
+      "etf_rf": 1.0,
+      "cripto": 6.0,
+      "outro": 3.0
+    },
+    "focus": {
+      "IPCA": 0.1,
+      "Selic": 0.25,
+      "PIB Total": 0.1,
+      "Câmbio": 0.1
+    }
+  },
+  "tesouro": {
+    "pre": {
+      "tipo": "Tesouro Prefixado",
+      "vencimento": "2032-01-01"
+    },
+    "real": {
+      "tipo": "Tesouro IPCA+",
+      "vencimento": "2035-05-15"
+    }
+  },
+  "resumo_diario": "18:30",
+  "historico_anos": 2,
+  "noticias": {
+    "_leia": "Busca de manchetes no Google Notícias (sem chave). Cada empresa usa o campo \"busca\" da lista de ativos. Fontes bloqueadas pelo nome do veículo.",
+    "por_tema": 4,
+    "maximo": 100,
+    "fontes_bloqueadas": [
+      "InfoMoney",
+      "XP Investimentos",
+      "Expert XP",
+      "Conteúdos XP"
+    ],
+    "macro": [
+      {
+        "tema": "Juros",
+        "consulta": "Copom OR Selic"
+      },
+      {
+        "tema": "Juros",
+        "consulta": "\"juros futuros\" OR \"curva de juros\" OR \"DI futuro\""
+      },
+      {
+        "tema": "Inflação",
+        "consulta": "IPCA OR \"inflação no Brasil\""
+      },
+      {
+        "tema": "Bolsa",
+        "consulta": "Ibovespa"
+      },
+      {
+        "tema": "Câmbio",
+        "consulta": "dólar real câmbio"
+      },
+      {
+        "tema": "EUA",
+        "consulta": "\"Federal Reserve\" OR \"Fed\" juros"
+      },
+      {
+        "tema": "Fiscal",
+        "consulta": "\"arcabouço fiscal\" OR \"contas públicas\""
+      },
+      {
+        "tema": "Commodities",
+        "consulta": "petróleo Brent OR minério de ferro"
+      }
+    ]
+  },
+  "ia_modelo": "claude-haiku-5-5",
+  "ia_versao_api": "2023-06-01",
+  "ativos_b3": [
+    {
+      "id": "LFTB11",
+      "yahoo": "LFTB11.SA",
+      "nome": "ETF de Tesouro Selic",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "IRFM11",
+      "yahoo": "IRFM11.SA",
+      "nome": "ETF do IRF-M (Tesouro prefixado)",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "5PRE11",
+      "yahoo": "5PRE11.SA",
+      "nome": "ETF de Tesouro prefixado",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "IDKA11",
+      "yahoo": "IDKA11.SA",
+      "nome": "ETF de prefixado (índice IDkA)",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "B5P211",
+      "yahoo": "B5P211.SA",
+      "nome": "ETF do IMA-B 5 (NTN-B até 5 anos)",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "IMAB11",
+      "yahoo": "IMAB11.SA",
+      "nome": "ETF do IMA-B (NTN-B, todos os prazos)",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "IB5M11",
+      "yahoo": "IB5M11.SA",
+      "nome": "ETF do IMA-B 5+ (NTN-B acima de 5 anos)",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "LFIN11",
+      "yahoo": "LFIN11.SA",
+      "nome": "ETF de crédito pós-fixado",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "GICP11",
+      "yahoo": "GICP11.SA",
+      "nome": "ETF de crédito pós-fixado",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "DEBB11",
+      "yahoo": "DEBB11.SA",
+      "nome": "ETF de crédito pós-fixado",
+      "classe": "etf_rf"
+    },
+    {
+      "id": "PETR4",
+      "yahoo": "PETR4.SA",
+      "nome": "Petrobras",
+      "classe": "acao",
+      "busca": "\"Petrobras\" OR \"PETR4\""
+    },
+    {
+      "id": "KLBN4",
+      "yahoo": "KLBN4.SA",
+      "nome": "Klabin",
+      "classe": "acao",
+      "busca": "\"Klabin\" OR \"KLBN4\""
+    },
+    {
+      "id": "BBSE3",
+      "yahoo": "BBSE3.SA",
+      "nome": "BB Seguridade",
+      "classe": "acao",
+      "busca": "\"BB Seguridade\" OR \"BBSE3\""
+    },
+    {
+      "id": "BBDC3",
+      "yahoo": "BBDC3.SA",
+      "nome": "Bradesco ON",
+      "classe": "acao",
+      "busca": "\"Bradesco\" OR \"BBDC3\" OR \"BBDC4\""
+    },
+    {
+      "id": "ITSA4",
+      "yahoo": "ITSA4.SA",
+      "nome": "Itaúsa",
+      "classe": "acao",
+      "busca": "\"Itaúsa\" OR \"ITSA4\""
+    },
+    {
+      "id": "CPLE3",
+      "yahoo": "CPLE3.SA",
+      "nome": "Copel",
+      "classe": "acao",
+      "busca": "\"Copel\" OR \"CPLE3\""
+    },
+    {
+      "id": "AXIA3",
+      "yahoo": "AXIA3.SA",
+      "nome": "Axia Energia",
+      "classe": "acao",
+      "busca": "\"Axia Energia\" OR \"AXIA3\""
+    },
+    {
+      "id": "EQTL3",
+      "yahoo": "EQTL3.SA",
+      "nome": "Equatorial",
+      "classe": "acao",
+      "busca": "\"Equatorial\" OR \"EQTL3\""
+    },
+    {
+      "id": "PRIO3",
+      "yahoo": "PRIO3.SA",
+      "nome": "PRIO",
+      "classe": "acao",
+      "busca": "\"PRIO3\" OR \"PetroRio\" OR \"Petro Rio\""
+    },
+    {
+      "id": "ALOS3",
+      "yahoo": "ALOS3.SA",
+      "nome": "Allos",
+      "classe": "acao",
+      "busca": "\"Allos\" OR \"ALOS3\""
+    },
+    {
+      "id": "INBR34",
+      "yahoo": "INBR34.SA",
+      "nome": "Inter & Co",
+      "classe": "acao",
+      "busca": "\"Banco Inter\" OR \"Inter&Co\" OR \"INBR34\""
+    },
+    {
+      "id": "TTEN3",
+      "yahoo": "TTEN3.SA",
+      "nome": "3tentos",
+      "classe": "acao",
+      "busca": "\"3tentos\" OR \"TTEN3\""
+    },
+    {
+      "id": "VAMO3",
+      "yahoo": "VAMO3.SA",
+      "nome": "Vamos",
+      "classe": "acao",
+      "busca": "\"VAMO3\" OR \"Vamos Locação\""
+    },
+    {
+      "id": "BTLG11",
+      "yahoo": "BTLG11.SA",
+      "nome": "BTG Logística",
+      "classe": "fii",
+      "busca": "\"BTLG11\""
+    },
+    {
+      "id": "XPML11",
+      "yahoo": "XPML11.SA",
+      "nome": "XP Malls",
+      "classe": "fii",
+      "busca": "\"XPML11\""
+    },
+    {
+      "id": "TRXF11",
+      "yahoo": "TRXF11.SA",
+      "nome": "TRX Real Estate",
+      "classe": "fii",
+      "busca": "\"TRXF11\""
+    },
+    {
+      "id": "KNHF11",
+      "yahoo": "KNHF11.SA",
+      "nome": "Kinea Hedge Fund",
+      "classe": "fii",
+      "busca": "\"KNHF11\""
+    },
+    {
+      "id": "HGCR11",
+      "yahoo": "HGCR11.SA",
+      "nome": "CSHG Recebíveis",
+      "classe": "fii",
+      "busca": "\"HGCR11\""
+    },
+    {
+      "id": "KNCA11",
+      "yahoo": "KNCA11.SA",
+      "nome": "Kinea Crédito Agro",
+      "classe": "fii",
+      "busca": "\"KNCA11\""
+    },
+    {
+      "id": "CDII11",
+      "yahoo": "CDII11.SA",
+      "nome": "Sparta Infra CDI",
+      "classe": "fii",
+      "busca": "\"CDII11\""
+    },
+    {
+      "id": "JURO11",
+      "yahoo": "JURO11.SA",
+      "nome": "Sparta Infra",
+      "classe": "fii",
+      "busca": "\"JURO11\""
+    }
+  ],
+  "ativos_eua": [
+    {
+      "id": "BIL",
+      "yahoo": "BIL",
+      "nome": "ETF americano par de IB01",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "TLT",
+      "yahoo": "TLT",
+      "nome": "ETF americano par de DTLA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "VTIP",
+      "yahoo": "VTIP",
+      "nome": "ETF americano par de IDTP",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "BND",
+      "yahoo": "BND",
+      "nome": "ETF americano par de IUAA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "HYG",
+      "yahoo": "HYG",
+      "nome": "ETF americano par de IHYA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "SHYG",
+      "yahoo": "SHYG",
+      "nome": "ETF americano par de SDHA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "EMHY",
+      "yahoo": "EMHY",
+      "nome": "ETF americano par de EMCA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "HYEM",
+      "yahoo": "HYEM",
+      "nome": "ETF americano par de JPEA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "VTI",
+      "yahoo": "VTI",
+      "nome": "ETF americano par de VHVE",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "VXUS",
+      "yahoo": "VXUS",
+      "nome": "ETF americano par de EXUS",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "SLYV",
+      "yahoo": "SLYV",
+      "nome": "ETF americano par de USSC",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "AVDV",
+      "yahoo": "AVDV",
+      "nome": "ETF americano par de WSML",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "VTV",
+      "yahoo": "VTV",
+      "nome": "ETF americano par de IUVL",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "VT",
+      "yahoo": "VT",
+      "nome": "ETF americano par de VWRA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "IEMG",
+      "yahoo": "IEMG",
+      "nome": "ETF americano par de EIMI",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "VWO",
+      "yahoo": "VWO",
+      "nome": "ETF americano par de VFEA",
+      "classe": "proxy",
+      "alertar": false
+    },
+    {
+      "id": "IBIT",
+      "yahoo": "IBIT",
+      "nome": "iShares Bitcoin Trust (IBIT)",
+      "classe": "cripto"
+    }
+  ]
+}

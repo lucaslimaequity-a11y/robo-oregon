@@ -1,0 +1,98 @@
+name: Robô de mercado Oregon
+
+on:
+  schedule:
+    # Horários em UTC. 11h–22h UTC = 8h–19h30 em Brasília, a cada 30 minutos, de segunda a sexta.
+    - cron: '*/30 11-22 * * 1-5'
+  push:
+    # Quando você sobe uma versão nova do painel, o site é atualizado na hora.
+    branches: [main]
+    paths: ['site/**']
+  workflow_dispatch:
+    inputs:
+      teste:
+        description: 'Mandar agora um resumo de teste no Telegram'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: robo-oregon
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Trazer os dados da rodada anterior
+        run: |
+          mkdir -p data
+          if git fetch --depth=1 origin dados 2>/dev/null; then
+            for f in mercado.json estado.json historico.json noticias.json; do
+              git show FETCH_HEAD:data/$f > data/$f 2>/dev/null || rm -f data/$f
+            done
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Coletar dados, notícias e avisar
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BRAPI_TOKEN: ${{ secrets.BRAPI_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ROBO_TESTE: ${{ github.event_name == 'workflow_dispatch' && inputs.teste }}
+        run: python robo/coletar.py
+
+      - name: Manter o agendamento ativo (o GitHub pausa robôs de repositórios parados há 60 dias)
+        if: github.event_name == 'schedule'
+        run: |
+          ultimo=$(git log -1 --format=%ct HEAD)
+          if [ $(( ($(date +%s) - ultimo) / 86400 )) -ge 45 ]; then
+            git config user.name "robo-oregon"
+            git config user.email "robo-oregon@users.noreply.github.com"
+            date -u +%Y-%m-%dT%H:%MZ > .robo-ativo
+            git add .robo-ativo
+            git commit -q -m "robô ativo $(date -u +%Y-%m-%d)"
+            git push -q origin HEAD:main || true
+          fi
+
+      - name: Guardar os dados no ramo "dados"
+        run: |
+          git config user.name "robo-oregon"
+          git config user.email "robo-oregon@users.noreply.github.com"
+          git checkout -q --orphan dados-novo
+          git rm -r --cached -q .
+          git add -f data/*.json
+          git commit -q -m "dados $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -f -q origin dados-novo:dados
+
+      - name: Montar o site (painel + dados)
+        run: |
+          mkdir -p _site/data
+          cp site/index.html _site/index.html
+          for f in mercado.json historico.json noticias.json; do
+            [ -f data/$f ] && cp data/$f _site/data/$f || true
+          done
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

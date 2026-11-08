@@ -4,6 +4,8 @@
 const path = require('path');
 const S = path.join(__dirname, '..', 'painel', 'src');
 const C = require(path.join(S, 'core.js')), Q = require(path.join(S, 'quant.js')), T = require(path.join(S, 'tests.js')), D = require(path.join(S, 'data.json'));
+// como no build: as fichas dos ETFs entram em DATA.etfs
+const E = require(path.join(S, 'etfs.json')); D.etfs = {}; Object.keys(E).forEach(k => { if (!k.startsWith('_')) D.etfs[k] = E[k]; });
 global.STORE = require(path.join(S, 'store.js'));
 global.MERCADO = require(path.join(S, 'mercado.js'));
 const res = T.run(C, Q, D, null);

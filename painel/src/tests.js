@@ -211,6 +211,43 @@ var TESTS = (function () {
       var sem = MK.normDireto({cambio: {USDBRL: {bid: '5.6', varBid: '0.01', pctChange: '0.2'}}}, '2026-11-07', '2026-11-07T12:30:00Z'); ok(!sem.fatores.usd, 'câmbio sem data entrou com data de hoje');
       ok(MK.sessao({fatores: {ibov: {ok: true, status: 'atualizado', data: '2026-11-06'}, usd: {ok: true, status: 'atualizado', data: '2026-11-07'}}, ativos: {}}) === '2026-11-06', 'sessão saltou para a data do dólar');
     });
+    if (MK) t('Briefing: filtros das notícias, seleção do dia sem ruído, o que mudou, conexão e exercício (dados sintéticos)', function () {
+      var ATV = DATA.ativos;
+      var c = function (n) { return MK.catNoticia(n, ATV); };
+      ok(c({tema: 'PRIO3', titulo: 'PRIO conclui aquisição'}).tags.empresas && c({tema: 'PRIO3', titulo: 'x'}).tags.commodities && c({tema: 'PRIO3', titulo: 'x'}).tags.brasil, 'PRIO3: empresa, commodity e Brasil');
+      ok(c({tema: 'Fiscal', titulo: 'Governo revisa meta fiscal'}).principal === 'juros' && c({tema: 'Fiscal', titulo: 'x'}).tags.brasil, 'fiscal → Juros e Fiscal');
+      ok(c({tema: 'EUA', titulo: 'Fed mantém juros'}).tags.mundo && !c({tema: 'EUA', titulo: 'Fed mantém juros'}).tags.brasil, 'Fed → Mundo');
+      ok(c({tema: 'Mercado', titulo: 'Petróleo recua e minério sobe na China'}).tags.commodities, 'commodity pelo título');
+      var ix = c({tema: 'Juro real (IMA-B e NTN-B)', titulo: 'NTN-B sobem', etfs: ['IMAB11']}); ok(ix.tags.juros && ix.tags.brasil && !ix.tags.empresas, 'ETF de NTN-B virou empresa: ' + JSON.stringify(ix));
+      ok(c({tema: 'Ações emergentes', titulo: 'x', etfs: ['EIMI']}).tags.mundo, 'ETF internacional → Mundo');
+      ok(!c({tema: 'Juros', titulo: 'Tesouro Direto: taxas sobem'}).tags.commodities, '"ouro" dentro de "Tesouro" virou commodity');
+      ok(!c({tema: 'Mercado', titulo: 'Banco Safra amplia crédito'}).tags.commodities && c({tema: 'Mercado', titulo: 'Banco Safra amplia crédito'}).tags.brasil, 'Banco Safra virou commodity');
+      var pe = c({tema: 'PETR4', titulo: 'Petrobras emite debêntures', etfs: ['DEBB11']}); ok(pe.tags.empresas && pe.principal === 'empresas', 'notícia de empresa virou notícia de índice');
+      var hoje = '2026-11-07', n = function (tit, tema, rel, quando, pontos, of) { return {titulo: tit, tema: tema, quando: quando, classe: {relevancia: rel, pontos: pontos, oficial: !!of}}; };
+      var itens = [n('a', 'PRIO3', 'alta', '2026-11-07T10:00', 5), n('b', 'PRIO3', 'alta', '2026-11-07T09:00', 5), n('c', 'PRIO3', 'alta', '2026-11-07T08:00', 5), n('ruído', 'VAMO3', 'baixa', '2026-11-07T10:00', 0),
+        n('velha', 'PETR4', 'alta', '2026-10-20T10:00', 9), n('fiscal', 'Fiscal', 'media', '2026-11-06T18:00', 2), n('cvm', 'BBSE3', 'alta', '2026-11-06T00:00', 6, true)];
+      var ds = MK.destaques(itens, {hoje: hoje, held: {PRIO3: 1, BBSE3: 1}});
+      ok(!ds.some(function (x) { return x.titulo === 'ruído'; }), 'baixa relevância entrou'); ok(!ds.some(function (x) { return x.titulo === 'velha'; }), 'notícia velha entrou');
+      ok(ds.filter(function (x) { return x.tema === 'PRIO3'; }).length === 2, 'mais de duas da mesma empresa'); ok(ds.length === 4, 'deveria ter 4: ' + ds.length);
+      ok(MK.destaques([n('só ruído', 'X', 'baixa', '2026-11-07T10:00', 0)], {hoje: hoje}).length === 0, 'completou com ruído');
+      ok(!itens.some(function (x) { return '_score' in x; }), 'seleção alterou as notícias guardadas');
+      var snap = {fatores: {real: {ok: true, status: 'atualizado', var: 0.21, uvar: 'pp', data: '2026-11-06', nivel: 7.46}, pre: {ok: true, status: 'atualizado', var: 0.05, uvar: 'pp', data: '2026-11-06', nivel: 13.4},
+        usd: {ok: true, status: 'desatualizado', var: 3, uvar: '%', data: '2026-11-05', nivel: 5.4}, ust10: {ok: true, status: 'atualizado', var: 0.12, uvar: 'pp', data: '2026-11-06', nivel: 4.18}, ibov: {ok: true, status: 'atualizado', var: -1.1, uvar: '%', data: '2026-11-06', nivel: 148000},
+        selic: {ok: true, status: 'atualizado', var: 0, uvar: 'pp', data: '2026-11-06', nivel: 13.75}}};
+      var ms = MK.mudancas(snap, MK.LIM_PADRAO); ok(ms[0].k === 'real', 'maior movimento relativo ao limite: ' + ms[0].k); ok(!ms.some(function (m) { return m.k === 'usd'; }), 'dado desatualizado entrou no que mudou');
+      var cx = MK.conexao(snap, MK.LIM_PADRAO); ok(cx && cx.k === 'ust10' && cx.br.some(function (b) { return b.k === 'real'; }) && !cx.br.some(function (b) { return b.k === 'usd'; }), 'conexão: ' + JSON.stringify(cx && cx.br));
+      var fx = MK.fatoExercicio(snap, MK.LIM_PADRAO, '2026-11-06'); ok(fx && fx.k === 'real', 'exercício deveria usar o IPCA+: ' + (fx && fx.k));
+      ok(MK.fatoExercicio({fatores: {}}, MK.LIM_PADRAO, '2026-11-06') === null, 'exercício sem fato real');
+      var ag = MK.agendaProx({itens: [{data: '2026-11-05', evento: 'passado'}, {data: '2026-11-10', hora: '09:00', evento: 'IPCA'}, {data: '2026-11-09', evento: 'Focus'}, {data: '2026-12-30', evento: 'longe'}]}, hoje, 10);
+      ok(ag.length === 2 && ag[0].evento === 'Focus', 'agenda: ' + JSON.stringify(ag));
+    });
+    t('ETFs: as 27 fichas têm fonte oficial e o cadastro divergente aparece, sem alterar o cadastro', function () {
+      var E = DATA.etfs; if (!E) { ok(true); return; }
+      var faltam = Object.keys(DATA.ativos).filter(function (t) { var a = DATA.ativos[t]; return /ETF/.test(a.tipo || '') && !E[t]; }); ok(!faltam.length, 'ETFs sem ficha: ' + faltam.join(','));
+      Object.keys(E).forEach(function (t) { var e = E[t]; ok(e.indice && e.objetivo && (e.documentos || []).length && (e.fontes || []).every(function (u) { return /^https:\/\//.test(u); }) && e.consultado_em, 'ficha incompleta ou sem fonte: ' + t); });
+      ok(/IRF-M P3/.test(E.IDKA11.indice) && E.IDKA11.aviso_cadastro, 'IDKA11: índice real e aviso'); ok(DATA.ativos.IDKA11.nome === 'ETF de prefixado (índice IDkA)', 'cadastro alterado');
+      ok(E.LFTB11.aviso_cadastro && /NTN-B/.test(E.LFTB11.aviso_cadastro), 'LFTB11 sem aviso da NTN-B');
+    });
     t('Consistência das carteiras aprovadas: 10 inválidas, pesos preservados como decididos (sem normalizar)', function () {
       var inval = C.CARTS.filter(function (m) { return C.validate(C.aprovadaOriginal(m.id), {sens: DATA.sens, irmaos: {}}).status === 'invalida'; }).map(function (m) { return m.id; });
       ok(inval.length === 10, inval.length + ' inválidas: ' + inval.join(','));

@@ -29,6 +29,10 @@ Yahoo Finance e brapi também têm regras de uso. O Yahoo não tem API oficial: 
 | Tesouro dos EUA | Treasuries de 2 e 10 anos | arquivo aberto | grátis | oficial |
 | IBGE | releases (IPCA, PIB etc.) | API aberta | grátis | fonte oficial |
 | CVM · dados abertos (IPE) | fatos relevantes, comunicados, avisos aos acionistas | arquivo aberto (licença ODbL) | grátis | atualizado semanalmente pela CVM; o robô cruza CNPJ e nome |
+| CVM · dados abertos (ITR e DFP) | resultados trimestrais e anuais das companhias (DRE consolidada: receita, lucro, resultado antes do financeiro) | arquivo aberto (licença ODbL, crédito à CVM) | grátis | lido na rodada de fechamento, a cada 3 dias; versão mais recente de cada documento; fundos imobiliários e BDRs ficam de fora (não entregam ITR/DFP) |
+| IBGE · calendário de divulgações | datas do IPCA, PIB, PNAD, indústria, comércio e serviços | API aberta (`servicodados.ibge.gov.br/api/v3/calendario`) | grátis | uma consulta por dia |
+| Banco Central e Federal Reserve · calendários | reuniões do Copom e do FOMC | páginas oficiais, conferidas à mão e guardadas em `config.json` (`agenda_macro`) | grátis | o calendário sai uma vez por ano: acrescente as datas novas; a página do BC exige JavaScript, então as datas do Copom foram conferidas na divulgação reproduzida pela imprensa |
+| Google Notícias (RSS) · temas dos ETFs | manchetes sobre os índices e as estratégias dos ETFs | RSS | grátis | marcadas como notícia do índice, nunca como fato do fundo |
 | Google Notícias (RSS) | manchetes por empresa e por tema | RSS | grátis | só título, link, data e veículo |
 | Brazil Journal (RSS) | manchetes | `braziljournal.com/feed/` | grátis | os termos proíbem reproduzir o texto: o robô guarda só título e link |
 | The News (RSS) | manchetes | `rss.beehiiv.com/feeds/j9teVW9Qmi.xml` | grátis | só título e link |
@@ -46,9 +50,29 @@ Yahoo Finance e brapi também têm regras de uso. O Yahoo não tem API oficial: 
 - **BRAPI_TOKEN** ([brapi.dev](https://brapi.dev/pricing)). O plano gratuito serve para testes, com cota mensal de pedidos, 1 ativo por pedido e só 3 meses de histórico. Por isso o robô usa a brapi apenas quando o Yahoo falha. Os planos pagos (na revisão, a partir de cerca de R$ 100 por mês no anual) liberam mais pedidos, histórico longo e proventos. Contrate só se o Yahoo continuar bloqueando os ETFs.
 - **ALPHAVANTAGE_KEY** ([alphavantage.co](https://www.alphavantage.co/support/#api-key)). É grátis. Serve de reserva de fechamento para os 9 ETFs de renda fixa quando Yahoo e brapi falham. O plano gratuito tem 25 pedidos por dia ([preços](https://www.alphavantage.co/premium/)): o robô controla a cota e não passa de `alphavantage.limite_dia` (20).
 - **TIINGO_TOKEN** ([tiingo.com](https://www.tiingo.com/about/pricing)): reserva gratuita para os ETFs americanos.
-- **FRED_API_KEY** ([fred.stlouisfed.org](https://fred.stlouisfed.org/docs/api/api_key.html)): grátis. Liga as séries globais da Estratégia Global.
+- **FRED_API_KEY** ([fred.stlouisfed.org](https://fred.stlouisfed.org/docs/api/api_key.html)): grátis. Liga as séries globais de Mundo e Estratégia.
 - **AWESOMEAPI_KEY** ([awesomeapi.com.br](https://docs.awesomeapi.com.br/)): grátis. Dólar ao vivo durante o pregão.
 - **ANTHROPIC_API_KEY** (Claude Console): pago, por uso. Liga uma leitura extra das manchetes por IA. A classificação por regras funciona sem ela, e o painel nunca depende dela.
+
+## Fichas dos ETFs (`painel/src/etfs.json`)
+
+Montadas em 07/11/2026 com os documentos oficiais:
+- **gestoras:** iShares/BlackRock, Vanguard, State Street, Xtrackers/DWS, J.P. Morgan, Itaú Asset (It Now), Investo, BTG Pactual, Genial/Plural;
+- **documentos:** KID/KIID, factsheet, regulamento, lâmina, informe diário à CVM, FundosNet da B3;
+- **índices:** ANBIMA, MarketVector, Teva, MSCI.
+
+Cada número tem a data do documento de origem, e cada ficha tem os links.
+
+Os dados são estáticos: o robô não os atualiza. Taxas, patrimônio e principais posições mudam, por isso as fichas devem ser revistas a cada trimestre, pelos links da própria ficha.
+
+Os pesos por país de EXUS, EIMI e WSML vêm do factsheet público do índice MSCI, não do fundo, e a ficha diz isso. Dados de índice são propriedade da MSCI. O painel mostra só os maiores pesos, com crédito. Se preferir não exibir, apague o campo `exposicao.paises` desses três ETFs.
+
+**Diferenças entre o cadastro do painel e o fundo real** aparecem na ficha. Nada foi alterado:
+- **LFTB11:** tem cerca de 9% em NTN-B 2060, e a premissa de sensibilidade o trata como Selic pura.
+- **IDKA11:** replica o IRF-M P3, não um IDkA.
+- **LFIN11:** é de letras financeiras de bancos.
+- **IBIT:** confirmar se o instrumento é o da Nasdaq ou o BDR IBIT39. O par QBTC não é um ETF americano.
+- **EMCA, JPEA, IUVL e EXUS:** o par americano usado para cotação e risco não tem a mesma exposição.
 
 ## Economatica
 

@@ -3,12 +3,12 @@
 ## Publicar (uma vez, pelo site do GitHub)
 
 1. **Guarde a versão atual.** Você já tem o `robo-oregon-main.zip` que me mandou. Ele é o seu ponto de volta.
-2. **Descompacte** o `robo-oregon-v2.zip` no computador.
+2. **Descompacte** o `robo-oregon-v2.1.zip` no computador.
 3. **Envie os arquivos.**
    - No GitHub, abra o repositório `robo-oregon` → **Add file** → **Upload files**.
    - Arraste **todo o conteúdo** da pasta descompactada: `.github`, `docs`, `painel`, `robo`, `site`, `testes` e `README.md`.
    - No Mac, a pasta `.github` fica oculta. No Finder, aperte **Cmd + Shift + .** para que ela apareça.
-   - Embaixo, escreva "Oregon Desk v2" e clique em **Commit changes**.
+   - Embaixo, escreva "Oregon Desk v2.1" e clique em **Commit changes**.
 4. **Apague o arquivo antigo.** Abra `test_coletar.py`, que está na raiz do repositório e não é mais usado → menu **⋯** → **Delete file** → **Commit changes**.
 5. **O que acontece sozinho.** O envio dispara o robô:
    - ele roda os testes;
@@ -35,7 +35,18 @@ Em **Settings** → **Secrets and variables** → **Actions** → **New reposito
 
 As chaves que você já tem (`TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`) continuam valendo.
 
+### Depois de publicar esta revisão (07/11/2026)
+
+- Na primeira rodada de **fechamento** (depois das 21h) ou num **Run workflow** manual, o robô lê os resultados da CVM. Eles aparecem nas fichas das empresas, em Research Brasil.
+- A agenda aparece no Hoje já na primeira rodada. O calendário do Copom e do Fed de 2027 já está em `robo/config.json`. Quando o BC e o Fed publicarem o de 2028, acrescente as datas em `agenda_macro`.
+- Para trocar as carteiras de referência do modo simples, mude a linha `A.REF` em `painel/src/ui_base.js`.
+
 ## Voltar atrás (rollback)
+
+**Só esta revisão (voltar à v2 anterior)**
+1. Descompacte o `robo-oregon-v2.zip` que você recebeu antes.
+2. Envie os arquivos pelo mesmo caminho e faça o commit.
+3. Os arquivos novos podem ficar, porque a v2 anterior não os usa: `robo/agenda.py`, `robo/resultados.py` e `painel/src/etfs.json`.
 
 **Tudo, código e painel**
 1. Descompacte o seu `robo-oregon-main.zip`.

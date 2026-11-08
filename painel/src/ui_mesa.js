@@ -7,10 +7,11 @@
     // direita do topo: busca e estado dos dados (sempre visíveis)
     var tr = document.getElementById('top-r');
     if (tr) tr.replaceChildren(
-      h('button', {class: 'kbtn', title: 'Buscar ativo, carteira ou seção (tecla /)', onclick: function () { A.busca(); }}, '⌕', h('span', null, ' Buscar'), h('kbd', null, '/')),
+      h('button', {class: 'kbtn', title: 'Buscar empresa, ETF, carteira ou seção (tecla /)', onclick: function () { A.busca(); }}, '⌕', h('span', null, ' Buscar'), h('kbd', null, '/')),
       A.dadosPill ? A.dadosPill() : null);
+    var cg = document.getElementById('cg-host'); if (cg) cg.hidden = !(S.area === 'sala' && S.sub.sala === 'comite');
     // faixa de contexto: só nas áreas em que a carteira escolhida vale (Carteiras e Sala)
-    var top = document.getElementById('top-ctl'); if (!top || !A.CTX_AREAS[S.area]) return;
+    var top = document.getElementById('top-ctl'); if (!top || !A.mostraCtx()) return;
     var v = A.versao(); if (!v) { S.ver = 'aprovada'; v = A.versao(); }
     var val = A.valida(v);
     var sel = h('select', {id: 'sel-cart', 'aria-label': 'Carteira', onchange: function () { S.cart = sel.value; S.ver = 'aprovada'; A.render(); }});

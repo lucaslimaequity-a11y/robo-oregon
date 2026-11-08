@@ -1,4 +1,4 @@
-/* ESTRATÉGIA GLOBAL — entender o mundo e ligar ao Brasil. Cada transmissão mostra o dado de hoje (com fonte e data),
+/* MUNDO E ESTRATÉGIA — entender o mundo e ligar ao Brasil. Cada transmissão mostra o dado de hoje (com fonte e data),
    o mecanismo econômico em passos e o que nas carteiras está exposto. Onde falta dado aberto, a falta aparece. */
 (function (A, C, M) {
   'use strict';
@@ -70,6 +70,16 @@
     }));
   }
 
+  function etfsGlobais() {
+    var grupos = [['Renda fixa no exterior', ['P9', 'P10']], ['Ações no exterior', ['P11', 'P12']], ['Alternativos', ['P13']]];
+    return h('div', {class: 'etf-gl'}, grupos.map(function (g) {
+      var ts = Object.keys(C.ATV).filter(function (t) { var a = C.ATV[t]; return A.ehETF && A.ehETF(t) && g[1].indexOf(a.pilar) >= 0 && a.status !== 'placeholder'; });
+      return h('div', null, h('div', {class: 'k', style: 'margin:4px 0 6px'}, g[0]), h('div', {class: 'etf-chips'}, ts.map(function (t) {
+        var e = C.D.etfs && C.D.etfs[t];
+        return h('button', {class: 'etfc', onclick: function () { A.abrirFicha(t); }, title: e ? e.indice : 'ficha não verificada'}, h('b', null, t), h('span', null, C.ATV[t].nome), e && e.aviso_cadastro ? h('i', {class: 'nfdot', title: 'cadastro diferente do fundo real: ver a ficha'}) : null);
+      })));
+    }));
+  }
   function juros() {
     var ds = [['DI', 'Prefixado 2032 (Brasil)', '#1D8C0F'], ['NTNB', 'IPCA+ 2035 (Brasil, real)', '#73C35A'], ['UST10', 'Treasury 10 anos', '#0B9AB8'], ['TIPS10', 'TIPS 10 anos (EUA, real)', '#6DD3E8']].map(function (x) { var s = serie(x[0]); return s ? {name: x[1], pts: s.pts, color: x[2]} : null; }).filter(Boolean);
     if (!ds.length) return h('p', {class: 'empty'}, 'As séries de juros chegam com o histórico do robô (uma vez por dia, à noite).');
@@ -78,7 +88,7 @@
 
   A.areas.global = function () {
     var wrap = h('div'), snap = E().snap;
-    wrap.appendChild(A.pageHead('Estratégia global', 'Entender o mundo, pensar no Brasil', 'Juros globais, dólar, China e commodities, crédito e política monetária, sempre com a pergunta: o que isso faz com as carteiras brasileiras? Os mecanismos são regras econômicas gerais, não previsões.'));
+    wrap.appendChild(A.pageHead('Mundo e Estratégia', 'Entender o mundo, pensar no Brasil', 'Fed, EUA, China, commodities e ETFs globais, sempre com a pergunta: o que isso faz com as carteiras brasileiras? Os mecanismos são regras econômicas gerais, não previsões.'));
     var go = function (k) { return function () { A.abrirFator && A.abrirFator(k); }; };
     var tileF = function (k, rot) { var f = fator(k), st = M.estado(f); return h('div', {class: 'tile' + (f && f.ok ? '' : ' na'), 'data-click': '1', onclick: go(k)}, h('span', {class: 'lbl'}, h('i', {class: 'dot ' + st}), rot), h('span', {class: 'v'}, f && f.ok ? M.fmtNivel(f).replace(/ pts$/, '') : 'sem dado'), h('span', {class: 'd ' + (st === 'atualizado' ? A.cls(f.var) : 'muted')}, f && f.ok && f.var != null ? M.fmtVar(f.var, f.uvar) : ' '), h('span', {class: 'meta'}, f && f.ok ? A.dataBR(f.data) + ' · ' + f.fonte : (f && f.motivo) || '')); };
     var tileS = function (id, rot, fmt, fonte) { var u = ultimo(id), t = var1m(id, /TIPS|BUND/.test(id)), st = !u ? 'indisponivel' : (u.s.desatualizada ? 'desatualizado' : u.s.qualidade === 'suspeita' ? 'suspeito' : 'atualizado'); return h('div', {class: 'tile' + (u ? '' : ' na'), title: u && u.s.motivo ? u.s.motivo : null}, h('span', {class: 'lbl'}, h('i', {class: 'dot ' + st, title: MERCADO.ESTADO_TXT[st]}), rot), h('span', {class: 'v'}, u ? fmt(u.v) : 'sem dado'), h('span', {class: 'd muted'}, t != null ? '1 mês ' + (/TIPS|BUND/.test(id) ? A.snum(t, 2) + ' p.p.' : A.spct(t, 1)) : ' '), h('span', {class: 'meta'}, u ? A.dataBR(u.d) + ' · ' + fonte : 'precisa da chave gratuita do FRED')); };
@@ -95,6 +105,7 @@
     var g = h('div', {class: 'grid2'}), L = h('div'), R = h('div'); g.append(L, R); wrap.appendChild(g);
     L.appendChild(A.sec('Juros: Brasil e EUA', null, juros()));
     R.appendChild(A.sec('Quanto de cada carteira está fora do Brasil', {hint: 'Pilares 9 a 13 na versão aprovada, por cor de pilar. O câmbio entra por inteiro nessa parcela.'}, exterior()));
+    wrap.appendChild(A.sec('ETFs globais das carteiras', {hint: 'Toque para ver a ficha com índice, exposições, custos, riscos e documentos oficiais. A cotação vem do par listado nos EUA quando não há fonte aberta do ETF de Londres; a diferença está marcada na ficha.', right: h('button', {class: 'btn sm', onclick: function () { A.go('res', 'etfs'); }}, 'Todas as fichas')}, etfsGlobais()));
     if (!snap) wrap.insertBefore(h('div', {class: 'alert warn'}, 'Sem leitura do robô neste aparelho: os dados de hoje aparecem quando o site buscar a última rodada.'), wrap.children[1]);
     return wrap;
   };

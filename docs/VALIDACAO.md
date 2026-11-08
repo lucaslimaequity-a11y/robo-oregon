@@ -40,3 +40,12 @@ Conferido na Mais Retorno em 07/11/2026 (ver `docs/DIAGNOSTICO.md`). Nada foi al
 Carteiras → Construção → "Proposta de correção (sugerida)". A proposta nasce da aprovada e mostra o antes × depois. Ela só vira versão aprovada com um registro de aprovação: data, ata e justificativa. A versão anterior fica guardada no histórico.
 
 Fontes do motor: regras R1 (soma da carteira), R2 (soma por pilar contra o decidido), R3 (soma interna do pilar) e as demais descritas em Metodologia, no painel.
+
+## Carteiras de referência do modo simples (revisão de 07/11/2026)
+
+O modo simples de Carteiras mostra duas carteiras: **Crescimento Conservador** e **Crescimento Arrojado**, as duas na versão aprovada do Comitê de 05/11/2026 e sem nenhum peso alterado. Para trocar a família, mude a linha `A.REF` em `painel/src/ui_base.js`.
+
+As duas aparecem como são:
+
+- **Conservador:** parcial. Os pesos fecham em 100%, mas 50% estão em fundos de teste (placeholders). Essa metade fica fora de risco e cenários, como lacuna, nunca como caixa. Os números de risco dizem que cobrem só a parte com instrumento.
+- **Arrojado:** inválida. Os ativos somam 106%, porque o IRFM11 tem 100% do P2 e o 5PRE11 e o IDKA11 entram por cima. Ela também tem 25% em fundos de teste. O topo da tela avisa, o risco estatístico fica bloqueado e os cenários aparecem com asterisco (parciais). A correção é uma proposta ao Comitê, pelo botão "Criar proposta de correção".

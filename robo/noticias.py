@@ -45,6 +45,18 @@ ESTRUTURAL = ['aquisicao', 'fusao', 'incorporacao', 'privatizacao', 'concessao',
               'grau de investimento', 'politica de dividendos', 'ceo', 'presidente', 'cisao']
 
 
+# Termos sem acento (usados na busca) → forma escrita, só para a explicação mostrada no painel
+ACENTO = {'aquisicao': 'aquisição', 'producao': 'produção', 'balanco': 'balanço', 'prejuizo': 'prejuízo', 'bonificacao': 'bonificação', 'distribuicao': 'distribuição',
+          'fusao': 'fusão', 'incorporacao': 'incorporação', 'emissao': 'emissão', 'debentures': 'debêntures', 'renuncia': 'renúncia', 'conselho de administracao': 'conselho de administração',
+          'reestruturacao': 'reestruturação', 'recuperacao judicial': 'recuperação judicial', 'privatizacao': 'privatização', 'cisao': 'cisão', 'regulacao': 'regulação',
+          'regulatorio': 'regulatório', 'concessao': 'concessão', 'leilao': 'leilão', 'tributacao': 'tributação', 'investigacao': 'investigação', 'acao judicial': 'ação judicial',
+          'reajuste tarifario': 'reajuste tarifário', 'revisao tarifaria': 'revisão tarifária', 'vacancia': 'vacância', 'inadimplencia': 'inadimplência', 'ocupacao': 'ocupação',
+          'fabrica': 'fábrica', 'poco': 'poço', 'demonstracoes financeiras': 'demonstrações financeiras', 'divida publica': 'dívida pública', 'arcabouco': 'arcabouço',
+          'dolar': 'dólar', 'cambio': 'câmbio', 'petroleo': 'petróleo', 'minerio': 'minério', 'producao industrial': 'produção industrial', 'inflacao': 'inflação',
+          'aneel': 'Aneel', 'anp': 'ANP', 'cvm': 'CVM', 'cade': 'Cade', 'stf': 'STF', 'tcu': 'TCU', 'iof': 'IOF', 'ipca': 'IPCA', 'pib': 'PIB', 'pnad': 'PNAD', 'copom': 'Copom',
+          'selic': 'Selic', 'fed': 'Fed', 'brent': 'Brent', 'jcp': 'JCP', 'ebitda': 'Ebitda', 'ceo': 'CEO', 'ipo': 'IPO', 'susep': 'Susep', 'ans': 'ANS', 'opep': 'Opep'}
+
+
 # Riscos da tese → palavras que, no título, indicam que a notícia toca naquele risco
 SINONIMOS = {
     'regula': ['aneel', 'anp', 'ans ', 'susep', 'regulac', 'regulat', 'tarifa', 'concessao', 'cade'],
@@ -107,7 +119,7 @@ def classificar(n, cfg_n, empresas):
             if toca_tese(t, risco):
                 tese.append(risco)
     setor = emp and _tem(t, [sem_acento(x) for x in (emp.get('setor') or [])])
-    impacto = 'empresa' if emp else ('macro' if macro or n.get('tema') in (cfg_n.get('temas_macro') or []) else 'setorial')
+    impacto = 'empresa' if emp else ('indice' if n.get('etfs') else ('macro' if macro or n.get('tema') in (cfg_n.get('temas_macro') or []) else 'setorial'))
     estrutural = _tem(t, ESTRUTURAL)
     natureza = 'estrutural' if estrutural else ('ruido' if (ruido or (mov and not cats)) else ('pontual' if cats else 'indefinido'))
     pontos = 0
@@ -116,26 +128,29 @@ def classificar(n, cfg_n, empresas):
     pontos += 2 if tese else 0
     pontos += 1 if confiavel else 0
     pontos += 1 if impacto == 'empresa' else 0
-    pontos += 3 if impacto == 'macro' and macro else 0
+    pontos += 3 if impacto in ('macro', 'indice') and macro else 0
     pontos -= 3 if ruido else 0
     pontos -= 2 if (mov and not cats) else 0
     rel = 'alta' if pontos >= 4 else ('media' if pontos >= 2 else 'baixa')
-    porque = []
     nomes = {'resultado': 'resultado (%s)', 'proventos': 'proventos (%s)', 'corporativo': 'evento corporativo (%s)', 'regulatorio': 'tema regulatório (%s)',
              'operacional': 'operação (%s)', 'rating': 'rating de crédito (%s)'}
-    for k, v in cats.items():
-        porque.append(nomes[k] % ', '.join(sorted({x.strip() for x in v})[:3]))
+    bonito = lambda xs: ', '.join(sorted({ACENTO.get(x.strip(), x.strip()) for x in xs})[:3])
+    partes = []
+    if cats:
+        partes.append('Fato: ' + '; '.join(nomes[k] % bonito(v) for k, v in cats.items()) + '.')
     if tese:
-        porque.append('toca no risco da tese: ' + '; '.join(tese[:2]))
-    if impacto == 'macro' and macro:
-        porque.append('tema macro (%s), que entra nos cenários da Sala' % ', '.join(sorted({x.strip() for x in macro})[:3]))
+        partes.append('Toca no risco da tese: ' + '; '.join(tese[:2]) + '.')
+    if impacto in ('macro', 'indice') and macro:
+        partes.append('Tema macro (%s), que entra nos cenários.' % bonito(macro))
     if oficial:
-        porque.append('documento ou divulgação oficial')
+        partes.append('Documento ou divulgação oficial.')
     if ruido:
-        porque.append('título de opinião, recomendação ou cobertura do pregão: tende a ser ruído')
+        partes.append('Título de opinião, recomendação ou cobertura do pregão: tende a ser ruído.')
     elif mov and not cats:
-        porque.append('só descreve o movimento do preço, sem fato novo')
-    explic = ('Menciona ' + '; '.join(porque) + '.') if porque else 'Sem fato material identificado no título; informação insuficiente para avaliar impacto.'
+        partes.append('Só descreve o movimento do preço, sem fato novo.')
+    explic = ' '.join(partes) if partes else 'Sem fato material identificado no título; informação insuficiente para avaliar impacto.'
+    if impacto == 'indice':
+        explic = 'Sobre o índice, a estratégia ou a exposição de %s, não sobre o fundo. ' % ', '.join(n['etfs'][:3]) + explic
     n['classe'] = {'impacto': impacto, 'categorias': sorted(cats), 'tese': tese[:3], 'setor': bool(setor), 'natureza': natureza, 'relevancia': rel,
                    'pontos': pontos, 'porque': explic, 'confiavel': confiavel, 'oficial': oficial}
     return n
@@ -162,6 +177,12 @@ def deduplicar(itens, limiar=0.6):
                 dup['tambem_em'].append(v)
             if n.get('tema') and n.get('tema') != dup.get('tema') and n['tema'] not in dup.setdefault('temas', [dup.get('tema')]):
                 dup['temas'].append(n['tema'])
+            # notícia de empresa nunca vira notícia de índice de ETF (regra: não confundir empresa investida com o fundo)
+            if n.get('etfs') and (dup.get('classe') or {}).get('impacto') != 'empresa':
+                dup['etfs'] = list(dup.get('etfs') or [])
+                for e in n['etfs']:
+                    if e not in dup['etfs']:
+                        dup['etfs'].append(e)
             continue
         n['_tk'] = tk
         out.append(n)
@@ -309,9 +330,11 @@ def coletar(rede, cfg, anteriores, hoje, estado, agora_):
     empresas = {a['id']: dict(a.get('noticias') or {}, **{'cnpj': a.get('cnpj'), 'cvm_nome': a.get('cvm_nome')}) for a in cfg['ativos'] if a.get('ativo', True)}
     bloqueio = n.get('fontes_bloqueadas') or []
     brutos, erros, ok = [], [], {}
-    consultas = [(c['consulta'], c['tema']) for c in n.get('macro', [])]
-    consultas += [(e['busca'], t) for t, e in empresas.items() if e.get('busca')]
-    for consulta, tema in consultas:
+    consultas = [(c['consulta'], c['tema'], None) for c in n.get('macro', [])]
+    consultas += [(e['busca'], t, None) for t, e in empresas.items() if e.get('busca')]
+    # temas dos ETFs: notícias sobre o índice, a estratégia e as exposições, marcadas com os ETFs ligados ao tema
+    consultas += [(e['consulta'], e['tema'], list(e['etfs'])) for e in (n.get('etfs') or []) if e.get('ativo', True) and e.get('consulta')]
+    for consulta, tema, etfs in consultas:
         if rede.sem_tempo():
             erros.append('%s: prazo da rodada esgotado' % tema)
             break
@@ -324,7 +347,10 @@ def coletar(rede, cfg, anteriores, hoje, estado, agora_):
         emp = empresas.get(tema)
         if emp:
             achou = [x for x in achou if pertence(x['titulo'], emp)]
-        brutos += achou[: n.get('por_tema', 6)]
+        if etfs:
+            for x in achou:
+                x['etfs'] = list(etfs)  # uma lista por manchete: a deduplicação não pode espalhar ETFs entre manchetes
+        brutos += achou[: n.get('por_tema_etf', 3) if etfs else n.get('por_tema', 6)]
     desde = (hoje - dt.timedelta(days=2)).isoformat()
     for f in n.get('rss') or []:
         if not f.get('ativo', True) or not f.get('url') or rede.sem_tempo():

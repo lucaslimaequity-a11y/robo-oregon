@@ -33,7 +33,9 @@ PADRAO = {
     'b3_arquivos': {'ativo': False, 'anos': 2},
     'alphavantage': {'limite_dia': 20, 'so_fechamento': True},
     'noticias': {'intervalo_min': 60, 'por_tema': 6, 'maximo': 120, 'ibge': True, 'cvm': True, 'fontes_bloqueadas': [], 'veiculos_confiaveis': [], 'macro': [], 'ibge_temas': [],
-                 'temas_macro': [], 'rss': []},
+                 'temas_macro': [], 'rss': [], 'etfs': []},
+    'agenda_macro': {'dias': 14, 'ibge': True, 'ibge_produtos': [], 'copom': {}, 'fomc': {}},
+    'resultados': {'ativo': True, 'intervalo_dias': 3, 'arquivos': 4},
     'prazo_rodada_min': 15,
     'feriados_b3': [],
 }
@@ -143,6 +145,24 @@ def validar(cfg):
     for i, f in enumerate((cfg.get('noticias') or {}).get('rss') or []):
         if not isinstance(f, dict) or not str(f.get('url', '')).startswith('https://') or not f.get('nome'):
             erros.append('notícias/rss %d: precisa de "nome" e de "url" começando com https://' % (i + 1))
+    for i, e in enumerate((cfg.get('noticias') or {}).get('etfs') or []):
+        if not isinstance(e, dict) or not e.get('consulta') or not e.get('tema') or not e.get('etfs'):
+            erros.append('notícias/etfs %d: precisa de "tema", "consulta" e da lista "etfs"' % (i + 1))
+    am = cfg.get('agenda_macro') or {}
+    for k in ('copom', 'fomc'):
+        c = am.get(k) or {}
+        if c and c.get('link') and not str(c['link']).startswith('https://'):
+            erros.append('agenda_macro/%s: o link da fonte oficial precisa começar com https://' % k)
+        for par in c.get('reunioes') or []:
+            try:
+                assert isinstance(par, list) and par
+                for d in par:
+                    dt.date.fromisoformat(d)
+            except (AssertionError, TypeError, ValueError):
+                erros.append('agenda_macro/%s: reunião %s precisa ser uma lista de datas AAAA-MM-DD' % (k, par))
+    r = cfg.get('resultados') or {}
+    if not isinstance(r.get('ativo', True), bool):
+        erros.append('resultados: "ativo" precisa ser true ou false, sem aspas')
     for i, s in enumerate(cfg.get('bcb_series') or []):
         if not isinstance(s.get('codigo'), int) or not s.get('id'):
             erros.append('séries do Banco Central %d: precisa de "id" e "codigo" (número do SGS)' % (i + 1))

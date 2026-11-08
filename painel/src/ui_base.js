@@ -257,9 +257,12 @@ var APP = (function () {
     if (document.querySelector('.cmdk-bg')) return;
     var itens = [];
     A.AREAS.forEach(function (a) { itens.push({t: a[1], d: 'área', go: function () { A.go(a[0]); }}); (A.SUBS[a[0]] || []).forEach(function (x) { itens.push({t: a[1] + ' › ' + x[1], d: 'seção', go: function () { A.go(a[0], x[1] && x[0]); }}); }); });
-    C.CARTS.forEach(function (m) { itens.push({t: m.rotulo, d: 'carteira · ' + m.familia, go: function () { S.cart = m.id; S.ver = 'aprovada'; A.go('cart', 'carteira'); }}); });
-    Object.keys(C.ATV).forEach(function (t) { var a = C.ATV[t]; if (a.status === 'placeholder') return; itens.push({t: t + ' · ' + (a.nome || ''), d: (a.tipo || '') + (A.temTese && A.temTese(t) ? ' · tese' : ''), go: function () { A.abrirTese(t); }}); });
-    var inp = h('input', {type: 'search', placeholder: 'Ativo, carteira ou seção (ex.: PRIO3, Renda Moderado, cenários)', 'aria-label': 'Buscar'}), ul = h('ul', {role: 'listbox'}), sel = 0, vis = [];
+    A.SUBS_AV.forEach(function (x) { itens.push({t: 'Carteiras › avançado › ' + x[1], d: 'seção', go: function () { A.go('cart', x[0]); }}); });
+    A.SUBS.sala.forEach(function (x) { itens.push({t: 'Comitê e Sala › ' + x[1], d: 'seção', go: function () { A.go('sala', x[0]); }}); });
+    var refIds = A.REF.map(function (r) { return r[0]; });
+    C.CARTS.forEach(function (m) { var ref = refIds.indexOf(m.id) >= 0; itens.push({t: m.rotulo, d: 'carteira · ' + m.familia + (ref ? ' · referência' : ''), go: function () { S.cart = m.id; S.ver = 'aprovada'; A.go('cart', ref ? 'ref' : 'carteira'); }}); });
+    Object.keys(C.ATV).forEach(function (t) { var a = C.ATV[t]; if (a.status === 'placeholder') return; var etf = A.ehETF && A.ehETF(t); itens.push({t: t + ' · ' + (a.nome || ''), d: (a.tipo || '') + (etf ? ' · ficha do ETF' : A.temTese && A.temTese(t) ? ' · tese' : ''), go: function () { A.abrirFicha ? A.abrirFicha(t) : A.abrirTese(t); }}); });
+    var inp = h('input', {type: 'search', placeholder: 'Empresa, ETF, carteira ou seção (ex.: PRIO3, IMAB11, Arrojado, cenários)', 'aria-label': 'Buscar'}), ul = h('ul', {role: 'listbox'}), sel = 0, vis = [];
     var bg = h('div', {class: 'cmdk-bg', onclick: function (e) { if (e.target === bg) fechar(); }}, h('div', {class: 'cmdk', role: 'dialog', 'aria-label': 'Busca rápida'}, inp, ul));
     function norm(x) { return String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
     function draw() {
@@ -288,13 +291,15 @@ var APP = (function () {
   var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { document.querySelectorAll('.chart').forEach(function (c) { if (c.__draw) c.__draw(); }); }, 150); });
 
   /* ---------- estado ---------- */
-  var SK = 'oregon-pm-v2:ui';
-  var SUB0 = {hoje: 'mesa', cart: 'mapa', res: 'empresas', global: 'mundo', sala: 'reuniao', mesa: 'painel', cons: 'editor', risco: 'cenarios'};
-  var S = {area: 'hoje', sub: Object.assign({}, SUB0), cart: 'cresc-mod', ver: 'aprovada', choques: {}, idio: {}, janela: 36, metodo: 'pearson'};
+  var SK = 'oregon-pm-v3:ui';
+  var SUB0 = {hoje: 'mesa', cart: 'ref', res: 'empresas', global: 'mundo', sala: 'reuniao', mesa: 'painel', cons: 'editor', risco: 'cenarios'};
+  // Carteiras de referência do modo simples: versões aprovadas da família Brasil Crescimento (uma linha para trocar)
+  A.REF = [['cresc-cons', 'Conservador'], ['cresc-arr', 'Arrojado']];
+  var S = {area: 'hoje', sub: Object.assign({}, SUB0), cart: A.REF[0][0], ver: 'aprovada', choques: {}, idio: {}, janela: 36, metodo: 'pearson'};
   try {
     var saved = JSON.parse(localStorage.getItem(SK) || '{}'); Object.assign(S, saved); S.sub = Object.assign({}, SUB0, saved.sub || {});
-    if (['hoje', 'cart', 'res', 'global', 'sala'].indexOf(S.area) < 0) S.area = 'hoje';  // estado salvo da versão anterior do painel
-    if (['empresas', 'macro', 'eventos'].indexOf(S.sub.res) < 0) S.sub.res = 'empresas';
+    if (['hoje', 'cart', 'res', 'global', 'sala'].indexOf(S.area) < 0) S.area = 'hoje';
+    if (['empresas', 'etfs', 'macro', 'eventos'].indexOf(S.sub.res) < 0) S.sub.res = 'empresas';
   } catch (e) {}
   A.S = S;
   A.save = function () { try { localStorage.setItem(SK, JSON.stringify({area: S.area, sub: S.sub, cart: S.cart, ver: S.ver, janela: S.janela, metodo: S.metodo, choques: S.choques, idio: S.idio, cenEvento: S.cenEvento})); } catch (e) {} };
@@ -443,41 +448,52 @@ var APP = (function () {
 
   /* ---------- áreas ---------- */
   A.areas = {};
-  // Quatro áreas principais e a Sala; cor como no painel original (Brasil verde, mundo azul-petróleo, Sala grafite)
-  A.AREAS = [['hoje', 'Hoje', null], ['cart', 'Carteiras', 'var(--rf)'], ['res', 'Research Brasil', 'var(--br)'], ['global', 'Estratégia Global', 'var(--intl)'], ['sala', 'Sala de Gestão', 'var(--sala)']];
+  // Quatro áreas no menu, na ordem do dia de trabalho. A Sala de Gestão e o Comitê ficam dentro de Carteiras.
+  A.AREAS = [['hoje', 'Hoje', null], ['res', 'Research Brasil', 'var(--br)'], ['cart', 'Carteiras', 'var(--rf)'], ['global', 'Mundo e Estratégia', 'var(--intl)']];
   A.SUBS = {
-    cart: [['mapa', 'Mapa das carteiras'], ['carteira', 'Carteira'], ['risco', 'Risco e cenários'], ['construcao', 'Construção'], ['perfis', 'Decidido × base'], ['perf', 'Performance']],
-    res: [['empresas', 'Empresas'], ['macro', 'Macro → empresas'], ['eventos', 'Acontecimentos']],
+    cart: [['ref', 'Referência'], ['risco', 'Risco e cenários'], ['sala', 'Comitê e Sala'], ['mapa', 'Todas as carteiras · avançado']],
+    res: [['empresas', 'Empresas'], ['etfs', 'ETFs'], ['macro', 'Macro → empresas'], ['eventos', 'Acontecimentos']],
     sala: [['reuniao', 'Reunião'], ['comite', 'Comitê 05/11'], ['decisoes', 'Decisões e diário'], ['pauta', 'Pauta de estudo'], ['textos', 'Textos e consultores'], ['hist', 'Histórico e auditoria']]
   };
-  A.CTX_AREAS = {cart: 1, sala: 1};  // áreas em que a carteira e a versão escolhidas valem
+  // Modo avançado de Carteiras: as 15 carteiras e as ferramentas de construção
+  A.SUBS_AV = [['mapa', 'Mapa das 15'], ['carteira', 'Carteira'], ['construcao', 'Construção'], ['perfis', 'Decidido × base'], ['perf', 'Performance']];
+  A.ehAvancado = function (s) { return A.SUBS_AV.some(function (x) { return x[0] === s; }); };
+  // A faixa de carteira e versão aparece onde qualquer das 15 pode ser escolhida (risco, avançado e Sala); a referência tem o próprio seletor
+  A.mostraCtx = function () { return S.area === 'sala' || (S.area === 'cart' && S.sub.cart !== 'ref'); };
+  A.navAtiva = function () { return S.area === 'sala' ? 'cart' : S.area; };
   A.render = function () {
     var main = document.getElementById('main'); if (!main) return;
     if (!A.areas[S.area]) S.area = 'hoje';
-    document.querySelectorAll('.nav button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.a === S.area ? 'true' : 'false'); });
-    var ctx = document.getElementById('ctx'); if (ctx) ctx.hidden = !A.CTX_AREAS[S.area];
+    var na = A.navAtiva();
+    document.querySelectorAll('.nav button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.a === na ? 'true' : 'false'); });
+    var ctx = document.getElementById('ctx'); if (ctx) ctx.hidden = !A.mostraCtx();
     A.renderTop();
     main.replaceChildren();
     try { main.appendChild(A.areas[S.area]()); } catch (e) { console.error(e); main.appendChild(h('div', {class: 'alert bad'}, 'Erro ao montar esta área: ' + (e && e.message || e))); }
     A.flush(); A.save();
     try { history.replaceState(null, '', '#' + S.area + '/' + (S.sub[S.area] || '')); } catch (e) {}
   };
+  // Atualiza a área atual com dados novos sem perder a posição de leitura
+  A.rerender = function () { var y = window.scrollY; A.render(); if (y) requestAnimationFrame(function () { window.scrollTo(0, y); }); };
   // Cabeçalho de página: título em serifa, frase de contexto e subnavegação
   A.pageHead = function (kick, titulo, frase, right) {
     return h('div', {class: 'page-h'}, h('div', {class: 'grow'}, kick ? h('p', {class: 'kick'}, kick) : null, h('h1', null, titulo), frase ? h('p', null, frase) : null), right || null);
   };
-  A.subnav = function (area, items) {
+  A.subnav = function (area, items, ativo) {
+    var cur = ativo || S.sub[area];
     return h('div', {class: 'sub', role: 'toolbar', 'aria-label': 'Seções'}, items.map(function (it) {
-      return h('button', {'aria-pressed': S.sub[area] === it[0] ? 'true' : 'false', onclick: function () { S.sub[area] = it[0]; A.render(); }}, it[1]);
+      return h('button', {'aria-pressed': cur === it[0] ? 'true' : 'false', onclick: function () { A.go(area, it[0]); }}, it[1]);
     }));
   };
-  // Endereços da versão anterior (mesa, cons, risco, res) continuam funcionando: são traduzidos para a nova navegação
+  // Endereços das versões anteriores continuam funcionando: são traduzidos para a nova navegação
   var SALA_SUBS = {sala: 'reuniao', comite: 'comite', decisoes: 'decisoes', pauta: 'pauta', textos: 'textos', hist: 'hist'};
   A.traduz = function (area, sub) {
     if (area === 'mesa') return sub === 'mercado' ? ['hoje', null] : ['cart', 'carteira'];
     if (area === 'cons') { if (sub) S.sub.cons = sub; return ['cart', 'construcao']; }
     if (area === 'risco') { if (sub) S.sub.risco = sub; return ['cart', 'risco']; }
     if (area === 'res' && sub && SALA_SUBS[sub]) return ['sala', SALA_SUBS[sub]];
+    if (area === 'cart' && sub === 'sala') return ['sala', null];
+    if (area === 'cart' && sub === 'todas') return ['cart', 'mapa'];
     if (area === 'res' && sub === 'teses') return ['res', 'empresas'];
     if (area === 'res' && sub === 'noticias') return ['res', 'eventos'];
     if (area === 'res' && sub === 'perf') return ['cart', 'perf'];

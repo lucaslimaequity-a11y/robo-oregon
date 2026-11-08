@@ -11,6 +11,9 @@ RAIZ = os.path.join(B, '..')
 def rd(p): return open(os.path.join(B, 'src', p), encoding='utf-8').read()
 
 data = json.load(open(os.path.join(B, 'src', 'data.json'), encoding='utf-8'))
+# fichas dos ETFs (documentos oficiais das gestoras): separadas para atualizar sem mexer no restante dos dados
+_etfs = json.load(open(os.path.join(B, 'src', 'etfs.json'), encoding='utf-8'))
+data['etfs'] = {k: v for k, v in _etfs.items() if not k.startswith('_')}
 data_js = 'var DATA = ' + json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/') + ';'
 sala = rd('sala.js').replace('/*__LEGACY_TOPICOS__*/', rd('legacy_topicos.js'))
 assert '__LEGACY' not in sala
@@ -43,7 +46,7 @@ body = '''<div class="ov">
 </main>
 </div>
 '''
-page = ('<title>Oregon Investment Desk</title>\n<meta name="robots" content="noindex,nofollow">\n<meta name="description" content="Mesa de análise, risco e estratégia da Oregon: Hoje, Carteiras, Research Brasil, Estratégia Global e Sala de Gestão.">\n'
+page = ('<title>Oregon Investment Desk</title>\n<meta name="robots" content="noindex,nofollow">\n<meta name="description" content="Mesa de análise, risco e estratégia da Oregon: Hoje, Research Brasil, Carteiras e Mundo e Estratégia.">\n'
         + fonts + '\n<style>\n' + css + '\n</style>\n' + body + '<script>\n' + js + '\n</script>\n<script>\n' + cg_js + '\n</script>\n')
 os.makedirs(os.path.join(B, 'dist'), exist_ok=True)
 open(os.path.join(B, 'dist', 'painel_artifact.html'), 'w', encoding='utf-8').write(page)

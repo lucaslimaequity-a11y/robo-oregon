@@ -26,6 +26,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import agenda  # noqa: E402
 import avisos  # noqa: E402
 import b3  # noqa: E402
 import calendario  # noqa: E402
@@ -36,6 +37,7 @@ import fontes_macro  # noqa: E402
 import historico  # noqa: E402
 import noticias  # noqa: E402
 import qualidade  # noqa: E402
+import resultados  # noqa: E402
 from util import ErroFonte, Rede, agora, gravar, ler, log, num  # noqa: E402
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
@@ -136,6 +138,12 @@ def coletar_macro(cfg, ctx, estado, anterior, fat, ind, fontes, marca):
     return tz
 
 
+def gravar_versao(snap, estado, hist):
+    """Arquivo de poucos bytes que o site consulta para saber se há dado novo, sem baixar os arquivos grandes."""
+    gravar('versao.json', {'gerado_em': snap.get('gerado_em'), 'verificado_em': snap.get('verificado_em') or snap.get('gerado_em'), 'noticias_em': estado.get('noticias_em'),
+                           'historico': (hist or {}).get('data_ref'), 'resultados_em': estado.get('resultados_em')})
+
+
 def main():
     agora_ = agora()
     hoje = agora_.date()
@@ -163,6 +171,7 @@ def main():
         snap['status'] = qualidade.avaliar(cfg or config.PADRAO, {}, {}, erros_config=erros)
         snap['erros_config'] = erros
         gravar('mercado.json', snap)
+        gravar_versao(snap, estado, ler('historico.json') or {})
         gravar('status.json', {'gerado_em': snap['gerado_em'], 'status': snap['status'], 'cobertura': snap.get('cobertura')})
         for e in erros:
             log('  ! configuração: ' + e)
@@ -275,6 +284,15 @@ def main():
             if k in (anterior.get('fontes') or {}):
                 fontes[k] = anterior['fontes'][k]
 
+    # ---- 4b. agenda macro (IBGE uma vez por dia; Copom e Fed pelos calendários oficiais da configuração)
+    try:
+        snap['agenda'] = agenda.montar(rede, cfg, hoje, agora_, estado)
+        ag = snap['agenda']
+        fontes['agenda'] = {'ok': not ag['erros'], 'quando': marca, 'msg': '%d eventos nos próximos %d dias' % (len(ag['itens']), ag['dias']) + ('; falhas: ' + '; '.join(ag['erros']) if ag['erros'] else '')}
+    except Exception as e:  # a agenda nunca derruba a rodada
+        snap['agenda'] = anterior.get('agenda')
+        fontes['agenda'] = {'ok': False, 'quando': marca, 'msg': 'agenda não montada: %s' % type(e).__name__}
+
     # ---- 5. avaliação preliminar, alertas e Telegram
     snap['status'] = qualidade.avaliar(cfg, fontes, cob)
     ip = ind.get('ipca_mes')
@@ -341,6 +359,28 @@ def main():
     h = ler('historico.json') or {}
     snap['historico'] = {'disponivel': bool(h.get('series')), 'data_ref': h.get('data_ref'), 'n': len(h.get('series') or {})}
 
+    # ---- 6b. resultados trimestrais (CVM, dados abertos): depois de alertas, Telegram e histórico, com prazo próprio,
+    # na rodada de fechamento ou manual, a cada N dias. Um arquivo que falhar não apaga o que já estava lido.
+    rc = cfg.get('resultados') or {}
+    ult_r = estado.get('resultados_em') or ''
+    if rc.get('ativo', True) and ctx['fechamento'] and (manual or not ult_r or ult_r[:10] <= (hoje - dt.timedelta(days=int(rc.get('intervalo_dias', 3)))).isoformat()):
+        try:
+            rede_cvm = Rede(prazo_seg=int(rc.get('prazo_min', 8)) * 60)
+            res, erros_r = resultados.coletar(rede_cvm, cfg, hoje, log=log)
+            ant_r = ler('resultados.json') or {}
+            emp = resultados.mesclar(ant_r.get('empresas'), res['empresas'])
+            if emp:
+                gravar('resultados.json', {'gerado_em': agora_.isoformat(timespec='minutes'), 'empresas': emp, 'fora': res['fora'], 'arquivos': res['arquivos'], 'erros': erros_r,
+                                           'fonte': 'CVM · Portal Dados Abertos (ITR e DFP)', 'licenca': 'ODbL · crédito à CVM',
+                                           'nota': 'Valores em reais, como informados no formulário (DRE consolidada, versão mais recente). Trimestre = linha de três meses; o quarto trimestre não é calculado.'})
+            if not erros_r:
+                estado['resultados_em'] = agora_.isoformat(timespec='minutes')  # com falha, tenta de novo na próxima rodada de fechamento
+            fontes['resultados'] = {'ok': bool(res['empresas']) and not erros_r, 'quando': marca, 'msg': '%d empresas lidas nesta rodada' % len(res['empresas']) + ('; falhas: ' + '; '.join(erros_r[:2]) if erros_r else '')}
+        except Exception as e:
+            fontes['resultados'] = {'ok': False, 'quando': marca, 'msg': 'resultados não lidos: %s' % (e if isinstance(e, ErroFonte) else type(e).__name__)}
+    elif (anterior.get('fontes') or {}).get('resultados'):
+        fontes['resultados'] = anterior['fontes']['resultados']
+
     # ---- 7. avaliação final, diagnóstico e gravação
     cob['por_fornecedor'] = rede.resumo()
     snap['status'] = qualidade.avaliar(cfg, fontes, cob, telegram=fontes['telegram'] if tem_tg else None)
@@ -356,6 +396,7 @@ def main():
     estado['alphavantage'] = {'dia': hoje.isoformat(), 'n': ctx['av_cota']['usados']}
     gravar('mercado.json', snap)
     gravar('status.json', {'gerado_em': snap['gerado_em'], 'status': snap['status'], 'cobertura': cob, 'fontes': fontes})
+    gravar_versao(snap, estado, h)
     gravar('estado.json', estado)
     if b3_cache:
         gravar('b3_cache.json', b3_cache)

@@ -61,13 +61,36 @@ Um revisor que não escreveu o código procurou defeitos contra as regras do pro
 - `estado.json` (controle de alertas enviados) fica no ramo `dados`, que é público junto com o repositório. Não há dado sensível nele.
 - O S&P 500 continua vindo do Yahoo. Vale a ressalva geral sobre o Yahoo em `docs/FONTES.md`.
 
+## Revisão independente da revisão de UX (07/11/2026)
+
+Outro revisor, que não escreveu o código, procurou defeitos contra as regras do projeto. Tudo o que ele achou foi corrigido. O que mexia com dado ganhou teste.
+
+**Regras de dado**
+- **Notícia de ETF espalhada.** Uma manchete de um tema de ETF podia levar os ETFs de outro tema na deduplicação. Agora cada manchete tem a sua lista.
+- **Notícia de empresa marcada como "do índice".** Uma notícia de empresa podia virar notícia do índice de um ETF. Agora a empresa vem sempre primeiro, e notícia de empresa nunca recebe ETF.
+- **Lucro e margem da CVM.**
+  - O lucro mostrado é o atribuído aos controladores. Sem essa linha, aparece o consolidado, com o nome escrito.
+  - A variação contra o ano anterior não é calculada quando um dos trimestres teve prejuízo.
+  - A margem só aparece quando a conta 3.01 é receita de vendas. Bancos, seguradoras e holdings ficam sem margem.
+- **Escala.** Um arquivo da CVM com escala desconhecida é recusado, sem publicar número mil vezes menor.
+- **Falha parcial da CVM.** Ela não apaga o que já estava lido. A ficha avisa que pode faltar o trimestre mais recente, e o robô tenta de novo na próxima rodada de fechamento.
+- **Rótulo da versão.** O nome da versão na tela de referência vem da versão vigente, e não de um texto fixo.
+
+**Defeitos**
+- **Atualização automática.** O que você digitou e ainda não salvou na opinião da casa não se perde quando a tela é atualizada. A tela também avisa que há alterações não salvas.
+- **Exercício.** A resposta é gravada enquanto você digita.
+- **Resultado na ficha rápida.** Ele aparece sem precisar reabrir a ficha.
+- **Classificação de notícias.** "Tesouro" deixou de cair em Commodities, e "Banco Safra" também. A seleção do dia não altera mais as notícias guardadas.
+- **CVM e rodada de fechamento.** A leitura da CVM foi para o fim da rodada de fechamento, com prazo próprio, e não atrasa mais alertas, Telegram e histórico.
+- **Datas provisórias.** As datas de 2027 do Fed aparecem como previstas, porque o próprio Fed as chama de provisórias.
+
 ## Diagnóstico por ativo (para confirmar no GitHub)
 
 Actions → Robô de mercado Oregon → Run workflow → modo **diagnostico**. Para cada ativo, o robô testa o Yahoo com e sem `.SA`, a brapi (se houver chave) e a Tiingo, uma por uma, sem pausa. O resultado aparece no resumo da execução e em `data/diagnostico.json`. É assim que se confirma, com a rede do GitHub, se algum ticker mudou ou só está bloqueado.
 
 ## Testes
 
-- `python -m unittest discover -s testes`: 37 testes do robô, com a internet simulada (`testes/simulador.py`). Nenhum número dos testes é real. Cobrem:
+- `python -m unittest discover -s testes`: 46 testes do robô, com a internet simulada (`testes/simulador.py`). Nenhum número dos testes é real. Cobrem:
   - o cenário do seu log (Yahoo 429, sem brapi, AwesomeAPI 401);
   - tudo fora (resultado crítico);
   - tudo ok (resultado completo);
@@ -83,9 +106,22 @@ Actions → Robô de mercado Oregon → Run workflow → modo **diagnostico**. P
   - Telegram (entrega, chat errado, sem vazar o token, sem repetir alerta);
   - configuração inválida (crítica, sem apagar dados, avisa no Telegram uma vez por dia);
   - modo diagnóstico;
-  - classificação de erros de rede.
-- `node testes/painel.test.js`: 26 testes do painel. Cobrem a validação das 15 carteiras, o motor de cenários, os modelos quantitativos, o mercado ao vivo no formato v2 (só cotação atualizada entra no cálculo do dia) e as teses.
-- `node painel/test/areas.js <endereço>` (precisa do Playwright): percorre as 5 áreas e 27 endereços, no computador e no celular, procurando erros de JavaScript e rolagem horizontal.
+  - classificação de erros de rede;
+  - resultados da CVM: só a linha de 3 meses, escala em milhares convertida, versão reapresentada substitui a original, nome conferido junto com o CNPJ, fundos imobiliários e BDRs fora, só na rodada de fechamento;
+  - agenda: produto fora da lista não entra, data quebrada não vira data, IBGE uma vez por dia, falha do IBGE não derruba a rodada, horário do Fed convertido para Brasília;
+  - notícias de índice dos ETFs marcadas como "não sobre o fundo";
+  - arquivo de versão pequeno para o site;
+  - validação dos blocos novos da configuração.
+- `node testes/painel.test.js`: 28 testes do painel. Cobrem a validação das 15 carteiras, o motor de cenários, os modelos quantitativos, o mercado no formato v2 (só cotação atualizada entra no cálculo do dia), as teses, o briefing (filtros das notícias, seleção sem ruído, o que mudou, conexão do dia, fato do exercício, agenda) e as fichas dos ETFs (todas com fonte oficial; cadastro divergente avisado e não alterado).
+- `node painel/test/areas.js <endereço>` (precisa do Playwright): percorre 31 endereços, novos e antigos, no computador e no celular. Confere o destino de cada endereço antigo, erros de JavaScript e rolagem horizontal. Também testa:
+  - a busca abrindo a ficha de uma empresa e de um ETF;
+  - a notícia levando ao ativo;
+  - o filtro de notícias;
+  - o exercício com explicação;
+  - o seletor Conservador/Arrojado mostrando a carteira inválida;
+  - o menu com quatro áreas.
+
+  Também confere que a ficha rápida completa o resultado da CVM sem reabrir. São 78 verificações.
 
 ## O que não pôde ser validado aqui (depende de credenciais ou da rede do GitHub)
 
@@ -93,4 +129,6 @@ Actions → Robô de mercado Oregon → Run workflow → modo **diagnostico**. P
 - **Cobertura de ETFs na brapi.** Se o plano gratuito cobre ETFs (LFTB11, IRFM11 etc.) e o índice ^BVSP, só se confirma com a sua chave.
 - **CVM.** O cruzamento por CNPJ e nome usa os CNPJs da configuração. O nome CVM da AXIA3 está vazio: confira em `robo/config.json`.
 - **Agendamento do GitHub.** Os disparos do cron podem atrasar. A rodada de fechamento foi feita para tolerar atraso até 23h30.
+- **Resultados da CVM.** O leitor segue o formato dos arquivos abertos da CVM (`*_DRE_con_AAAA.csv`, colunas `CNPJ_CIA`, `DT_REFER`, `VERSAO`, `ORDEM_EXERC`, `DT_INI_EXERC`, `DT_FIM_EXERC`, `CD_CONTA`, `DS_CONTA`, `VL_CONTA`, `ESCALA_MOEDA`) e foi testado com arquivos sintéticos nesse formato. Os bancos e as seguradoras usam outro nome na conta 3.01: o painel mostra o nome da conta ao lado do número. Confira na primeira rodada de fechamento (Actions → resumo da execução → fonte "resultados").
+- **Agenda do IBGE.** A API de calendário foi testada com resposta simulada no formato descrito na documentação pública. Se o formato real for outro, a falha aparece na fonte "agenda", e a agenda segue só com Copom, Fed e Focus.
 - **Publicação no Pages.** O YAML foi conferido em sintaxe e lógica, mas a execução real só acontece no seu repositório.

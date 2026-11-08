@@ -32,11 +32,11 @@ var MERCADO = (function () {
   function urlRobo(s) {
     s = String(s || '').trim().replace(/\s+/g, ''); if (!s) return null;
     var m = s.match(/^https:\/\/raw\.githubusercontent\.com\/([\w.-]+)\/([\w.-]+)\/([\w.-]+)\/(?:data\/)?(?:mercado\.json)?$/i);
-    if (m) { var b0 = 'https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/' + m[3] + '/data/'; return {mercado: b0 + 'mercado.json', historico: b0 + 'historico.json', noticias: b0 + 'noticias.json', repo: m[1] + '/' + m[2]}; }
+    if (m) { var b0 = 'https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/' + m[3] + '/data/'; return {mercado: b0 + 'mercado.json', historico: b0 + 'historico.json', noticias: b0 + 'noticias.json', versao: b0 + 'versao.json', repo: m[1] + '/' + m[2]}; }
     m = s.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:\/.*)?$/i) || s.match(/^([\w.-]+)\/([\w.-]+)$/);
     if (!m) return null;
     var base = 'https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/dados/data/';
-    return {mercado: base + 'mercado.json', historico: base + 'historico.json', noticias: base + 'noticias.json', repo: m[1] + '/' + m[2]};
+    return {mercado: base + 'mercado.json', historico: base + 'historico.json', noticias: base + 'noticias.json', versao: base + 'versao.json', repo: m[1] + '/' + m[2]};
   }
 
   // ---------- fontes diretas (navegador, sem chave) ----------
@@ -183,8 +183,93 @@ var MERCADO = (function () {
   }
   function idade(snap, agora) { if (!snap || !snap.gerado_em) return null; return Math.max(0, (agora - new Date(snap.gerado_em).getTime()) / 60000); }
 
+  /* ---------- briefing do dia (funções puras, testadas em tests.js) ---------- */
+  function semAcento(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+  function menosDias(iso, n) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - n); return d.toISOString().slice(0, 10); }
+  var KW = {
+    mundo: ['fed ', 'federal reserve', 'eua', 'estados unidos', 'treasur', 'china', 'chines', 'europa', 'bce', 'trump', 'wall street', 's&p', 'nasdaq', 'payroll', 'japao', 'global', 'emergentes', 'msci', 'ucits'],
+    commodities: ['petroleo', 'brent', 'minerio', 'soja', 'milho', 'celulose', 'commodit', 'ouro', 'gas natural', 'opep', 'cafe ', 'acucar', 'boi gordo', 'safra de', 'safras', 'agronegocio', 'agricola'],
+    juros: ['selic', 'copom', 'juros', 'ipca', 'inflacao', 'fiscal', 'arcabouco', 'divida publica', 'tesouro', 'orcamento', 'deficit', 'superavit', 'di futuro', 'curva', 'focus', 'ntn-b', 'banco central', 'ima-b', 'irf-m', 'idka']
+  };
+  var TEMA_CAT = {'Juros': 'juros', 'Inflação': 'juros', 'Fiscal': 'juros', 'Inflação e atividade': 'juros', 'Commodities': 'commodities', 'Agro': 'commodities', 'EUA': 'mundo', 'Mundo': 'mundo', 'Bolsa': 'brasil', 'Câmbio': 'brasil', 'Mercado': 'brasil'};
+  var SETOR_COMMOD = {'Petróleo': 1, 'Papel e celulose': 1, 'Agronegócio': 1};
+  // Filtros do briefing: Brasil, Empresas, Juros e Fiscal, Commodities, Mundo. Uma notícia pode estar em mais de um.
+  function catNoticia(n, ATV) {
+    ATV = ATV || {}; var t = ' ' + semAcento(n.titulo) + ' ', tg = {brasil: false, empresas: false, juros: false, commodities: false, mundo: false};
+    // palavra começando no limite (evita "ouro" dentro de "Tesouro")
+    var has = function (lst) { return lst.some(function (w) { var i = t.indexOf(w); while (i >= 0) { if (!/[a-z0-9]/.test(t.charAt(i - 1))) return true; i = t.indexOf(w, i + 1); } return false; }); };
+    var tm = n.tema === 'BBDC4' && !ATV.BBDC4 ? 'BBDC3' : n.tema, a = tm && ATV[tm] && !/ETF/.test(ATV[tm].tipo || '') ? ATV[tm] : null;
+    if (a) {  // empresa primeiro: notícia de empresa nunca vira notícia de índice de ETF
+      tg.empresas = true;
+      if (a.moeda === 'USD' && a.tipo !== 'Ação (BDR)') tg.mundo = true; else tg.brasil = true;
+      if (SETOR_COMMOD[a.setor]) tg.commodities = true;
+    } else if (n.etfs && n.etfs.length) {  // notícia sobre o índice ou a estratégia de um ETF (nunca fato do fundo)
+      var e0 = ATV[n.etfs[0]] || {}; if (e0.moeda === 'USD' || e0.pais && e0.pais !== 'Brasil') tg.mundo = true; else { tg.brasil = true; tg.juros = /Renda fixa/.test(e0.classe || '') || tg.juros; }
+    } else if (TEMA_CAT[n.tema]) { tg[TEMA_CAT[n.tema]] = true; if (TEMA_CAT[n.tema] === 'juros') tg.brasil = true; }
+    if (!a && !(n.etfs && n.etfs.length)) {
+      if (has(KW.mundo)) tg.mundo = true;
+      if (has(KW.commodities)) tg.commodities = true;
+      if (has(KW.juros) && !tg.mundo) tg.juros = true;
+      if (!tg.mundo && !tg.commodities) tg.brasil = true;
+      if (tg.juros) tg.brasil = true;
+    }
+    var principal = tg.empresas ? 'empresas' : tg.juros ? 'juros' : tg.commodities ? 'commodities' : tg.mundo ? 'mundo' : 'brasil';
+    return {tags: tg, principal: principal};
+  }
+  function relevN(n) { return (n.classe && n.classe.relevancia) || (n.ia && n.ia.relevancia) || 'baixa'; }
+  // As 5 a 10 notícias que merecem leitura: média ou alta relevância, das últimas 24 a 48 horas (até 4 dias se faltar),
+  // no máximo duas por empresa ou tema. Nunca completa com notícia de baixa relevância.
+  function destaques(itens, opt) {
+    opt = opt || {}; var hoje = opt.hoje || hojeBRT(), held = opt.held || {}, max = opt.max || 10, min = opt.min || 5;
+    var pool = (itens || []).filter(function (n) { return n && n.titulo && relevN(n) !== 'baixa' && (n.quando || n.visto_em); });
+    function pega(janela) {
+      var lim = menosDias(hoje, janela), cand = pool.filter(function (n) { return (n.quando || n.visto_em).slice(0, 10) >= lim; });
+      var sc = cand.map(function (n) {
+        var d = (n.quando || n.visto_em).slice(0, 10), k = n.classe || {}, rec = d >= hoje ? 2 : d >= menosDias(hoje, 1) ? 1 : 0;
+        return (k.pontos || (relevN(n) === 'alta' ? 4 : 2)) + (held[n.tema] ? 2 : 0) + (k.oficial ? 1 : 0) + (k.tese && k.tese.length ? 1 : 0) + rec;
+      });
+      var ord = cand.map(function (n, i) { return i; }).sort(function (i, j) { return (sc[j] - sc[i]) || String(cand[j].quando || '').localeCompare(String(cand[i].quando || '')); });
+      cand = ord.map(function (i) { return cand[i]; });
+      var porTema = {}, out = [];
+      cand.forEach(function (n) { var t = n.tema || n.titulo; if ((porTema[t] || 0) >= 2 || out.length >= max) return; porTema[t] = (porTema[t] || 0) + 1; out.push(n); });
+      return out;
+    }
+    var r = pega(1); if (r.length < min) r = pega(3);
+    return r;
+  }
+  // O que mudou desde o último pregão: fatores da sessão, em ordem de tamanho relativo ao limite de alerta
+  function mudancas(snap, lim) {
+    if (!snap || !snap.fatores) return [];
+    lim = (lim || LIM_PADRAO).fatores || LIM_PADRAO.fatores;
+    return FK.map(function (k) {
+      var f = snap.fatores[k]; if (!f || !f.ok || f.var == null || !isFinite(f.var) || estado(f) !== 'atualizado') return null;
+      var L = lim[k] || 1; return {k: k, f: f, var: f.var, uvar: f.uvar, ratio: Math.abs(f.var) / L, data: f.data, de: f.data_anterior || null};
+    }).filter(Boolean).sort(function (a, b) { return b.ratio - a.ratio; });
+  }
+  // Conexão do dia: o maior movimento externo (juros americanos, bolsas, petróleo, bitcoin) e como o Brasil reagiu no mesmo pregão
+  var GLOBAIS = ['ust10', 'ust2', 'sp', 'em', 'brent', 'btc'];
+  function conexao(snap, lim) {
+    var ms = mudancas(snap, lim), g = ms.filter(function (m) { return GLOBAIS.indexOf(m.k) >= 0; })[0];
+    if (!g) return null;
+    var br = ['usd', 'pre', 'real', 'ibov'].map(function (k) { var f = snap.fatores[k]; return f && f.ok && usavel(f) && f.var != null && f.data === g.data ? {k: k, f: f, var: f.var, uvar: f.uvar} : null; }).filter(Boolean);
+    return {k: g.k, f: g.f, var: g.var, uvar: g.uvar, ratio: g.ratio, data: g.data, br: br};
+  }
+  // Fato do exercício: o maior movimento real da sessão, com o Brasil primeiro (juros, câmbio, bolsa, petróleo)
+  var EX_PESO = {real: 1, pre: 1, selic: 1, usd: 1, ibov: 1, brent: 0.9, ust10: 0.8, sp: 0.7};
+  function fatoExercicio(snap, lim, ses) {
+    var ms = mudancas(snap, lim).filter(function (m) { return EX_PESO[m.k] && Math.abs(m.var) > 1e-9 && (!ses || m.data === ses || GLOBAIS.indexOf(m.k) >= 0); });
+    ms.sort(function (a, b) { return b.ratio * EX_PESO[b.k] - a.ratio * EX_PESO[a.k]; });
+    return ms[0] || null;
+  }
+  // Próximos eventos da agenda (robô: IBGE e calendários oficiais do Copom e do Fed)
+  function agendaProx(ag, hoje, dias) {
+    hoje = hoje || hojeBRT(); var ate = menosDias(hoje, -(dias || 10));
+    return ((ag && ag.itens) || []).filter(function (x) { return x && x.data && x.data >= hoje && x.data <= ate; }).sort(function (a, b) { return (a.data + (a.hora || '99')).localeCompare(b.data + (b.hora || '99')); });
+  }
+
   return {estado: estado, usavel: usavel, ESTADO_TXT: ESTADO_TXT, tendencia: tendencia, ROBO_PADRAO: ROBO_PADRAO, FK: FK, NOME: NOME, LIM_PADRAO: LIM_PADRAO, CFG_PADRAO: CFG_PADRAO, cfgCompleta: cfgCompleta, urlRobo: urlRobo, urlsDiretas: urlsDiretas, sgsPts: sgsPts, normDireto: normDireto, mesclar: mesclar,
-    sessao: sessao, classe: classe, cotacao: cotacao, detectar: detectar, choquesDoDia: choquesDoDia, idioDoDia: idioDoDia, carteiraHoje: carteiraHoje, fmtNivel: fmtNivel, fmtVar: fmtVar, idade: idade, isoLocal: isoLocal, hojeBRT: hojeBRT};
+    sessao: sessao, classe: classe, cotacao: cotacao, detectar: detectar, choquesDoDia: choquesDoDia, idioDoDia: idioDoDia, carteiraHoje: carteiraHoje, fmtNivel: fmtNivel, fmtVar: fmtVar, idade: idade, isoLocal: isoLocal, hojeBRT: hojeBRT,
+    catNoticia: catNoticia, destaques: destaques, mudancas: mudancas, conexao: conexao, fatoExercicio: fatoExercicio, agendaProx: agendaProx, menosDias: menosDias, relevN: relevN, GLOBAIS: GLOBAIS};
 })();
 if (typeof module !== 'undefined' && module.exports) module.exports = MERCADO;
 
@@ -202,7 +287,7 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
   var naoAcessa = function () { return STORE.mode === 'db' || !!(window.claude && window.claude.use); };
   // Publicado no GitHub Pages: os dados do robô estão no mesmo endereço do painel (pasta data/), sem configurar nada
   function siteBase() { try { if (/^https?:$/.test(location.protocol) && !naoAcessa()) return new URL('data/', location.href).href; } catch (e) {} return null; }
-  function fonteRobo(c) { var b = siteBase(); if (b) return {mercado: b + 'mercado.json', historico: b + 'historico.json', noticias: b + 'noticias.json', site: true}; return M.urlRobo((c || cfg()).robo); }
+  function fonteRobo(c) { var b = siteBase(); if (b) return {mercado: b + 'mercado.json', historico: b + 'historico.json', noticias: b + 'noticias.json', versao: b + 'versao.json', site: true}; return M.urlRobo((c || cfg()).robo); }
 
   async function getJSON(url, ms) {
     var ctl = typeof AbortController !== 'undefined' ? new AbortController() : null, t = setTimeout(function () { if (ctl) ctl.abort(); }, ms || 10000);
@@ -211,10 +296,28 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
   }
   function motivo(e) { var m = String(e && (e.message || e) || ''); return /sem dados/.test(m) ? 'arquivo do robô sem dados (rodada incompleta); tenta de novo na próxima' : /HTTP 404/.test(m) ? 'não encontrado (confira o endereço ou se o robô já rodou)' : /HTTP/.test(m) ? m : /abort/i.test(m) ? 'sem resposta em 10 s' : 'bloqueado pelo navegador ou sem internet'; }
 
+  // Verificação leve: o robô grava um versao.json de poucos bytes a cada rodada. Só quando ele muda (ou quando as fontes
+  // diretas do navegador estão vencidas) os arquivos grandes são baixados. A página não recarrega: a área atual é redesenhada
+  // no mesmo ponto de leitura, e nunca enquanto você digita ou está com uma gaveta aberta.
+  var DIRETO_MIN = 15;
   async function atualizar(manual) {
-    if (E.carregando) return; E.carregando = true; if (manual) A.render();
-    try { await atualizarAgora(); } catch (e) { console.warn(e); E.status = Object.assign({}, E.status, {robo: {ok: false, msg: motivo(e)}}); }
-    finally { E.carregando = false; A.render(); }
+    if (E.carregando) return; E.carregando = true; A.renderTop();
+    var mudou = true;
+    try {
+      var urls = fonteRobo(), c = cfg(), diretoVencido = c.diretas && (!E.diretoEm || Date.now() - E.diretoEm > DIRETO_MIN * 60000);
+      if (!manual && E.robo && urls && urls.versao && !diretoVencido) {
+        var v = null; try { v = await getJSON(urls.versao + '?t=' + Date.now(), 8000); } catch (e) { v = null; }
+        if (v && v.gerado_em && v.gerado_em === E.robo.gerado_em) { mudou = false; E.ultimo = new Date().toISOString(); }
+      }
+      if (mudou) await atualizarAgora();
+    } catch (e) { console.warn(e); E.status = Object.assign({}, E.status, {robo: {ok: false, msg: motivo(e)}}); }
+    finally { E.carregando = false; if (mudou || manual) renderSeguro(); else A.renderTop(); }
+  }
+  function renderSeguro() {
+    var ae = document.activeElement;
+    A.renderTop();
+    if (document.querySelector('.drawer') || document.querySelector('.cmdk-bg') || (ae && ae.closest && ae.closest('#main') && /INPUT|TEXTAREA|SELECT/.test(ae.tagName))) { clearTimeout(E.rsT); E.rsT = setTimeout(renderSeguro, 1500); return; }
+    (A.rerender || A.render)();
   }
   async function atualizarAgora() {
     var c = cfg(), agora = new Date(), hoje = M.hojeBRT(agora), st = {};
@@ -231,16 +334,20 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
     if (c.diretas) {
       var nb = ['s432', 's4389', 's433', 's13522', 's1'].filter(function (k) { return raw[k]; }).length;
       st.bcb = nb ? {ok: true, msg: nb + ' de 5 séries'} : {ok: false, msg: (st.bcb_s432 || {}).msg || 'sem resposta'};
-      st.cambio = raw.cambio ? {ok: true, msg: 'dólar ao vivo'} : (st.cambio || {ok: false, msg: 'sem resposta'});
+      st.cambio = raw.cambio ? {ok: true, msg: 'dólar do dia (AwesomeAPI, com atraso do fornecedor)'} : (st.cambio || {ok: false, msg: 'sem resposta'});
       ['s432', 's4389', 's433', 's13522', 's1'].forEach(function (k) { delete st['bcb_' + k]; });
-      E.direto = nb || raw.cambio ? M.normDireto(raw, hoje, agora.toISOString()) : null;
+      E.direto = nb || raw.cambio ? M.normDireto(raw, hoje, agora.toISOString()) : null; E.diretoEm = Date.now();
     } else { st.bcb = {ok: null, msg: 'desligado'}; st.cambio = {ok: null, msg: 'desligado'}; E.direto = null; }
     // fonte direta bloqueada pelo navegador não é problema quando o robô responde: ele traz os mesmos dados
     if (st.robo && st.robo.ok) ['bcb', 'cambio'].forEach(function (k) { if (st[k] && st[k].ok === false) st[k] = {ok: null, msg: 'o navegador não deixou consultar direto; os dados vêm do robô'}; });
     var novo = M.mesclar(E.robo, E.direto);
     E.status = st; E.ultimo = agora.toISOString();
     if (novo) { E.snap = novo; lsSet(LS_SNAP, novo); await processar(novo, c); }
-    if (E.robo && E.robo.historico && E.robo.historico.disponivel && urls && urls.historico) { try { await historicoAuto(urls, E.robo.historico.data_ref); } catch (e) { console.warn(e); } }
+    // o histórico (arquivo grande, uma vez por dia) carrega depois, sem atrasar a primeira tela
+    if (E.robo && E.robo.historico && E.robo.historico.disponivel && urls && urls.historico && !E.histBuscando && !(E.histData && E.histData.data_ref === E.robo.historico.data_ref)) {
+      E.histBuscando = true;
+      historicoAuto(urls, E.robo.historico.data_ref).then(function () { renderSeguro(); }, function (e) { console.warn(e); }).then(function () { E.histBuscando = false; });
+    }
   }
   // Séries do robô: carregadas sozinhas uma vez por dia (tendências da página Hoje e modelo de risco).
   // Séries que você importou de outra fonte nunca são trocadas; séries marcadas como suspeitas pelo robô ficam de fora do modelo.
@@ -263,6 +370,20 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
     if (A.carregarTabelas) await A.carregarTabelas();
     E.hist = {ok: true, msg: novos + ' séries do robô de ' + A.dataBR(j.data_ref) + (fora.length ? '; fora do modelo por qualidade suspeita: ' + fora.join(', ') : '') + (mantidas.length ? '; mantidas as importadas por você: ' + mantidas.join(', ') : '') + '.'};
   }
+  // Resultados da CVM (resultados.json do robô): baixados só quando uma ficha pede, uma vez por sessão
+  A.resultadosDe = function (t) {
+    var vencido = E.resFalhou && Date.now() - E.resFalhou > 10 * 60000;
+    if ((!E.resLido || vencido) && !E.resBuscando && !naoAcessa()) {
+      var u = fonteRobo();
+      if (u && u.mercado) {
+        E.resBuscando = true;
+        E.resPromise = getJSON(u.mercado.replace(/mercado\.json$/, 'resultados.json') + '?t=' + Date.now(), 30000)
+          .then(function (j) { E.res = j && j.empresas ? j : null; E.resFalhou = null; E.resAusente = !E.res; }, function (e) { E.res = null; E.resFalhou = Date.now(); E.resAusente = /HTTP 404/.test(String(e && e.message)); })
+          .then(function () { E.resBuscando = false; E.resLido = true; renderSeguro(); });
+      }
+    }
+    return {carregando: !!E.resBuscando, promessa: E.resPromise || null, falhou: !!E.resFalhou && !E.resAusente, dados: E.res || null, emp: E.res && E.res.empresas ? (E.res.empresas[t] || null) : null, fora: E.res && E.res.fora ? (E.res.fora[t] || null) : null};
+  };
   A.mercadoHist = function () { return E.histData || null; };
   A.mercadoCfg = function () { return cfg(); };
   A.mercadoBloqueado = function () { return naoAcessa(); };
@@ -325,7 +446,7 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
     E.snap = lsGet(LS_SNAP, null);
     if (naoAcessa()) return;
     var c = cfg(); if (!c.robo && !c.diretas && !siteBase()) return;
-    setTimeout(function () { atualizar(false); }, 1500); reagendar();
+    setTimeout(function () { atualizar(false); }, 30); reagendar();
     document.addEventListener('visibilitychange', function () { if (!document.hidden && E.ultimo && (Date.now() - new Date(E.ultimo).getTime()) > cfg().intervalo * 60000) atualizar(false); });
   };
   A.mercadoVisto = function () { E.novos = 0; try { document.title = 'Painel Carteira Oregon'; } catch (e) {} };
@@ -343,7 +464,7 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
   }
   A.dadosPill = function () {
     var q = nivelDados();
-    return h('button', {class: 'dstat', title: 'Qualidade e origem dos dados', onclick: function () { A.abrirQualidade(); }}, h('i', {class: 'dot ' + (q.nivel || 'indisponivel') + (q.velho ? ' desatualizado' : '')}), (E.carregando ? '… ' : '') + q.txt + (E.novos ? ' · ' + E.novos + ' novo' + (E.novos > 1 ? 's' : '') : ''));
+    return h('button', {class: 'dstat', title: 'Hora da última rodada do robô (a cada 30 min em dias úteis; não é tempo real). Toque para ver a qualidade e a origem dos dados.', onclick: function () { A.abrirQualidade(); }}, h('i', {class: 'dot ' + (q.nivel || 'indisponivel') + (q.velho ? ' desatualizado' : '')}), (E.carregando ? '… ' : '') + q.txt + (E.novos ? ' · ' + E.novos + ' novo' + (E.novos > 1 ? 's' : '') : ''));
   };
   A.qualidadeLinha = function () {
     var snap = E.snap, q = nivelDados(); if (!snap) return null;
@@ -360,7 +481,7 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
     if (snap && snap.simulado) body.appendChild(h('div', {class: 'alert warn'}, 'Dados SIMULADOS de teste carregados neste aparelho. Nenhum número é real.'));
     body.appendChild(h('div', {class: 'row', style: 'margin-bottom:8px'}, h('i', {class: 'dot ' + (q.nivel || 'indisponivel')}), h('b', null, snap ? 'Última rodada do robô: ' + ({completo: 'COMPLETA', parcial: 'PARCIAL', critico: 'CRÍTICA'}[q.nivel] || '—') : 'Sem leitura do robô'),
       h('span', {class: 'grow'}), h('button', {class: 'btn sm', disabled: E.carregando || naoAcessa() || null, onclick: function () { d.remove(); atualizar(true); }}, E.carregando ? 'Buscando…' : 'Buscar agora')));
-    if (naoAcessa()) body.appendChild(h('div', {class: 'alert warn'}, 'Nesta página do claude.ai o navegador não acessa a internet. Os dados ao vivo aparecem no site do painel (GitHub Pages) e no arquivo aberto no computador.'));
+    if (naoAcessa()) body.appendChild(h('div', {class: 'alert warn'}, 'Nesta página do claude.ai o navegador não acessa a internet. Os dados do robô aparecem no site do painel (GitHub Pages) e no arquivo aberto no computador.'));
     if (snap) {
       var st = snap.status || {}, cob = snap.cobertura || {};
       if ((st.motivos || []).length) body.appendChild(h('ul', null, st.motivos.map(function (m) { return h('li', null, m); })));
@@ -392,6 +513,16 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
     else body.appendChild(h('div', {class: 'alert warn'}, 'Sem dado deste fator na última rodada' + (f && f.motivo ? ': ' + f.motivo : '') + '.'));
     if (s) body.appendChild(h('div', null, h('h3', null, 'Histórico (' + A.dataBR(s.inicio) + ' a ' + A.dataBR(s.fim) + ')'), A.lines([{name: M.NOME[k], pts: s.pts}], {fmt: function (v) { return s.tipo === 'taxa' ? A.num(v, 2) + '%' : A.num(v, v > 1000 ? 0 : 2); }, h: 200}), h('p', {class: 'hint'}, 'Série ' + ({taxa: 'de taxa (% a.a.)', nivel: 'de nível (índice ou preço)', ajustado: 'ajustada por proventos', preco: 'de preço sem ajuste'}[s.tipo] || s.tipo) + ' · ' + s.fonte + (s.qualidade && s.qualidade !== 'ok' ? ' · qualidade: ' + s.qualidade + (s.motivo ? ' (' + s.motivo + ')' : '') : ''))));
     if (mec) body.appendChild(h('div', null, h('h3', null, 'Como chega às carteiras'), h('p', null, mec.txt), h('p', {class: 'muted'}, 'Acompanhar: ' + mec.ver + '.')));
+    // repercussão nas carteiras de referência: o movimento de hoje aplicado pelo motor de cenários
+    if (f && f.ok && M.usavel(f) && f.var != null && isFinite(f.var) && Math.abs(f.var) > 1e-9 && C.FATORES.some(function (x) { return x.k === k; })) {
+      var ch = {}; ch[k] = Math.round(f.var * 10000) / 10000; var P = A.prem();
+      body.appendChild(h('div', null, h('h3', null, 'O movimento de hoje nas carteiras de referência'),
+        h('table', {class: 't'}, h('thead', null, h('tr', null, h('th', null, 'Carteira'), h('th', {class: 'r'}, 'Efeito pelo motor'), h('th', null, 'Situação'))), h('tbody', null, A.REF.map(function (r) {
+          var v = STORE.aprovadaVigente(C, r[0]), x = C.choqueCarteira(v, ch, P.sens), val = A.valida(v);
+          return h('tr', null, h('td', null, r[1]), h('td', {class: 'r num ' + A.cls(x.total)}, A.spct(x.total, 2)), h('td', {style: 'font-size:.84rem'}, val.status === 'invalida' ? 'inválida: soma ' + A.pct(val.total, 1) + ', sem ajuste' : x.parcial ? 'parcial: ' + A.pct(x.cobertura.descoberto, 0) + ' sem cobertura' : 'válida'));
+        }))),
+        h('p', {class: 'hint'}, 'Choque de ' + M.fmtVar(ch[k], f.uvar) + ' aplicado com as sensibilidades cadastradas (premissas a revisar, não medições). Para testar outros tamanhos: Carteiras → Risco e cenários.')));
+    }
     if (ex.length) body.appendChild(h('div', null, h('h3', null, 'Peso exposto por carteira (versão aprovada)'), A.hbars(ex.map(function (x) { return {label: x.m.rotulo, v: x.w, color: A.FAMC[x.m.familia]}; }), {fmt: function (v) { return A.pct(v, 1); }}), h('p', {class: 'hint'}, 'Soma dos pesos nos pilares e ativos ligados a este fator. É exposição bruta, não sensibilidade estimada.')));
     A.drawer(M.NOME[k] || k, body);
   };
@@ -412,7 +543,7 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
   A.mercadoPill = function () {
     var snap = E.snap; if (!snap && naoAcessa()) return null;
     var n = E.novos;
-    return h('button', {class: 'tbtn', title: 'Mercado ao vivo', onclick: function () { A.go('mesa', 'mercado'); }}, (E.carregando ? '… ' : '') + 'Mercado' + (n ? ' · ' + n + ' novo' + (n > 1 ? 's' : '') : snap ? ' · ' + hm(snap.gerado_em) : ''));
+    return h('button', {class: 'tbtn', title: 'Mercado (atualização periódica)', onclick: function () { A.go('mesa', 'mercado'); }}, (E.carregando ? '… ' : '') + 'Mercado' + (n ? ' · ' + n + ' novo' + (n > 1 ? 's' : '') : snap ? ' · ' + hm(snap.gerado_em) : ''));
   };
 
   A.mercadoTela = function () {
@@ -421,14 +552,14 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
     var bloqueado = naoAcessa();
     // 1. estado das fontes
     var idade = M.idade(snap, Date.now());
-    wrap.appendChild(A.sec('Mercado ao vivo', {mtd: 'mercado', hint: 'O painel busca os dados sozinho a cada ' + c.intervalo + ' min enquanto estiver aberto. O robô no GitHub roda a cada 30 min em dias úteis, avisa no Telegram e guarda notícias e séries. Valores sem fonte nunca aparecem.',
+    wrap.appendChild(A.sec('Mercado: todos os números', {mtd: 'mercado', hint: 'Atualização periódica, não é tempo real: o painel verifica a cada ' + c.intervalo + ' min, enquanto estiver aberto, se o robô publicou dados novos. O robô no GitHub roda a cada 30 min em dias úteis, avisa no Telegram e guarda notícias e séries. Valores sem fonte nunca aparecem.',
       right: h('div', {class: 'row'}, h('button', {class: 'btn sm pri', disabled: E.carregando || bloqueado || null, onclick: function () { atualizar(true); }}, E.carregando ? 'Buscando…' : 'Atualizar agora'), h('button', {class: 'btn sm', onclick: configurar}, 'Configurar'))}, [
-      bloqueado ? h('div', {class: 'alert warn'}, h('b', null, 'Neste link do claude.ai a página não acessa a internet '), '(regra da plataforma para páginas publicadas). O acompanhamento ao vivo funciona no arquivo ', h('b', null, 'Painel_Carteira_Oregon.html'), ' aberto no Chrome do seu computador. Os avisos do robô chegam no Telegram de qualquer jeito.') : null,
-      !bloqueado && !fonteRobo(c) ? h('div', {class: 'alert'}, h('b', null, 'Robô ainda não ligado. '), c.diretas ? 'Por enquanto o painel lê direto do Banco Central (Selic, CDI, IPCA, PTAX) e o dólar ao vivo. ' : '', 'Com o robô ligado entram juros do Tesouro, Treasuries, Ibovespa, S&P 500, Brent, bitcoin, as cotações de todos os ativos das carteiras, notícias, alertas no Telegram e as séries para o modelo de risco. Siga o guia de ativação e cole o endereço do repositório em “Configurar”.') : null,
+      bloqueado ? h('div', {class: 'alert warn'}, h('b', null, 'Neste link do claude.ai a página não acessa a internet '), '(regra da plataforma para páginas publicadas). O acompanhamento automático funciona no arquivo ', h('b', null, 'Painel_Carteira_Oregon.html'), ' aberto no Chrome do seu computador. Os avisos do robô chegam no Telegram de qualquer jeito.') : null,
+      !bloqueado && !fonteRobo(c) ? h('div', {class: 'alert'}, h('b', null, 'Robô ainda não ligado. '), c.diretas ? 'Por enquanto o painel lê direto do Banco Central (Selic, CDI, IPCA, PTAX) e o dólar do dia. ' : '', 'Com o robô ligado entram juros do Tesouro, Treasuries, Ibovespa, S&P 500, Brent, bitcoin, as cotações de todos os ativos das carteiras, notícias, alertas no Telegram e as séries para o modelo de risco. Siga o guia de ativação e cole o endereço do repositório em “Configurar”.') : null,
       h('div', {class: 'row', style: 'gap:6px;flex-wrap:wrap'},
         snap ? h('span', null, 'Última leitura: ', h('b', null, A.dataBR(snap.gerado_em) + ' ' + hm(snap.gerado_em)), idade != null ? h('span', {class: 'muted'}, ' (há ' + (idade < 90 ? Math.round(idade) + ' min' : idade < 2880 ? Math.round(idade / 60) + ' h' : Math.round(idade / 1440) + ' dias') + ')') : null, ' · sessão de referência ', h('b', null, A.dataBR(ses))) : h('span', {class: 'muted'}, 'Ainda sem leitura.'),
         h('span', {class: 'grow'}),
-        chipStatus(siteBase() ? 'Robô (este site)' : 'Robô', E.status.robo || (fonteRobo(c) ? {ok: null, msg: 'aguardando'} : {ok: null, msg: 'não configurado'})), chipStatus('Banco Central', E.status.bcb), chipStatus('Câmbio ao vivo', E.status.cambio)),
+        chipStatus(siteBase() ? 'Robô (este site)' : 'Robô', E.status.robo || (fonteRobo(c) ? {ok: null, msg: 'aguardando'} : {ok: null, msg: 'não configurado'})), chipStatus('Banco Central', E.status.bcb), chipStatus('Câmbio direto', E.status.cambio)),
       snap && snap.fontes && Object.keys(snap.fontes).length ? A.more('Fontes do robô (' + Object.keys(snap.fontes).filter(function (k) { return snap.fontes[k].ok; }).length + ' de ' + Object.keys(snap.fontes).length + ' responderam na última rodada)', h('div', {class: 'row', style: 'gap:6px;flex-wrap:wrap'}, Object.keys(snap.fontes).map(function (k) { var f = snap.fontes[k]; return chipStatus({bcb: 'Banco Central', focus: 'Focus', tesouro: 'Tesouro Direto', treasury: 'Tesouro dos EUA', cotacoes: 'Cotações', noticias: 'Notícias', ia: 'Leitura por IA', telegram: 'Telegram'}[k] || k, {ok: f.ok, msg: (f.msg || '') + (f.quando ? ' · ' + hm(f.quando) : '')}); }))) : null
     ]));
     if (!snap) { wrap.appendChild(passos()); return wrap; }
@@ -569,7 +700,7 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
     var busca = h('input', {class: 'inp', type: 'search', placeholder: 'Buscar (ex.: Klabin, Copom)', value: NF.q, onchange: function () { NF.q = busca.value; A.render(); }});
     wrap.appendChild(A.sec('Acontecimentos e impacto', {mtd: 'mercado', hint: 'O robô busca a cada hora (Google Notícias por empresa e tema, releases do IBGE, documentos da CVM), separa a empresa certa (ex.: PRIO não é “prioridade”), junta repetidas e classifica por regras: fonte oficial, categoria do fato, risco da tese tocado, ruído. Por padrão, só média e alta relevância. Cada item já vem testado na ' + mand.rotulo + ': são testes de sensibilidade, não previsões.'}, [
       bloqueado ? h('div', {class: 'alert warn'}, 'Neste link do claude.ai a página não acessa a internet, então as notícias não chegam aqui. Use o site do painel no GitHub Pages ou o arquivo no computador.') : null,
-      !bloqueado && !u ? h('div', {class: 'alert'}, 'As notícias chegam pelo robô. Siga o guia de ativação (ou, no arquivo do computador, informe o repositório em Mesa → Mercado ao vivo → Configurar).') : null,
+      !bloqueado && !u ? h('div', {class: 'alert'}, 'As notícias chegam pelo robô. Siga o guia de ativação (ou, no arquivo do computador, informe o repositório em Hoje → Dados → Configurar).') : null,
       h('div', {class: 'sub', role: 'toolbar', style: 'margin:0 0 8px'}, btn('todas', 'Todas'), btn('nesta', 'Empresas desta carteira'), btn('empresas', 'Empresas das carteiras'), btn('macro', 'Macro e mercado'), btn('alta', 'Alta relevância')),
       h('label', {class: 'row', style: 'gap:6px;font-size:.88rem;margin:0 0 8px'}, h('input', {type: 'checkbox', checked: NF.baixa || null, onchange: function (e) { NF.baixa = e.target.checked; A.render(); }}), 'Mostrar também as de baixa relevância (' + nBaixa + ' no período: opinião, cobertura do pregão, menção sem fato novo)'),
       h('div', {class: 'row', style: 'gap:10px;flex-wrap:wrap'}, h('label', {class: 'field'}, 'Período', per), h('label', {class: 'field'}, 'Tamanho do teste nas empresas', tst), h('label', {class: 'field', style: 'flex:1;min-width:220px'}, 'Buscar', busca)),
@@ -627,7 +758,7 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
       h('div', {class: 'row', style: 'margin:6px 0'}, h('button', {class: 'btn', onclick: async function () { var u = M.urlRobo(robo.value); if (!u) { res.replaceChildren(h('div', {class: 'alert bad'}, 'Endereço não reconhecido. Use o formato usuario/repositorio.')); return; } res.replaceChildren(h('p', {class: 'muted'}, 'Testando…')); try { var j = await getJSON(u.mercado + '?t=' + Date.now()); res.replaceChildren(h('div', {class: 'alert ok'}, 'Conectado: última rodada do robô em ' + A.dataBR(j.gerado_em) + ' ' + hm(j.gerado_em) + '.')); } catch (e) { res.replaceChildren(h('div', {class: 'alert bad'}, 'Não conectou: ' + motivo(e) + '. Confira se o repositório é público e se o robô já rodou pelo menos uma vez (aba Actions).')); } }}, 'Testar conexão')),
       res,
       h('h3', null, 'Funcionamento'),
-      h('label', null, dir, ' Fontes públicas diretas (Banco Central e dólar ao vivo, sem chave)'), h('br'),
+      h('label', null, dir, ' Fontes públicas diretas (Banco Central e dólar do dia, sem chave)'), h('br'),
       h('label', {class: 'field', style: 'max-width:260px'}, 'Atualizar a cada (minutos)', itv),
       h('label', null, aut, ' Montar a reunião automática na Sala quando houver alerta'), h('br'),
       h('label', null, apl, ' Usar o cenário do dia como cenário ativo do painel'), h('br'),
@@ -643,11 +774,11 @@ if (typeof APP !== 'undefined') (function (A, C, M) {
         Object.keys(limF).forEach(function (k) { var v = Number(limF[k].value); n.limites.fatores[k] = isFinite(v) && v > 0 ? v : M.LIM_PADRAO.fatores[k]; });
         Object.keys(limA).forEach(function (k) { var v = Number(limA[k].value); n.limites.ativos[k] = isFinite(v) && v > 0 ? v : M.LIM_PADRAO.ativos[k]; });
         n.limites.ativos.outro = M.LIM_PADRAO.ativos.outro;
-        await salvarCfg(n); await STORE.audit('configuração do mercado ao vivo', (n.robo || 'sem robô') + ' · ' + n.intervalo + ' min');
+        await salvarCfg(n); await STORE.audit('configuração do mercado', (n.robo || 'sem robô') + ' · ' + n.intervalo + ' min');
         d.remove(); if (!naoAcessa()) atualizar(true); else A.render();
       }}, 'Salvar'))
     );
-    var d = A.drawer('Configurar o mercado ao vivo', body);
+    var d = A.drawer('Configurar o mercado', body);
   }
   A.mercadoEstado = E;
 })(APP, CORE, MERCADO);

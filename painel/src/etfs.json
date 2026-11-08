@@ -1,0 +1,3047 @@
+{
+ "_leia": "Fichas dos ETFs das carteiras montadas com os documentos oficiais das gestoras, consultados em 07/11/2026. Campo nulo = não verificado em fonte oficial (motivo em notas). aviso_cadastro = diferença entre o cadastro do painel e o fundo real; o cadastro não foi alterado.",
+ "LFTB11": {
+  "nome_completo": "Investo ETF MarketVector Brazil Treasury 760 Day Target Duration Classe de Índice - Responsabilidade Limitada",
+  "gestora": "Investo Gestão de Recursos Ltda. (CNPJ 37.788.647/0001-30)",
+  "administrador": "Banco BNP Paribas Brasil S.A. (CNPJ 01.522.368/0001-82), também custodiante",
+  "cnpj": "56.176.507/0001-55",
+  "isin": "BRLFTBCTF002",
+  "ticker_bolsa": "LFTB11 · B3 · BRL",
+  "indice": "MarketVector Brazil Treasury 760 Day Target Duration Index (MVLFTB)",
+  "indice_metodologia": "Inclui todas as LFTs (Tesouro Selic) elegíveis e a NTN-B (Tesouro IPCA+) de vencimento mais longo. O peso da NTN-B é 760 dividido pelo prazo médio de repactuação (PMR) dela; o restante vai para as LFTs, proporcional ao valor de mercado. Entrada exige 12 meses ao vencimento (permanência, 6 meses). Rebalanceamento mensal, no último dia útil. O alvo de 760 dias é de PMR (critério tributário), não de duration econômica.",
+  "objetivo": "Acompanhar um índice que é quase todo Tesouro Selic, com uma pequena posição em Tesouro IPCA+ longo para manter o prazo médio de repactuação da carteira acima de 720 dias.",
+  "taxa_adm": "0,19% a.a. (taxa global)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Não distribui rendimentos: juros e cupons são reinvestidos. O regulamento permite amortização trimestral, a critério do gestor, só se a classe superar o índice no trimestre.",
+  "tributacao": {
+   "texto": "Segundo o gestor, IR de 15% retido na fonte sobre o ganho, em qualquer prazo, sem come-cotas e sem IOF. O material do gestor explica que a carteira tem PMR acima de 720 dias, o que a coloca na faixa de 15% da regra de ETFs de renda fixa (Lei 13.043/2014).",
+   "fonte": "https://investoetf.com/lftb11/"
+  },
+  "patrimonio": {
+   "valor": "R$ 6.939.770.956,21",
+   "data": "2026-11-05"
+  },
+  "duration": {
+   "valor": "1,18 (duration modificada média do índice, conforme a MarketVector); PMR da carteira: 772 dias",
+   "data": "2026-11-07 (página do índice e página do gestor)"
+  },
+  "fatores": [
+   "Selic (pós-fixado)",
+   "juro real (IPCA+) longo via NTN-B",
+   "risco soberano"
+  ],
+  "riscos": [
+   "A cota pode se descolar do índice por causa de taxas, custos de rebalanceamento e caixa.",
+   "A perna em NTN-B longa oscila com o juro real e pode fazer o fundo render abaixo do CDI em períodos de alta de juros.",
+   "As cotas e os títulos podem ter pouca liquidez no mercado secundário.",
+   "Se o provedor deixar de manter o índice, a classe pode ser liquidada.",
+   "Há possibilidade de perda de capital e de patrimônio líquido negativo; não há garantia do FGC."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "Tesouro Selic (direto)",
+    "diferenca": "LFT comprada diretamente: sem taxa de gestão e sem a perna de IPCA+ longo, mas o IR segue a tabela regressiva pelo prazo da aplicação."
+   },
+   {
+    "ticker": "LFIN11",
+    "diferenca": "Também pós-fixado (DI), mas troca o risco soberano por risco de crédito de bancos (Letras Financeiras)."
+   }
+  ],
+  "papel_na_carteira": "Funciona como caixa de longo prazo em títulos soberanos pós-fixados, aceitando um pouco de volatilidade de juro real em troca da alíquota de 15% de IR.",
+  "busca_noticias": "\"Tesouro Selic\" OR \"taxa Selic\" OR \"Copom\" OR \"LFT\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (Investo)",
+    "url": "https://investoetf.com/lftb11/"
+   },
+   {
+    "titulo": "Lâmina do fundo (Investo)",
+    "url": "https://api.mziq.com/mzfilemanager/v2/d/02c0bf8f-2988-419f-9a6f-4e116a4bf822/317b07d7-aa6e-3c69-a81f-3df015141a49?origin=2"
+   },
+   {
+    "titulo": "Material publicitário (Investo)",
+    "url": "https://api.mziq.com/mzfilemanager/v2/d/02c0bf8f-2988-419f-9a6f-4e116a4bf822/d3670dbd-89e1-ce56-a9ca-4bb4a6693f83?origin=2"
+   },
+   {
+    "titulo": "Regulamento (versão de 16/03/2026, FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1147544"
+   },
+   {
+    "titulo": "Metodologia do índice MVLFTB (Index Guide v1.02, jan/2026)",
+    "url": "https://files.marketvector.com/index-guide/MVLFTB_Index_Guide.pdf"
+   },
+   {
+    "titulo": "Página do índice (MarketVector)",
+    "url": "https://www.marketvector.com/indexes/bond/marketvector-brazil-treasury-760-day-target-duration"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1370897"
+   }
+  ],
+  "fontes": [
+   "https://investoetf.com/lftb11/",
+   "https://api.mziq.com/mzfilemanager/v2/d/02c0bf8f-2988-419f-9a6f-4e116a4bf822/317b07d7-aa6e-3c69-a81f-3df015141a49?origin=2",
+   "https://api.mziq.com/mzfilemanager/v2/d/02c0bf8f-2988-419f-9a6f-4e116a4bf822/d3670dbd-89e1-ce56-a9ca-4bb4a6693f83?origin=2",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1147544",
+   "https://files.marketvector.com/index-guide/MVLFTB_Index_Guide.pdf",
+   "https://www.marketvector.com/indexes/bond/marketvector-brazil-treasury-760-day-target-duration",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1370897",
+   "https://www.marketvector.com/insights/index-updates/rule-change-for-mvlftb",
+   "https://www.marketvector.com/insights/index-updates/marketvector-introduces-its-first-brazilian-fixed-income-index-licenses-to-investo-to-meet-rising-demand",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1143169",
+   "https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CConsolFdo/ResultBuscaParticFdo.aspx?CNPJNome=56176507000155"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "DISCREPÂNCIA PARCIAL: o rótulo 'ETF de Tesouro Selic' simplifica demais. O índice tem cerca de 90% em LFT e cerca de 9% na NTN-B 2060 (9,32% em 01/10/2026, página do gestor), usada para levar o PMR acima de 720 dias. Essa perna traz risco de juro real longo: em outubro/2026 o ETF rendeu 50,4% do CDI no mês (página do gestor, dados até 30/10/2026). Nome, ISIN e CNPJ informados pelo fornecedor de dados conferem com o regulamento e o cadastro da CVM; o gestor indica início em 31/10/2024. Além da taxa global, o regulamento prevê taxa máxima de custódia de 0,03% a.a. A duration modificada é a estatística corrente do índice na página da MarketVector (sem data explícita).",
+  "aviso_cadastro": "O cadastro do painel chama de \"ETF de Tesouro Selic\", e o índice não é só LFT: tem cerca de 90% em LFT e cerca de 9% na NTN-B 2060, usada para o prazo médio passar de 720 dias (alíquota de 15%). Essa perna traz risco de juro real longo. A premissa de sensibilidade do painel trata o LFTB11 como Selic pura (duration zero): confira antes de usar nos cenários."
+ },
+ "IRFM11": {
+  "nome_completo": "It Now IRF-M P2 Fundo de Índice - Responsabilidade Limitada",
+  "gestora": "Itaú Asset Management (Itaú Unibanco Asset Management Ltda., CNPJ 40.430.971/0001-96)",
+  "administrador": "Itaú Unibanco S.A. (CNPJ 60.701.190/0001-04), também custodiante",
+  "cnpj": "32.880.642/0001-19",
+  "isin": "BRIRFMCTF009",
+  "ticker_bolsa": "IRFM11 · B3 · BRL",
+  "indice": "IRF-M P2 (ANBIMA)",
+  "indice_metodologia": "Subíndice da família IMA com títulos prefixados (LTN e NTN-F) ponderados pelo estoque em mercado. Se o prazo médio de repactuação (PMR) estimado ficar abaixo de 780 dias, a ANBIMA reduz os títulos mais curtos até atingi-lo, para que o PMR nunca caia abaixo de 720 dias. Rebalanceamento mensal (vigência do 2º dia útil do mês ao 1º dia útil do mês seguinte).",
+  "objetivo": "Dar acesso, numa só cota, a uma cesta de títulos públicos prefixados com prazo médio acima de dois anos, replicando o IRF-M P2.",
+  "taxa_adm": "0,20% a.a. (total máximo: administração 0,04% + gestão 0,13% + custódia 0,03%)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os resultados são reinvestidos automaticamente na classe; os cupons das NTN-F não são pagos ao cotista.",
+  "tributacao": {
+   "texto": "Segundo o gestor, IR de 15% sobre o ganho de capital em qualquer prazo, sem IOF e sem come-cotas. O regulamento explica que a alíquota varia de 25% a 15% conforme o prazo de repactuação da carteira (Lei 13.043/2014) e sobe para 30% se o fundo tiver menos de 75% em títulos do índice.",
+   "fonte": "https://www.itnow.com.br/irfm11/"
+  },
+  "patrimonio": {
+   "valor": "R$ 1.036.700.784,90",
+   "data": "2026-11-05"
+  },
+  "duration": {
+   "valor": "593 dias úteis (duration do índice IRF-M P2; PMR de 918 dias corridos)",
+   "data": "set/2026 (lâmina ANBIMA do índice)"
+  },
+  "fatores": [
+   "juro nominal prefixado",
+   "duration intermediária (cerca de 2,4 anos)",
+   "título público federal"
+  ],
+  "riscos": [
+   "O preço dos prefixados cai quando sobem as expectativas de juros futuros.",
+   "A cota pode se descolar do índice por taxas, custos de rebalanceamento e caixa.",
+   "Não há garantia de mercado secundário ativo para as cotas; o preço em bolsa pode ter ágio ou deságio sobre o valor patrimonial.",
+   "Se a ANBIMA descontinuar o índice ou a licença não for renovada, o fundo pode mudar de objetivo ou ser liquidado.",
+   "Com menos de 75% da carteira em títulos do índice, a alíquota de IR passa a 30%."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IDKA11",
+    "diferenca": "Mesma família IMA, mas com piso de PMR de 1.110 dias (cerca de 3 anos): carteira mais longa e mais sensível a juros."
+   },
+   {
+    "ticker": "5PRE11",
+    "diferenca": "Índice Teva com os 7 prefixados mais longos e prazo médio alvo de 5 anos: o mais sensível a juros dos três."
+   }
+  ],
+  "papel_na_carteira": "É a exposição mais curta da carteira à curva prefixada, ganhando quando os juros futuros recuam e perdendo quando sobem.",
+  "busca_noticias": "\"IRF-M\" OR \"Tesouro Prefixado\" OR \"LTN\" OR \"juros futuros\" OR \"DI futuro\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (It Now)",
+    "url": "https://www.itnow.com.br/irfm11/"
+   },
+   {
+    "titulo": "Lâmina do fundo (30/10/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIRFMP24216_It_Now_IRF-M_P2.pdf"
+   },
+   {
+    "titulo": "Regulamento (25/06/2025)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/regulamento-IRFM.pdf"
+   },
+   {
+    "titulo": "Fatores de risco",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/FatoresRisco%20IRFM.pdf"
+   },
+   {
+    "titulo": "Política de distribuição de resultados",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-de-distribuicao-de-resultados-IRFM.pdf"
+   },
+   {
+    "titulo": "Demonstrações financeiras (exercício encerrado em 31/03/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IRFM.pdf"
+   },
+   {
+    "titulo": "Metodologia IMA Série P2 (ANBIMA, mar/2026)",
+    "url": "https://www.anbima.com.br/data/files/E9/C7/A4/3F/16FBC91067D089C9BA2BA2A8/Metodologia_IMA_Series_P2_mar26.pdf"
+   },
+   {
+    "titulo": "Lâmina do índice IRF-M P2 (ANBIMA, set/2026)",
+    "url": "https://anbima.com.br/data/files/AE/60/13/1A/69E95710D4A1B957882BA2A8/IRF_M_P2_Lamina.pdf"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371055"
+   }
+  ],
+  "fontes": [
+   "https://www.itnow.com.br/irfm11/",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIRFMP24216_It_Now_IRF-M_P2.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/regulamento-IRFM.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/FatoresRisco%20IRFM.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-de-distribuicao-de-resultados-IRFM.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IRFM.pdf",
+   "https://www.anbima.com.br/data/files/E9/C7/A4/3F/16FBC91067D089C9BA2BA2A8/Metodologia_IMA_Series_P2_mar26.pdf",
+   "https://anbima.com.br/data/files/AE/60/13/1A/69E95710D4A1B957882BA2A8/IRF_M_P2_Lamina.pdf",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371055",
+   "https://www.itnow.com.br/irfm11/documentos/",
+   "https://www.itnow.com.br/irfm11/caracteristicas/",
+   "https://www.itnow.com.br/nossos-etfs/renda-fixa/"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Rótulo correto. Atenção: replica o IRF-M P2 (com piso de PMR), não o IRF-M cheio. Na página de documentos do gestor, o link 'Metodologia do índice' aponta para um arquivo com nome de IMA-B, então a metodologia veio da ANBIMA. A duration é do índice, não do fundo; a lâmina do fundo traz um campo 'duration histórica' com valores incoerentes (cerca de 15 anos), que foi descartado. O regulamento prevê 0,02% a.a. à ANBIMA pela licença do índice; não fica claro se isso está dentro dos 0,20%. A página de características aponta Itaú Unibanco S.A. como gestor; o regulamento indica Itaú Unibanco Asset Management."
+ },
+ "5PRE11": {
+  "nome_completo": "It Now Teva ITBR Pré 5 Anos Fundo de Índice - Responsabilidade Limitada",
+  "gestora": "Itaú Asset Management (Itaú Unibanco Asset Management Ltda., CNPJ 40.430.971/0001-96)",
+  "administrador": "Itaú Unibanco S.A. (CNPJ 60.701.190/0001-04), também custodiante",
+  "cnpj": "64.538.158/0001-00",
+  "isin": "BR5PRECTF008",
+  "ticker_bolsa": "5PRE11 · B3 · BRL",
+  "indice": "Índice Teva ITBR Tesouro Pré Fixado 5 Anos (Teva Índices / Kjerag Índices de Mercado)",
+  "indice_metodologia": "Considera LTN e NTN-F com volume no secundário de pelo menos R$ 500 milhões em cada um dos dois meses anteriores e mais de 30 dias ao vencimento. Seleciona os 7 títulos de prazo mais longo, parte de pesos iguais e ajusta os pesos dos papéis das pontas até o prazo médio da carteira ficar em 5 anos. Rebalanceamento mensal, no 1º dia útil.",
+  "objetivo": "Replicar uma carteira de títulos públicos prefixados com prazo médio de cerca de 5 anos, numa só cota negociada em bolsa.",
+  "taxa_adm": "0,25% a.a. (total máximo: administração 0,04% + gestão 0,18% + custódia 0,03%)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os resultados são reinvestidos automaticamente na classe; cupons não são distribuídos.",
+  "tributacao": {
+   "texto": "Segundo o gestor, IR de 15% sobre o ganho de capital em qualquer prazo, sem come-cotas, sem IOF e sem emissão de DARF. O regulamento remete à Lei 13.043/2014 (25% a 15% conforme o prazo de repactuação; 30% se menos de 75% da carteira estiver em títulos do índice).",
+   "fonte": "https://www.itnow.com.br/5pre11/"
+  },
+  "patrimonio": {
+   "valor": "R$ 173.372.184,60",
+   "data": "2026-11-05"
+  },
+  "duration": null,
+  "fatores": [
+   "juro nominal prefixado",
+   "duration longa (prazo médio alvo de 5 anos)",
+   "título público federal"
+  ],
+  "riscos": [
+   "O preço dos prefixados longos oscila bastante com as expectativas de juros futuros.",
+   "A cota pode se descolar do índice por taxas, custos de rebalanceamento e caixa.",
+   "Liquidez das cotas no secundário não é garantida; pode haver ágio ou deságio sobre o valor patrimonial.",
+   "O provedor (Teva) pode alterar ou deixar de calcular o índice, o que pode levar à mudança de objetivo ou liquidação.",
+   "Com menos de 75% da carteira em títulos do índice, a alíquota de IR passa a 30%."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IRFM11",
+    "diferenca": "Usa a carteira de mercado de prefixados com PMR mínimo de 720 dias: bem mais curto e diversificado."
+   },
+   {
+    "ticker": "IDKA11",
+    "diferenca": "Carteira de mercado com PMR mínimo de 1.110 dias (cerca de 3 anos): posição intermediária entre IRFM11 e 5PRE11."
+   }
+  ],
+  "papel_na_carteira": "É a aposta mais longa da carteira na curva prefixada, com o maior ganho se os juros caírem e a maior perda se subirem.",
+  "busca_noticias": "\"Tesouro Prefixado\" OR \"NTN-F\" OR \"juros longos\" OR \"DI futuro\" OR \"curva de juros\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (It Now)",
+    "url": "https://www.itnow.com.br/5pre11/"
+   },
+   {
+    "titulo": "Lâmina do fundo (30/10/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUTEV68755_It_Now_Teva_Itbr_Pre_5_Anos_Rl.pdf"
+   },
+   {
+    "titulo": "Regulamento (16/01/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Regulamento_5PRE11.pdf"
+   },
+   {
+    "titulo": "Metodologia do índice Teva ITBR Pré 5 Anos (v202511171)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Teva%20Indices%20-%20Metodologia%20%20-%20ITBR%20PR%EF%BF%83%EF%BE%89%20-%20%EF%BF%83%EF%BE%8Dndice%20Teva%20Tesouro%20Pre%205%20Anos_v202511171b.pdf"
+   },
+   {
+    "titulo": "Fatores de risco",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco_5PRE11.pdf"
+   },
+   {
+    "titulo": "Política de distribuição de resultados",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Pol_Distr_Resultados_5PRE11.pdf"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371063"
+   }
+  ],
+  "fontes": [
+   "https://www.itnow.com.br/5pre11/",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUTEV68755_It_Now_Teva_Itbr_Pre_5_Anos_Rl.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Regulamento_5PRE11.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Teva%20Indices%20-%20Metodologia%20%20-%20ITBR%20PR%EF%BF%83%EF%BE%89%20-%20%EF%BF%83%EF%BE%8Dndice%20Teva%20Tesouro%20Pre%205%20Anos_v202511171b.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco_5PRE11.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Pol_Distr_Resultados_5PRE11.pdf",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371063",
+   "https://www.itnow.com.br/5pre11/documentos/",
+   "https://www.itnow.com.br/5pre11/caracteristicas/",
+   "https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CConsolFdo/ResultBuscaParticFdo.aspx?CNPJNome=64538158000100"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Rótulo correto. O índice mira prazo médio até o vencimento de 5 anos, não duration; a página do gestor fala em 'duration média de 5 anos', o que não é a mesma métrica. Duration não publicada em fonte oficial. Fundo novo: a lâmina indica início em 05/02/2026 e a página de características, 23/02/2026. Lâmina com histórico curto (desde o início)."
+ },
+ "IDKA11": {
+  "nome_completo": "It Now IRF-M P3 Fundo de Índice - Responsabilidade Limitada",
+  "gestora": "Itaú Asset Management (Itaú Unibanco Asset Management Ltda., CNPJ 40.430.971/0001-96)",
+  "administrador": "Itaú Unibanco S.A. (CNPJ 60.701.190/0001-04), também custodiante",
+  "cnpj": "57.055.305/0001-18",
+  "isin": "BRIDKACTF004",
+  "ticker_bolsa": "IDKA11 · B3 · BRL",
+  "indice": "IRF-M P3 (ANBIMA)",
+  "indice_metodologia": "Subíndice da família IMA com títulos prefixados (LTN e NTN-F) ponderados pelo estoque em mercado. Se o prazo médio de repactuação (PMR) da carteira ficar abaixo de 1.110 dias corridos (cerca de 3 anos), a ANBIMA reduz os títulos de menor PMR até atingir esse piso (em empate, começa pelas LTN). Rebalanceamento mensal, após o 1º dia útil.",
+  "objetivo": "Replicar uma carteira de títulos públicos prefixados com prazo médio de pelo menos três anos, numa só cota negociada em bolsa.",
+  "taxa_adm": "0,25% a.a. (total máximo: administração 0,04% + gestão 0,18% + custódia 0,03%)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os resultados são reinvestidos automaticamente na classe; os cupons das NTN-F não são pagos ao cotista.",
+  "tributacao": {
+   "texto": "Segundo o gestor, IR de 15% sobre o ganho de capital em qualquer prazo, sem come-cotas, sem IOF e sem DARF. O regulamento remete à Lei 13.043/2014 (25% a 15% conforme o prazo de repactuação; 30% se menos de 75% da carteira estiver em títulos do índice).",
+   "fonte": "https://www.itnow.com.br/idka11/"
+  },
+  "patrimonio": {
+   "valor": "R$ 1.129.045.160,00",
+   "data": "2026-11-05"
+  },
+  "duration": null,
+  "fatores": [
+   "juro nominal prefixado",
+   "duration intermediária (PMR mínimo de cerca de 3 anos)",
+   "título público federal"
+  ],
+  "riscos": [
+   "O preço dos prefixados cai quando sobem as expectativas de juros de longo prazo.",
+   "A cota pode se descolar do índice por taxas, custos de rebalanceamento e caixa.",
+   "Não há garantia de mercado secundário ativo; o preço em bolsa pode ter ágio ou deságio.",
+   "Se a ANBIMA interromper o índice ou a licença acabar, a classe pode ter de mudar de objetivo ou ser liquidada.",
+   "Com menos de 75% da carteira em títulos do índice, a alíquota de IR passa a 30%."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IRFM11",
+    "diferenca": "Mesma família IMA, mas com piso de PMR de 720 dias: carteira mais curta e menos volátil."
+   },
+   {
+    "ticker": "5PRE11",
+    "diferenca": "Índice Teva com os 7 prefixados mais longos e prazo médio alvo de 5 anos: mais longo e mais concentrado."
+   }
+  ],
+  "papel_na_carteira": "Ocupa o meio da curva prefixada, com sensibilidade a juros maior que a do IRFM11 e menor que a do 5PRE11.",
+  "busca_noticias": "\"IRF-M\" OR \"Tesouro Prefixado\" OR \"NTN-F\" OR \"curva de juros\" OR \"DI futuro\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (It Now)",
+    "url": "https://www.itnow.com.br/idka11/"
+   },
+   {
+    "titulo": "Lâmina do fundo (30/10/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIRFM67811_It_Now_IRFM_P3_Rl.pdf"
+   },
+   {
+    "titulo": "Regulamento (26/06/2025)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/RegulamentoIRFMP3.pdf"
+   },
+   {
+    "titulo": "Fatores de risco",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco%20IRF-M%20P3.pdf"
+   },
+   {
+    "titulo": "Política de distribuição de resultados",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Pol_Distr_Resultados%20IRF-M%20P3.pdf"
+   },
+   {
+    "titulo": "Demonstrações financeiras (exercício encerrado em 31/03/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IDKA11.pdf"
+   },
+   {
+    "titulo": "Metodologia IMA Série P3 / IRF-M P3 (ANBIMA, mar/2026)",
+    "url": "https://www.anbima.com.br/data/files/E1/34/3D/24/84FBC91067D089C9BA2BA2A8/Metodologia_IMA_Series_P3_mar26.pdf"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371048"
+   }
+  ],
+  "fontes": [
+   "https://www.itnow.com.br/idka11/",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIRFM67811_It_Now_IRFM_P3_Rl.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/RegulamentoIRFMP3.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco%20IRF-M%20P3.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Pol_Distr_Resultados%20IRF-M%20P3.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IDKA11.pdf",
+   "https://www.anbima.com.br/data/files/E1/34/3D/24/84FBC91067D089C9BA2BA2A8/Metodologia_IMA_Series_P3_mar26.pdf",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371048",
+   "https://www.itnow.com.br/idka11/documentos-idka11/",
+   "https://www.itnow.com.br/idka11/caracteristicas/",
+   "https://www.itau.com.br/relacoes-com-investidores/noticias/itau-asset-lanca-dois-novos-etfs-para-o-mercado-brasileiro/?lang=en",
+   "https://borainvestir.b3.com.br/cotacoes/etfs/IDKA11/",
+   "https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CConsolFdo/ResultBuscaParticFdo.aspx?CNPJNome=57055305000118"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "DISCREPÂNCIA: o rótulo 'índice IDkA' está errado. Apesar do ticker, o fundo replica o IRF-M P3 da ANBIMA (família IMA), não um IDkA (o índice de duração constante da ANBIMA). O nome registrado 'IT NOW IRFM P3' confere com o regulamento, a lâmina e o cadastro da CVM; o fundo começou em 29/10/2024. O IRF-M P3 tem piso de PMR de 1.110 dias, não alvo de duration; o gestor descreve como 'duration próxima de 3 anos', mas PMR e duration são métricas diferentes. A duration do IRF-M P3 não foi encontrada em fonte oficial. A lâmina traz um campo 'duration histórica' com valores incoerentes (cerca de 15 anos), que foi descartado.",
+  "aviso_cadastro": "O cadastro diz \"índice IDkA\", mas o fundo replica o IRF-M P3 da ANBIMA (LTN e NTN-F com prazo médio mínimo de cerca de 3 anos), não um IDkA. A exposição é parecida (prefixado), o índice é outro."
+ },
+ "B5P211": {
+  "nome_completo": "It Now IMA-B5 P2 Fundo de Índice - Responsabilidade Limitada",
+  "gestora": "Itaú Asset Management (Itaú Unibanco Asset Management Ltda., CNPJ 40.430.971/0001-96)",
+  "administrador": "Itaú Unibanco S.A. (CNPJ 60.701.190/0001-04), também custodiante",
+  "cnpj": "38.354.864/0001-84",
+  "isin": "BRB5P2CTF001",
+  "ticker_bolsa": "B5P211 · B3 · BRL",
+  "indice": "IMA-B 5 P2 (ANBIMA)",
+  "indice_metodologia": "Subíndice da família IMA com NTN-B (Tesouro IPCA+ com juros semestrais) de até 63 meses ao vencimento, ponderadas pelo estoque em mercado; os papéis com 61, 62 e 63 meses entram com 75%, 50% e 25% do estoque. Se o PMR estimado ficar abaixo de 780 dias, os títulos mais curtos são reduzidos, para o PMR nunca cair abaixo de 720 dias. Rebalanceamento mensal (vigência do dia 16 ao dia 15).",
+  "objetivo": "Dar exposição a juro real de prazo curto (NTN-B de até cerca de 5 anos), numa só cota negociada em bolsa.",
+  "taxa_adm": "0,20% a.a. (total máximo: administração 0,04% + gestão 0,13% + custódia 0,03%)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os rendimentos, inclusive os cupons das NTN-B, são reinvestidos automaticamente e não são pagos ao cotista.",
+  "tributacao": {
+   "texto": "O gestor informa IR retido na fonte na venda ou resgate, com alíquota pelo PMR da carteira: 25% até 180 dias, 20% de 181 a 720 dias e 15% acima de 720 dias; 30% se o fundo tiver menos de 75% em títulos do índice. O IOF na negociação em bolsa é zero. A lâmina destaca 15% de IR, sem IOF e sem come-cotas.",
+   "fonte": "https://www.itnow.com.br/b5p211/taxas-e-tributos/"
+  },
+  "patrimonio": {
+   "valor": "R$ 4.533.084.122,80",
+   "data": "2026-11-05"
+  },
+  "duration": {
+   "valor": "560 dias úteis (duration de Macaulay do índice IMA-B 5 P2; PMR de 829 dias corridos)",
+   "data": "set/2026 (lâmina ANBIMA do índice)"
+  },
+  "fatores": [
+   "juro real (IPCA+)",
+   "inflação (IPCA)",
+   "duration curta"
+  ],
+  "riscos": [
+   "O preço das NTN-B varia com as expectativas de juros e de inflação, sobretudo as de curto prazo.",
+   "A cota pode se descolar do índice por taxas, custos de rebalanceamento e caixa.",
+   "Liquidez das cotas no secundário não é garantida; pode haver ágio ou deságio.",
+   "A descontinuidade do índice pela ANBIMA ou o fim da licença podem levar à liquidação da classe.",
+   "Com menos de 75% da carteira em títulos do índice, a alíquota de IR passa a 30%."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IMAB11",
+    "diferenca": "Carteira com todas as NTN-B: duration cerca de três vezes maior e mais volátil."
+   },
+   {
+    "ticker": "IB5M11",
+    "diferenca": "Só NTN-B acima de 5 anos: a ponta mais longa e sensível a juro real."
+   }
+  ],
+  "papel_na_carteira": "É a parcela de proteção contra inflação com menor oscilação de preço da carteira, mais próxima de um IPCA mais juro real de curto prazo do que de uma aposta em queda de juros.",
+  "busca_noticias": "\"IMA-B 5\" OR \"NTN-B\" OR \"juro real\" OR \"Tesouro IPCA+\" OR \"inflação IPCA\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (It Now)",
+    "url": "https://www.itnow.com.br/b5p211/"
+   },
+   {
+    "titulo": "Taxas e tributos (It Now)",
+    "url": "https://www.itnow.com.br/b5p211/taxas-e-tributos/"
+   },
+   {
+    "titulo": "Lâmina do fundo (30/09/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIMA5P2070_It_Now_IMA-B5_P2.pdf"
+   },
+   {
+    "titulo": "Regulamento (jun/2025)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Regulamento-ETF-B5P211.pdf"
+   },
+   {
+    "titulo": "Metodologia do índice (It Now)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Metodologia-do-indice-IMAB5P2.pdf"
+   },
+   {
+    "titulo": "Fatores de risco",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco%20IMAB5P2.pdf"
+   },
+   {
+    "titulo": "Política de distribuição de resultados",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-distribuicao-resultados-b5p211.pdf"
+   },
+   {
+    "titulo": "Demonstrações financeiras (exercício encerrado em 31/03/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demostracoes-financeiras-IMAB5.pdf"
+   },
+   {
+    "titulo": "Metodologia IMA Série P2 (ANBIMA, mar/2026)",
+    "url": "https://www.anbima.com.br/data/files/E9/C7/A4/3F/16FBC91067D089C9BA2BA2A8/Metodologia_IMA_Series_P2_mar26.pdf"
+   },
+   {
+    "titulo": "Lâmina do índice IMA-B 5 P2 (ANBIMA, set/2026)",
+    "url": "https://www.anbima.com.br/data/files/A5/C4/7B/81/71072710C8394327092BA2A8/IMA_B_5_P2_lamina.pdf"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371025"
+   }
+  ],
+  "fontes": [
+   "https://www.itnow.com.br/b5p211/",
+   "https://www.itnow.com.br/b5p211/taxas-e-tributos/",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIMA5P2070_It_Now_IMA-B5_P2.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Regulamento-ETF-B5P211.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Metodologia-do-indice-IMAB5P2.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco%20IMAB5P2.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-distribuicao-resultados-b5p211.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demostracoes-financeiras-IMAB5.pdf",
+   "https://www.anbima.com.br/data/files/E9/C7/A4/3F/16FBC91067D089C9BA2BA2A8/Metodologia_IMA_Series_P2_mar26.pdf",
+   "https://www.anbima.com.br/data/files/A5/C4/7B/81/71072710C8394327092BA2A8/IMA_B_5_P2_lamina.pdf",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371025",
+   "https://www.itnow.com.br/b5p211/documentos/",
+   "https://www.itnow.com.br/b5p211/caracteristicas/"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Rótulo correto. Atenção: replica o IMA-B 5 P2 (com piso de PMR de 720 dias), não o IMA-B 5 tradicional. A duration é do índice, não do fundo. A lâmina traz duas datas de início (16/11/2020 e 27/09/1999); vale 16/11/2020, que bate com a página de características. Essa página aponta Itaú Unibanco S.A. como gestor; o regulamento indica Itaú Unibanco Asset Management. O regulamento prevê 0,02% a.a. à ANBIMA pela licença do índice."
+ },
+ "IMAB11": {
+  "nome_completo": "It Now ID ETF IMA-B Fundo de Índice - Responsabilidade Limitada",
+  "gestora": "Itaú Asset Management (Itaú Unibanco Asset Management Ltda., CNPJ 40.430.971/0001-96)",
+  "administrador": "Itaú Unibanco S.A. (CNPJ 60.701.190/0001-04), também custodiante",
+  "cnpj": "31.024.153/0001-00",
+  "isin": "BRIMABCTF004",
+  "ticker_bolsa": "IMAB11 · B3 · BRL",
+  "indice": "IMA-B (ANBIMA)",
+  "indice_metodologia": "Índice de mercado da ANBIMA com todas as NTN-B (Tesouro IPCA+ com juros semestrais) emitidas em oferta pública competitiva e com mais de um mês ao vencimento, ponderadas pelo valor de mercado. Rebalanceamento mensal.",
+  "objetivo": "Replicar a carteira completa de títulos públicos atrelados ao IPCA, numa só cota negociada em bolsa.",
+  "taxa_adm": "0,25% a.a. (total máximo: administração 0,04% + gestão 0,18% + custódia 0,03%)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os resultados, inclusive os cupons das NTN-B, são reinvestidos automaticamente na classe.",
+  "tributacao": {
+   "texto": "O gestor informa IR retido na fonte na venda ou resgate, com alíquota pelo PMR da carteira: 25% até 180 dias, 20% acima de 180 dias e 15% acima de 720 dias; 30% se o fundo tiver menos de 75% em títulos do índice. IOF zero na negociação em bolsa. A página do produto destaca 15% de IR em qualquer prazo, sem come-cotas.",
+   "fonte": "https://www.itnow.com.br/imab11/taxas-e-tributos/"
+  },
+  "patrimonio": {
+   "valor": "R$ 4.299.464.842,40",
+   "data": "2026-11-05"
+  },
+  "duration": {
+   "valor": "1.715 dias úteis (duration do índice IMA-B; PMR de 3.218 dias corridos)",
+   "data": "set/2026 (lâmina ANBIMA do índice)"
+  },
+  "fatores": [
+   "juro real (IPCA+)",
+   "inflação (IPCA)",
+   "duration longa"
+  ],
+  "riscos": [
+   "O preço das NTN-B varia com juros e inflação esperados; quanto mais longo o título, maior a oscilação.",
+   "A cota pode se descolar do índice por taxas, custos de rebalanceamento e caixa.",
+   "Liquidez das cotas no secundário não é garantida; pode haver ágio ou deságio.",
+   "O fim do apoio do Tesouro Nacional ou da marca ID ETF pode elevar custos e reduzir a liquidez.",
+   "Com menos de 75% da carteira em títulos do índice, a alíquota de IR passa a 30%."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "B5P211",
+    "diferenca": "Só NTN-B de até cerca de 5 anos: duration aproximadamente um terço da do IMA-B."
+   },
+   {
+    "ticker": "IB5M11",
+    "diferenca": "Só NTN-B acima de 5 anos: duration maior e mais volátil que o IMA-B cheio."
+   }
+  ],
+  "papel_na_carteira": "Representa a exposição ampla a juro real da carteira, combinando proteção contra inflação com sensibilidade relevante a movimentos da curva de juros reais.",
+  "busca_noticias": "\"IMA-B\" OR \"NTN-B\" OR \"juro real\" OR \"Tesouro IPCA+\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (It Now)",
+    "url": "https://www.itnow.com.br/imab11/"
+   },
+   {
+    "titulo": "Taxas e tributos (It Now)",
+    "url": "https://www.itnow.com.br/imab11/taxas-e-tributos/"
+   },
+   {
+    "titulo": "Lâmina do fundo (30/10/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIMAB64066_It_Now_ID_ETF_IMA-B.pdf"
+   },
+   {
+    "titulo": "Regulamento (25/06/2025)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/regulamento-IMAB.pdf"
+   },
+   {
+    "titulo": "Metodologia do índice (It Now)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/metodologia-do-indice-IMAB.pdf"
+   },
+   {
+    "titulo": "Fatores de risco",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco%20IMAB.pdf"
+   },
+   {
+    "titulo": "Política de distribuição de resultados",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-de-distribuicao-de-resultados-IMAB.pdf"
+   },
+   {
+    "titulo": "Demonstrações financeiras (exercício encerrado em 31/03/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IMAB.pdf"
+   },
+   {
+    "titulo": "Lâmina do índice IMA-B (ANBIMA, set/2026)",
+    "url": "https://www.anbima.com.br/data/files/A7/64/C2/96/D65FE610DC784BE6192BA2A8/IMA_B_Lamina.pdf"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371027"
+   }
+  ],
+  "fontes": [
+   "https://www.itnow.com.br/imab11/",
+   "https://www.itnow.com.br/imab11/taxas-e-tributos/",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIMAB64066_It_Now_ID_ETF_IMA-B.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/regulamento-IMAB.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/metodologia-do-indice-IMAB.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/Fatores%20de%20Risco%20IMAB.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-de-distribuicao-de-resultados-IMAB.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IMAB.pdf",
+   "https://www.anbima.com.br/data/files/A7/64/C2/96/D65FE610DC784BE6192BA2A8/IMA_B_Lamina.pdf",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371027",
+   "https://www.itnow.com.br/imab11/documentos/",
+   "https://www.itnow.com.br/imab11/caracteristicas/"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Rótulo correto; o nome oficial inclui 'ID ETF' (produto desenvolvido com o Tesouro Nacional e o Banco Mundial, segundo o gestor). Em alguns trechos o regulamento cita por engano 'It Now IMA-B5 P2', mas capa, CNPJ e índice conferem com o IMA-B. A duration é do índice, não do fundo. O regulamento prevê 0,01% a.a. ao Banco Mundial pela marca ID ETF, pago pelo gestor."
+ },
+ "IB5M11": {
+  "nome_completo": "It Now IMA-B5+ Fundo de Índice - Responsabilidade Limitada",
+  "gestora": "Itaú Asset Management (Itaú Unibanco Asset Management Ltda., CNPJ 40.430.971/0001-96)",
+  "administrador": "Itaú Unibanco S.A. (CNPJ 60.701.190/0001-04), também custodiante",
+  "cnpj": "32.880.663/0001-34",
+  "isin": "BRIB5MCTF008",
+  "ticker_bolsa": "IB5M11 · B3 · BRL",
+  "indice": "IMA-B 5+ (ANBIMA)",
+  "indice_metodologia": "Índice da ANBIMA com as NTN-B (Tesouro IPCA+ com juros semestrais) de prazo ao vencimento acima de 5 anos, emitidas em oferta pública competitiva e ponderadas pelo valor de mercado. Rebalanceamento mensal (vigência do 1º dia útil após o dia 15 até o dia 15 do mês seguinte).",
+  "objetivo": "Dar exposição a juro real de longo prazo, replicando a carteira de NTN-B com vencimento acima de cinco anos.",
+  "taxa_adm": "0,25% a.a. (total máximo: administração 0,04% + gestão 0,18% + custódia 0,03%)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os resultados, inclusive os cupons das NTN-B, são reinvestidos automaticamente no fundo.",
+  "tributacao": {
+   "texto": "Segundo o gestor, IR de 15% sobre o ganho de capital (diferença entre venda e compra), sem IOF e sem come-cotas nas cotas negociadas em bolsa.",
+   "fonte": "https://www.itnow.com.br/ib5m11/"
+  },
+  "patrimonio": {
+   "valor": "R$ 926.028.710,40",
+   "data": "2026-11-05"
+  },
+  "duration": {
+   "valor": "2.389 dias úteis (duration do índice IMA-B 5+; PMR de 4.611 dias corridos)",
+   "data": "set/2026 (lâmina ANBIMA do índice)"
+  },
+  "fatores": [
+   "juro real (IPCA+)",
+   "inflação (IPCA)",
+   "duration muito longa"
+  ],
+  "riscos": [
+   "As NTN-B longas têm grande oscilação de preço com mudanças nos juros reais esperados.",
+   "A cota pode se descolar do índice por taxas, custos de rebalanceamento e caixa.",
+   "Liquidez das cotas no secundário não é garantida; pode haver ágio ou deságio.",
+   "Não há garantia do administrador, do gestor ou do FGC; rentabilidade passada não garante a futura."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IMAB11",
+    "diferenca": "Inclui também as NTN-B curtas: duration menor e oscilação mais moderada."
+   },
+   {
+    "ticker": "B5P211",
+    "diferenca": "Só NTN-B de até cerca de 5 anos: a ponta curta, com duration cerca de quatro vezes menor."
+   }
+  ],
+  "papel_na_carteira": "É a posição de maior sensibilidade a juro real da carteira, a que mais ganha com fechamento da curva longa e a que mais perde com abertura.",
+  "busca_noticias": "\"IMA-B 5+\" OR \"NTN-B longa\" OR \"juro real\" OR \"Tesouro IPCA+\" OR \"juros longos\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (It Now)",
+    "url": "https://www.itnow.com.br/ib5m11/"
+   },
+   {
+    "titulo": "Características (It Now)",
+    "url": "https://www.itnow.com.br/ib5m11/caracteristicas/"
+   },
+   {
+    "titulo": "Lâmina do fundo (30/09/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIMAB64215_It_Now_IMA-B5%2b.pdf"
+   },
+   {
+    "titulo": "Regulamento",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/regulamento-IMAB%2B.pdf"
+   },
+   {
+    "titulo": "Política de distribuição de resultados",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-de-distribuicao-de-resultados-IMAB5%2b.pdf"
+   },
+   {
+    "titulo": "Fatores de risco",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/FatoresRisco%20IMAB5%2b.pdf"
+   },
+   {
+    "titulo": "Demonstrações financeiras (exercício encerrado em 31/03/2026)",
+    "url": "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IMAB5%2b.pdf"
+   },
+   {
+    "titulo": "Lâmina do índice IMA-B 5+ (ANBIMA, set/2026)",
+    "url": "https://www.anbima.com.br/data/files/72/45/E7/37/D1216810218920686B2BA2A8/IMA_B_5_mais_Lamina.pdf"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371028"
+   }
+  ],
+  "fontes": [
+   "https://www.itnow.com.br/ib5m11/",
+   "https://www.itnow.com.br/ib5m11/caracteristicas/",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/FND/ITAUIMAB64215_It_Now_IMA-B5%2b.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/regulamento-IMAB%2B.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/politica-de-distribuicao-de-resultados-IMAB5%2b.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/FatoresRisco%20IMAB5%2b.pdf",
+   "https://assetfront.arquivosparceiros.cloud.itau.com.br/ITN/demonstracoes-financeiras-IMAB5%2b.pdf",
+   "https://www.anbima.com.br/data/files/72/45/E7/37/D1216810218920686B2BA2A8/IMA_B_5_mais_Lamina.pdf",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371028",
+   "https://www.itnow.com.br/ib5m11/documentos/"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Rótulo correto. O link do regulamento na página do gestor retornou erro em todas as tentativas; administrador e CNPJ vieram das demonstrações financeiras e do informe diário, e a distribuição, da política de distribuição (que cita por engano o IRF-M P2 em um aviso). A página de características aponta Itaú Unibanco S.A. como gestor; a página do produto, Itaú Asset Management. A duration é do índice, não do fundo; a lâmina ANBIMA de set/2026 foi usada (há uma lâmina antiga, de out/2022, ainda indexada). Riscos baseados na página do produto e na lâmina; o documento de fatores de risco do fundo não foi lido."
+ },
+ "LFIN11": {
+  "nome_completo": "BTG Pactual Teva Letras Financeiras DI Qualidade Fundo de Índice (classe única, responsabilidade limitada)",
+  "gestora": "BTG Pactual Asset Management S.A. DTVM (CNPJ 29.650.082/0001-00)",
+  "administrador": "BTG Pactual Serviços Financeiros S.A. DTVM (CNPJ 59.281.253/0001-23); custodiante Banco BTG Pactual S.A.",
+  "cnpj": "62.087.419/0001-80",
+  "isin": "BRLFINCTF000",
+  "ticker_bolsa": "LFIN11 · B3 · BRL",
+  "indice": "Índice Teva LFIN DI Qualidade (Teva Índices / Kjerag Índices de Mercado)",
+  "indice_metodologia": "Carteira de Letras Financeiras seniores atreladas ao DI (DI + spread ou percentual do DI), com vencimento definido e sem cupons ou amortizações intermediárias, mantidas até o vencimento. Pesos fixos por segmento prudencial do banco emissor (S1 45%, S2 20%, S3 35%) e prazo médio da carteira acima de 820 dias a cada rebalanceamento; se ficar abaixo, os papéis mais curtos perdem peso. Rebalanceamento trimestral.",
+  "objetivo": "Replicar uma carteira de Letras Financeiras de bancos atreladas ao CDI, dando acesso a crédito bancário pós-fixado numa só cota.",
+  "taxa_adm": "0,30% a.a. (taxa global)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os rendimentos são incorporados ao patrimônio e, em regra, não são distribuídos. Amortização só em caráter excepcional, a critério do administrador, e se a classe superar o índice.",
+  "tributacao": {
+   "texto": "O regulamento informa que os rendimentos da carteira são isentos de IR para o fundo (Lei 14.754/2023) e que o cotista paga IR na venda ou resgate conforme o prazo médio de repactuação da carteira: 25% até 180 dias, 20% de 181 a 720 dias e 15% acima de 720 dias; 30% se o fundo tiver menos de 75% em ativos do índice. O regulamento não diz em que faixa a carteira está hoje.",
+   "fonte": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=994616"
+  },
+  "patrimonio": {
+   "valor": "R$ 999.774.060,38",
+   "data": "2026-11-05"
+  },
+  "duration": null,
+  "fatores": [
+   "crédito bancário (Letras Financeiras)",
+   "CDI + spread (pós-fixado)",
+   "spread de crédito"
+  ],
+  "riscos": [
+   "Risco de crédito dos bancos emissores: a inadimplência de um deles pode gerar perdas.",
+   "Variações de spread e de liquidez das Letras Financeiras afetam o preço da cota.",
+   "A cota pode se descolar do índice, e a criação e o resgate dependem de agentes autorizados.",
+   "O provedor pode descontinuar o índice ou mudar sua composição.",
+   "Não há garantia de retorno nem cobertura do FGC; é possível perder todo o capital."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "DEBB11",
+    "diferenca": "Crédito corporativo (debêntures) em vez de bancário, com mais emissores e 10% em LFT."
+   },
+   {
+    "ticker": "LFTB11",
+    "diferenca": "Também pós-fixado, mas em título público (risco soberano), com prêmio menor sobre o CDI."
+   }
+  ],
+  "papel_na_carteira": "Busca prêmio sobre o CDI com risco de crédito concentrado no sistema bancário, servindo de ponte entre o caixa soberano e o crédito corporativo.",
+  "busca_noticias": "\"letras financeiras\" OR \"crédito bancário\" OR \"spread bancário\" OR \"captação dos bancos\"",
+  "documentos": [
+   {
+    "titulo": "Regulamento (versão de mai/2026, FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1187147"
+   },
+   {
+    "titulo": "Regulamento de constituição (05/08/2025, FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=994615"
+   },
+   {
+    "titulo": "Comunicado de início de negociação (26/09/2025)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=999516"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371529"
+   },
+   {
+    "titulo": "Portal do fundo (BTG Pactual)",
+    "url": "https://www.btgpactual.com/asset-management/LFIN11"
+   }
+  ],
+  "fontes": [
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1187147",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=994615",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=999516",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371529",
+   "https://www.btgpactual.com/asset-management/LFIN11",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=994616",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=994545",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=999801",
+   "https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CConsolFdo/ResultBuscaParticFdo.aspx?CNPJNome=62087419000180"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "DISCREPÂNCIA PARCIAL: o rótulo 'crédito pós-fixado' está certo quanto ao indexador (DI), mas o LFIN11 é crédito BANCÁRIO (Letras Financeiras seniores), não debêntures corporativas como DEBB11 e GICP11; o perfil de risco é diferente. Emissor confirmado: BTG Pactual. O regulamento lembra que o investimento não tem garantia do FGC. Fundo lançado em set/2025 (preço inicial R$ 100). A página do produto não carrega sem JavaScript; a taxa veio do regulamento. Duration não publicada em fonte acessível.",
+  "aviso_cadastro": "O cadastro diz \"ETF de crédito pós-fixado\". O índice é de letras financeiras de bancos (crédito bancário sênior), não de debêntures de empresas."
+ },
+ "GICP11": {
+  "nome_completo": "Genial Teva Debêntures DI Quality High Beta Fundo de Índice (Classe de Índice - Responsabilidade Limitada)",
+  "gestora": "Plural Gestão de Recursos Ltda. (CNPJ 11.397.672/0002-80), marca Genial",
+  "administrador": "Banco BNP Paribas Brasil S.A. (CNPJ 01.522.368/0001-82)",
+  "cnpj": "61.736.225/0001-03",
+  "isin": "BRGICPCTF002",
+  "ticker_bolsa": "GICP11 · B3 · BRL",
+  "indice": "Teva Debêntures DI Quality High Beta (Teva Índices)",
+  "indice_metodologia": "99% em debêntures DI + spread e 1% em quatro LFTs longas. Debêntures elegíveis: emissão acima de R$ 500 milhões, liquidez mínima nos três meses anteriores, de 730 a 3.650 dias ao vencimento; exclui conversíveis, emissores em recuperação judicial ou extrajudicial e papéis cotados abaixo de 80% do PU par. O peso de cada debênture combina 50% da fatia do emissor no mercado DI e 50% do z-score da duration, com teto de 3% por emissor. Rebalanceamento mensal, no 1º dia útil.",
+  "objetivo": "Replicar uma carteira de debêntures atreladas ao CDI que filtra papéis estressados e dá mais peso aos de prazo mais longo, buscando prêmio de crédito maior.",
+  "taxa_adm": "0,50% a.a. (taxa global; máxima global 0,51% a.a.)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Os resultados dos ativos são incorporados ao patrimônio; eventuais amortizações dependem de decisão dos prestadores de serviços essenciais.",
+  "tributacao": null,
+  "patrimonio": {
+   "valor": "R$ 44.365.887,91",
+   "data": "2026-11-05"
+  },
+  "duration": null,
+  "fatores": [
+   "crédito privado (debêntures)",
+   "CDI + spread (pós-fixado)",
+   "spread de crédito com inclinação a prazos mais longos"
+  ],
+  "riscos": [
+   "Oscilações de preço e de spread afetam o patrimônio; a inclinação a duration amplia esse efeito.",
+   "A exposição a poucos emissores aumenta a volatilidade.",
+   "Não há garantia de mercado ativo para as cotas; resgates podem ser suspensos em situações excepcionais.",
+   "A cota pode se descolar do índice; se o provedor parar de manter o índice, a classe pode ser liquidada.",
+   "Responsabilidade limitada com risco de patrimônio negativo; sem garantia do FGC."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "DEBB11",
+    "diferenca": "Índice Teva Debêntures DI 'cheio': 90% debêntures e 10% LFT, pesos por valor de mercado, teto de 4,5% por emissor, muito maior e mais líquido."
+   },
+   {
+    "ticker": "LFIN11",
+    "diferenca": "Crédito bancário (Letras Financeiras) em vez de debêntures corporativas."
+   }
+  ],
+  "papel_na_carteira": "É a versão mais agressiva do crédito corporativo pós-fixado da carteira, buscando mais spread com maior sensibilidade a estresse de crédito.",
+  "busca_noticias": "\"debêntures\" OR \"crédito privado\" OR \"spread de crédito\" OR \"high yield Brasil\"",
+  "documentos": [
+   {
+    "titulo": "Regulamento (vigência 08/06/2026, FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1214915"
+   },
+   {
+    "titulo": "Comunicado de alteração do regulamento (18/06/2026)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1224087"
+   },
+   {
+    "titulo": "Comunicado de início de negociação (03/10/2025)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1009437"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1370852"
+   },
+   {
+    "titulo": "Página do ETF (Genial Asset)",
+    "url": "https://genialasset.com.br/pt/strategy/etf/gicp11"
+   }
+  ],
+  "fontes": [
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1214915",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1224087",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1009437",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1370852",
+   "https://genialasset.com.br/pt/strategy/etf/gicp11",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1005690",
+   "https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CConsolFdo/ResultBuscaParticFdo.aspx?CNPJNome=61736225000103"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Rótulo 'ETF de crédito pós-fixado' coerente, mas a estratégia é mais agressiva que a do DEBB11 (99% debêntures, inclinação a duration). Emissor: marca Genial; o regulamento indica Plural Gestão de Recursos como gestor e BNP Paribas como administrador. Fundo pequeno (cerca de R$ 44 milhões; 389 cotistas em 05/11/2026). Tributação deixada nula: o regulamento só diz que o gestor buscará manter a carteira compatível com a regra tributária e remete ao site, que bloqueia leitura automatizada. Duration não publicada em fonte acessível. Negociação no secundário desde 09/10/2025."
+ },
+ "DEBB11": {
+  "nome_completo": "BTG Pactual Teva Debêntures DI Fundo de Índice (classe única, responsabilidade limitada)",
+  "gestora": "BTG Pactual Asset Management S.A. DTVM (CNPJ 29.650.082/0001-00)",
+  "administrador": "BTG Pactual Serviços Financeiros S.A. DTVM (CNPJ 59.281.253/0001-23); custodiante Banco BTG Pactual S.A.",
+  "cnpj": "45.064.129/0001-00",
+  "isin": "BRDEBBCTF000",
+  "ticker_bolsa": "DEBB11 · B3 · BRL",
+  "indice": "Índice Teva Debêntures DI (Teva Índices / Kjerag Índices de Mercado)",
+  "indice_metodologia": "Carteira teórica com cerca de 90% em debêntures DI + spread e 10% em LFTs. Debêntures elegíveis: emissão acima de R$ 300 milhões, mínimos de volume e de dias negociados no secundário, de 410 a 3.650 dias ao vencimento (perpétuas excluídas); LFTs com volume mínimo de R$ 100 milhões/mês e pelo menos 1.095 dias. Pesos por valor de mercado, teto de 4,5% por emissor; ativos ficam elegíveis por 365 dias. Rebalanceamento mensal, no 1º dia útil.",
+  "objetivo": "Replicar uma carteira diversificada de debêntures corporativas atreladas ao CDI, com uma parcela em Tesouro Selic, numa só cota negociada em bolsa.",
+  "taxa_adm": "0,60% a.a. (taxa global)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Não distribui rendimentos: juros e amortizações dos papéis são reinvestidos ou usados para despesas. Amortização de cotas só em caráter excepcional, a critério do administrador, e se o fundo superar o índice.",
+  "tributacao": {
+   "texto": "O regulamento informa que os rendimentos da carteira são isentos de IR para o fundo (Lei 14.754/2023) e que o cotista paga IR na venda ou resgate conforme o prazo médio de repactuação da carteira: 25% até 180 dias, 20% de 181 a 720 dias e 15% acima de 720 dias; 30% se o fundo tiver menos de 75% em ativos do índice. O regulamento não diz em que faixa a carteira está hoje.",
+   "fonte": "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=872616"
+  },
+  "patrimonio": {
+   "valor": "R$ 1.409.112.217,63",
+   "data": "2026-11-05"
+  },
+  "duration": null,
+  "fatores": [
+   "crédito privado (debêntures)",
+   "CDI + spread (pós-fixado)",
+   "spread de crédito corporativo"
+  ],
+  "riscos": [
+   "A inadimplência de emissores (risco de crédito) pode causar perdas.",
+   "A abertura dos spreads de crédito derruba o preço das debêntures mesmo sem calote.",
+   "As debêntures têm liquidez limitada; resgates podem ser pagos em ativos em vez de dinheiro.",
+   "A cota pode se descolar do índice; se o índice deixar de ser mantido, o fundo pode mudar de objetivo ou ser liquidado.",
+   "Não há garantia do administrador, do gestor, de seguro ou do FGC."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "GICP11",
+    "diferenca": "Mesma família Teva, mas 99% em debêntures, teto de 3% por emissor e peso inclinado a papéis de maior duration: mais sensível a spread."
+   },
+   {
+    "ticker": "LFIN11",
+    "diferenca": "Também DI + spread, mas em Letras Financeiras de bancos, e não em debêntures de empresas."
+   }
+  ],
+  "papel_na_carteira": "Adiciona prêmio de crédito corporativo sobre o CDI, com risco concentrado em spreads e na saúde financeira das empresas emissoras, sem risco relevante de taxa prefixada.",
+  "busca_noticias": "\"debêntures\" OR \"crédito privado\" OR \"spread de crédito\" OR \"IDA-DI\"",
+  "documentos": [
+   {
+    "titulo": "Regulamento adaptado à RCVM 175 (abr/2025, FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=872616"
+   },
+   {
+    "titulo": "Regulamento consolidado (mai/2026, FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1196714"
+   },
+   {
+    "titulo": "Comunicado sobre o regulamento de mai/2026",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1196721"
+   },
+   {
+    "titulo": "Comunicado Externo B3 060/2022 (lançamento do DEBB11)",
+    "url": "https://www.b3.com.br/data/files/CD/C6/D2/B7/7A291810C493CD08AC094EA8/CE%20060-2022-VPC%20Lan%C3%A7amento%20Novo%20ETF%20de%20Renda%20Fixa%20DEBB11%20BTG%20Pactual.pdf"
+   },
+   {
+    "titulo": "Informe diário CVM de 05/11/2026 (FundosNet B3)",
+    "url": "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371574"
+   },
+   {
+    "titulo": "Página do fundo (BTG Pactual)",
+    "url": "https://www.btgpactual.com/asset-management/etf-debentures/"
+   }
+  ],
+  "fontes": [
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=872616",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/downloadDocumento?id=1196714",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1196721",
+   "https://www.b3.com.br/data/files/CD/C6/D2/B7/7A291810C493CD08AC094EA8/CE%20060-2022-VPC%20Lan%C3%A7amento%20Novo%20ETF%20de%20Renda%20Fixa%20DEBB11%20BTG%20Pactual.pdf",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1371574",
+   "https://www.btgpactual.com/asset-management/etf-debentures/",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=872621",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=1248105",
+   "https://fnet.bmfbovespa.com.br/fnet/publico/exibirDocumento?id=700642",
+   "https://cvmweb.cvm.gov.br/SWB/Sistemas/SCW/CPublica/CConsolFdo/ResultBuscaParticFdo.aspx?CNPJNome=45064129000100"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Rótulo 'ETF de crédito pós-fixado' coerente: o índice é de debêntures DI + spread, com cerca de 10% em LFT. Emissor confirmado: família BTG Pactual (gestor BTG Pactual Asset Management, administrador BTG Pactual Serviços Financeiros DTVM; o comunicado B3 de 2022 citava o Banco BTG Pactual como administrador). A taxa de 0,60% a.a. vem do regulamento de abr/2025; o comunicado de mai/2026 afirma que não houve mudança nos valores, mas o anexo da versão de mai/2026 não pôde ser lido. A página do produto não carrega sem JavaScript. Duration não publicada em fonte acessível."
+ },
+ "IB01": {
+  "nome_completo": "iShares $ Treasury Bond 0-1yr UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BGSF1X88",
+  "ticker_bolsa": "IB01 · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "ICE U.S. Treasury Short Bond Index",
+  "objetivo": "Acompanhar títulos do Tesouro americano em dólar com vencimento remanescente de até 1 ano, oferecendo exposição de curtíssimo prazo aos juros dos EUA.",
+  "metodologia": "Réplica física por amostragem. O índice reúne títulos do Tesouro dos EUA prefixados, em dólar, com prazo remanescente entre 1 mês e menos de 1 ano; a carteira se renova continuamente à medida que os papéis vencem.",
+  "taxa_adm": "0,07% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 28,19 bi (fundo, todas as classes); US$ 20,87 bi (classe USD Acc)",
+   "data": "2026-11-06"
+  },
+  "n_posicoes": {
+   "valor": 44,
+   "data": "2026-11-05"
+  },
+  "exposicao": null,
+  "principais_posicoes": null,
+  "fatores": [
+   "juros curtos dos EUA (duration ~0,3 ano)",
+   "risco soberano EUA",
+   "câmbio USD",
+   "equivalente de caixa em dólar"
+  ],
+  "riscos": [
+   "Mudanças de juros e eventual inadimplência do emissor afetam o valor dos títulos; rebaixamentos de rating podem elevar o risco.",
+   "Concentração em um único emissor/país torna o fundo mais sensível a eventos econômicos, políticos ou regulatórios locais.",
+   "Risco de contraparte: insolvência de custodiante ou contraparte de derivativos pode gerar perdas.",
+   "Risco de liquidez: em mercados estressados pode ser difícil comprar ou vender os títulos."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "DTLA",
+    "diferenca": "Mesmo emissor, ponta oposta da curva: Treasuries acima de 20 anos, duration ~14,9 anos contra ~0,3 ano; mesma taxa (0,07%)."
+   },
+   {
+    "ticker": "IDTP",
+    "diferenca": "Treasuries indexados à inflação (TIPS), duration ~6,5 anos; protege contra inflação, enquanto o IB01 quase não sofre com alta de juros."
+   }
+  ],
+  "papel_na_carteira": "Funciona como caixa em dólar de baixíssima volatilidade, rendendo próximo das T-bills, e como reserva de liquidez para rebalanceamentos.",
+  "busca_noticias": "\"T-bills\" OR \"Treasury bills\" OR \"Fed funds\" OR \"juros curtos\" EUA",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/307243/ishares-treasury-bond-0-1yr-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/ib01-ishares-treasury-bond-0-1yr-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-treasury-bond-0-1yr-ucits-etf-usd-acc-gb-ie00bgsf1x88-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/307243/ishares-treasury-bond-0-1yr-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/ib01-ishares-treasury-bond-0-1yr-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-treasury-bond-0-1yr-ucits-etf-usd-acc-gb-ie00bgsf1x88-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "O índice oficial chama-se 'ICE U.S. Treasury Short Bond Index'. Na página iShares, a quebra por tipo (05/11/2026) mostra 29,39% em 'Treasury' e 70,61% em 'Cash and/or Derivatives' sem explicar a classificação (provavelmente T-bills tratadas como instrumentos de curto prazo); para não induzir a erro, exposicao e principais_posicoes ficaram null. O factsheet (set/2026) lista apenas o emissor 'United States Treasury' com 27,37%. Quebras por rating e vencimento só aparecem em gráfico. Fundo tem outras classes (USD Dist, MXN Hedged); IB01 na LSE é a USD Acc. SRRI 1 de 7 (KIID de 09/02/2026). Duration efetiva 0,33 ano (05/11/2026)."
+ },
+ "DTLA": {
+  "nome_completo": "iShares $ Treasury Bond 20+yr UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BFM6TC58",
+  "ticker_bolsa": "DTLA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "ICE U.S. Treasury 20+ Year Bond Index",
+  "objetivo": "Acompanhar títulos do Tesouro americano em dólar com prazo remanescente de 20 anos ou mais, concentrando a exposição na ponta longa da curva de juros dos EUA.",
+  "metodologia": "Réplica física por amostragem. O índice inclui Treasuries prefixados com vencimento remanescente igual ou superior a 20 anos, grau de investimento e ao menos US$ 300 milhões em circulação na inclusão, ponderados por valor de mercado.",
+  "taxa_adm": "0,07% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 6,76 bi (fundo, todas as classes); US$ 3,46 bi (classe USD Acc)",
+   "data": "2026-11-06"
+  },
+  "n_posicoes": {
+   "valor": 40,
+   "data": "2026-11-05"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Títulos do Tesouro dos EUA",
+     99.97
+    ],
+    [
+     "Caixa e/ou derivativos",
+     0.03
+    ]
+   ],
+   "data": "2026-11-05",
+   "fonte": "Quebra por tipo de ativo da página iShares; rating e vencimento não estão disponíveis em texto."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Tesouro dos EUA (emissor)",
+     99.8
+    ]
+   ],
+   "data": "2026-10-31"
+  },
+  "fatores": [
+   "duration longa (~14,9 anos)",
+   "juros longos dos EUA",
+   "risco soberano EUA",
+   "câmbio USD"
+  ],
+  "riscos": [
+   "Juros: mudanças nas taxas afetam fortemente o preço; com duration perto de 15 anos as oscilações são amplas (indicador de risco 5 de 7 no KIID).",
+   "Crédito do emissor: o emissor pode deixar de pagar juros ou principal; rebaixamentos de rating podem elevar o risco.",
+   "Concentração em um único emissor/país aumenta a sensibilidade a eventos locais.",
+   "Contraparte: insolvência de custodiante ou contraparte de derivativos pode gerar perdas.",
+   "Liquidez: em momentos de estresse pode ser difícil negociar os títulos."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IB01",
+    "diferenca": "Mesmo emissor, mas só vencimentos até 1 ano: duration ~0,3 ano contra ~14,9; quase sem risco de juros."
+   },
+   {
+    "ticker": "IDTP",
+    "diferenca": "Treasuries indexados à inflação (TIPS), duration ~6,5 anos; sensível a juros reais, não aos nominais longos."
+   },
+   {
+    "ticker": "IUAA",
+    "diferenca": "Renda fixa agregada dos EUA (Treasuries, hipotecas e crédito IG), duration ~5,7 anos e TER 0,25%."
+   }
+  ],
+  "papel_na_carteira": "Posição de duration longa que tende a se valorizar quando os juros longos americanos caem, inclusive em episódios de aversão a risco, mas com volatilidade alta para renda fixa.",
+  "busca_noticias": "\"30-year Treasury\" OR \"Treasury 30 anos\" OR \"long bond\" OR \"juros longos\" EUA",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/297191/ishares-treasury-bond-20-yr-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.blackrock.com/gls-download/literature/fact-sheet/dtla-ishares-treasury-bond-20yr-ucits-etf-fund-fact-sheet-en-lu.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-treasury-bond-20yr-ucits-etf-usd-acc-gb-ie00bfm6tc58-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/297191/ishares-treasury-bond-20-yr-ucits-etf",
+   "https://www.blackrock.com/gls-download/literature/fact-sheet/dtla-ishares-treasury-bond-20yr-ucits-etf-fund-fact-sheet-en-lu.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-treasury-bond-20yr-ucits-etf-usd-acc-gb-ie00bfm6tc58-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "SRRI 5 de 7 (KIID de 09/02/2026). Duration efetiva 14,89 anos (05/11/2026); prazo médio 26,02 anos (31/10/2026). Quebras por rating e vencimento só em gráfico. Factsheet usado é a versão en-lu (dados de 31/10/2026). Também listado na BVC (COP) e em Berna (CHF)."
+ },
+ "IDTP": {
+  "nome_completo": "iShares $ TIPS UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00B1FZSC47",
+  "ticker_bolsa": "IDTP · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "Bloomberg US Government Inflation-Linked Bond Index",
+  "objetivo": "Acompanhar os títulos do Tesouro americano indexados à inflação (TIPS), cujo principal é corrigido pela inflação ao consumidor, oferecendo juro real em dólar.",
+  "metodologia": "Réplica física por amostragem. O índice reúne TIPS emitidos pelo Tesouro dos EUA, em dólar, com prazo remanescente de pelo menos 1 ano e no mínimo US$ 500 milhões em circulação.",
+  "taxa_adm": "0,10% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 6,54 bi (fundo, todas as classes); US$ 3,81 bi (classe USD Acc)",
+   "data": "2026-11-04"
+  },
+  "n_posicoes": {
+   "valor": 48,
+   "data": "2026-11-04"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Títulos do Tesouro dos EUA (TIPS)",
+     99.95
+    ],
+    [
+     "Caixa e/ou derivativos",
+     0.05
+    ]
+   ],
+   "data": "2026-11-04",
+   "fonte": "Quebra por tipo de ativo da página iShares; rating e vencimento não estão disponíveis em texto."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Tesouro dos EUA (emissor)",
+     99.78
+    ]
+   ],
+   "data": "2026-10-31"
+  },
+  "fatores": [
+   "inflação dos EUA",
+   "juros reais dos EUA",
+   "duration intermediária (~6,5 anos)",
+   "risco soberano EUA",
+   "câmbio USD"
+  ],
+  "riscos": [
+   "Juros: variações nas taxas (especialmente nos juros reais) afetam significativamente o preço dos títulos.",
+   "Crédito do emissor e rebaixamentos de rating podem aumentar o risco percebido.",
+   "Concentração em um único emissor/país amplia a sensibilidade a eventos locais.",
+   "Contraparte: insolvência de prestadores de serviço ou contrapartes pode gerar perdas.",
+   "Liquidez: pode faltar comprador ou vendedor para negociar os títulos rapidamente."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IB01",
+    "diferenca": "Treasuries nominais de até 1 ano: sem proteção contra inflação, mas quase sem risco de juros."
+   },
+   {
+    "ticker": "DTLA",
+    "diferenca": "Treasuries nominais acima de 20 anos: duration ~14,9 anos, muito mais sensível a juros e sem correção pela inflação."
+   },
+   {
+    "ticker": "IUAA",
+    "diferenca": "Mercado agregado nominal (Tesouro, hipotecas e crédito IG), duration ~5,7 anos e TER 0,25%."
+   }
+  ],
+  "papel_na_carteira": "Renda fixa em dólar que protege o poder de compra contra inflação americana acima do esperado, com sensibilidade moderada aos juros reais.",
+  "busca_noticias": "\"TIPS\" Treasury OR \"inflação americana\" OR \"US CPI\" OR \"breakeven inflation\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/251714/ishares-tips-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/itps-ishares-tips-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-tips-ucits-etf-gb-ie00b1fzsc47-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/251714/ishares-tips-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/itps-ishares-tips-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-tips-ucits-etf-gb-ie00b1fzsc47-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Atenção ao ticker: na LSE, IDTP é a linha em USD e ITPS a linha em GBP da mesma classe (IE00B1FZSC47), conforme o factsheet; o arquivo do factsheet usa o prefixo 'itps'. O fundo tem ainda classes com hedge (ex.: EUR Hedged). SRRI 4 de 7 (KIID de 09/02/2026). Duration efetiva 6,52 anos e prazo médio 7,40 anos (31/10/2026)."
+ },
+ "IUAA": {
+  "nome_completo": "iShares US Aggregate Bond UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BYXYYM63",
+  "ticker_bolsa": "IUAA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "Bloomberg U.S. Aggregate Bond Index",
+  "objetivo": "Acompanhar o mercado amplo de renda fixa grau de investimento em dólar dos EUA (Tesouro, agências, crédito corporativo e títulos lastreados em hipotecas) numa única carteira.",
+  "metodologia": "Réplica física por amostragem (o índice tem milhares de títulos). Inclui papéis em dólar, prefixados, tributáveis e grau de investimento na inclusão, com pelo menos 1 ano até o vencimento: Tesouro, agências, corporativos, MBS, ABS e CMBS.",
+  "taxa_adm": "0,25% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 6,13 bi (fundo, todas as classes); US$ 4,44 bi (classe USD Acc)",
+   "data": "2026-11-03"
+  },
+  "n_posicoes": {
+   "valor": 10267,
+   "data": "2026-11-03"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Tesouro dos EUA",
+     48.35
+    ],
+    [
+     "MBS (hipotecas pass-through)",
+     23.12
+    ],
+    [
+     "Crédito corporativo industrial",
+     14.12
+    ],
+    [
+     "Instituições financeiras",
+     7.83
+    ],
+    [
+     "Utilities",
+     2.4
+    ]
+   ],
+   "data": "2026-11-03",
+   "fonte": "Quebra por tipo da página iShares (% do valor de mercado); rating e vencimento não estão disponíveis em texto."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Tesouro dos EUA",
+     48.44
+    ],
+    [
+     "Fannie Mae (Federal National Mortgage Association)",
+     9.05
+    ],
+    [
+     "Freddie Mac (Federal Home Loan Mortgage Corporation)",
+     6.01
+    ],
+    [
+     "Ginnie Mae II (Government National Mortgage Association II)",
+     5.54
+    ],
+    [
+     "Uniform MBS",
+     2.41
+    ]
+   ],
+   "data": "2026-10-31"
+  },
+  "fatores": [
+   "duration intermediária (~5,7 anos)",
+   "juros dos EUA",
+   "crédito grau de investimento",
+   "pré-pagamento de hipotecas (MBS)",
+   "câmbio USD"
+  ],
+  "riscos": [
+   "Renda fixa: juros, risco de crédito e inadimplência afetam o desempenho; rebaixamentos de rating elevam o risco.",
+   "Títulos lastreados (MBS/ABS): além dos riscos de renda fixa, podem ter menor liquidez, alta alavancagem e valor que não reflete os ativos subjacentes.",
+   "Contraparte: insolvência de prestadores de serviço ou contrapartes de derivativos pode gerar perdas.",
+   "Crédito do emissor: um emissor pode não pagar juros ou principal no prazo.",
+   "Liquidez: pode faltar comprador ou vendedor para negociar os títulos."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "DTLA",
+    "diferenca": "Só Treasuries acima de 20 anos: duration ~14,9 anos, sem crédito nem hipotecas, TER 0,07%."
+   },
+   {
+    "ticker": "IHYA",
+    "diferenca": "Só crédito corporativo high yield: mais spread e risco de default, duration ~3,3 anos, TER 0,50%."
+   },
+   {
+    "ticker": "IB01",
+    "diferenca": "Só Treasuries de até 1 ano: praticamente sem risco de juros nem de crédito privado."
+   }
+  ],
+  "papel_na_carteira": "Núcleo de renda fixa em dólar de alta qualidade, que combina juros do Tesouro, hipotecas e crédito grau de investimento numa só posição.",
+  "busca_noticias": "\"Bloomberg US Aggregate\" OR \"Bloomberg Agg\" OR \"renda fixa americana\" OR \"US bond market\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/287339/ishares-us-aggregate-bond-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/iuaa-ishares-us-aggregate-bond-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-us-aggregate-bond-ucits-etf-usd-acc-gb-ie00byxyym63-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/287339/ishares-us-aggregate-bond-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/iuaa-ishares-us-aggregate-bond-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-us-aggregate-bond-ucits-etf-usd-acc-gb-ie00byxyym63-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "SRRI 4 de 7 (KIID de 09/02/2026). Duration efetiva 5,74 anos (03/11/2026). Principais posições são emissores (o factsheet não lista títulos individuais). Quebras por rating e vencimento só em gráfico."
+ },
+ "IHYA": {
+  "nome_completo": "iShares $ High Yield Corp Bond UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BYXYYL56",
+  "ticker_bolsa": "IHYA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "iBoxx USD Liquid High Yield Capped Index",
+  "objetivo": "Acompanhar os títulos corporativos high yield (abaixo do grau de investimento) mais líquidos emitidos em dólar por empresas de países desenvolvidos.",
+  "metodologia": "Réplica física por amostragem. Índice ponderado por valor de mercado com teto de 3% por emissor; exige rating abaixo do grau de investimento, prazo original de até 15 anos e prazo remanescente mínimo de 1,5 ano (1 ano para quem já está no índice); limita a 10% certos papéis 144A e Reg S.",
+  "taxa_adm": "0,50% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 5,89 bi (fundo, todas as classes); US$ 2,82 bi (classe USD Acc)",
+   "data": "2026-11-06"
+  },
+  "n_posicoes": {
+   "valor": 1334,
+   "data": "2026-11-05"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Consumo cíclico",
+     17.58
+    ],
+    [
+     "Comunicações",
+     15.81
+    ],
+    [
+     "Energia",
+     9.7
+    ],
+    [
+     "Outros",
+     8.98
+    ],
+    [
+     "Bens de capital",
+     8.22
+    ]
+   ],
+   "data": "2026-11-05",
+   "fonte": "Quebra setorial da página iShares (classificação iShares); rating, vencimento e países não estão disponíveis em texto."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Tenet Healthcare Corp",
+     2.78
+    ],
+    [
+     "OneMain Finance Corp",
+     2.55
+    ],
+    [
+     "Celanese US Holdings LLC",
+     2.13
+    ],
+    [
+     "TransDigm Inc",
+     1.81
+    ],
+    [
+     "CCO Holdings LLC",
+     1.77
+    ]
+   ],
+   "data": "2026-10-31"
+  },
+  "fatores": [
+   "crédito high yield",
+   "spread de crédito",
+   "duration curta-intermediária (~3,3 anos)",
+   "ciclo econômico dos EUA",
+   "câmbio USD"
+  ],
+  "riscos": [
+   "Juros, crédito e inadimplência afetam o desempenho, e títulos high yield são mais sensíveis a esses fatores que os de rating alto.",
+   "Rebaixamentos de rating, efetivos ou esperados, podem elevar o risco e derrubar preços.",
+   "Crédito: o emissor pode deixar de pagar juros ou principal no prazo.",
+   "Liquidez: em momentos de estresse pode ser difícil vender os títulos sem desconto.",
+   "Contraparte: insolvência de prestadores de serviço ou contrapartes pode gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "SDHA",
+    "diferenca": "Mesmo universo iBoxx, mas só vencimentos de 0 a 5 anos: duration ~2,3 contra ~3,3 anos e TER 0,45% contra 0,50%."
+   },
+   {
+    "ticker": "EMCA",
+    "diferenca": "Crédito corporativo em dólar de emergentes, misturando grau de investimento e high yield; acrescenta risco país emergente."
+   },
+   {
+    "ticker": "IUAA",
+    "diferenca": "Renda fixa grau de investimento dos EUA (Tesouro, hipotecas, crédito IG): menos spread e mais duration (~5,7 anos)."
+   }
+  ],
+  "papel_na_carteira": "Fonte de carrego ligada ao crédito de empresas mais alavancadas; tende a se comportar mais em linha com o ciclo econômico e as ações do que com os Treasuries.",
+  "busca_noticias": "\"high yield\" EUA OR \"junk bonds\" OR \"US high yield spreads\" OR \"spreads de crédito\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/287352/ishares-high-yield-corp-bond-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/ihya-ishares-high-yield-corp-bond-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-high-yield-corp-bond-ucits-etf-usd-acc-gb-ie00byxyyl56-en.pdf"
+   },
+   {
+    "titulo": "Prospecto iShares II plc (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/prospectus/ishares-ii-plc-prospectus-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/287352/ishares-high-yield-corp-bond-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/ihya-ishares-high-yield-corp-bond-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-high-yield-corp-bond-ucits-etf-usd-acc-gb-ie00byxyyl56-en.pdf",
+   "https://www.ishares.com/gls-download/literature/prospectus/ishares-ii-plc-prospectus-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "SRRI 4 de 7 (KIID de 25/08/2026). Duration efetiva 3,25 anos e yield to worst 7,72 (31/10/2026; unidade não indicada no factsheet, presumivelmente %). Principais posições são emissores. Quebras por rating, vencimento e país só em gráfico."
+ },
+ "SDHA": {
+  "nome_completo": "iShares $ Short Duration High Yield Corp Bond UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BZ17CN18",
+  "ticker_bolsa": "SDHA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "iBoxx USD Liquid High Yield 0-5 Capped Index",
+  "objetivo": "Acompanhar títulos corporativos high yield em dólar com vencimento de até 5 anos, buscando carrego de crédito com menor sensibilidade a juros.",
+  "metodologia": "Réplica física por amostragem. Títulos abaixo do grau de investimento na inclusão, prefixados, com vencimento entre 0 e 5 anos e valor de face mínimo de US$ 350 milhões; ponderação por valor de mercado com teto de 3% por emissor e limite de 10% para certos papéis 144A e Reg S.",
+  "taxa_adm": "0,45% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 2,87 bi (fundo, todas as classes); US$ 1,44 bi (classe USD Acc)",
+   "data": "2026-11-06"
+  },
+  "n_posicoes": {
+   "valor": 1147,
+   "data": "2026-11-05"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Consumo cíclico",
+     23.01
+    ],
+    [
+     "Comunicações",
+     9.43
+    ],
+    [
+     "Energia",
+     9.26
+    ],
+    [
+     "Outros",
+     8.94
+    ],
+    [
+     "Bens de capital",
+     8.25
+    ]
+   ],
+   "data": "2026-11-05",
+   "fonte": "Quebra setorial da página iShares (classificação iShares); rating, vencimento e países não estão disponíveis em texto."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "OneMain Finance Corp",
+     2.97
+    ],
+    [
+     "Tenet Healthcare Corp",
+     2.63
+    ],
+    [
+     "Icahn Enterprises LP",
+     2.49
+    ],
+    [
+     "Celanese US Holdings LLC",
+     2.03
+    ],
+    [
+     "Sunoco LP",
+     1.82
+    ]
+   ],
+   "data": "2026-10-31"
+  },
+  "fatores": [
+   "crédito high yield",
+   "spread de crédito",
+   "duration curta (~2,3 anos)",
+   "ciclo econômico dos EUA",
+   "câmbio USD"
+  ],
+  "riscos": [
+   "Juros, crédito e inadimplência afetam o desempenho; títulos high yield são mais sensíveis a esses fatores.",
+   "Crédito: o emissor pode deixar de pagar juros ou principal no prazo.",
+   "Liquidez: pode faltar comprador ou vendedor para negociar os títulos rapidamente.",
+   "Contraparte: insolvência de prestadores de serviço ou contrapartes de derivativos pode gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IHYA",
+    "diferenca": "Mesmo universo, sem o corte de 5 anos: duration ~3,3 contra ~2,3 anos, TER 0,50% contra 0,45%."
+   },
+   {
+    "ticker": "EMCA",
+    "diferenca": "Crédito corporativo em dólar de emergentes, com grau de investimento e high yield e duration ~4,2 anos."
+   }
+  ],
+  "papel_na_carteira": "Exposição a crédito high yield americano com menor risco de juros, útil para capturar spread de crédito sem alongar a duration da carteira.",
+  "busca_noticias": "\"short duration high yield\" OR \"high yield\" EUA OR \"junk bonds\" OR \"default rate\" EUA",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/297889/ishares-short-duration-high-yield-corp-bond-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.blackrock.com/gls-download/literature/fact-sheet/sdha-ishares-short-duration-high-yield-corp-bond-ucits-etf-fund-fact-sheet-en-no.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-short-duration-high-yield-corp-bond-ucits-etf-usd-acc-gb-ie00bz17cn18-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/297889/ishares-short-duration-high-yield-corp-bond-ucits-etf",
+   "https://www.blackrock.com/gls-download/literature/fact-sheet/sdha-ishares-short-duration-high-yield-corp-bond-ucits-etf-fund-fact-sheet-en-no.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-short-duration-high-yield-corp-bond-ucits-etf-usd-acc-gb-ie00bz17cn18-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "SRRI 3 de 7 (KIID de 21/08/2026). Duration efetiva 2,26 anos e yield to worst 7,42 (31/10/2026; unidade não indicada). Factsheet usado é a versão en-no. Principais posições são emissores. Quebras por rating e vencimento só em gráfico."
+ },
+ "EMCA": {
+  "nome_completo": "iShares J.P. Morgan $ EM Corp Bond UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BFM6TD65",
+  "ticker_bolsa": "EMCA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "J.P. Morgan CEMBI Broad Diversified Core Index",
+  "objetivo": "Acompanhar títulos corporativos emitidos em dólar por empresas de países emergentes (América Latina, Europa emergente, Oriente Médio, África e Ásia ex-Japão).",
+  "metodologia": "Réplica física por amostragem. O emissor deve ser sediado em país emergente (ou ter 100% dos ativos operacionais ou garantia de entidade emergente); exige prazo mínimo de 2,5 anos e US$ 500 milhões em circulação, e não impõe rating mínimo, misturando grau de investimento e high yield.",
+  "taxa_adm": "0,50% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 3,24 bi (fundo, todas as classes); US$ 1,95 bi (classe USD Acc)",
+   "data": "2026-11-04"
+  },
+  "n_posicoes": {
+   "valor": 1289,
+   "data": "2026-11-04"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Industrial",
+     42.86
+    ],
+    [
+     "Instituições financeiras",
+     26.27
+    ],
+    [
+     "Agências (entidades ligadas a governos)",
+     24.3
+    ],
+    [
+     "Utilities",
+     5.27
+    ],
+    [
+     "Supranacional",
+     0.99
+    ]
+   ],
+   "data": "2026-11-04",
+   "fonte": "Quebra setorial da página iShares; rating, vencimento e países não estão disponíveis em texto."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Standard Chartered PLC",
+     2.67
+    ],
+    [
+     "Ecopetrol SA",
+     1.7
+    ],
+    [
+     "Saudi Arabian Oil Co",
+     1.59
+    ],
+    [
+     "OCP SA",
+     1.42
+    ],
+    [
+     "Anglo American Capital PLC",
+     1.31
+    ]
+   ],
+   "data": "2026-09-30"
+  },
+  "fatores": [
+   "crédito corporativo emergente",
+   "mistura de grau de investimento e high yield",
+   "spread de crédito",
+   "duration intermediária (~4,2 anos)",
+   "risco político e soberano de emergentes",
+   "câmbio USD (sem moeda local)"
+  ],
+  "riscos": [
+   "Crédito: emissores podem não pagar juros ou principal, e rebaixamentos de rating elevam o risco; muitos papéis têm rating baixo ou não têm rating.",
+   "Juros e inadimplência afetam significativamente o desempenho da renda fixa.",
+   "Emergentes: maior sensibilidade a choques econômicos e políticos, possíveis restrições a investimento e transferência e falhas de liquidação.",
+   "Liquidez: pode ser difícil negociar os títulos em momentos de estresse.",
+   "Contraparte: insolvência de prestadores de serviço ou contrapartes pode gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "JPEA",
+    "diferenca": "Dívida emergente em dólar de governos e quase-soberanos (não de empresas), duration ~6,3 contra ~4,2 anos, TER 0,45%."
+   },
+   {
+    "ticker": "IHYA",
+    "diferenca": "Crédito high yield de empresas de países desenvolvidos (sobretudo EUA), sem risco país emergente."
+   },
+   {
+    "ticker": "SDHA",
+    "diferenca": "High yield americano de até 5 anos (duration ~2,3 anos), com rating médio mais baixo e sem exposição a emergentes."
+   }
+  ],
+  "papel_na_carteira": "Diversifica o crédito em dólar para empresas de países emergentes, com spread acima do grau de investimento americano e sem exposição direta a moedas locais.",
+  "busca_noticias": "\"EM corporate bonds\" OR \"CEMBI\" OR \"dívida corporativa emergente\" OR \"emerging market corporate debt\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/297673/ishares-j-p-morgan-em-corp-bond-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/emca-ishares-j-p-morgan-em-corp-bond-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-jp-morgan-em-corp-bond-ucits-etf-usd-acc-gb-ie00bfm6td65-en.pdf"
+   },
+   {
+    "titulo": "Prospecto iShares V plc (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/prospectus/ishares-v-plc-prospectus-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/297673/ishares-j-p-morgan-em-corp-bond-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/emca-ishares-j-p-morgan-em-corp-bond-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-jp-morgan-em-corp-bond-ucits-etf-usd-acc-gb-ie00bfm6td65-en.pdf",
+   "https://www.ishares.com/gls-download/literature/prospectus/ishares-v-plc-prospectus-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "O rótulo da carteira ('EM USD debt, high yield / corporate') corresponde a crédito CORPORATIVO emergente amplo, não a um fundo só de high yield: o índice não tem rating mínimo e combina grau de investimento e high yield (a divisão exata por rating só aparece em gráfico). SRRI 3 de 7 (KIID de 09/02/2026). Duration efetiva 4,16 anos e yield to worst 6,86 (30/09/2026). O factsheet en-gb consultado é de set/2026; patrimônio, posições e setores vêm da página do produto (04/11/2026). Principais posições são emissores.",
+  "aviso_cadastro": "O cadastro diz \"dívida emergente em dólar (high yield)\", mas o índice (CEMBI Broad Diversified Core) é de dívida corporativa emergente sem nota mínima: mistura grau de investimento e high yield. O par usado para cotação e histórico (EMHY) é só high yield: o risco calculado com ele é aproximação."
+ },
+ "JPEA": {
+  "nome_completo": "iShares J.P. Morgan $ EM Bond UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BYXYYK40",
+  "ticker_bolsa": "JPEA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "J.P. Morgan EMBI Global Core Index",
+  "objetivo": "Acompanhar títulos em dólar emitidos por governos de países emergentes e por entidades quase-soberanas (100% estatais ou com garantia governamental integral).",
+  "metodologia": "Réplica física por amostragem. O índice inclui títulos soberanos e quase-soberanos em dólar, ativamente negociados, com pelo menos 2,5 anos até o vencimento e US$ 1 bilhão em circulação; aceita grau de investimento, high yield e até papéis em default.",
+  "taxa_adm": "0,45% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 7,93 bi (fundo, todas as classes); US$ 2,33 bi (classe USD Acc)",
+   "data": "2026-10-23"
+  },
+  "n_posicoes": {
+   "valor": 615,
+   "data": "2026-10-23"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Soberano",
+     87.34
+    ],
+    [
+     "Estatal sem garantia governamental",
+     10.89
+    ],
+    [
+     "Com garantia governamental",
+     1.69
+    ],
+    [
+     "Caixa e/ou derivativos",
+     0.08
+    ]
+   ],
+   "data": "2026-10-23",
+   "fonte": "Quebra por tipo de emissor da página iShares; países, rating e vencimento não estão disponíveis em texto (os maiores emissores, abaixo, são países)."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Turquia",
+     4.16
+    ],
+    [
+     "Brasil",
+     3.92
+    ],
+    [
+     "México",
+     3.84
+    ],
+    [
+     "Arábia Saudita",
+     3.56
+    ],
+    [
+     "República Dominicana",
+     3.49
+    ]
+   ],
+   "data": "2026-09-30"
+  },
+  "fatores": [
+   "risco soberano emergente",
+   "crédito (mistura de grau de investimento e high yield)",
+   "duration intermediária-longa (~6,3 anos)",
+   "juros dos Treasuries",
+   "câmbio USD (sem moeda local)"
+  ],
+  "riscos": [
+   "Crédito: governos e estatais podem não pagar juros ou principal, e rebaixamentos de rating elevam o risco.",
+   "Juros: mudanças nas taxas americanas afetam significativamente o preço dos títulos.",
+   "Emergentes: maior sensibilidade a choques econômicos e políticos, restrições a investimento e transferência e possíveis falhas de liquidação.",
+   "Liquidez: mercados menos profundos podem dificultar a negociação dos títulos.",
+   "Contraparte: insolvência de prestadores de serviço ou contrapartes pode gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "EMCA",
+    "diferenca": "Dívida em dólar de EMPRESAS emergentes (CEMBI), duration ~4,2 contra ~6,3 anos e TER 0,50% contra 0,45%."
+   },
+   {
+    "ticker": "IHYA",
+    "diferenca": "Crédito high yield de empresas de países desenvolvidos: risco corporativo americano em vez de risco soberano emergente."
+   }
+  ],
+  "papel_na_carteira": "Exposição à dívida de governos emergentes em dólar, que combina carrego elevado com risco de crédito soberano e sensibilidade aos juros americanos.",
+  "busca_noticias": "\"EMBI\" OR \"dívida emergente\" OR \"emerging market sovereign debt\" OR \"spread soberano\" emergentes",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/287334/ishares-j-p-morgan-em-bond-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/jpea-ishares-j-p-morgan-em-bond-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-jp-morgan-em-bond-ucits-etf-usd-acc-gb-ie00byxyyk40-en.pdf"
+   },
+   {
+    "titulo": "KID PRIIPs (UE) da classe USD Acc (PDF)",
+    "url": "https://www.blackrock.com/it/investitori-privati/literature/kiid/eu-priips-ishares-jp-morgan-em-bond-ucits-etf-usd-acc-ie00byxyyk40-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/287334/ishares-j-p-morgan-em-bond-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/jpea-ishares-j-p-morgan-em-bond-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-jp-morgan-em-bond-ucits-etf-usd-acc-gb-ie00byxyyk40-en.pdf",
+   "https://www.blackrock.com/it/investitori-privati/literature/kiid/eu-priips-ishares-jp-morgan-em-bond-ucits-etf-usd-acc-ie00byxyyk40-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Divergência no nome do índice: o KIID UK (09/02/2026) e o KID PRIIPs (03/09/2026) citam 'J.P. Morgan EMBI Global Core Index', e a página usa o código JPEICORE; já o factsheet de set/2026 traz 'J.P. Morgan Emerging Markets Bond Index Global Diversified Core'. Não achamos comunicado de troca de benchmark; adotamos o nome do KID e convém confirmar antes de publicar. Cerca de 11% está em quase-soberanos, então o rótulo 'soberano' é aproximado. Patrimônio, posições e tipos vêm da página do produto, que exibia dados de 23/10/2026 na consulta. SRRI 4 de 7 (KIID UK) e SRI 3 de 7 (KID PRIIPs). Duration efetiva 6,28 anos e yield to worst 7,16 (30/09/2026). Principais posições são emissores.",
+  "aviso_cadastro": "O índice é de dívida soberana emergente (EMBI Global Core, segundo o KID), com cerca de 11% em estatais. O par usado para cotação e histórico (HYEM) é dívida corporativa high yield: o risco calculado com ele é aproximação. Os documentos da gestora divergem no nome do índice (ver notas)."
+ },
+ "VHVE": {
+  "nome_completo": "Vanguard FTSE Developed World UCITS ETF (USD) Accumulating",
+  "gestora": "Vanguard (Vanguard Funds plc)",
+  "isin": "IE00BK5BQV03",
+  "ticker_bolsa": "VHVE · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "FTSE Developed Index",
+  "objetivo": "Replicar o desempenho de ações de grande e média capitalização de países desenvolvidos, incluindo EUA, Japão, Europa, Canadá e Coreia do Sul.",
+  "metodologia": "Réplica física por amostragem representativa do índice. O FTSE Developed Index é ponderado por capitalização ajustada ao free float e cobre large e mid caps dos mercados que a FTSE Russell classifica como desenvolvidos.",
+  "taxa_adm": "0,12% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 11,61 bi (fundo, todas as classes); US$ 6,83 bi (classe USD Acc)",
+   "data": "2026-09-30"
+  },
+  "n_posicoes": {
+   "valor": 1910,
+   "data": "2026-09-30"
+  },
+  "exposicao": {
+   "paises": [
+    [
+     "Estados Unidos",
+     69.2
+    ],
+    [
+     "Japão",
+     6.7
+    ],
+    [
+     "Reino Unido",
+     3.5
+    ],
+    [
+     "Canadá",
+     3.2
+    ],
+    [
+     "Coreia do Sul",
+     2.9
+    ]
+   ],
+   "setores": [
+    [
+     "Tecnologia",
+     36.0
+    ],
+    [
+     "Financeiro",
+     14.2
+    ],
+    [
+     "Industrial",
+     12.5
+    ],
+    [
+     "Consumo discricionário",
+     10.7
+    ],
+    [
+     "Saúde",
+     8.4
+    ]
+   ],
+   "data": "2026-09-30",
+   "fonte": "Factsheet Vanguard; setores pela classificação ICB."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "NVIDIA",
+     5.6
+    ],
+    [
+     "Apple",
+     5.1
+    ],
+    [
+     "Microsoft",
+     4.0
+    ],
+    [
+     "Alphabet",
+     3.8
+    ],
+    [
+     "Amazon.com",
+     2.5
+    ]
+   ],
+   "data": "2026-09-30"
+  },
+  "fatores": [
+   "ações globais de países desenvolvidos",
+   "concentração em EUA (~69%)",
+   "large caps e tecnologia",
+   "câmbio (USD e moedas desenvolvidas)"
+  ],
+  "riscos": [
+   "Ações: o valor oscila com o mercado, resultados das empresas e notícias políticas e econômicas.",
+   "Concentração: peso elevado em certos países, setores ou empresas aumenta a sensibilidade a eventos específicos.",
+   "Câmbio: variações das moedas podem reduzir o retorno.",
+   "Rastreamento e amostragem: o fundo pode não replicar perfeitamente o índice, e a amostra pode não representá-lo por inteiro.",
+   "Liquidez e contraparte: dificuldade de negociar ativos ou insolvência de prestadores de serviço podem gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "VWRA",
+    "diferenca": "FTSE All-World: este mesmo universo desenvolvido mais os emergentes; TER 0,14% contra 0,12%."
+   },
+   {
+    "ticker": "EXUS",
+    "diferenca": "Desenvolvidos SEM os EUA (MSCI World ex USA): Japão, Europa e Canadá dominam; não inclui Coreia."
+   },
+   {
+    "ticker": "WSML",
+    "diferenca": "Small caps de países desenvolvidos (MSCI), em vez de large e mid caps; TER 0,35%."
+   }
+  ],
+  "papel_na_carteira": "Núcleo de ações globais de países desenvolvidos, com peso dominante dos EUA e das grandes empresas de tecnologia.",
+  "busca_noticias": "\"FTSE Developed\" OR \"bolsas globais\" OR \"global equities\" OR \"ações globais\" mercados desenvolvidos",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.vanguard.co.uk/professional/product/etf/equity/9675/ftse-developed-world-ucits-etf-usd-accumulating"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://fund-docs.vanguard.com/FTSE_Developed_World_UCITS_ETF_USD_Accumulating_9675_NETH_INT_EN.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://fund-docs.vanguard.com/ie00bk5bqv03-en.pdf"
+   },
+   {
+    "titulo": "Factsheet UK (link da página oficial)",
+    "url": "https://fund-docs.vanguard.com/FTSE_Developed_World_UCITS_ETF_USD_Accumulating_9675_EU_INT_UK_EN.pdf"
+   },
+   {
+    "titulo": "Prospecto Vanguard ETFs (PDF)",
+    "url": "https://fund-docs.vanguard.com/etf-prospectus-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.vanguard.co.uk/professional/product/etf/equity/9675/ftse-developed-world-ucits-etf-usd-accumulating",
+   "https://fund-docs.vanguard.com/FTSE_Developed_World_UCITS_ETF_USD_Accumulating_9675_NETH_INT_EN.pdf",
+   "https://fund-docs.vanguard.com/ie00bk5bqv03-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "A FTSE classifica a Coreia do Sul como mercado desenvolvido (a MSCI a trata como emergente): por isso o VHVE tem Coreia (~2,9%) e o VFEA não. Setores pela classificação ICB. SRRI 6 de 7 (KIID de 17/02/2026). Na LSE, VHVE é a linha em USD e VHVG a linha em GBP. Patrimônio e posições do factsheet de 30/09/2026 (versão NETH_INT_EN, destinada a profissionais; a página UK aponta para a versão EU_INT_UK_EN)."
+ },
+ "EXUS": {
+  "nome_completo": "Xtrackers MSCI World ex USA UCITS ETF 1C",
+  "gestora": "DWS (Xtrackers)",
+  "isin": "IE0006WW1TQ4",
+  "ticker_bolsa": "EXUS · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "MSCI World ex USA Index",
+  "objetivo": "Acompanhar ações de grande e média capitalização dos países desenvolvidos, excluindo os EUA (22 dos 23 mercados desenvolvidos da MSCI).",
+  "metodologia": "Réplica física direta. O índice cobre cerca de 85% do valor de mercado ajustado ao free float de cada mercado desenvolvido fora os EUA, ponderado por capitalização.",
+  "taxa_adm": "0,15% a.a. (taxa all-in)",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 8,11 bi (fundo)",
+   "data": "2026-09-30"
+  },
+  "n_posicoes": null,
+  "exposicao": {
+   "paises": [
+    [
+     "Japão",
+     20.99
+    ],
+    [
+     "Reino Unido",
+     12.91
+    ],
+    [
+     "Canadá",
+     12.65
+    ],
+    [
+     "Suíça",
+     8.6
+    ],
+    [
+     "França",
+     8.15
+    ]
+   ],
+   "setores": [
+    [
+     "Financeiro",
+     27.3
+    ],
+    [
+     "Industrial",
+     17.2
+    ],
+    [
+     "Tecnologia da informação",
+     10.12
+    ],
+    [
+     "Saúde",
+     9.84
+    ],
+    [
+     "Consumo discricionário",
+     7.51
+    ]
+   ],
+   "data": "2026-10-30",
+   "fonte": "Factsheet do índice MSCI World ex USA (MSCI), não do fundo; setores GICS."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "ASML Holding",
+     2.75
+    ],
+    [
+     "HSBC Holdings",
+     1.4
+    ],
+    [
+     "Roche",
+     1.22
+    ],
+    [
+     "Shell",
+     1.14
+    ],
+    [
+     "Royal Bank of Canada",
+     1.13
+    ]
+   ],
+   "data": "2026-09-30"
+  },
+  "fatores": [
+   "ações desenvolvidas fora dos EUA",
+   "Japão e Europa",
+   "câmbio (iene, euro, libra, dólar canadense, franco suíço)",
+   "mais financeiro e industrial, menos tecnologia que os EUA"
+  ],
+  "riscos": [
+   "Perda de capital: o valor pode cair, inclusive até a perda total do investimento.",
+   "Ações: o valor depende das condições econômicas e de mercado, do setor, da região e de eventos políticos.",
+   "Câmbio: o fundo está exposto a moedas que podem ser muito voláteis.",
+   "Conversão: quem investe ou resgata em moeda diferente da classe corre risco cambial adicional."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "VHVE",
+    "diferenca": "Desenvolvidos COM os EUA (~69%) e com Coreia do Sul, pelo índice FTSE Developed; TER 0,12%."
+   },
+   {
+    "ticker": "VWRA",
+    "diferenca": "Mundo todo (desenvolvidos + emergentes, EUA ~62%) pelo FTSE All-World; TER 0,14%."
+   }
+  ],
+  "papel_na_carteira": "Complementa uma carteira já concentrada em EUA, adicionando Japão, Europa, Canadá e Austrália e reduzindo a dependência do dólar e das big techs americanas.",
+  "busca_noticias": "\"MSCI World ex USA\" OR \"international stocks\" OR \"ações fora dos EUA\" OR \"bolsas europeias\" OR \"bolsa do Japão\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://etf.deutsche-am.com/en-gb/IE0006WW1TQ4-msci-world-ex-usa-ucits-etf-1c/"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://etf.deutsche-am.com/download/asset/6b8b98ab-789c-4c16-bb92-1a586f2d448d"
+   },
+   {
+    "titulo": "Factsheet do índice MSCI World ex USA (PDF)",
+    "url": "https://www.msci.com/documents/10199/255599/msci-world-ex-usa-index.pdf"
+   }
+  ],
+  "fontes": [
+   "https://etf.deutsche-am.com/en-gb/IE0006WW1TQ4-msci-world-ex-usa-ucits-etf-1c/",
+   "https://etf.deutsche-am.com/download/asset/6b8b98ab-789c-4c16-bb92-1a586f2d448d",
+   "https://www.msci.com/documents/10199/255599/msci-world-ex-usa-index.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "O rótulo 'world ex-USA' é só desenvolvidos (MSCI World ex USA), sem emergentes. O site da Xtrackers (etf.dws.com redireciona para etf.deutsche-am.com) só renderiza via JavaScript: não foi possível ler a página nem localizar o KID oficial, por isso os riscos vêm do factsheet de 30/09/2026 e não do KID. O factsheet não informa o número de posições do fundo (índice com 756 componentes segundo o factsheet de 30/09/2026; 734 no factsheet MSCI de 30/10/2026). Países e setores são do índice, não do fundo. Custo informado como taxa all-in. Na LSE, EXUS = USD e XMWX = GBP. Classe 1C lançada em 06/03/2024.",
+  "aviso_cadastro": "O índice (MSCI World ex USA) é só de países desenvolvidos. O par usado para cotação e histórico (VXUS) inclui emergentes: o risco calculado com ele é aproximação."
+ },
+ "USSC": {
+  "nome_completo": "State Street SPDR MSCI USA Small Cap Value Weighted UCITS ETF",
+  "gestora": "State Street (SPDR ETFs)",
+  "isin": "IE00BSPLC413",
+  "ticker_bolsa": "USSC · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "MSCI USA Small Cap Value Weighted Index",
+  "objetivo": "Acompanhar ações americanas de pequena capitalização, dando mais peso às empresas com valuations mais baixos.",
+  "metodologia": "Réplica física otimizada (detém um subconjunto do índice). Parte do MSCI USA Small Cap Index e repondera cada ação por quatro variáveis fundamentalistas (vendas, valor patrimonial, lucro e lucro-caixa), favorecendo as mais baratas em vez de excluir ações.",
+  "taxa_adm": "0,30% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 1,02 bi (fundo, classe única)",
+   "data": "2026-11-06"
+  },
+  "n_posicoes": {
+   "valor": 1621,
+   "data": "2026-11-05"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Financeiro",
+     22.9
+    ],
+    [
+     "Consumo discricionário",
+     16.09
+    ],
+    [
+     "Industrial",
+     15.21
+    ],
+    [
+     "Saúde",
+     9.58
+    ],
+    [
+     "Tecnologia da informação",
+     7.02
+    ]
+   ],
+   "data": "2026-11-05",
+   "fonte": "Página oficial State Street (setores GICS); universo 100% EUA, a página não publica países."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Performance Food Group",
+     0.62
+    ],
+    [
+     "RenaissanceRe Holdings",
+     0.6
+    ],
+    [
+     "Reinsurance Group of America",
+     0.6
+    ],
+    [
+     "Moderna",
+     0.52
+    ],
+    [
+     "US Foods Holding",
+     0.52
+    ]
+   ],
+   "data": "2026-11-05"
+  },
+  "fatores": [
+   "tamanho (small caps)",
+   "valor",
+   "ações dos EUA",
+   "ciclo econômico doméstico dos EUA",
+   "câmbio USD"
+  ],
+  "riscos": [
+   "Small caps: empresas menores tendem a ser mais voláteis, menos negociadas e com recursos e histórico mais limitados.",
+   "Concentração: a carteira focada fica mais exposta a problemas que afetem seus segmentos e pode ter liquidez reduzida.",
+   "Rastreamento: o retorno pode diferir do índice por custos, mudanças no índice e uso de amostragem.",
+   "Liquidez do ETF: em mercados estressados as cotas podem ser negociadas bem longe do valor patrimonial."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IUVL",
+    "diferenca": "Valor nos EUA, mas em large e mid caps, com ~146 ações selecionadas por escore e alta concentração (Micron ~20%); TER 0,20%."
+   },
+   {
+    "ticker": "WSML",
+    "diferenca": "Small caps de todos os desenvolvidos (EUA ~62%), sem viés de valor; ~3.570 ações e TER 0,35%."
+   }
+  ],
+  "papel_na_carteira": "Combina os fatores tamanho e valor no mercado americano numa carteira muito pulverizada, em que nenhuma ação passa de cerca de 0,6%.",
+  "busca_noticias": "\"small cap value\" OR \"Russell 2000\" OR \"small caps\" EUA OR \"ações de valor\" small caps",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ssga.com/uk/en_gb/intermediary/etfs/state-street-spdr-msci-usa-small-cap-value-weighted-ucits-etf-zprv-gy"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-zprv-gy.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ssga.com/library-content/kiids?isin=IE00BSPLC413&documentType=kiid&country=uk&language=en&ticker=zprv-gy"
+   },
+   {
+    "titulo": "Prospecto SSGA SPDR ETFs Europe II plc (PDF)",
+    "url": "https://www.ssga.com/library-content/products/fund-docs/etfs/emea/2-GENERIC-EN-FP-IRISH-SPDR-II.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ssga.com/uk/en_gb/intermediary/etfs/state-street-spdr-msci-usa-small-cap-value-weighted-ucits-etf-zprv-gy",
+   "https://www.ssga.com/library-content/products/factsheets/etfs/emea/factsheet-emea-en_gb-zprv-gy.pdf",
+   "https://www.ssga.com/library-content/kiids?isin=IE00BSPLC413&documentType=kiid&country=uk&language=en&ticker=zprv-gy"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Fundo renomeado em 19/02/2026 (antes 'SPDR MSCI USA Small Cap Value Weighted UCITS ETF'). Listagem primária na Deutsche Börse (ZPRV, EUR); USSC é a linha da LSE em USD. Classe única, acumulação. SRRI 6 de 7 (KIID de 19/02/2026). O factsheet mensal traz top 10 um pouco diferente e data ambígua (30/09 ou 31/10/2026); usamos a página do produto (05/11/2026)."
+ },
+ "WSML": {
+  "nome_completo": "iShares MSCI World Small Cap UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BF4RFH31",
+  "ticker_bolsa": "WSML · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "MSCI World Small Cap Index",
+  "objetivo": "Acompanhar ações de empresas de pequena capitalização de países desenvolvidos.",
+  "metodologia": "Réplica física otimizada: detém uma seleção representativa dos papéis do índice. O índice é ponderado por capitalização ajustada ao free float e reúne small caps de mercados desenvolvidos que atendem aos critérios de tamanho, liquidez e free float da MSCI.",
+  "taxa_adm": "0,35% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 8,95 bi (fundo, classe única)",
+   "data": "2026-11-05"
+  },
+  "n_posicoes": {
+   "valor": 3571,
+   "data": "2026-11-05"
+  },
+  "exposicao": {
+   "paises": [
+    [
+     "Estados Unidos",
+     62.0
+    ],
+    [
+     "Japão",
+     12.57
+    ],
+    [
+     "Reino Unido",
+     4.36
+    ],
+    [
+     "Canadá",
+     4.16
+    ],
+    [
+     "Austrália",
+     3.6
+    ]
+   ],
+   "setores": [
+    [
+     "Industrial",
+     18.76
+    ],
+    [
+     "Financeiro",
+     14.69
+    ],
+    [
+     "Saúde",
+     11.98
+    ],
+    [
+     "Tecnologia da informação",
+     11.53
+    ],
+    [
+     "Consumo discricionário",
+     11.02
+    ]
+   ],
+   "data": "países: 2026-10-30 (índice); setores: 2026-11-05 (fundo)",
+   "fonte": "Países do factsheet do índice MSCI World Small Cap (MSCI); setores GICS da página iShares do fundo."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Moderna",
+     0.72
+    ],
+    [
+     "Tenet Healthcare",
+     0.22
+    ],
+    [
+     "US Foods Holding",
+     0.22
+    ],
+    [
+     "Caixa (USD)",
+     0.21
+    ],
+    [
+     "Guardant Health",
+     0.21
+    ]
+   ],
+   "data": "2026-10-31"
+  },
+  "fatores": [
+   "tamanho (small caps)",
+   "ações de países desenvolvidos",
+   "ciclo econômico doméstico",
+   "câmbio (várias moedas desenvolvidas)"
+  ],
+  "riscos": [
+   "Small caps: ações de empresas menores são menos negociadas e oscilam mais que as de empresas grandes.",
+   "Ações: o valor depende do mercado, de notícias políticas e econômicas e de resultados das empresas.",
+   "Contraparte: insolvência de custodiante ou contraparte de derivativos pode gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "USSC",
+    "diferenca": "Só small caps dos EUA e com ponderação por valor (vendas, patrimônio, lucro); TER 0,30%."
+   },
+   {
+    "ticker": "VHVE",
+    "diferenca": "Large e mid caps de desenvolvidos (FTSE), dominado por megacaps de tecnologia; TER 0,12%."
+   }
+  ],
+  "papel_na_carteira": "Diversifica a parcela de ações desenvolvidas para empresas menores, reduzindo a concentração nas megacaps de tecnologia.",
+  "busca_noticias": "\"MSCI World Small Cap\" OR \"small caps\" globais OR \"small-cap stocks\" OR \"Russell 2000\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/296576/"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/wsml-ishares-msci-world-small-cap-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-msci-world-small-cap-ucits-etf-usd-acc-gb-ie00bf4rfh31-en.pdf"
+   },
+   {
+    "titulo": "Factsheet do índice MSCI World Small Cap (PDF)",
+    "url": "https://www.msci.com/documents/10199/a67b0d43-0289-4bce-8499-0c102eaa8399"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/296576/",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/wsml-ishares-msci-world-small-cap-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-msci-world-small-cap-ucits-etf-usd-acc-gb-ie00bf4rfh31-en.pdf",
+   "https://www.msci.com/documents/10199/a67b0d43-0289-4bce-8499-0c102eaa8399"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Países vêm do factsheet do índice (MSCI, 30/10/2026), porque a página e o factsheet do fundo só mostram países em gráfico; setores são do fundo (05/11/2026). Na LSE, WSML = USD e WLDS = GBP. SRRI 6 de 7 (KIID de 09/02/2026). URL da página do produto usada pelo ID (296576), sem slug."
+ },
+ "IUVL": {
+  "nome_completo": "iShares Edge MSCI USA Value Factor UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BD1F4M44",
+  "ticker_bolsa": "IUVL · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "MSCI USA Enhanced Value Index",
+  "objetivo": "Acompanhar um subconjunto de ações americanas de grande e média capitalização consideradas baratas em relação aos seus fundamentos (fator valor).",
+  "metodologia": "Réplica física completa. A partir do MSCI USA, o índice escolhe cerca de 150 ações com melhor escore de valor dentro de cada setor GICS, combinando em pesos iguais preço/lucro projetado, preço/valor patrimonial e EV/fluxo de caixa operacional (sem EV para financeiras), com limites para os pesos setoriais não se afastarem muito do índice-mãe; rebalanceamento semestral.",
+  "taxa_adm": "0,20% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 3,65 bi (fundo, todas as classes); US$ 3,30 bi (classe USD Acc)",
+   "data": "2026-11-06"
+  },
+  "n_posicoes": {
+   "valor": 146,
+   "data": "2026-11-05"
+  },
+  "exposicao": {
+   "paises": null,
+   "setores": [
+    [
+     "Tecnologia da informação",
+     35.1
+    ],
+    [
+     "Financeiro",
+     11.79
+    ],
+    [
+     "Consumo discricionário",
+     10.41
+    ],
+    [
+     "Comunicação",
+     10.38
+    ],
+    [
+     "Saúde",
+     9.28
+    ]
+   ],
+   "data": "2026-11-05",
+   "fonte": "Página iShares (setores GICS); universo 100% EUA, a página não publica países."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Micron Technology",
+     20.17
+    ],
+    [
+     "Cisco Systems",
+     4.15
+    ],
+    [
+     "General Motors",
+     3.88
+    ],
+    [
+     "Verizon Communications",
+     2.81
+    ],
+    [
+     "AT&T",
+     2.32
+    ]
+   ],
+   "data": "2026-10-31"
+  },
+  "fatores": [
+   "valor",
+   "ações dos EUA de grande e média capitalização",
+   "concentração em uma ação (Micron ~20%)",
+   "câmbio USD"
+  ],
+  "riscos": [
+   "Ações: o valor oscila com o mercado, resultados das empresas e notícias políticas e econômicas.",
+   "Foco em fator: o fundo é menos diversificado que o índice-mãe por concentrar a exposição em um único fator (valor).",
+   "Metodologia do índice: não há garantia de que a regra de seleção do índice entregue o resultado pretendido.",
+   "Contraparte: insolvência de custodiante ou contraparte de derivativos pode gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "USSC",
+    "diferenca": "Valor em small caps americanas, com ponderação fundamentalista e ~1.600 ações (máximo ~0,6% cada); TER 0,30%."
+   },
+   {
+    "ticker": "VHVE",
+    "diferenca": "Mercado amplo de desenvolvidos ponderado por capitalização, sem viés de valor; TER 0,12%."
+   }
+  ],
+  "papel_na_carteira": "Inclina a parcela de ações americanas para o fator valor, contrabalançando o viés de crescimento dos índices amplos, mas hoje com forte dependência de uma única ação (Micron).",
+  "busca_noticias": "\"MSCI USA Value\" OR \"value stocks\" OR \"ações de valor\" EUA OR \"value vs growth\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/285207/ishares-edge-msci-usa-value-factor-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/iuvl-ishares-edge-msci-usa-value-factor-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-edge-msci-usa-value-factor-ucits-etf-usd-acc-gb-ie00bd1f4m44-en.pdf"
+   },
+   {
+    "titulo": "Factsheet do índice MSCI USA Enhanced Value (PDF)",
+    "url": "https://www.msci.com/documents/10199/255599/msci-usa-enhanced-value-index-usd-net.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/285207/ishares-edge-msci-usa-value-factor-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/iuvl-ishares-edge-msci-usa-value-factor-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-edge-msci-usa-value-factor-ucits-etf-usd-acc-gb-ie00bd1f4m44-en.pdf",
+   "https://www.msci.com/documents/10199/255599/msci-usa-enhanced-value-index-usd-net.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Concentração atípica: Micron Technology pesa 20,17% no fundo (factsheet de 31/10/2026), confirmado pelo factsheet do índice MSCI (20,22% em 30/10/2026); o top 10 soma ~42%. A página oficial avisa que 'uma linha de listagem' do fundo será deslistada em 15/12/2026, sem dizer qual (há IUVL/LSE em USD, IUVF/LSE em GBP, QDVI/Xetra, IUVL/SIX e IUVL/BMV) — conferir a carta aos cotistas. O KIID descreve o risco de metodologia com texto sobre seleção por alta recente de preços, que parece herdado de um fundo de momentum; resumimos só a ideia geral. SRRI 6 de 7 (KIID de 09/02/2026). P/L 15,4x e P/VP 2,26x (05/11/2026).",
+  "aviso_cadastro": "Concentração atípica: a Micron pesa cerca de 20% do fundo (factsheet de 31/10/2026). O par usado para cotação e histórico (VTV) é um índice amplo de valor ponderado por capitalização, sem essa concentração: o risco calculado com ele é aproximação."
+ },
+ "VWRA": {
+  "nome_completo": "Vanguard FTSE All-World UCITS ETF (USD) Accumulating",
+  "gestora": "Vanguard (Vanguard Funds plc)",
+  "isin": "IE00BK5BQT80",
+  "ticker_bolsa": "VWRA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "FTSE All-World Index",
+  "objetivo": "Replicar o desempenho de ações de grande e média capitalização de países desenvolvidos e emergentes numa única carteira global.",
+  "metodologia": "Réplica física por amostragem representativa (o fundo detinha 3.821 das 4.203 ações do índice). Índice ponderado por capitalização ajustada ao free float, com large e mid caps de mercados desenvolvidos e emergentes.",
+  "taxa_adm": "0,14% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 87,30 bi (fundo, todas as classes); US$ 60,19 bi (classe USD Acc)",
+   "data": "2026-09-30"
+  },
+  "n_posicoes": {
+   "valor": 3821,
+   "data": "2026-09-30"
+  },
+  "exposicao": {
+   "paises": [
+    [
+     "Estados Unidos",
+     62.2
+    ],
+    [
+     "Japão",
+     6.1
+    ],
+    [
+     "Taiwan",
+     3.5
+    ],
+    [
+     "Reino Unido",
+     3.1
+    ],
+    [
+     "Canadá",
+     2.9
+    ]
+   ],
+   "setores": [
+    [
+     "Tecnologia",
+     36.1
+    ],
+    [
+     "Financeiro",
+     14.9
+    ],
+    [
+     "Industrial",
+     12.0
+    ],
+    [
+     "Consumo discricionário",
+     10.4
+    ],
+    [
+     "Saúde",
+     7.9
+    ]
+   ],
+   "data": "2026-09-30",
+   "fonte": "Factsheet Vanguard; setores pela classificação ICB."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "NVIDIA",
+     5.0
+    ],
+    [
+     "Apple",
+     4.5
+    ],
+    [
+     "Microsoft",
+     3.6
+    ],
+    [
+     "Alphabet",
+     3.4
+    ],
+    [
+     "Amazon.com",
+     2.3
+    ]
+   ],
+   "data": "2026-09-30"
+  },
+  "fatores": [
+   "ações globais (desenvolvidos + emergentes)",
+   "concentração em EUA (~62%)",
+   "large caps e tecnologia",
+   "câmbio (várias moedas)"
+  ],
+  "riscos": [
+   "Ações: o valor oscila com o mercado, resultados das empresas e notícias políticas e econômicas.",
+   "Emergentes: parte da carteira está em mercados mais sensíveis a choques econômicos e políticos.",
+   "Câmbio: variações das moedas podem reduzir o retorno.",
+   "Rastreamento e amostragem: o fundo pode não replicar perfeitamente o índice.",
+   "Liquidez e contraparte: dificuldade de negociar ativos ou insolvência de prestadores de serviço podem gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "VHVE",
+    "diferenca": "Só a parte desenvolvida do mesmo universo FTSE (EUA ~69%); TER 0,12% contra 0,14%."
+   },
+   {
+    "ticker": "VFEA",
+    "diferenca": "Só a parte emergente do universo FTSE (Taiwan, China, Índia); TER 0,17%."
+   },
+   {
+    "ticker": "EIMI",
+    "diferenca": "Emergentes pelo MSCI, incluindo small caps e Coreia do Sul; TER 0,18%."
+   }
+  ],
+  "papel_na_carteira": "Posição única de mercado acionário global, que já combina desenvolvidos e emergentes nos pesos de mercado e pode servir de núcleo da parcela internacional de ações.",
+  "busca_noticias": "\"FTSE All-World\" OR \"MSCI ACWI\" OR \"bolsas globais\" OR \"global stocks\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.vanguard.co.uk/professional/product/etf/equity/9679/ftse-all-world-ucits-etf-usd-accumulating"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_CH_RET_EN.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://fund-docs.vanguard.com/ie00bk5bqt80-en.pdf"
+   },
+   {
+    "titulo": "Factsheet UK (link da página oficial)",
+    "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf"
+   },
+   {
+    "titulo": "Prospecto Vanguard ETFs (PDF)",
+    "url": "https://fund-docs.vanguard.com/etf-prospectus-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.vanguard.co.uk/professional/product/etf/equity/9679/ftse-all-world-ucits-etf-usd-accumulating",
+   "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_CH_RET_EN.pdf",
+   "https://fund-docs.vanguard.com/ie00bk5bqt80-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "SRRI 6 de 7 (KIID de 28/07/2026). Setores pela classificação ICB. Factsheet lido é a versão suíça (CH_RET_EN) de 30/09/2026; a página UK aponta para a versão EU_INT_UK_EN. Na LSE, VWRA = USD e VWRP = GBP. A FTSE trata a Coreia do Sul como desenvolvida."
+ },
+ "EIMI": {
+  "nome_completo": "iShares Core MSCI EM IMI UCITS ETF USD (Acc)",
+  "gestora": "BlackRock (iShares)",
+  "isin": "IE00BKM4GZ66",
+  "ticker_bolsa": "EIMI · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "MSCI Emerging Markets Investable Market Index (MSCI EM IMI)",
+  "objetivo": "Acompanhar ações de empresas de grande, média e pequena capitalização de países emergentes.",
+  "metodologia": "Réplica física completa: busca deter os papéis do índice nas mesmas proporções, podendo usar ADRs e GDRs. O índice é ponderado pela parcela das ações disponível a investidores estrangeiros e cobre large, mid e small caps que atendem aos critérios de tamanho, liquidez e free float da MSCI.",
+  "taxa_adm": "0,18% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 41,73 bi (fundo, todas as classes); US$ 40,20 bi (classe USD Acc)",
+   "data": "2026-11-06"
+  },
+  "n_posicoes": {
+   "valor": 2947,
+   "data": "2026-11-05"
+  },
+  "exposicao": {
+   "paises": [
+    [
+     "Taiwan",
+     28.72
+    ],
+    [
+     "Coreia do Sul",
+     18.99
+    ],
+    [
+     "China",
+     18.67
+    ],
+    [
+     "Índia",
+     12.91
+    ],
+    [
+     "Brasil",
+     3.8
+    ]
+   ],
+   "setores": [
+    [
+     "Tecnologia da informação",
+     36.37
+    ],
+    [
+     "Financeiro",
+     20.41
+    ],
+    [
+     "Consumo discricionário",
+     8.68
+    ],
+    [
+     "Industrial",
+     7.35
+    ],
+    [
+     "Materiais",
+     6.37
+    ]
+   ],
+   "data": "países: 2026-10-30 (índice); setores: 2026-11-05 (fundo)",
+   "fonte": "Países do factsheet do índice MSCI EM IMI (MSCI); setores GICS da página iShares do fundo."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Taiwan Semiconductor Manufacturing (TSMC)",
+     13.68
+    ],
+    [
+     "Samsung Electronics",
+     6.61
+    ],
+    [
+     "SK Hynix",
+     5.16
+    ],
+    [
+     "Tencent Holdings",
+     2.4
+    ],
+    [
+     "Alibaba Group",
+     1.62
+    ]
+   ],
+   "data": "2026-09-30"
+  },
+  "fatores": [
+   "ações emergentes",
+   "inclui small caps",
+   "semicondutores e memória (TSMC, Samsung, SK Hynix)",
+   "concentração na Ásia (Taiwan, Coreia, China)",
+   "câmbio de moedas emergentes"
+  ],
+  "riscos": [
+   "Emergentes: mercados mais sensíveis a choques econômicos e políticos, com possíveis restrições a investimento e transferência de recursos.",
+   "Liquidez e liquidação: alguns papéis podem ter negociação limitada, e entregas ou pagamentos podem falhar ou atrasar.",
+   "Câmbio: variações das moedas locais podem reduzir o valor do investimento.",
+   "Ações: o valor oscila com o mercado, resultados das empresas e eventos corporativos.",
+   "Contraparte: insolvência de custodiante ou contraparte de derivativos pode gerar perdas."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "VFEA",
+    "diferenca": "FTSE Emerging: sem Coreia do Sul (a FTSE a classifica como desenvolvida) e sem small caps; ~2.300 ações, TER 0,17%."
+   },
+   {
+    "ticker": "VWRA",
+    "diferenca": "Carteira global em que os emergentes entram só pelo peso de mercado, ao lado dos desenvolvidos (EUA ~62%)."
+   }
+  ],
+  "papel_na_carteira": "Exposição ampla a emergentes, incluindo small caps e Coreia do Sul, hoje com peso muito alto do ciclo de semicondutores asiático.",
+  "busca_noticias": "\"MSCI Emerging Markets\" OR \"mercados emergentes\" ações OR \"emerging markets equities\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.ishares.com/uk/individual/en/products/264659/ishares-msci-emerging-markets-imi-ucits-etf"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/fact-sheet/eimi-ishares-core-msci-em-imi-ucits-etf-fund-fact-sheet-en-gb.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-core-msci-em-imi-ucits-etf-usd-acc-gb-ie00bkm4gz66-en.pdf"
+   },
+   {
+    "titulo": "Factsheet do índice MSCI EM IMI (PDF)",
+    "url": "https://www.msci.com/documents/10199/97e25eb7-9bd0-4204-bea9-077095acf1d3"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/uk/individual/en/products/264659/ishares-msci-emerging-markets-imi-ucits-etf",
+   "https://www.ishares.com/gls-download/literature/fact-sheet/eimi-ishares-core-msci-em-imi-ucits-etf-fund-fact-sheet-en-gb.pdf",
+   "https://www.ishares.com/gls-download/literature/kiid/ucits_kiid-ishares-core-msci-em-imi-ucits-etf-usd-acc-gb-ie00bkm4gz66-en.pdf",
+   "https://www.msci.com/documents/10199/97e25eb7-9bd0-4204-bea9-077095acf1d3"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Países vêm do factsheet do índice MSCI EM IMI (30/10/2026), pois a página e o factsheet do fundo só mostram países em gráfico; setores são do fundo (05/11/2026). O factsheet de set/2026 informava patrimônio de US$ 46,80 bi (fundo) em 30/09/2026; a página traz US$ 41,73 bi em 06/11/2026. Na LSE, EIMI = USD e EMIM = GBP (mesma classe); há também classe distribuidora. SRRI 6 de 7 (KIID de 09/02/2026)."
+ },
+ "VFEA": {
+  "nome_completo": "Vanguard FTSE Emerging Markets UCITS ETF (USD) Accumulating",
+  "gestora": "Vanguard (Vanguard Funds plc)",
+  "isin": "IE00BK5BR733",
+  "ticker_bolsa": "VFEA · London Stock Exchange · USD",
+  "domicilio": "Irlanda",
+  "classe_distribuicao": "acumula",
+  "indice": "FTSE Emerging Index",
+  "objetivo": "Replicar o desempenho de ações de grande e média capitalização de países emergentes.",
+  "metodologia": "Réplica física: busca deter todos ou quase todos os componentes nas proporções do índice, recorrendo a amostragem quando a réplica completa não é prática. Índice ponderado por capitalização ajustada ao free float, segundo a classificação de países da FTSE Russell.",
+  "taxa_adm": "0,17% a.a.",
+  "moeda": "USD",
+  "patrimonio": {
+   "valor": "US$ 5,99 bi (fundo, todas as classes); US$ 2,41 bi (classe USD Acc)",
+   "data": "2026-09-30"
+  },
+  "n_posicoes": {
+   "valor": 2321,
+   "data": "2026-09-30"
+  },
+  "exposicao": {
+   "paises": [
+    [
+     "Taiwan",
+     35.4
+    ],
+    [
+     "China",
+     26.7
+    ],
+    [
+     "Índia",
+     15.1
+    ],
+    [
+     "Brasil",
+     4.5
+    ],
+    [
+     "África do Sul",
+     3.7
+    ]
+   ],
+   "setores": [
+    [
+     "Tecnologia",
+     37.2
+    ],
+    [
+     "Financeiro",
+     20.8
+    ],
+    [
+     "Consumo discricionário",
+     8.4
+    ],
+    [
+     "Industrial",
+     7.9
+    ],
+    [
+     "Materiais básicos",
+     6.6
+    ]
+   ],
+   "data": "2026-09-30",
+   "fonte": "Factsheet Vanguard; setores pela classificação ICB."
+  },
+  "principais_posicoes": {
+   "itens": [
+    [
+     "Taiwan Semiconductor Manufacturing (TSMC)",
+     17.9
+    ],
+    [
+     "Tencent Holdings",
+     3.2
+    ],
+    [
+     "Alibaba Group",
+     2.4
+    ],
+    [
+     "MediaTek",
+     2.1
+    ],
+    [
+     "Delta Electronics",
+     1.1
+    ]
+   ],
+   "data": "2026-09-30"
+  },
+  "fatores": [
+   "ações emergentes",
+   "concentração em Taiwan, China e Índia",
+   "semicondutores (TSMC ~18%)",
+   "câmbio de moedas emergentes"
+  ],
+  "riscos": [
+   "Ações: o valor oscila com o mercado, resultados das empresas e notícias políticas e econômicas.",
+   "Emergentes: maior sensibilidade a choques econômicos e políticos, restrições a investimento e transferência e falhas de liquidação.",
+   "Concentração: peso elevado em poucos países, setores ou empresas aumenta a sensibilidade a eventos locais.",
+   "Câmbio: variações das moedas podem reduzir o retorno.",
+   "Rastreamento e amostragem: o fundo pode não replicar perfeitamente o índice."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "EIMI",
+    "diferenca": "MSCI EM IMI: inclui Coreia do Sul (~19% do índice) e small caps; ~2.950 ações e TER 0,18%."
+   },
+   {
+    "ticker": "VWRA",
+    "diferenca": "Carteira global FTSE em que estes mesmos emergentes entram com peso bem menor, ao lado dos desenvolvidos."
+   }
+  ],
+  "papel_na_carteira": "Exposição dedicada a emergentes de grande e média capitalização, hoje muito ligada aos semicondutores de Taiwan, à China e à Índia.",
+  "busca_noticias": "\"FTSE Emerging\" OR \"mercados emergentes\" ações OR \"emerging markets stocks\"",
+  "documentos": [
+   {
+    "titulo": "Página oficial do produto",
+    "url": "https://www.vanguard.co.uk/professional/product/etf/equity/9678/ftse-emerging-markets-ucits-etf-usd-accumulating"
+   },
+   {
+    "titulo": "Factsheet (PDF)",
+    "url": "https://fund-docs.vanguard.com/FTSE_Emerging_Markets_UCITS_ETF_USD_Accumulating_9678_CH_RET_EN.pdf"
+   },
+   {
+    "titulo": "KIID / documento de informações-chave (PDF)",
+    "url": "https://fund-docs.vanguard.com/ie00bk5br733-en.pdf"
+   },
+   {
+    "titulo": "Factsheet UK (link da página oficial)",
+    "url": "https://fund-docs.vanguard.com/FTSE_Emerging_Markets_UCITS_ETF_USD_Accumulating_9678_EU_INT_UK_EN.pdf"
+   },
+   {
+    "titulo": "Prospecto Vanguard ETFs (PDF)",
+    "url": "https://fund-docs.vanguard.com/etf-prospectus-en.pdf"
+   }
+  ],
+  "fontes": [
+   "https://www.vanguard.co.uk/professional/product/etf/equity/9678/ftse-emerging-markets-ucits-etf-usd-accumulating",
+   "https://fund-docs.vanguard.com/FTSE_Emerging_Markets_UCITS_ETF_USD_Accumulating_9678_CH_RET_EN.pdf",
+   "https://fund-docs.vanguard.com/ie00bk5br733-en.pdf"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "Diferença-chave para o EIMI: a FTSE classifica a Coreia do Sul como desenvolvida, então o VFEA não tem Coreia, enquanto o índice MSCI EM IMI tem ~19% (30/10/2026). SRRI 6 de 7 (KIID de 17/02/2026). Setores pela classificação ICB. Na LSE, VFEA é a linha em USD e VFEG a linha em GBP. Factsheet lido é a versão suíça (CH_RET_EN) de 30/09/2026."
+ },
+ "IBIT": {
+  "nome_completo": "iShares Bitcoin Trust ETF",
+  "gestora": "BlackRock (patrocinador: iShares Delaware Trust Sponsor LLC)",
+  "administrador": "The Bank of New York Mellon (Trust Administrator); custódia do bitcoin: Coinbase Custody Trust Company, LLC",
+  "cnpj": null,
+  "isin": "US46438F1012",
+  "ticker_bolsa": "IBIT · NASDAQ · USD",
+  "indice": "CME CF Bitcoin Reference Rate - New York Variant",
+  "indice_metodologia": "Preço de referência do bitcoin calculado pela CF Benchmarks a partir de várias corretoras de criptoativos; o trust usa esse preço para avaliar diariamente o bitcoin que detém. Não há carteira a rebalancear: o fundo detém 100% em bitcoin à vista.",
+  "objetivo": "Acompanhar o preço do bitcoin por meio de um trust que guarda bitcoin à vista, negociado em bolsa nos EUA.",
+  "taxa_adm": "0,25% a.a. (sponsor fee)",
+  "classe_distribuicao": "acumula",
+  "distribuicao_texto": "Não distribui rendimentos (frequência de distribuição: nenhuma); o retorno vem só da variação do preço do bitcoin. O trust vende bitcoin para pagar a taxa, o que reduz aos poucos a quantidade de bitcoin por cota.",
+  "tributacao": null,
+  "patrimonio": {
+   "valor": "US$ 60.695.227.966",
+   "data": "2026-11-06"
+  },
+  "duration": null,
+  "fatores": [
+   "bitcoin (criptoativo)",
+   "dólar (para o investidor brasileiro)",
+   "alta volatilidade"
+  ],
+  "riscos": [
+   "O preço do bitcoin é extremamente volátil e pode cair muito.",
+   "Perda, roubo ou comprometimento das chaves privadas e ataques hackers podem afetar os ativos.",
+   "A cota pode negociar acima ou abaixo do valor do bitcoin detido, e a liquidez pode ser baixa em momentos de estresse.",
+   "O índice de referência tem histórico curto e pode não refletir o preço global do bitcoin.",
+   "O trust não é registrado sob o Investment Company Act de 1940 e não tem as proteções desse regime."
+  ],
+  "semelhantes": [
+   {
+    "ticker": "IBIT39",
+    "diferenca": "BDR do mesmo trust negociado na B3 em reais, lançado em 2024; segundo a B3, inicialmente restrito a investidores qualificados."
+   },
+   {
+    "ticker": "QBTC11",
+    "diferenca": "ETF brasileiro da QR Asset na B3, referenciado em índice de bitcoin da CME CF; fundo local, em reais."
+   }
+  ],
+  "papel_na_carteira": "É a posição de ativo alternativo de altíssima volatilidade da carteira, com retorno que não depende dos juros locais e exposição implícita ao dólar.",
+  "busca_noticias": "\"bitcoin\" OR \"ETF de bitcoin\" OR \"criptoativos\" OR \"cripto\"",
+  "documentos": [
+   {
+    "titulo": "Página do ETF (iShares EUA)",
+    "url": "https://www.ishares.com/us/products/333011/ishares-bitcoin-trust-etf"
+   },
+   {
+    "titulo": "Fact sheet (30/09/2026)",
+    "url": "https://www.ishares.com/us/literature/fact-sheet/ibit-ishares-bitcoin-trust-etf-fund-fact-sheet-en-us.pdf"
+   },
+   {
+    "titulo": "Prospecto",
+    "url": "https://www.ishares.com/us/literature/prospectus/p-ishares-bitcoin-trust-12-31.pdf"
+   },
+   {
+    "titulo": "B3: lançamento do BDR IBIT39",
+    "url": "https://borainvestir.b3.com.br/tipos-de-investimentos/renda-variavel/criptoativos/blackrock-e-banco-b3-anunciam-primeiro-bdr-de-etf-atrelado-ao-bitcoin/"
+   },
+   {
+    "titulo": "B3: início de negociação do QBTC11",
+    "url": "https://www.b3.com.br/pt_br/noticias/mais-um-etf-de-criptomoedas-passa-a-ser-negociado-na-b3.htm"
+   }
+  ],
+  "fontes": [
+   "https://www.ishares.com/us/products/333011/ishares-bitcoin-trust-etf",
+   "https://www.ishares.com/us/literature/fact-sheet/ibit-ishares-bitcoin-trust-etf-fund-fact-sheet-en-us.pdf",
+   "https://www.ishares.com/us/literature/prospectus/p-ishares-bitcoin-trust-12-31.pdf",
+   "https://borainvestir.b3.com.br/tipos-de-investimentos/renda-variavel/criptoativos/blackrock-e-banco-b3-anunciam-primeiro-bdr-de-etf-atrelado-ao-bitcoin/",
+   "https://www.b3.com.br/pt_br/noticias/mais-um-etf-de-criptomoedas-passa-a-ser-negociado-na-b3.htm"
+  ],
+  "consultado_em": "2026-11-07",
+  "notas": "INSTRUMENTO A CONFIRMAR. O ticker 'IBIT' sem sufixo corresponde literalmente ao iShares Bitcoin Trust ETF (NASDAQ: IBIT); os dados acima são desse fundo, segundo a iShares. Nenhum ativo da B3 usa 'IBIT' sem sufixo: a versão brasileira do mesmo trust é o BDR IBIT39 (B3, desde cerca de 01/03/2024). O campo 'proxy EUA = QBTC' parece errado: não confirmei nenhum ETF listado nos EUA com esse ticker. QBTC é usado no Canadá (TSX) e na Austrália (ASX), e QBTC11 é o ETF de bitcoin da QR Asset na B3. Hipótese mais provável: os campos ticker e proxy estão trocados ou truncados, e o ativo local é IBIT39 ou QBTC11. A mesa deve confirmar o que os clientes de fato carregam. Tributação no Brasil não verificada em fonte oficial (depende de ser BDR, ETF local ou ativo no exterior). O ISIN aparece na página da iShares só como parâmetro de link; o CUSIP 46438F101 aparece rotulado. CNPJ e duration ficam nulos porque não se aplicam (trust americano que detém só bitcoin).",
+  "aviso_cadastro": "Instrumento a confirmar. \"IBIT\" sem sufixo é o iShares Bitcoin Trust listado na Nasdaq; na B3 a versão do mesmo fundo é o BDR IBIT39. O par cadastrado (QBTC) não é um ETF listado nos EUA (QBTC11 é outro ETF de bitcoin, da QR Asset, na B3). A ficha descreve o fundo da Nasdaq."
+ }
+}

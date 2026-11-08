@@ -62,6 +62,11 @@ class Resp:
         return False
 
 
+def linha_dre(cnpj, nome, ref, ini, fim, cd, ds, v, versao='1', ordem='ÚLTIMO', escala='MIL'):
+    """Uma linha da DRE consolidada no formato dos dados abertos da CVM (ITR/DFP)."""
+    return [cnpj, ref, versao, nome, '9512', 'DF Consolidado - Demonstração do Resultado', 'REAL', escala, ordem, ini, fim, cd, ds, str(v), 'S']
+
+
 def erro(url, code, corpo=b'', retry=None):
     h = email.message.Message()
     if retry:
@@ -85,6 +90,8 @@ class Mundo:
         self.manchetes = kw.get('manchetes', {})
         self.rss = kw.get('rss', {})  # host -> [(título, dias atrás)]
         self.tickers_b3 = kw.get('tickers_b3', [])
+        self.agenda_ibge = kw.get('agenda_ibge')  # itens do calendário do IBGE (None = lista padrão de teste)
+        self.dre = kw.get('dre', {})  # ('ITR', 2026) -> linhas da DRE consolidada no formato dos dados abertos da CVM
 
     # --- respostas por fonte
     def __call__(self, req, timeout=None):
@@ -253,11 +260,30 @@ class Mundo:
         return Resp('<?xml version="1.0"?><rss><channel>%s</channel></rss>' % xml)
 
     def _ibge(self, url, hdr, dados):
+        if '/calendario' in url:
+            d = self.hoje + dt.timedelta(days=4)
+            itens = self.agenda_ibge if self.agenda_ibge is not None else [
+                {'titulo': 'IPCA - Índice Nacional de Preços ao Consumidor Amplo (teste)', 'produto': 'IPCA', 'data_inicio': d.strftime('%d/%m/%Y') + ' 09:00:00', 'link': 'https://www.ibge.gov.br/teste-ipca', 'tipo': 'Divulgação'},
+                {'titulo': 'Censo Agropecuário: mapa de solos (teste)', 'produto': 'Censo Agro', 'data_inicio': d.strftime('%d/%m/%Y') + ' 10:00:00', 'link': 'https://www.ibge.gov.br/teste-censo', 'tipo': 'Divulgação'}]
+            return Resp(json.dumps({'count': len(itens), 'page': 1, 'totalPages': 1, 'items': itens}))
         return Resp(json.dumps({'items': [
             {'titulo': 'IPCA de outubro fica em 0,40% (teste)', 'introducao': 'Índice de preços ao consumidor', 'data_publicacao': self.hoje.strftime('%d/%m/%Y') + ' 09:00:00', 'link': 'https://ibge.test/1'},
             {'titulo': 'Censo agropecuário divulga mapa de solos (teste)', 'introducao': 'cartografia', 'data_publicacao': self.hoje.strftime('%d/%m/%Y') + ' 10:00:00', 'link': 'https://ibge.test/2'}]}))
 
     def _cvm(self, url, hdr, dados):
+        import re
+        m = re.search(r'/(ITR|DFP)/DADOS/(?:itr|dfp)_cia_aberta_(\d{4})\.zip', url)
+        if m:
+            linhas = self.dre.get((m.group(1), int(m.group(2))))
+            if linhas is None:
+                raise erro(url, 404)
+            cab = 'CNPJ_CIA;DT_REFER;VERSAO;DENOM_CIA;CD_CVM;GRUPO_DFP;MOEDA;ESCALA_MOEDA;ORDEM_EXERC;DT_INI_EXERC;DT_FIM_EXERC;CD_CONTA;DS_CONTA;VL_CONTA;ST_CONTA_FIXA'
+            b = io.BytesIO()
+            pre = m.group(1).lower()
+            with zipfile.ZipFile(b, 'w') as z:
+                z.writestr('%s_cia_aberta_DRE_con_%s.csv' % (pre, m.group(2)), '\n'.join([cab] + [';'.join(r) for r in linhas]).encode('latin-1'))
+                z.writestr('%s_cia_aberta_BPA_con_%s.csv' % (pre, m.group(2)), cab.encode('latin-1'))
+            return Resp(b.getvalue())
         cab = 'CNPJ_Companhia;Nome_Companhia;Codigo_CVM;Data_Referencia;Categoria;Tipo;Especie;Assunto;Data_Entrega;Tipo_Apresentacao;Protocolo_Entrega;Versao;Link_Download'
         linhas = [cab] + [';'.join(r) for r in self.cvm_docs]
         b = io.BytesIO()

@@ -6,9 +6,9 @@
   // RESEARCH BRASIL: empresas, macro → empresas e acontecimentos
   A.areas.res = function () {
     var wrap = h('div'), s = S.sub.res;
-    if (['empresas', 'macro', 'eventos'].indexOf(s) < 0) s = S.sub.res = 'empresas';
+    if (['empresas', 'etfs', 'macro', 'eventos'].indexOf(s) < 0) s = S.sub.res = 'empresas';
     wrap.appendChild(A.subnav('res', A.SUBS.res));
-    wrap.appendChild(s === 'macro' ? macroEmpresas() : s === 'eventos' && A.noticiasTela ? h('div', null, A.pageHead('Research Brasil', 'Acontecimentos', 'Fatos selecionados pela relevância para as carteiras e as teses, não um feed. Cada item diz a fonte, por que importa e o que testar.'), A.noticiasTela()) : empresas());
+    wrap.appendChild(s === 'macro' ? macroEmpresas() : s === 'etfs' ? etfs() : s === 'eventos' && A.noticiasTela ? h('div', null, A.pageHead('Research Brasil', 'Acontecimentos', 'Arquivo completo das notícias e documentos coletados pelo robô, com filtros. O briefing de Hoje mostra só as que mais importam.'), A.noticiasTela()) : empresas());
     return wrap;
   };
   // SALA DE GESTÃO E COMITÊ
@@ -16,82 +16,311 @@
     var wrap = h('div'), s = S.sub.sala, host = document.getElementById('cg-host');
     if (!A.SUBS.sala.some(function (x) { return x[0] === s; })) s = S.sub.sala = 'reuniao';
     if (host) host.hidden = s !== 'comite';
-    wrap.appendChild(A.subnav('sala', A.SUBS.sala));
+    wrap.appendChild(A.subnav('cart', A.SUBS.cart, 'sala'));
+    wrap.appendChild(h('div', {class: 'sub sub2', role: 'toolbar', 'aria-label': 'Comitê e Sala'}, A.SUBS.sala.map(function (it) { return h('button', {'aria-pressed': s === it[0] ? 'true' : 'false', onclick: function () { A.go('sala', it[0]); }}, it[1]); })));
     if (s === 'comite') { wrap.appendChild(h('p', {class: 'hint'}, 'Guia do Comitê de Investimentos de 05 e 06/11/2026 (Research Brasil), preservado sem alterações. A− e A+ mudam o tamanho do texto.')); setTimeout(function () { window.dispatchEvent(new CustomEvent('ov:show', {detail: 'comite'})); }, 0); return wrap; }
     wrap.appendChild(s === 'reuniao' ? A.sala() : s === 'decisoes' ? decisoes() : s === 'textos' ? textos() : s === 'pauta' ? pauta() : historico());
     return wrap;
   };
   A.resPerf = function () { return perf(); };
 
-  /* ---------- Empresas: ficha objetiva ---------- */
-  var EMP = {t: null, f: 'Ações'};
-  A.abrirEmpresa = function (t) { if (t === 'BBDC4') t = 'BBDC3'; if (C.ATV[t]) { EMP.t = t; EMP.f = C.ATV[t].classe || 'Todos'; } A.go('res', 'empresas'); };
+  /* ---------- Research Brasil: empresas e ETFs ----------
+     Fundamentos (estrutural) separados da conjuntura. O robô traz preço, fatos da CVM, notícias e resultados da CVM;
+     à mão fica só a opinião da casa (preço-teto, convicção, premissas e conclusões). O que falta aparece como falta. */
+  var EMP = {t: null, f: 'Ações', setor: null}, ETFS = {t: null, f: 'Todos'};
+  A.ehETF = function (t) { var a = C.ATV[t]; return !!a && (/ETF/.test(a.tipo || '') || t === 'CYPRESS'); };
+  A.abrirEmpresa = function (t) {
+    if (t === 'BBDC4') t = 'BBDC3';
+    if (A.ehETF(t)) { ETFS.t = t; ETFS.f = 'Todos'; A.go('res', 'etfs'); return; }
+    if (C.ATV[t]) { EMP.t = t; EMP.f = C.ATV[t].classe === 'FIIs' ? 'FIIs' : 'Ações'; EMP.setor = null; }
+    A.go('res', 'empresas');
+  };
+  A.abrirSetor = function (setor) { EMP.setor = setor; EMP.f = 'Todos'; EMP.t = null; A.go('res', 'empresas'); };
   function precoVivo(t) {
     var E = A.mercadoEstado || {}, snap = E.snap; if (!snap || !snap.ativos) return null;
-    var c = snap.ativos[t] || (t === 'BBDC4' ? snap.ativos.BBDC3 : null); if (!c || c.preco == null) return c ? {st: MERCADO.estado(c), motivo: c.motivo} : null;
-    return {p: c.preco, var: c.var, data: c.data, hora: c.hora, fonte: c.fonte, st: MERCADO.estado(c), moeda: c.moeda};
+    var q = MERCADO.cotacao(snap, C, t); if (!q) return null; var c = q.c;
+    if (c.preco == null) return {st: MERCADO.estado(c), motivo: c.motivo};
+    return {p: c.preco, var: c.var, data: c.data, hora: c.hora, fonte: c.fonte, st: MERCADO.estado(c), moeda: c.moeda, proxy: q.proxy ? q.id : null};
   }
+  function noticiasDe(t) {
+    var E = A.mercadoEstado || {}, todas = (E.arquivo && E.arquivo.itens) || (E.snap && E.snap.noticias) || [];
+    var r = {alta: 0, media: 1, baixa: 2};
+    return todas.filter(function (n) { return n.tema === t || (t === 'BBDC3' && n.tema === 'BBDC4') || (n.temas || []).indexOf(t) >= 0 || (n.etfs || []).indexOf(t) >= 0; })
+      .sort(function (x, y) { return (y.quando || '').localeCompare(x.quando || '') || (r[MERCADO.relevN(x)] - r[MERCADO.relevN(y)]); });
+  }
+  function brl(v) { if (v == null || !isFinite(v)) return '—'; var a = Math.abs(v); return (v < 0 ? '−' : '') + 'R$ ' + (a >= 1e9 ? A.num(a / 1e9, 1) + ' bi' : a >= 1e6 ? A.num(a / 1e6, 0) + ' mi' : A.num(a, 0)); }
+  function itemNoticia(n, t) {
+    var k = n.classe || {}, rl = MERCADO.relevN(n), indice = (n.etfs || []).indexOf(t) >= 0 && n.tema !== t;
+    return h('div', {class: 'noticia'}, h('div', {class: 'row', style: 'gap:6px;flex-wrap:wrap'}, A.chip(rl, rl === 'alta' ? 'g-critica' : rl === 'media' ? 'g-media' : ''), k.oficial ? A.chip('oficial', 'o-obs') : null, indice ? A.chip('sobre o índice', '') : null,
+      h('span', {class: 'muted', style: 'font-size:.8rem'}, (n.fonte || '') + (n.quando ? ' · ' + A.dataBR(n.quando) : ''))),
+      A.link(n.link) ? h('a', {href: A.link(n.link), target: '_blank', rel: 'noopener'}, n.titulo) : h('b', null, n.titulo), k.porque ? h('div', {class: 'muted', style: 'font-size:.86rem'}, k.porque) : null);
+  }
+  function precoBox(t, a, pv) {
+    var px = pv && pv.p != null ? pv.p : null, mo = pv && pv.moeda === 'USD' ? 'US$ ' : 'R$ ';
+    return h('div', null, h('span', {class: 'k', title: pv && pv.proxy ? 'Sem fonte aberta para a cotação deste ETF: o robô cota o par listado nos EUA, ' + pv.proxy + '. Não é o preço do ETF.' : null}, pv && pv.proxy ? 'Preço do par ' + pv.proxy : 'Último preço'), h('b', null, px != null ? mo + A.num(px, 2) : '—'),
+      h('small', null, pv ? (px != null ? (pv.var != null && pv.st === 'atualizado' ? MERCADO.fmtVar(pv.var, '%') + ' · ' : '') + MERCADO.ESTADO_TXT[pv.st] + ' · ' + A.dataBR(pv.data) + (pv.hora ? ' ' + pv.hora : '') + ' · ' + pv.fonte + (pv.proxy ? ' · não é o preço do ETF' : '') : 'sem cotação' + (pv.motivo ? ': ' + pv.motivo : '')) : 'sem leitura do robô'));
+  }
+  function pesosRef(t) {
+    var pw = A.pesosDoAtivo ? A.pesosDoAtivo(t) : [], ref = A.REF.map(function (r) { return r[0]; });
+    return h('p', {style: 'font-size:.92rem;margin:6px 0 12px'}, h('span', {class: 'k', style: 'margin-right:8px'}, 'Nas carteiras'), pw.length ? pw.map(function (x, i) { var eh = ref.indexOf(x.m.id) >= 0; return h('span', null, i ? ' · ' : '', eh ? h('b', null, A.REF.filter(function (r) { return r[0] === x.m.id; })[0][1]) : x.m.rotulo, ' ', h('b', null, A.pct(x.w, 1))); }) : h('span', {class: 'muted'}, 'em nenhuma carteira aprovada'));
+  }
+
+  /* ---- resultados da CVM (automático) ---- */
+  // Lucro mostrado: o atribuído aos controladores (o que o mercado divulga); sem essa linha, o consolidado, com o nome dito
+  function lucroDe(x) { return x.lucro_controladores != null ? {v: x.lucro_controladores, rot: 'controladores'} : x.lucro != null ? {v: x.lucro, rot: 'consolidado'} : null; }
+  function receitaDeVendas(x) { return /receita de venda/i.test(x && x.receita_conta || ''); }
+  function resultadosBox(t, a) {
+    if (a.classe === 'FIIs') return h('p', {class: 'muted'}, 'Fundos imobiliários entregam à CVM informes mensais, não ITR/DFP de companhia aberta: o robô ainda não coleta esses informes.');
+    var R = A.resultadosDe ? A.resultadosDe(t === 'BBDC4' ? 'BBDC3' : t) : null;
+    if (!R || A.mercadoBloqueado && A.mercadoBloqueado()) return h('p', {class: 'muted'}, 'Os resultados chegam pelo robô (CVM, dados abertos) e aparecem no site do painel.');
+    if (R.carregando) return h('p', {class: 'muted'}, 'Carregando os resultados da CVM…');
+    if (R.falhou) return h('p', {class: 'muted'}, 'Não foi possível baixar o arquivo de resultados agora; nova tentativa em alguns minutos. Nenhum número foi preenchido no lugar.');
+    if (!R.dados) return h('p', {class: 'muted'}, 'Arquivo de resultados ainda não publicado pelo robô (ele lê a CVM na rodada de fechamento, a cada 3 dias).');
+    if (!R.emp) return h('p', {class: 'muted'}, 'Sem DRE desta empresa no arquivo da CVM' + (R.fora ? ': ' + R.fora : '') + '.');
+    var tri = R.emp.trimestres || [], ano = R.emp.anuais || [], linhas = tri.slice(-5), todas = linhas.concat(ano.slice(-1));
+    var ref = tri[tri.length - 1] || ano[ano.length - 1] || {}, nomeConta = ref.receita_conta || '3.01 Receita', vendas = receitaDeVendas(ref);
+    var rotL = todas.some(function (x) { return x.lucro_controladores != null; }) ? 'Lucro (controladores)' : 'Lucro consolidado';
+    var tb = h('table', {class: 't'}, h('thead', null, h('tr', null, h('th', null, 'Período'), h('th', {class: 'r', title: nomeConta}, 'Receita'), h('th', {class: 'r'}, rotL), vendas ? h('th', {class: 'r', title: 'lucro ÷ receita de vendas (cálculo)'}, 'Margem') : null)),
+      h('tbody', null, todas.map(function (x) { var L = lucroDe(x); return h('tr', {title: (x.ebit != null ? 'Resultado antes do resultado financeiro: ' + brl(x.ebit) + '. ' : '') + (x.lucro != null ? 'Lucro consolidado (com minoritários): ' + brl(x.lucro) + '.' : '')}, h('td', null, x.periodo + (x.documento === 'DFP' ? ' (ano)' : '') + (x.versao > 1 ? '*' : '')), h('td', {class: 'r num'}, brl(x.receita)), h('td', {class: 'r num'}, L ? brl(L.v) + (L.rot !== 'controladores' && rotL === 'Lucro (controladores)' ? '†' : '') : '—'), vendas ? h('td', {class: 'r num'}, receitaDeVendas(x) && x.receita > 0 && L ? A.pct(L.v / x.receita, 1) : '—') : null); })));
+    var ult = tri[tri.length - 1], ant = ult ? tri.filter(function (x) { return x.periodo.slice(0, 2) === ult.periodo.slice(0, 2) && x.periodo !== ult.periodo; }).pop() : null;
+    var Lu = ult && lucroDe(ult), La = ant && lucroDe(ant), comp = Lu && La && Lu.rot === La.rot ? (Lu.v > 0 && La.v > 0 ? h('span', null, h('b', {class: A.cls(Lu.v / La.v - 1)}, A.spct(Lu.v / La.v - 1, 1)), ' (cálculo com os dois valores informados)') : 'variação percentual não calculada: um dos dois trimestres teve prejuízo (' + brl(La.v) + ' → ' + brl(Lu.v) + ')') : null;
+    return h('div', null, tb,
+      comp ? h('p', {style: 'font-size:.9rem;margin:6px 0 0'}, 'Lucro do ' + ult.periodo + ' contra o ' + ant.periodo + ': ', comp, '.') : null,
+      ult && ult.ebit != null ? h('p', {style: 'font-size:.9rem;margin:4px 0 0'}, 'Resultado antes do resultado financeiro no ' + ult.periodo + ': ' + brl(ult.ebit) + (vendas && ult.receita ? ' (' + A.pct(ult.ebit / ult.receita, 1) + ' da receita)' : '') + '.') : null,
+      linhas.some(function (x) { return x.versao > 1; }) ? h('p', {class: 'hint'}, '* reapresentado pela empresa: vale a versão mais recente.') : null,
+      todas.some(function (x) { var L = lucroDe(x); return L && L.rot !== 'controladores'; }) && rotL === 'Lucro (controladores)' ? h('p', {class: 'hint'}, '† sem a linha dos controladores no formulário: mostrado o lucro consolidado.') : null,
+      (R.dados.erros || []).length ? h('div', {class: 'alert warn', style: 'font-size:.84rem'}, 'Na última leitura da CVM, parte dos arquivos falhou (' + R.dados.erros.slice(0, 2).join('; ') + '). Os períodos já lidos antes foram mantidos; pode faltar o trimestre mais recente.') : null,
+      h('p', {class: 'hint'}, 'DRE consolidada informada à CVM (ITR trimestral, DFP anual), versão mais recente. Receita é a conta “' + nomeConta + '”' + (vendas ? '' : ': em bancos, seguradoras e holdings ela não é receita de vendas, por isso a margem não é calculada') + '. Quarto trimestre não é calculado. Fonte: ' + (R.dados.fonte || 'CVM') + ' · ' + (R.dados.licenca || '') + ' · lido em ' + A.dataBR(R.dados.gerado_em) + '.'));
+  }
+
+  /* ---- exposição: juros, câmbio, regulação, commodities ---- */
+  var REGULADOS = {'Energia elétrica': 'ANEEL: tarifa, revisão tarifária e renovação de concessões', 'Energia e saneamento': 'ANEEL e agências de saneamento: tarifa e concessões', 'Seguros': 'SUSEP: regras de capital e produtos', 'Bancos': 'Banco Central: capital (Basileia), compulsório e crédito', 'Bancos digitais': 'Banco Central: capital e meios de pagamento', 'Holding (Itaú)': 'Banco Central, pelo Itaú', 'Petróleo': 'ANP e política de preços de combustíveis'};
+  function nivelTxt(v, lim) { if (v == null || !isFinite(v) || Math.abs(v) < 1e-9) return null; var x = Math.abs(v); return x >= lim[0] ? 'alta' : x >= lim[1] ? 'média' : 'baixa'; }
+  function exposicaoBox(t, a, sen, org) {
+    var s = sen && sen.m === 'acao' ? sen : null, f = sen && sen.m === 'fii' ? sen : null, G = {}; ((C.D && C.D.grupos) || []).forEach(function (g) { if ((g.tickers || []).indexOf(t) >= 0) G[g.id] = g; });
+    var cel = function (rot, nivel, txt, base) { return h('div', {class: 'fxc'}, h('span', {class: 'k'}, rot), h('b', {class: 'lv-' + (nivel || 'nd')}, nivel || 'sem premissa'), h('div', {style: 'font-size:.86rem'}, txt), base ? h('div', {class: 'muted', style: 'font-size:.78rem;margin-top:3px'}, base) : null); };
+    var j = s ? s.j : null, u = s ? s.u : null, b = s ? s.b : null;
+    var jur = s ? cel('Juros', nivelTxt(j, [4, 2]), j ? (j < 0 ? 'Cai ' : 'Sobe ') + A.num(Math.abs(j), 1) + '% para cada +1 p.p. na curva prefixada, além do que o beta explica.' : 'Sem sensibilidade residual a juros cadastrada.' + (G.jur ? ' Está no grupo de ações sensíveis a juros: ' + G.jur.canal + '.' : ''), 'premissa · ' + (org === 'gestor' ? 'do gestor' : 'hipótese inicial a revisar'))
+      : f ? cel('Juros', nivelTxt(f.d, [6, 3]), 'Duration de juro real de ' + A.num(f.d, 1) + ' anos: +1 p.p. no IPCA+ ≈ −' + A.num(f.d, 1) + '% no valor.', 'premissa') : cel('Juros', null, 'Sem sensibilidade cadastrada.');
+    var cam = cel('Câmbio', nivelTxt(u, [0.4, 0.15]), u ? (u > 0 ? 'Ganha ' : 'Perde ') + A.num(Math.abs(u), 2) + '% para cada +1% no dólar (receita ou custo em dólar).' : 'Sem sensibilidade cadastrada ao dólar.', s ? 'premissa' : null);
+    var reg = cel('Regulação', REGULADOS[a.setor] || (a.tags || []).indexOf('Regulatório') >= 0 ? 'alta' : null, REGULADOS[a.setor] || ((a.tags || []).indexOf('Regulatório') >= 0 ? 'Marcada como regulatória nas Teses.' : 'Sem regulador setorial específico relevante nas fontes do painel.'), 'leitura qualitativa, sem número');
+    var com = cel('Commodities', nivelTxt(b, [0.3, 0.1]) || (a.setor === 'Papel e celulose' || a.setor === 'Agronegócio' ? 'média' : null), b ? 'Brent: ' + (b > 0 ? '+' : '−') + A.num(Math.abs(b), 2) + '% para cada +1% no petróleo.' : a.setor === 'Papel e celulose' ? 'Celulose: preço em dólar, sem série aberta no robô; sem elasticidade cadastrada.' : a.setor === 'Agronegócio' ? 'Grãos e insumos: sem série aberta no robô; sem elasticidade cadastrada.' : 'Sem exposição direta a commodities nas premissas.', b ? 'premissa' : 'qualitativo');
+    return h('div', null, h('div', {class: 'fx-grid'}, jur, cam, reg, com), h('p', {class: 'hint'}, 'Alta, média ou baixa pelo tamanho da sensibilidade cadastrada (premissas usadas no motor de cenários, não medições). Para editar: Carteiras → Risco e cenários → Premissas.'));
+  }
+  function setorBox(t, a) {
+    var pares = Object.keys(C.ATV).filter(function (x) { var b = C.ATV[x]; return x !== t && b.status !== 'placeholder' && !A.ehETF(x) && b.setor && (b.setor === a.setor || (a.grupo_economico && b.grupo_economico === a.grupo_economico)); });
+    var gr = ((C.D && C.D.grupos) || []).filter(function (g) { return (g.tickers || []).indexOf(t) >= 0; });
+    gr.forEach(function (g) { (g.tickers || []).forEach(function (x) { if (x !== t && C.ATV[x] && C.ATV[x].status !== 'placeholder' && pares.indexOf(x) < 0 && !A.ehETF(x)) pares.push(x); }); });
+    if (!pares.length) return h('p', {class: 'muted'}, 'Nenhuma outra empresa do mesmo setor ou canal macro nas teses.');
+    return h('div', null, gr.length ? h('p', {style: 'font-size:.88rem;margin:0 0 6px'}, gr.map(function (g) { return h('span', {class: 'chip', title: g.canal, style: 'margin-right:4px'}, g.nome || g.id); })) : null,
+      A.table([{k: 't', t: 'Empresa', f: function (r) { return h('span', null, A.tk(r.t), ' ', h('span', {class: 'muted', style: 'font-size:.84rem'}, C.ATV[r.t].setor)); }},
+        {k: 'v', t: 'Dia', r: 1, f: function (r) { return r.v == null ? '—' : h('span', {class: A.cls(r.v)}, MERCADO.fmtVar(r.v, '%')); }},
+        {k: 'up', t: 'Até o teto', r: 1, f: function (r) { return r.up == null ? '—' : h('span', {class: A.cls(r.up)}, A.spct(r.up, 0)); }}],
+        pares.map(function (x) { var pv = precoVivo(x), ok = pv && pv.st === 'atualizado' && pv.p != null; return {t: x, v: ok ? pv.var : null, up: ok && C.ATV[x].teto ? C.ATV[x].teto / pv.p - 1 : null}; }), {sort: 't', dir: 1, onRow: function (r) { EMP.t = r.t; A.render(); }}));
+  }
+  /* ---- opinião da casa: o único preenchimento manual ---- */
+  var RASC = {};  // rascunhos por ativo: a tela pode ser redesenhada por dado novo sem perder o que foi digitado e não salvo
+  function opiniaoBox(t, a) {
+    var doc = STORE.get('teses', t) || {}, op = doc.opiniao || {};
+    var novo = RASC[t] || (RASC[t] = {teto: op.teto || '', conviccao: op.conviccao || '', premissas: op.premissas || '', conclusao: op.conclusao || ''});
+    var teto = h('input', {class: 'inp', type: 'number', step: '0.01', min: '0', value: novo.teto, placeholder: a.teto ? 'Teses: ' + A.num(a.teto, 2) : 'R$', oninput: function () { novo.teto = teto.value; }});
+    var conv = h('select', {class: 'inp', onchange: function () { novo.conviccao = conv.value; }}, [['', '—'], ['alta', 'Alta'], ['media', 'Média'], ['baixa', 'Baixa']].map(function (o) { return h('option', {value: o[0], selected: novo.conviccao === o[0] || null}, o[1]); }));
+    var prem = h('textarea', {class: 'inp w', style: 'min-height:70px', placeholder: 'Premissas próprias: crescimento, margens, custo de capital, cenário de juros…', oninput: function () { novo.premissas = prem.value; }}); prem.value = novo.premissas;
+    var conc = h('textarea', {class: 'inp w', style: 'min-height:70px', placeholder: 'Conclusão da casa e decisão do comitê (com a data da reunião)', oninput: function () { novo.conclusao = conc.value; }}); conc.value = novo.conclusao;
+    var mudou = ['teto', 'conviccao', 'premissas', 'conclusao'].some(function (k) { return String(novo[k] || '') !== String(op[k] || ''); });
+    var onde = STORE.mode === 'db' ? 'no banco deste painel no claude.ai' : 'neste navegador (use “Dados” no topo para exportar e levar a outro aparelho)';
+    var hist = doc.opinioes || [];
+    return A.sec('Opinião da casa', {hint: 'O único campo preenchido à mão. Fica salvo ' + onde + '; cada gravação guarda a anterior no histórico. Não muda carteira nem premissa de cenário.', right: h('button', {class: 'btn pri', onclick: async function () {
+      var reg = {teto: novo.teto === '' ? null : Number(novo.teto), conviccao: novo.conviccao || null, premissas: String(novo.premissas || '').trim(), conclusao: String(novo.conclusao || '').trim(), quando: STORE.now()};
+      if (reg.teto != null && !(reg.teto > 0)) { A.toast('Preço-teto precisa ser um número positivo.'); return; }
+      var d2 = C.clone(STORE.get('teses', t) || {}); if (d2.opiniao) d2.opinioes = (d2.opinioes || []).concat([d2.opiniao]).slice(-30); d2.opiniao = reg;
+      await STORE.put('teses', t, d2); await STORE.audit('opinião da casa salva', t); delete RASC[t]; A.toast('Opinião da casa sobre ' + t + ' salva ' + (STORE.mode === 'db' ? 'no painel.' : 'neste navegador.')); A.render();
+    }}, 'Salvar')}, [
+      mudou ? h('div', {class: 'alert warn', style: 'margin-top:0;font-size:.86rem'}, 'Há alterações ainda não salvas nesta ficha.') : null,
+      op.quando ? h('div', {class: 'alert ok', style: 'margin-top:0'}, h('b', null, 'Registrada em ' + A.dataBR(op.quando) + ': '), [op.teto ? 'teto da casa R$ ' + A.num(op.teto, 2) : null, op.conviccao ? 'convicção ' + {alta: 'alta', media: 'média', baixa: 'baixa'}[op.conviccao] : null].filter(Boolean).join(' · ') || 'sem teto nem convicção', op.conclusao ? h('div', {style: 'margin-top:4px'}, op.conclusao) : null) : null,
+      h('div', {class: 'form', style: 'grid-template-columns:repeat(2,minmax(0,1fr))'}, h('label', {class: 'field'}, 'Preço-teto da casa (R$)', teto), h('label', {class: 'field'}, 'Convicção', conv)),
+      h('label', {class: 'field'}, 'Premissas próprias', prem), h('label', {class: 'field'}, 'Conclusões e decisões do comitê', conc),
+      a.teto ? h('p', {class: 'hint'}, 'Referência oficial: preço-teto das Teses de 04/11/2026, R$ ' + A.num(a.teto, 2) + (a.metodologia_teto ? ' (' + a.metodologia_teto + ')' : ' (metodologia não informada)') + '.') : null,
+      hist.length ? A.more('Histórico (' + hist.length + ')', h('ul', null, hist.slice().reverse().map(function (o) { return h('li', null, A.dataBR(o.quando) + ': ' + [o.teto ? 'teto R$ ' + A.num(o.teto, 2) : null, o.conviccao ? 'convicção ' + o.conviccao : null, o.conclusao].filter(Boolean).join(' · ')); }))) : null,
+      doc.campos || doc.kpi ? A.more('Registros da versão anterior da ficha (só leitura)', h('dl', {class: 'kv'}, Object.keys(doc.campos || {}).filter(function (k) { return doc.campos[k]; }).map(function (k) { return [h('dt', null, k), h('dd', null, doc.campos[k])]; }), Object.keys(doc.kpi || {}).filter(function (k) { return doc.kpi[k] && doc.kpi[k].v; }).map(function (k) { return [h('dt', null, k), h('dd', null, doc.kpi[k].v + (doc.kpi[k].f ? ' · ' + doc.kpi[k].f : ''))]; }))) : null]);
+  }
+
+  /* ---- lista de empresas ---- */
   function empresas() {
     var wrap = h('div');
-    wrap.appendChild(A.pageHead('Research Brasil · inteligência fundamentalista', 'Empresas', 'Ficha objetiva de cada ativo: o que é estrutural na tese separado do que é conjuntural, valuation com o preço do robô e o peso em cada carteira.',
+    wrap.appendChild(A.pageHead('Research Brasil · centro da análise', 'Empresas', 'Fundamentos separados da conjuntura. O robô traz preço, documentos da CVM, notícias e resultados; à mão fica só a opinião da casa.',
       h('button', {class: 'btn', onclick: function () { var d = A.drawer('Teses da Carteira Oregon · visão geral', A.tesesOregon()); d.classList.add('wide'); }}, 'Visão geral das teses')));
-    var lista = Object.keys(C.ATV).filter(function (t) { var a = C.ATV[t]; return a.status !== 'placeholder' && (EMP.f === 'Todos' || a.classe === EMP.f); });
+    var lista = Object.keys(C.ATV).filter(function (t) { var a = C.ATV[t]; return a.status !== 'placeholder' && !A.ehETF(t) && (a.classe === 'Ações' || a.classe === 'FIIs') && (EMP.f === 'Todos' || a.classe === EMP.f) && (!EMP.setor || a.setor === EMP.setor); });
     if (!EMP.t || lista.indexOf(EMP.t) < 0) EMP.t = lista[0];
-    var fsel = h('div', {class: 'sub', style: 'margin:0 0 8px'}, ['Ações', 'FIIs', 'Renda fixa', 'Alternativos', 'Todos'].map(function (x) { return h('button', {'aria-pressed': EMP.f === x ? 'true' : 'false', onclick: function () { EMP.f = x; EMP.t = null; A.render(); }}, x); }));
-    var rows = lista.map(function (t) { var a = C.ATV[t], pv = precoVivo(t), px = pv && pv.p != null ? pv.p : null, ok = pv && pv.st === 'atualizado'; return {t: t, nome: a.nome, setor: a.setor, rec: a.rec, px: px, st: pv ? pv.st : 'indisponivel', var: pv ? pv.var : null, up: a.teto && px && ok ? a.teto / px - 1 : null, w: (A.pesosDoAtivo ? A.pesosDoAtivo(t) : []).length}; });
+    var fsel = h('div', {class: 'sub', style: 'margin:0 0 8px'}, ['Ações', 'FIIs', 'Todos'].map(function (x) { return h('button', {'aria-pressed': EMP.f === x && !EMP.setor ? 'true' : 'false', onclick: function () { EMP.f = x; EMP.setor = null; EMP.t = null; A.render(); }}, x); }),
+      EMP.setor ? h('button', {'aria-pressed': 'true', title: 'Tirar o filtro de setor', onclick: function () { EMP.setor = null; A.render(); }}, 'Setor: ' + EMP.setor + ' ✕') : null);
+    var rows = lista.map(function (t) { var a = C.ATV[t], pv = precoVivo(t), px = pv && pv.p != null ? pv.p : null, ok = pv && pv.st === 'atualizado'; return {t: t, nome: a.nome, setor: a.setor, px: px, st: pv ? pv.st : 'indisponivel', var: pv && ok ? pv.var : null, up: a.teto && px && ok ? a.teto / px - 1 : null, nf: noticiasDe(t).filter(function (n) { return (n.quando || '') >= MERCADO.menosDias(MERCADO.hojeBRT(), 3) && MERCADO.relevN(n) !== 'baixa'; }).length}; });
     var g = h('div', {class: 'grid-emp'}), L = h('div', {class: 'sticky'}), R = h('div'); g.append(L, R); wrap.appendChild(g);
-    L.appendChild(A.sec('Ativos', {flush: true}, [h('div', {style: 'padding:0 18px'}, fsel), A.table([
-      {k: 't', t: 'Ativo', f: function (r) { return h('span', null, h('b', null, r.t), h('div', {class: 'muted', style: 'font-size:.8rem'}, r.setor || r.nome)); }},
-      {k: 'var', t: 'Dia', r: 1, f: function (r) { return r.var == null ? h('span', {class: 'muted'}, '—') : h('span', {class: r.st === 'atualizado' ? A.cls(r.var) : 'muted', title: MERCADO.ESTADO_TXT[r.st]}, MERCADO.fmtVar(r.var, '%')); }},
+    L.appendChild(A.sec('Empresas', {flush: true}, [h('div', {style: 'padding:0 18px'}, fsel), A.table([
+      {k: 't', t: 'Ativo', f: function (r) { return h('span', null, h('b', null, r.t), r.nf ? h('i', {class: 'nfdot', title: r.nf + ' fato(s) novo(s) nos últimos 3 dias'}) : null, h('div', {class: 'muted', style: 'font-size:.8rem'}, r.setor || r.nome)); }},
+      {k: 'var', t: 'Dia', r: 1, f: function (r) { return r.var == null ? h('span', {class: 'muted', title: MERCADO.ESTADO_TXT[r.st]}, '—') : h('span', {class: A.cls(r.var)}, MERCADO.fmtVar(r.var, '%')); }},
       {k: 'up', t: 'Até o teto', r: 1, f: function (r) { return r.up == null ? '—' : h('span', {class: A.cls(r.up)}, A.spct(r.up, 0)); }}
-    ], rows, {sort: 't', dir: 1, search: 'Filtrar', onRow: function (r) { EMP.t = r.t; A.render(); }, rowClass: function (r) { return r.t === EMP.t ? 'sel' : null; }})]));
-    R.appendChild(empresa(EMP.t));
+    ], rows, {sort: 't', dir: 1, search: 'Filtrar', onRow: function (r) { EMP.t = r.t; A.rerender(); }, rowClass: function (r) { return r.t === EMP.t ? 'sel' : null; }})]));
+    R.appendChild(EMP.t ? empresa(EMP.t) : h('p', {class: 'empty'}, 'Nenhuma empresa neste filtro.'));
     return wrap;
   }
+  function blocoTxt(tit, conteudo) { return conteudo ? h('div', {class: 'fbloco'}, h('h3', null, tit), conteudo) : null; }
   function empresa(t) {
     var a = C.ATV[t]; if (!a) return h('div');
     var box = h('div'), pv = precoVivo(t), tx = A.teseDe(t), T = tx && tx.tese, P = A.prem(), sen = P.sens[t], org = P.origem[t] || (P.estimadas[t] ? 'e' : null);
-    box.appendChild(h('div', {class: 'tv'}, h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' + (C.PIL[a.pilar] ? C.PIL[a.pilar].nome : '') + ' · ' : '') + (a.setor || a.tipo)), h('h2', {class: 'tv-nome'}, a.nome, h('span', {class: 'tv-tk'}, t), A.stchip(a.status))));
-    // valuation: preço do robô × preço-teto das Teses; o que não existe aparece como não informado
-    var px = pv && pv.p != null ? pv.p : null, up = a.teto && px && pv.st === 'atualizado' ? a.teto / px - 1 : null, mo = pv && pv.moeda === 'USD' ? 'US$ ' : 'R$ ';
-    box.appendChild(h('div', {class: 'vbox'},
-      h('div', null, h('span', {class: 'k'}, 'Preço atual'), h('b', null, px != null ? mo + A.num(px, 2) : '—'), h('small', null, pv ? (px != null ? MERCADO.ESTADO_TXT[pv.st] + ' · ' + A.dataBR(pv.data) + (pv.hora ? ' ' + pv.hora : '') + ' · ' + pv.fonte : 'sem cotação' + (pv.motivo ? ': ' + pv.motivo : '')) : 'sem leitura do robô')),
-      h('div', null, h('span', {class: 'k'}, 'Preço-teto'), h('b', null, a.teto ? 'R$ ' + A.num(a.teto, 2) : '—'), h('small', null, a.teto ? (a.fonte_preco || 'Teses') + (a.metodologia_teto ? ' · ' + a.metodologia_teto : ' · metodologia não informada') : 'não informado')),
+    box.appendChild(h('div', {class: 'tv'}, h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' + (C.PIL[a.pilar] ? C.PIL[a.pilar].nome : '') + ' · ' : '') + (a.setor || a.tipo)), h('h2', {class: 'tv-nome'}, a.nome, h('span', {class: 'tv-tk'}, t), A.stchip(a.status), a.rec ? h('span', {class: 'tv-peso'}, a.rec) : null)));
+    // valuation: preço do robô × preço-teto das Teses
+    var px = pv && pv.p != null ? pv.p : null, up = a.teto && px && pv.st === 'atualizado' ? a.teto / px - 1 : null;
+    var op = (STORE.get('teses', t) || {}).opiniao;
+    box.appendChild(h('div', {class: 'vbox'}, precoBox(t, a, pv),
+      h('div', null, h('span', {class: 'k'}, 'Preço-teto (Teses)'), h('b', null, a.teto ? 'R$ ' + A.num(a.teto, 2) : '—'), h('small', null, a.teto ? (a.fonte_preco || 'Teses') + (a.metodologia_teto ? ' · ' + a.metodologia_teto : ' · metodologia não informada') : 'não informado')),
       h('div', null, h('span', {class: 'k'}, 'Até o teto'), h('b', {class: A.cls(up)}, up != null ? A.spct(up, 1) : '—'), h('small', null, up != null ? 'teto ÷ preço atual − 1 (cálculo)' : px != null && a.teto ? 'preço ' + MERCADO.ESTADO_TXT[pv.st] + ': cálculo suspenso' : 'falta preço ou teto')),
-      h('div', null, h('span', {class: 'k'}, 'Valor justo'), h('b', null, a.justo ? 'R$ ' + A.num(a.justo, 2) : '—'), h('small', null, a.justo ? 'Teses' : 'não informado')),
-      h('div', null, h('span', {class: 'k'}, 'Recomendação'), h('b', {style: 'font-size:1.05rem;font-family:var(--sans);font-weight:600'}, a.rec || '—'), h('small', null, a.rec ? 'Teses de 04/11/2026' : 'não informada')),
+      h('div', null, h('span', {class: 'k'}, 'Teto da casa'), h('b', null, op && op.teto ? 'R$ ' + A.num(op.teto, 2) : '—'), h('small', null, op && op.teto ? 'opinião registrada em ' + A.dataBR(op.quando) + (px && pv.st === 'atualizado' ? ' · até o teto ' + A.spct(op.teto / px - 1, 1) : '') : 'não registrado (Opinião da casa, abaixo)')),
+      h('div', null, h('span', {class: 'k'}, 'Proventos 12 meses'), h('b', null, a.dy_12m != null ? A.pct(a.dy_12m, 1) : '—'), h('small', null, a.dy_12m != null ? 'dividend yield · ' + (a.fonte_ret || 'deck') : 'não informado')),
       h('div', null, h('span', {class: 'k'}, 'Retorno 12m'), h('b', {class: A.cls(a.ret_12m)}, a.ret_12m != null ? A.spct(a.ret_12m, 1) : '—'), h('small', null, a.ret_12m != null ? (a.fonte_ret || '') : 'não informado'))));
-    box.appendChild(h('p', {class: 'hint'}, 'Retorno esperado e convicção: não informados nas fontes do painel; não são estimados aqui.'));
-    var pw = A.pesosDoAtivo ? A.pesosDoAtivo(t) : [];
-    box.appendChild(h('p', {style: 'font-size:.92rem'}, h('span', {class: 'k', style: 'margin-right:8px'}, 'Nas carteiras'), pw.length ? pw.map(function (x, i) { return h('span', null, i ? ' · ' : '', x.m.rotulo + ' ', h('b', null, A.pct(x.w, 1))); }) : h('span', {class: 'muted'}, 'em nenhuma carteira aprovada')));
+    if (a.ponto) box.appendChild(h('p', {class: 'tv-lead', style: 'margin:0 0 10px'}, h('b', null, (a.ponto_t || 'Leitura de valuation') + ': '), a.ponto));
+    box.appendChild(pesosRef(t));
+    // últimas atualizações (conjuntura), no topo
+    var nots = noticiasDe(t), lim = MERCADO.menosDias(MERCADO.hojeBRT(), 14), rec = nots.filter(function (n) { return (n.quando || '') >= lim; });
+    box.appendChild(A.sec('Últimas atualizações', {hint: 'Documentos da CVM e manchetes que citam a empresa certa (desambiguadas), das últimas duas semanas. A relevância é por regras, sem IA.'}, rec.length ? h('div', null, rec.slice(0, 6).map(function (n) { return itemNoticia(n, t); }), rec.length > 6 ? A.more('Mais ' + (rec.length - 6), rec.slice(6).map(function (n) { return itemNoticia(n, t); })) : null) : h('p', {class: 'empty'}, nots.length ? 'Nada novo nas últimas duas semanas; o último fato é de ' + A.dataBR(nots[0].quando) + '.' : 'Nenhum fato da empresa no arquivo do robô.')));
     var g = h('div', {class: 'grid2'}), L = h('div'), R = h('div'); g.append(L, R); box.appendChild(g);
-    // ESTRUTURAL
-    L.appendChild(h('div', {class: 'k', style: 'margin:4px 0 8px'}, 'Estrutural · a tese'));
-    if (T) L.appendChild(A.sec('Tese · documento de 30/10/2026', {right: h('button', {class: 'btn sm', onclick: function () { A.abrirTese(t); }}, 'Tela cheia')}, A.teseView(t)));
-    else L.appendChild(A.sec('Tese', null, h('div', null, tx && tx.nota ? h('div', {class: 'alert warn'}, tx.nota) : h('p', {class: 'muted'}, 'Sem tese no documento de 30/10/2026.'), a.tese ? h('p', null, a.tese) : null, a.motores ? h('p', null, h('b', null, 'Motores: '), a.motores) : null, a.riscos ? h('p', null, h('b', null, 'Riscos: '), a.riscos) : null)));
-    // CONJUNTURAL
-    R.appendChild(h('div', {class: 'k', style: 'margin:4px 0 8px'}, 'Conjuntural · o que mudou'));
+    // FUNDAMENTOS
+    L.appendChild(h('div', {class: 'k', style: 'margin:4px 0 8px'}, 'Fundamentos · estrutural'));
+    var fund = h('div', {class: 'tv'});
+    if (T) {
+      fund.append(
+        blocoTxt('Tese estrutural', h('div', null, h('p', null, T.resumo), T.papel_titulo ? h('p', null, h('b', null, T.papel_titulo + '. '), T.papel) : null)),
+        blocoTxt('Modelo de negócio', h('div', null, a.tese ? h('p', null, a.tese) : null, (T.fundamentos || []).length ? h('ul', null, T.fundamentos.map(function (x) { return h('li', null, h('b', null, x.titulo + ': '), x.texto); })) : null)),
+        blocoTxt('Drivers', h('div', null, a.motores ? h('ul', null, a.motores.split(' · ').map(function (x) { return h('li', null, x); })) : null, (T.numeros || []).length ? h('p', {class: 'muted', style: 'font-size:.9rem'}, T.numeros.join(' ')) : null)),
+        blocoTxt('Riscos', (T.riscos || []).length ? h('ul', null, T.riscos.map(function (x) { return h('li', null, h('b', null, x.titulo + ': '), x.texto); })) : (a.riscos ? h('p', null, a.riscos) : null)),
+        blocoTxt('Perguntas a responder', h('div', null, T.questao ? h('p', {class: 'tv-lead'}, T.questao) : null, (T.criterios || []).length ? h('div', null, h('b', null, 'O que mudaria a tese'), h('ul', null, T.criterios.map(function (x) { return h('li', null, x); }))) : null,
+          (T.indicadores || []).length || a.acompanhamos ? h('div', null, h('b', null, 'O que acompanhar'), h('ul', null, (T.indicadores || []).map(function (x) { return h('li', null, x); }).concat(a.acompanhamos ? [h('li', null, a.acompanhamos)] : []))) : null)));
+      fund.appendChild(h('p', {class: 'hint'}, (T.fontes || '') + ' Texto das Teses de 30/10/2026, sem alteração. ', h('button', {class: 'btn link', onclick: function () { A.abrirTese(t); }}, 'Tese em tela cheia')));
+    } else {
+      fund.append(tx && tx.nota ? h('div', {class: 'alert warn'}, tx.nota) : h('p', {class: 'muted'}, 'Sem tese no documento de 30/10/2026.'),
+        blocoTxt('Tese', a.tese ? h('p', null, a.tese) : null), blocoTxt('Drivers', a.motores ? h('p', null, a.motores) : null), blocoTxt('Riscos', a.riscos ? h('p', null, a.riscos) : null), blocoTxt('O que acompanhar', a.acompanhamos ? h('p', null, a.acompanhamos) : null));
+    }
+    L.appendChild(A.sec('A tese', null, fund));
+    L.appendChild(A.sec('Exposição a juros, câmbio, regulação e commodities', {badge: sen && sen.m !== 'nd' ? A.ochip(org || 'ia') : null}, exposicaoBox(t, a, sen, org)));
+    // CONJUNTURA
+    R.appendChild(h('div', {class: 'k', style: 'margin:4px 0 8px'}, 'Conjuntura · o que mudou'));
     var H = A.mercadoHist ? A.mercadoHist() : null, se = H && H.series ? (H.series[t] || (t === 'BBDC4' ? H.series.BBDC3 : null)) : null;
     if (se) {
       var t1 = MERCADO.tendencia(se.pts, 30), t12 = MERCADO.tendencia(se.pts, 365);
       R.appendChild(A.sec('Preço', {hint: (se.tipo === 'ajustado' ? 'Série ajustada por proventos (retorno total) · ' : se.tipo === 'preco' ? 'Preço sem ajuste de proventos · ' : '') + se.fonte + (se.qualidade && se.qualidade !== 'ok' ? ' · qualidade: ' + se.qualidade : '')},
         h('div', null, h('div', {class: 'row', style: 'gap:18px;font-size:.92rem'}, h('span', null, '1 mês ', h('b', {class: A.cls(t1 && t1.r)}, t1 ? A.spct(t1.r, 1) : '—')), h('span', null, '12 meses ', h('b', {class: A.cls(t12 && t12.r)}, t12 ? A.spct(t12.r, 1) : '—'))),
           A.lines([{name: t, pts: se.pts.slice(-260)}], {fmt: function (v) { return A.num(v, 2); }, h: 170}))));
-    }
-    var E = A.mercadoEstado || {}, nots = ((E.arquivo && E.arquivo.itens) || (E.snap && E.snap.noticias) || []).filter(function (n) { return n.tema === t || (t === 'BBDC3' && n.tema === 'BBDC4') || (n.temas || []).indexOf(t) >= 0; }).slice(0, 8);
-    R.appendChild(A.sec('Fatos recentes', {hint: 'Do robô: documentos da CVM e manchetes que mencionam a empresa certa, com a classificação por regras. Média e alta relevância primeiro.'}, nots.length ? h('div', null, nots.sort(function (x, y) { var r = {alta: 0, media: 1, baixa: 2}; return (r[(x.classe || {}).relevancia] || 2) - (r[(y.classe || {}).relevancia] || 2) || (y.quando || '').localeCompare(x.quando || ''); }).map(function (n) {
-      var k = n.classe || {};
-      return h('div', {class: 'noticia'}, h('div', {class: 'row', style: 'gap:6px'}, A.chip(k.relevancia || '—', k.relevancia === 'alta' ? 'g-critica' : k.relevancia === 'media' ? 'g-media' : ''), k.oficial ? A.chip('oficial', 'o-obs') : null, h('span', {class: 'muted', style: 'font-size:.8rem'}, (n.fonte || '') + (n.quando ? ' · ' + A.dataBR(n.quando) : ''))),
-        A.link(n.link) ? h('a', {href: A.link(n.link), target: '_blank', rel: 'noopener'}, n.titulo) : h('b', null, n.titulo), k.porque ? h('div', {class: 'muted', style: 'font-size:.86rem'}, k.porque) : null);
-    })) : h('p', {class: 'empty'}, 'Nenhum fato recente da empresa no arquivo do robô.')));
-    if (sen && sen.m !== 'nd') {
-      var lin = sen.m === 'acao' ? [['Beta ao Ibovespa', sen.beta], ['Juros (curva +1 p.p. → %)', sen.j], ['Dólar (+1% → %)', sen.u], ['Brent (+1% → %)', sen.b]] : sen.m === 'fii' ? [['Beta ao Ibovespa', sen.beta], ['Duration de juro real (anos)', sen.d]] : sen.m === 'rf' ? [['Fator', sen.f], ['Duration (anos)', sen.d]] : [];
-      R.appendChild(A.sec('Sensibilidades usadas nos cenários', {badge: A.ochip(org || 'ia'), hint: 'Premissas, não medições: hipótese inicial a revisar, premissa do gestor ou estimada por regressão (Carteiras → Risco e cenários → Premissas).'}, h('dl', {class: 'kv'}, lin.map(function (x) { return [h('dt', null, x[0]), h('dd', {class: 'num'}, x[1] == null ? '—' : typeof x[1] === 'number' ? A.num(x[1], 2) : String(x[1]))]; }))));
-    }
-    box.appendChild(h('div', {class: 'k', style: 'margin:14px 0 8px'}, 'Acompanhamento e resultados'));
-    box.appendChild(fichaForms(t));
+    } else R.appendChild(A.sec('Preço', null, h('p', {class: 'muted'}, 'A série histórica chega com o histórico do robô (uma vez por dia, à noite).')));
+    R.appendChild(A.sec('Resultados', {hint: 'Automático: dados abertos da CVM.'}, resultadosBox(t, a)));
+    R.appendChild(A.sec('Setor e pares', {hint: 'Empresas do mesmo setor, grupo econômico ou canal macro nas teses.'}, setorBox(t, a)));
+    box.appendChild(opiniaoBox(t, a));
     return box;
   }
+
+  /* ---------- ETFs: ficha educativa e analítica ---------- */
+  var ETF_GR = [['Todos', null], ['Renda fixa Brasil', ['P1', 'P2', 'P3', 'P4']], ['Renda fixa exterior', ['P9', 'P10']], ['Ações exterior', ['P11', 'P12']], ['Alternativos', ['P13']]];
+  function etfInfo(t) { return (C.D && C.D.etfs && C.D.etfs[t]) || null; }
+  function etfs() {
+    var wrap = h('div');
+    wrap.appendChild(A.pageHead('Research · fundos de índice', 'ETFs', 'Ficha de cada ETF das carteiras com os documentos oficiais da gestora: índice, metodologia, exposições, custos, riscos e o papel na carteira. Notícias do índice e da estratégia, nunca confundidas com fatos do fundo.'));
+    var gr = ETF_GR.filter(function (x) { return x[0] === ETFS.f; })[0] || ETF_GR[0];
+    var lista = Object.keys(C.ATV).filter(function (t) { return A.ehETF(t) && C.ATV[t].status !== 'placeholder' && (!gr[1] || gr[1].indexOf(C.ATV[t].pilar) >= 0); });
+    lista.sort(function (x, y) { return (+C.ATV[x].pilar.slice(1) - +C.ATV[y].pilar.slice(1)) || x.localeCompare(y); });
+    if (!ETFS.t || lista.indexOf(ETFS.t) < 0) ETFS.t = lista[0];
+    var fsel = h('div', {class: 'sub', style: 'margin:0 0 8px'}, ETF_GR.map(function (x) { return h('button', {'aria-pressed': ETFS.f === x[0] ? 'true' : 'false', onclick: function () { ETFS.f = x[0]; ETFS.t = null; A.render(); }}, x[0]); }));
+    var rows = lista.map(function (t) { var a = C.ATV[t], e = etfInfo(t), pv = precoVivo(t); return {t: t, nome: a.nome, p: a.pilar, ter: e && e.taxa_adm ? partes(e.taxa_adm)[0] : null, var: pv && pv.st === 'atualizado' ? pv.var : null, par: pv && pv.proxy, ok: !!e}; });
+    var g = h('div', {class: 'grid-emp'}), L = h('div', {class: 'sticky'}), R = h('div'); g.append(L, R); wrap.appendChild(g);
+    L.appendChild(A.sec('ETFs das carteiras', {flush: true}, [h('div', {style: 'padding:0 18px'}, fsel), A.table([
+      {k: 't', t: 'ETF', f: function (r) { return h('span', null, h('b', null, r.t), r.ok ? null : h('span', {class: 'muted', style: 'font-size:.74rem'}, ' · sem ficha verificada'), h('div', {class: 'muted', style: 'font-size:.8rem'}, r.p + ' · ' + r.nome + (r.ter ? ' · taxa ' + r.ter : ''))); }, s: function (r) { return +r.p.slice(1) * 100 + r.t.charCodeAt(0); }},
+      {k: 'var', t: 'Dia', r: 1, f: function (r) { return r.var == null ? '—' : h('span', {class: A.cls(r.var), title: r.par ? 'Variação do par ' + r.par + ' nos EUA, não do ETF' : null}, MERCADO.fmtVar(r.var, '%'), r.par ? h('small', {class: 'muted', style: 'display:block;font-size:.7rem'}, 'par ' + r.par) : null); }}
+    ], rows, {sort: null, search: 'Filtrar', onRow: function (r) { ETFS.t = r.t; A.rerender(); }, rowClass: function (r) { return r.t === ETFS.t ? 'sel' : null; }})]));
+    R.appendChild(ETFS.t ? fichaETF(ETFS.t) : h('p', {class: 'empty'}, 'Nenhum ETF neste filtro.'));
+    return wrap;
+  }
+  // "R$ 4.299.464.842,40" → ["R$ 4,3 bi", ""]; "1.715 dias úteis (duration do índice…)" → ["1.715 dias úteis", "duration do índice…"]
+  function partes(s) {
+    if (s == null || s === '') return [null, null];
+    s = String(s); var m = s.match(/^R\$ ([\d.]+),(\d+)$/);
+    if (m) return [brl(Number(m[1].replace(/\./g, '') + '.' + m[2])), null];
+    var k = s.search(/ \(|; /); if (k > 0) return [s.slice(0, k), s.slice(k).replace(/^ \(|^; /, '').replace(/\)/g, '').replace(/\(/g, '· ')];
+    return [s, null];
+  }
+  function barrasPct(lst) { return A.hbars((lst || []).map(function (x) { return {label: x[0], v: x[1] / 100}; }), {fmt: function (v) { return A.pct(v, 1); }, rh: 22}); }
+  function fichaETF(t) {
+    var a = C.ATV[t], e = etfInfo(t), pv = precoVivo(t), box = h('div');
+    var nm = e && e.nome_completo || a.nome;
+    box.appendChild(h('div', {class: 'tv'}, h('p', {class: 'tv-crumb'}, a.pilar + ' · ' + (C.PIL[a.pilar] ? C.PIL[a.pilar].nome : '') + ' · ' + (a.tipo || '') + ' · no cadastro: ' + a.nome), h('h2', {class: 'tv-nome', style: nm.length > 60 ? 'font-size:1.45rem' : null}, nm, h('span', {class: 'tv-tk'}, t))));
+    if (!e) {
+      box.appendChild(h('div', {class: 'alert warn'}, h('b', null, 'Ficha não verificada. '), 'Não encontrei os documentos oficiais deste ' + (t === 'CYPRESS' ? 'fundo' : 'ETF') + ' nas fontes públicas consultadas. Abaixo, só o que está no cadastro do painel; nada foi completado por estimativa.'));
+      box.appendChild(h('dl', {class: 'kv'}, h('dt', null, 'Nome no cadastro'), h('dd', null, a.nome), h('dt', null, 'Emissor'), h('dd', null, a.emissor || '—'), a.proxy_us ? h('dt', null, 'Par nos EUA (só para cotação)') : null, a.proxy_us ? h('dd', null, a.proxy_us) : null, a.obs ? h('dt', null, 'Observação') : null, a.obs ? h('dd', null, a.obs) : null));
+      box.appendChild(pesosRef(t));
+      return box;
+    }
+    box.appendChild(h('div', {class: 'row', style: 'gap:6px;flex-wrap:wrap;margin:-2px 0 10px'}, [e.gestora, e.ticker_bolsa, e.domicilio ? 'domicílio: ' + e.domicilio : null, e.classe_distribuicao ? (e.classe_distribuicao === 'acumula' ? 'acumula os rendimentos' : 'distribui os rendimentos') : null, e.isin ? 'ISIN ' + e.isin : null, e.cnpj ? 'CNPJ ' + e.cnpj : null].filter(Boolean).map(function (x) { return A.chip(x); })));
+    if (e.aviso_cadastro) box.appendChild(h('div', {class: 'alert warn'}, h('b', null, 'Diferença entre o cadastro do painel e o fundo real. '), e.aviso_cadastro, ' O cadastro não foi alterado: a correção é decisão da mesa.'));
+    var dur = e.duration && e.duration.valor != null ? e.duration : null, tx0 = partes(e.taxa_adm), pt = partes(e.patrimonio && e.patrimonio.valor != null ? String(e.patrimonio.valor) : null), du = partes(dur ? String(dur.valor) : null);
+    var dtx = function (x) { return x ? (/^\d{4}-\d{2}-\d{2}$/.test(x) ? A.dataBR(x) : x) : ''; };
+    box.appendChild(h('div', {class: 'vbox'}, precoBox(t, a, pv),
+      h('div', null, h('span', {class: 'k'}, 'Taxa total'), h('b', null, tx0[0] || '—'), h('small', null, tx0[1] || (e.taxa_adm ? 'documento da gestora' : 'não verificada'))),
+      h('div', null, h('span', {class: 'k'}, 'Patrimônio'), h('b', {style: 'font-size:1.05rem'}, pt[0] || '—'), h('small', null, (pt[1] ? pt[1] + ' · ' : '') + (e.patrimonio && e.patrimonio.data ? 'em ' + dtx(e.patrimonio.data) : 'não verificado'))),
+      h('div', null, h('span', {class: 'k'}, dur ? 'Duration' : 'Posições'), h('b', {style: dur ? 'font-size:1.05rem' : null}, dur ? du[0] : e.n_posicoes && e.n_posicoes.valor != null ? String(e.n_posicoes.valor) : '—'), h('small', null, dur ? (du[1] ? du[1] + ' · ' : '') + dtx(dur.data) : e.n_posicoes && e.n_posicoes.data ? 'em ' + dtx(e.n_posicoes.data) : (A.ehETF(t) && /Renda fixa/.test(a.classe) ? 'duration não publicada em fonte oficial' : 'não verificado'))),
+      h('div', null, h('span', {class: 'k'}, 'Moeda'), h('b', null, e.moeda || a.moeda || '—'), h('small', null, a.moeda === 'USD' ? 'em reais, o câmbio entra por inteiro' : ''))));
+    box.appendChild(pesosRef(t));
+    var g = h('div', {class: 'grid2'}), L = h('div'), R = h('div'); g.append(L, R); box.appendChild(g);
+    L.appendChild(h('div', {class: 'k', style: 'margin:4px 0 8px'}, 'O que é · estrutural'));
+    var ed = h('div', {class: 'tv'});
+    ed.append(blocoTxt('Objetivo', e.objetivo ? h('p', null, e.objetivo) : null),
+      blocoTxt('Índice e metodologia', h('div', null, h('p', null, h('b', null, e.indice || 'Índice não verificado')), e.indice_metodologia ? h('p', null, e.indice_metodologia) : null, e.metodologia ? h('p', null, e.metodologia) : null)),
+      blocoTxt('Papel na carteira', h('div', null, e.papel_na_carteira ? h('p', {class: 'tv-lead'}, e.papel_na_carteira) : null, C.PIL[a.pilar] && C.PIL[a.pilar].papel ? h('p', {class: 'muted', style: 'font-size:.9rem'}, 'Papel do ' + a.pilar + ' na política: ' + C.PIL[a.pilar].papel) : null)),
+      blocoTxt('Fatores de risco e retorno', (e.fatores || []).length ? h('div', {class: 'row', style: 'gap:6px;flex-wrap:wrap'}, e.fatores.map(function (x) { return A.chip(x); })) : null),
+      blocoTxt('Riscos (documentos oficiais)', (e.riscos || []).length ? h('ul', null, e.riscos.map(function (x) { return h('li', null, x); })) : null),
+      e.distribuicao_texto ? blocoTxt('Rendimentos', h('p', null, e.distribuicao_texto)) : null,
+      e.tributacao ? blocoTxt('Tributação', h('p', null, typeof e.tributacao === 'string' ? e.tributacao : (e.tributacao.texto || '') + (e.tributacao.fonte ? ' (fonte: ' + e.tributacao.fonte + ')' : ''))) : null);
+    L.appendChild(A.sec('Ficha', null, ed));
+    var sem = (e.semelhantes || []).filter(function (x) { return x && x.ticker; });
+    if (sem.length) L.appendChild(A.sec('Comparação com semelhantes', {flush: true}, A.table([{k: 'ticker', t: 'ETF', f: function (r) { return C.ATV[r.ticker] ? h('button', {class: 'btn link', onclick: function () { A.abrirEmpresa(r.ticker); }}, r.ticker) : r.ticker; }}, {k: 'diferenca', t: 'Diferença', s: false}], sem, {sort: null})));
+    // exposições e concentração
+    R.appendChild(h('div', {class: 'k', style: 'margin:4px 0 8px'}, 'Exposições · com data'));
+    var ex = e.exposicao, pp = e.principais_posicoes;
+    if (ex && ((ex.paises || []).length || (ex.setores || []).length)) R.appendChild(A.sec('Países e setores', {hint: (ex.fonte || '') + (ex.data ? ' · ' + (/^\d{4}-/.test(ex.data) ? A.dataBR(ex.data) : ex.data) : '')}, h('div', null, (ex.paises || []).length ? h('div', null, h('h3', {style: 'margin-top:0'}, 'Países'), barrasPct(ex.paises)) : null, (ex.setores || []).length ? h('div', null, h('h3', null, /Quebra por tipo|tipo de emissor|tipo de ativo/.test(ex.fonte || '') ? 'Tipo de ativo' : 'Setores'), barrasPct(ex.setores)) : null)));
+    else R.appendChild(A.sec('Países e setores', null, h('p', {class: 'muted'}, 'Não publicado em texto nos documentos consultados.')));
+    if (pp && (pp.itens || []).length) { var top5 = C.sum(pp.itens.slice(0, 5), function (x) { return x[1]; }); R.appendChild(A.sec('Principais posições', {hint: 'Em ' + (pp.data ? A.dataBR(pp.data) : 'data não informada') + '. As 5 maiores somam ' + A.num(top5, 1) + '%.'}, barrasPct(pp.itens))); }
+    var nots = noticiasDe(t);
+    R.appendChild(A.sec('Notícias do índice e da estratégia', {hint: 'Buscas pelo tema do índice e das exposições' + (e.busca_noticias ? ' (' + e.busca_noticias.replace(/"/g, '') + ')' : '') + '. Não são fatos do fundo: uma notícia sobre uma empresa investida não é notícia do ETF.'},
+      nots.length ? h('div', null, nots.slice(0, 6).map(function (n) { return itemNoticia(n, t); })) : h('p', {class: 'muted'}, 'Sem notícias recentes do tema no arquivo do robô. A ficha acima continua válida: o ETF não depende de notícia para ser entendido.')));
+    R.appendChild(A.sec('Documentos oficiais', null, h('div', null,
+      (e.documentos || []).filter(function (d) { return A.link(d.url); }).length ? h('ul', {class: 'docs'}, e.documentos.filter(function (d) { return A.link(d.url); }).map(function (d) { return h('li', null, h('a', {href: A.link(d.url), target: '_blank', rel: 'noopener'}, d.titulo || d.url)); })) : h('p', {class: 'muted'}, 'Sem link verificado.'),
+      h('p', {class: 'hint'}, 'Consultado em ' + A.dataBR(e.consultado_em) + '. Cada número traz a data do documento de origem.'),
+      e.notas ? A.more('Notas de verificação', h('p', {style: 'font-size:.9rem'}, e.notas)) : null)));
+    return box;
+  }
+
+  /* ---------- ficha rápida: últimas atualizações sem sair da tela ---------- */
+  A.abrirFicha = function (t) {
+    if (t === 'BBDC4' && !C.ATV.BBDC4) t = 'BBDC3';
+    var a = C.ATV[t]; if (!a) return;
+    var pv = precoVivo(t), e = etfInfo(t), tx = A.teseDe(t), T = tx && tx.tese, nots = noticiasDe(t), body = h('div');
+    body.appendChild(h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' : '') + (a.setor || a.tipo)));
+    var up = a.teto && pv && pv.p != null && pv.st === 'atualizado' ? a.teto / pv.p - 1 : null;
+    body.appendChild(h('div', {class: 'vbox'}, precoBox(t, a, pv), a.teto && !A.ehETF(t) ? h('div', null, h('span', {class: 'k'}, 'Até o teto (Teses)'), h('b', {class: A.cls(up)}, up != null ? A.spct(up, 1) : '—'), h('small', null, 'teto R$ ' + A.num(a.teto, 2))) : e ? h('div', null, h('span', {class: 'k'}, 'Taxa total'), h('b', null, e.taxa_adm || '—'), h('small', null, e.indice || '')) : null));
+    body.appendChild(pesosRef(t));
+    body.appendChild(h('h3', null, 'Últimas atualizações'));
+    body.appendChild(nots.length ? h('div', null, nots.slice(0, 5).map(function (n) { return itemNoticia(n, t); })) : h('p', {class: 'muted'}, 'Nenhum fato ' + (A.ehETF(t) ? 'do índice ' : '') + 'no arquivo do robô.'));
+    if (!A.ehETF(t) && a.classe === 'Ações') {
+      var slot = h('p', {style: 'font-size:.92rem'});
+      var poe = function () { var R = A.resultadosDe ? A.resultadosDe(t) : null, ul = R && R.emp && (R.emp.trimestres || []).slice(-1)[0], L = ul && lucroDe(ul);
+        slot.replaceChildren(R && R.carregando ? h('span', {class: 'muted'}, 'Carregando o último resultado da CVM…') : ul ? h('span', null, h('b', null, 'Último resultado na CVM (' + ul.periodo + '): '), 'receita ' + brl(ul.receita) + (L ? ', lucro ' + (L.rot === 'controladores' ? 'dos controladores ' : 'consolidado ') + brl(L.v) : '') + '.') : h('span', {class: 'muted'}, R && R.falhou ? 'Resultados da CVM indisponíveis agora.' : 'Sem resultado da CVM no arquivo do robô.'));
+        return R; };
+      var R0 = poe(); if (R0 && R0.carregando && R0.promessa) R0.promessa.then(poe);
+      body.appendChild(slot);
+    }
+    body.appendChild(h('h3', null, A.ehETF(t) ? 'O que é' : 'A tese em uma frase'));
+    body.appendChild(h('p', null, A.ehETF(t) ? (e ? e.objetivo : 'Ficha não verificada.') : (T ? T.resumo : a.tese || 'Sem tese no documento.')));
+    if (T && T.questao) body.appendChild(h('p', {class: 'tv-lead'}, T.questao));
+    body.appendChild(h('div', {class: 'row', style: 'margin-top:12px'}, h('button', {class: 'btn pri', onclick: function () { d.remove(); A.abrirEmpresa(t); }}, 'Ficha completa'), T ? h('button', {class: 'btn', onclick: function () { d.remove(); A.abrirTese(t); }}, 'Tese completa') : null));
+    var d = A.drawer(t + ' · ' + (e && e.nome_completo || a.nome), body);
+    return d;
+  };
 
   /* ---------- Macro → empresas ---------- */
   var CHOQ = [['pre', 1, 'Curva prefixada +1 p.p.'], ['real', 0.5, 'Juro real +0,5 p.p.'], ['usd', -10, 'Real valoriza 10%'], ['brent', -20, 'Brent −20%'], ['ibov', -10, 'Ibovespa −10%']];

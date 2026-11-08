@@ -266,7 +266,7 @@ class TestNoticias(unittest.TestCase):
         self.assertEqual(b['relevancia'], 'baixa')
         self.assertEqual(b['natureza'], 'ruido')
         c = noticias.classificar({'titulo': 'Ação da Equatorial sobe 3% no pregão', 'fonte': 'Site', 'tema': 'EQTL3'}, cfg_n, self.EMP)['classe']
-        self.assertIn('só descreve o movimento', c['porque'])
+        self.assertIn('Só descreve o movimento', c['porque'])
         d = noticias.classificar({'titulo': 'Equatorial participa de evento', 'fonte': 'Site', 'tema': 'EQTL3'}, cfg_n, self.EMP)['classe']
         self.assertIn('informação insuficiente', d['porque'])
         e = noticias.classificar({'titulo': 'ANEEL abre consulta sobre revisão tarifária da Equatorial', 'fonte': 'Agência Brasil', 'tema': 'EQTL3'}, cfg_n, self.EMP)['classe']
@@ -483,6 +483,163 @@ class TestConfig(Base):
         self.assertFalse(config.deve_rodar(dt.datetime(2026, 11, 6, 10, 30, tzinfo=tz), c)[0])
         self.assertTrue(config.deve_rodar(dt.datetime(2026, 11, 6, 11, 0, tzinfo=tz), c)[0])
         self.assertTrue(config.deve_rodar(dt.datetime(2026, 11, 8, 3, 0, tzinfo=tz), c, manual=True)[0])
+
+
+class TestBriefing(Base):
+    """Agenda macro, resultados da CVM, notícias de índice dos ETFs e o arquivo de versão para o site."""
+    PETRO = '33.000.167/0001-01'
+
+    def dre_petro(self):
+        L = S.linha_dre
+        return {
+            ('ITR', 2026): [
+                # 3º trimestre: linha de 3 meses (entra) e acumulada do ano (fica de fora)
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-09-30', '2026-07-01', '2026-09-30', '3.01', 'Receita de Venda de Bens e/ou Serviços', 120000000),
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-09-30', '2026-01-01', '2026-09-30', '3.01', 'Receita de Venda de Bens e/ou Serviços', 350000000),
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-09-30', '2026-07-01', '2026-09-30', '3.05', 'Resultado Antes do Resultado Financeiro e dos Tributos', 40000000),
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-09-30', '2026-07-01', '2026-09-30', '3.11', 'Lucro/Prejuízo Consolidado do Período', 30000000),
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-09-30', '2026-07-01', '2026-09-30', '3.11.01', 'Atribuído a Sócios da Empresa Controladora', 29500000),
+                # mesmo trimestre do ano anterior (PENÚLTIMO): fica de fora
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-09-30', '2025-07-01', '2025-09-30', '3.01', 'Receita de Venda de Bens e/ou Serviços', 110000000, ordem='PENÚLTIMO'),
+                # 2º trimestre reapresentado: a versão 2 substitui a 1
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-06-30', '2026-04-01', '2026-06-30', '3.11', 'Lucro/Prejuízo Consolidado do Período', 25000000, versao='1'),
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2026-06-30', '2026-04-01', '2026-06-30', '3.11', 'Lucro/Prejuízo Consolidado do Período', 26000000, versao='2'),
+                # CNPJ certo com nome de outra empresa: não entra
+                L(self.PETRO, 'OUTRA EMPRESA S.A.', '2026-03-31', '2026-01-01', '2026-03-31', '3.01', 'Receita', 1),
+            ],
+            ('DFP', 2025): [
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2025-12-31', '2025-01-01', '2025-12-31', '3.01', 'Receita de Venda de Bens e/ou Serviços', 480000000),
+                L(self.PETRO, 'PETROLEO BRASILEIRO S.A. PETROBRAS', '2025-12-31', '2025-01-01', '2025-12-31', '3.11', 'Lucro/Prejuízo Consolidado do Período', 110000000),
+            ],
+        }
+
+    def test_resultados_da_cvm(self):
+        m = S.Mundo(dre=self.dre_petro())
+        snap = self.rodar(m, ROBO_MANUAL='1')
+        r = self.ler('resultados.json')
+        p = r['empresas']['PETR4']
+        t3 = [x for x in p['trimestres'] if x['periodo'] == '3T26'][0]
+        self.assertEqual(t3['receita'], 120000000 * 1000)  # escala MIL convertida para reais; acumulado do ano fica de fora
+        self.assertEqual(t3['lucro'], 30000000 * 1000)
+        self.assertEqual(t3['lucro_controladores'], 29500000 * 1000)
+        self.assertIn('Antes do Resultado Financeiro', t3['ebit_conta'])
+        t2 = [x for x in p['trimestres'] if x['periodo'] == '2T26'][0]
+        self.assertEqual(t2['lucro'], 26000000 * 1000)  # versão reapresentada
+        self.assertEqual(t2['versao'], 2)
+        self.assertFalse(any(x['periodo'] == '1T26' for x in p['trimestres']))  # nome não conferiu
+        self.assertEqual(p['anuais'][0]['periodo'], '2025')
+        self.assertIn('fundo imobiliário', r['fora']['BTLG11'])
+        self.assertIn('BDR', r['fora']['INBR34'])
+        self.assertIn('ODbL', r['licenca'])
+        self.assertTrue(snap['fontes']['resultados']['ok'] is False)  # ITR 2025 e DFP 2024 não existem no simulador: falha relatada
+        self.assertEqual(snap['status']['nivel'] in ('completo', 'parcial'), True)  # resultados nunca derrubam a rodada
+
+    def test_resultados_so_no_fechamento(self):
+        m = S.Mundo(dre=self.dre_petro())
+        self.rodar(m)  # rodada comum das 15h30
+        self.assertFalse(any('/ITR/' in u or '/DFP/' in u for u in m.chamadas))
+        self.assertFalse(os.path.exists(os.path.join(self.tmp, 'data', 'resultados.json')))
+
+    def test_agenda_ibge_copom_fed_e_focus(self):
+        snap = self.rodar(S.Mundo())
+        ag = snap['agenda']
+        evs = [x['evento'] for x in ag['itens']]
+        self.assertTrue(any('IPCA' in e for e in evs))
+        self.assertFalse(any('Censo' in e for e in evs))  # produto fora da lista
+        foc = [x for x in ag['itens'] if x['tipo'] == 'focus']
+        self.assertTrue(foc and all(x['previsto'] for x in foc))
+        self.assertTrue(all(x['data'] >= '2026-11-06' for x in ag['itens']))
+        self.assertFalse(any(x['tipo'] in ('copom', 'fomc') for x in ag['itens']))  # próximas reuniões passam de 14 dias
+        import agenda
+        cal = {'copom': {'fonte': 'BC', 'link': 'https://www.bcb.gov.br/x', 'reunioes': [['2026-12-08', '2026-12-09']]},
+               'fomc': {'fonte': 'Fed', 'link': 'https://www.federalreserve.gov/x', 'reunioes': [['2026-12-08', '2026-12-09']]}}
+        of = agenda.oficiais(cal, dt.date(2026, 12, 1), 14)
+        dec = [x for x in of if x['data'] == '2026-12-09']
+        self.assertEqual({x['tipo'] for x in dec}, {'copom', 'fomc'})
+        fed = [x for x in dec if x['tipo'] == 'fomc'][0]
+        self.assertEqual(fed['hora'], '16:00')  # 14h em Nova York (horário padrão) = 16h em Brasília
+        self.assertEqual(agenda.data_ibge('10/11/2026 09:00:00'), ('2026-11-10', '09:00'))
+        self.assertEqual(agenda.data_ibge('2026-11-10T00:00:00'), ('2026-11-10', None))
+        self.assertEqual(agenda.data_ibge('sem data'), (None, None))
+
+    def test_agenda_falha_do_ibge_nao_derruba(self):
+        with mock.patch.object(S.Mundo, '_ibge', side_effect=lambda *a: (_ for _ in ()).throw(S.erro('https://servicodados.ibge.gov.br/api/v3/calendario', 503))):
+            snap = self.rodar(S.Mundo())
+        self.assertFalse(snap['fontes']['agenda']['ok'])
+        self.assertTrue(any(x['tipo'] == 'focus' for x in snap['agenda']['itens']))
+        # item sem data válida não entra (nada de data inventada); o IBGE é consultado uma vez por dia
+        os.remove(os.path.join(self.tmp, 'data', 'estado.json'))
+        snap = self.rodar(S.Mundo(agenda_ibge=[{'titulo': 'IPCA', 'data_inicio': 'data quebrada'}]))
+        self.assertEqual([x for x in snap['agenda']['itens'] if x['tipo'] == 'ibge'], [])
+        m = S.Mundo()
+        self.rodar(m)
+        self.assertFalse(any('/calendario' in u for u in m.chamadas))
+
+    def test_noticias_de_indice_dos_etfs(self):
+        cfgp = os.path.join(self.tmp, 'cfg.json')
+        c = json.loads(json.dumps(CFG))
+        c['noticias']['etfs'] = [{'tema': 'Juro real (IMA-B)', 'consulta': '"IMA-B" OR "NTN-B"', 'etfs': ['IMAB11', 'B5P211']}]
+        with open(cfgp, 'w', encoding='utf-8') as f:
+            json.dump(c, f, ensure_ascii=False)
+        m = S.Mundo(manchetes={'"IMA-B" OR "NTN-B"': [('Taxas das NTN-B longas sobem com risco fiscal', 'Valor Econômico')]})
+        snap = self.rodar(m, ROBO_CONFIG=cfgp)
+        n = [x for x in snap['noticias'] if 'NTN-B longas' in x['titulo']][0]
+        self.assertEqual(n['etfs'], ['IMAB11', 'B5P211'])
+        self.assertEqual(n['classe']['impacto'], 'indice')
+        self.assertIn('não sobre o fundo', n['classe']['porque'])
+
+    def test_etf_nao_contamina_outras_manchetes_nem_empresa(self):
+        # revisão independente: a mesma lista era compartilhada e a deduplicação espalhava ETFs; notícia de empresa virava "do índice"
+        itens = [{'titulo': 'IMA-B acumula queda no mês com abertura das NTN-B', 'tema': 'Juro real', 'etfs': ['IMAB11'], 'quando': '2026-11-06T10:00'},
+                 {'titulo': 'Tesouro IPCA+ paga mais de 7% ao ano', 'tema': 'Juro real', 'etfs': ['IMAB11'], 'quando': '2026-11-06T10:00'},
+                 {'titulo': 'IMA-B acumula queda no mês com abertura das NTN-B longas', 'tema': 'Crédito', 'etfs': ['DEBB11'], 'quando': '2026-11-06T10:00'},
+                 {'titulo': 'Petrobras emite debêntures de R$ 3 bilhões', 'tema': 'PETR4', 'quando': '2026-11-06T09:00'},
+                 {'titulo': 'Petrobras emite debêntures de R$ 3 bilhões hoje', 'tema': 'Crédito', 'etfs': ['DEBB11'], 'quando': '2026-11-06T09:00'}]
+        emp = {'PETR4': {'termos': ['Petrobras']}}
+        for x in itens:
+            noticias.classificar(x, CFG['noticias'], emp)
+        out = noticias.deduplicar(itens)
+        tes = [x for x in out if x['titulo'].startswith('Tesouro IPCA+')][0]
+        self.assertEqual(tes['etfs'], ['IMAB11'])  # não pegou o DEBB11 de outra manchete
+        petro = [x for x in out if x['titulo'].startswith('Petrobras')][0]
+        self.assertEqual(petro['classe']['impacto'], 'empresa')
+        self.assertFalse(petro.get('etfs'))
+
+    def test_resultados_escala_desconhecida_e_falha_parcial(self):
+        dres = self.dre_petro()
+        dres[('ITR', 2026)] = [r[:7] + ['BILHAO'] + r[8:] for r in dres[('ITR', 2026)]]
+        m = S.Mundo(dre=dres)
+        snap = self.rodar(m, ROBO_MANUAL='1')
+        r = self.ler('resultados.json')
+        self.assertFalse(any(x['periodo'].endswith('T26') for x in r['empresas']['PETR4']['trimestres']))  # escala desconhecida: nada publicado
+        self.assertTrue(any('escala' in e for e in r['erros']))
+        self.assertIsNone(self.ler('estado.json').get('resultados_em'))  # falhou: tenta de novo na próxima rodada de fechamento
+        # rodada seguinte com o ITR bom: o anual lido antes continua, e os trimestres entram
+        self.rodar(S.Mundo(dre=self.dre_petro()), ROBO_MANUAL='1')
+        r2 = self.ler('resultados.json')
+        self.assertTrue(any(x['periodo'] == '3T26' for x in r2['empresas']['PETR4']['trimestres']))
+        self.assertTrue(r2['empresas']['PETR4']['anuais'])
+        # se o ITR do ano falhar depois, o que já estava lido não some
+        m3 = S.Mundo(dre={('DFP', 2025): self.dre_petro()[('DFP', 2025)]})
+        self.rodar(m3, ROBO_MANUAL='1')
+        r3 = self.ler('resultados.json')
+        self.assertTrue(any(x['periodo'] == '3T26' for x in r3['empresas']['PETR4']['trimestres']))
+
+    def test_versao_para_o_site(self):
+        snap = self.rodar(S.Mundo())
+        v = self.ler('versao.json')
+        self.assertEqual(v['gerado_em'], snap['gerado_em'])
+        self.assertLess(len(json.dumps(v)), 400)
+
+    def test_validacao_dos_blocos_novos(self):
+        c = json.loads(json.dumps(CFG))
+        c['agenda_macro']['copom']['reunioes'] = [['2026-13-40']]
+        c['agenda_macro']['fomc']['link'] = 'http://inseguro'
+        c['noticias']['etfs'] = [{'tema': 'x'}]
+        c['resultados']['ativo'] = 'true'
+        e = ' | '.join(config.validar(c))
+        for trecho in ('agenda_macro/copom', 'agenda_macro/fomc', 'notícias/etfs 1', 'resultados'):
+            self.assertIn(trecho, e)
 
 
 class TestDiagnostico(Base):

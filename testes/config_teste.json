@@ -429,7 +429,122 @@
         "ativo": true
       }
     ],
-    "_rss_nota": "RSS públicos dos próprios veículos. O robô guarda só título, link, data e veículo (os termos de uso não permitem reproduzir o texto). Para tirar um veículo, troque \"ativo\" para false."
+    "_rss_nota": "RSS públicos dos próprios veículos. O robô guarda só título, link, data e veículo (os termos de uso não permitem reproduzir o texto). Para tirar um veículo, troque \"ativo\" para false.",
+    "por_tema_etf": 3,
+    "_etfs_nota": "Temas dos ETFs: notícias sobre o índice, a estratégia e as exposições, marcadas com os ETFs do tema. Não são fatos do fundo. Consultas montadas com as fichas oficiais (painel/src/etfs.json). Para desligar um tema, \"ativo\": false.",
+    "etfs": [
+      {
+        "tema": "Juro real (IMA-B e NTN-B)",
+        "consulta": "\"IMA-B\" OR \"NTN-B\" OR \"Tesouro IPCA+\"",
+        "etfs": [
+          "IMAB11",
+          "B5P211",
+          "IB5M11"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Prefixados (IRF-M)",
+        "consulta": "\"IRF-M\" OR \"Tesouro Prefixado\" OR \"DI futuro\"",
+        "etfs": [
+          "IRFM11",
+          "5PRE11",
+          "IDKA11"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Tesouro Selic",
+        "consulta": "\"Tesouro Selic\" OR \"LFT\" Tesouro",
+        "etfs": [
+          "LFTB11"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Crédito privado no Brasil",
+        "consulta": "\"debêntures\" OR \"crédito privado\" OR \"letras financeiras\"",
+        "etfs": [
+          "DEBB11",
+          "GICP11",
+          "LFIN11"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Treasuries",
+        "consulta": "\"Treasuries\" OR \"T-bills\" OR \"títulos do Tesouro americano\"",
+        "etfs": [
+          "IB01",
+          "DTLA",
+          "IUAA"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Inflação americana (TIPS)",
+        "consulta": "\"TIPS\" Treasury OR \"inflação americana\" OR \"US CPI\"",
+        "etfs": [
+          "IDTP"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "High yield nos EUA",
+        "consulta": "\"high yield\" EUA OR \"junk bonds\" OR \"spreads de crédito\"",
+        "etfs": [
+          "IHYA",
+          "SDHA"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Dívida emergente",
+        "consulta": "\"dívida emergente\" OR \"EMBI\" OR \"CEMBI\" OR \"emerging market debt\"",
+        "etfs": [
+          "JPEA",
+          "EMCA"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Ações globais e desenvolvidos",
+        "consulta": "\"MSCI World\" OR \"FTSE All-World\" OR \"bolsas globais\" OR \"ações globais\"",
+        "etfs": [
+          "VWRA",
+          "VHVE",
+          "EXUS"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Small caps e valor",
+        "consulta": "\"small caps\" OR \"Russell 2000\" OR \"ações de valor\" OR \"value stocks\"",
+        "etfs": [
+          "USSC",
+          "WSML",
+          "IUVL"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Ações emergentes",
+        "consulta": "\"MSCI Emerging Markets\" OR \"mercados emergentes\" ações OR \"emerging markets stocks\"",
+        "etfs": [
+          "EIMI",
+          "VFEA"
+        ],
+        "ativo": true
+      },
+      {
+        "tema": "Bitcoin",
+        "consulta": "\"ETF de bitcoin\" OR \"bitcoin ETF\" OR bitcoin",
+        "etfs": [
+          "IBIT"
+        ],
+        "ativo": true
+      }
+    ]
   },
   "ativos": [
     {
@@ -1259,5 +1374,120 @@
     "limite_dia": 20,
     "so_fechamento": true,
     "_nota": "Reserva gratuita para os ETFs de renda fixa da B3 (símbolo com .SAO). O plano gratuito permite 25 pedidos por dia: o robô usa no máximo limite_dia e, por padrão, só na rodada de fechamento ou em execução manual. Chave: ALPHAVANTAGE_KEY nos Secrets."
+  },
+  "agenda_macro": {
+    "_leia": "Agenda do briefing. IBGE pela API oficial de calendário (uma consulta por dia). Copom e Fed pelos calendários oficiais, publicados uma vez por ano: quando sair o calendário novo, acrescente as reuniões aqui (lista [primeiro dia, dia da decisão]) e atualize conferido_em.",
+    "dias": 14,
+    "ibge": true,
+    "ibge_produtos": [
+      "IPCA",
+      "IPCA-15",
+      "INPC",
+      "PIB",
+      "Contas Nacionais Trimestrais",
+      "PNAD Contínua",
+      "Produção Industrial",
+      "Pesquisa Industrial Mensal",
+      "Pesquisa Mensal de Comércio",
+      "Pesquisa Mensal de Serviços"
+    ],
+    "copom": {
+      "fonte": "Banco Central · calendário do Copom (datas conferidas na imprensa)",
+      "link": "https://www.bcb.gov.br/controleinflacao/calendariocopom",
+      "conferido_em": "2026-11-07",
+      "_nota": "A página do BC exige JavaScript; as datas foram conferidas na divulgação do calendário reproduzida pela imprensa (B3 Bora Investir para 2026; EuQueroInvestir para 2027). Confira na página oficial.",
+      "reunioes": [
+        [
+          "2026-12-08",
+          "2026-12-09"
+        ],
+        [
+          "2027-01-26",
+          "2027-01-27"
+        ],
+        [
+          "2027-03-16",
+          "2027-03-17"
+        ],
+        [
+          "2027-04-27",
+          "2027-04-28"
+        ],
+        [
+          "2027-06-15",
+          "2027-06-16"
+        ],
+        [
+          "2027-08-03",
+          "2027-08-04"
+        ],
+        [
+          "2027-09-21",
+          "2027-09-22"
+        ],
+        [
+          "2027-10-26",
+          "2027-10-27"
+        ],
+        [
+          "2027-12-07",
+          "2027-12-08"
+        ]
+      ]
+    },
+    "fomc": {
+      "fonte": "Federal Reserve · calendário oficial do FOMC",
+      "link": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+      "conferido_em": "2026-11-07",
+      "_nota": "As datas de 2027 são provisórias até a reunião anterior confirmar cada uma (aviso da própria página do Fed).",
+      "reunioes": [
+        [
+          "2026-12-08",
+          "2026-12-09"
+        ],
+        [
+          "2027-01-26",
+          "2027-01-27"
+        ],
+        [
+          "2027-03-16",
+          "2027-03-17"
+        ],
+        [
+          "2027-04-27",
+          "2027-04-28"
+        ],
+        [
+          "2027-06-08",
+          "2027-06-09"
+        ],
+        [
+          "2027-07-27",
+          "2027-07-28"
+        ],
+        [
+          "2027-09-14",
+          "2027-09-15"
+        ],
+        [
+          "2027-10-26",
+          "2027-10-27"
+        ],
+        [
+          "2027-12-07",
+          "2027-12-08"
+        ]
+      ],
+      "anos_provisorios": [
+        2027
+      ]
+    }
+  },
+  "resultados": {
+    "_leia": "Resultados trimestrais e anuais das companhias (DRE consolidada) dos dados abertos da CVM, ITR e DFP. Baixa só na rodada de fechamento ou manual, a cada intervalo_dias. Usa o CNPJ e o cvm_nome de cada ação em 'ativos'.",
+    "ativo": true,
+    "intervalo_dias": 3,
+    "arquivos": 4,
+    "prazo_min": 8
   }
 }

@@ -1,4 +1,333 @@
-# Atualizar para o Oregon Intelligence v3.5 e como voltar atrás
+# Atualizar para o Oregon Intelligence v3.8 e como voltar atrás
+
+O pacote `robo-oregon-v3.8-alterados.zip` atualiza o que está hoje no seu GitHub, a **v3.5** (commit "Add files via
+upload" de 08/11, 15:56). Ele já traz a **v3.6 e a v3.7 inteiras** (ver os guias abaixo); basta subir este pacote, sem
+os anteriores. Nada foi retirado, nenhuma chave vai para arquivo e nenhuma API paga entra.
+
+## O que entra na v3.8
+
+**Brasil › Fluxo dos fundos.** Mostra se o dinheiro está entrando ou saindo dos fundos brasileiros, por classe (Ações,
+Multimercado, Renda Fixa, Cambial), semana a semana e mês a mês. Uma barra mostra o fluxo dos fundos de ações.
+- Fonte: o informe diário que cada fundo entrega à CVM (captação e resgate do dia), nos dados abertos, com a classe
+  tirada do cadastro da CVM.
+- Fundos de cotas ficam de fora, porque o mesmo dinheiro contaria duas vezes.
+- O robô lê uma vez por dia, a partir das 9h: o mês corrente e o anterior, que a CVM ainda reapresenta. O histórico
+  publicado nunca é apagado.
+- O **Fechamento da semana** ganhou a linha do fluxo.
+
+**Fontes que falhavam na rodada real de 08/11.**
+- **Pausa automática:** a fonte que falha 3 vezes seguidas passa a ser tentada só uma vez por dia. Isso vale para
+  bloqueio 403 (Squadra, Safra, Santander, Itaú), tempo esgotado (IBGE, Genial) e endereço que sumiu. Ela deixa de gastar
+  o prazo da rodada e de aparecer como falha a cada 30 minutos. Em Fontes e coleta aparece como "em pausa · 1 tentativa
+  por dia". Nada é contornado; quando a fonte volta a responder, sai da pausa sozinha.
+- **SPX Capital:** as cartas voltam a ser lidas. O Issuu passou a usar links relativos e o padrão antigo exigia
+  "issuu.com" no link. Entra só a versão em português, com o mês tirado do título ("CARTA À EQUIPE - 10.26" = outubro).
+- **CNN Brasil · Economia** foi desligada, com o motivo registrado: o site não tem mais feed RSS. As manchetes da CNN
+  continuam chegando pela busca.
+- **Quem tem a ação:** o robô agora espera 10 segundos entre um arquivo e outro da CVM, como pede o robots.txt dela
+  (Crawl-Delay).
+
+## 1. Suba os arquivos (um só envio)
+
+1. Descompacte o `robo-oregon-v3.8-alterados.zip`. Ele tem os 42 arquivos que mudaram desde a v3.5.
+2. No GitHub, repositório `robo-oregon` → **Add file** → **Upload files**.
+3. Arraste **as pastas** `docs`, `painel`, `robo`, `site` e `testes` e o `README.md` de uma vez.
+4. Escreva "Oregon Intelligence v3.8" e **Commit changes**.
+
+## 2. Mude o horário do robô (se ainda não mudou)
+
+É o mesmo passo da v3.7. No GitHub, abra `.github/workflows/robo.yml`, toque no lápis, troque `*/30` por `7,37` nas duas
+linhas de `cron` e faça o **Commit changes**. O arquivo completo está no pacote, em `.github/workflows/robo.yml`.
+
+## 3. Primeira rodada e conferência
+
+- O envio já dispara uma rodada.
+- **Fluxo dos fundos:** aparece na primeira rodada depois das 9h. Se você subir antes das 9h, use **Coletar agora**
+  depois desse horário.
+- **Para conferir:**
+  1. **Brasil › Fluxo dos fundos**: semana a semana e mês a mês.
+  2. **Carteiras › Fechamento da semana**: a linha "Fluxo dos fundos".
+  3. **Biblioteca › Fontes e coleta**: as fontes em pausa e a SPX com a primeira leitura.
+- Se o fluxo não aparecer, o log da rodada (Actions › rodada › "Coleta") traz a linha `fluxo dos fundos:` com as colunas
+  que a CVM usou. Mande para mim que eu ajusto.
+
+## 4. Voltar atrás
+
+No GitHub, abra o commit "Oregon Intelligence v3.8" → **Revert**. O `biblioteca/fluxo_fundos.json` fica no ramo `dados`
+e só para de ser atualizado.
+
+---
+
+# Guia da v3.7 (histórico)
+
+O pacote `robo-oregon-v3.7-alterados.zip` atualiza o que está hoje no seu GitHub, que é a **v3.5** (commit "Add files via
+upload" de 08/11, 15:56). Por isso ele já traz a **v3.6 inteira** (Comitê do mês, proventos, quem tem a ação, termômetro
+das cartas, wealth, trilha, lente global): basta subir este pacote, sem o da v3.6. Tudo pelo site do GitHub, sem
+instalar nada. Nenhuma chave vai para arquivo e nenhuma API paga entra. Nada foi retirado: a v3.7 só acrescenta.
+
+## O que entra na v3.7
+
+**Coleta e botão Atualizar**
+- O robô passa a rodar aos **7 e aos 37 minutos** de cada hora (das 7h às 22h37, e à 1h15 e às 4h15), na mesma
+  frequência de antes. Motivo: na página Actions, hoje só houve **uma** rodada agendada; as outras vieram dos seus envios.
+  A documentação do GitHub avisa que a hora cheia é horário de pico, quando as rodadas atrasam ou são descartadas, e
+  recomenda outro minuto. É a única mudança no workflow (passo 2 abaixo).
+- No topo, a coleta virou um ponto com a hora (não corta mais). Ao tocar, abre um quadro com:
+  - a última coleta e a próxima prevista;
+  - "Atualizar agora", "Coleta por fonte" e **Coletar agora** (abre a página do robô no GitHub para você tocar em
+    "Run workflow", com o seu login; nenhuma chave fica no site);
+  - aparência: automático, claro ou escuro;
+  - "sempre mostrar as explicações".
+- Depois de **Atualizar** aparece uma de duas mensagens: "Conferido às 17:40: nada novo desde a coleta das 15:57.
+  Próxima coleta prevista às 18:07" ou "chegou a coleta das…".
+
+**Hoje**
+- **Faixa do dia** logo abaixo da data. Ela mostra quantos acontecimentos houve nas carteiras e quantas opiniões de casas
+  saíram, os ativos com data-com até sexta, as cartas do mês que citam a carteira, os itens na pauta do comitê e as
+  novidades das buscas salvas. Cada trecho leva à lista.
+- **Alertas das suas buscas** (as buscas salvas, com as manchetes novas) e **Sua fila de leitura** ("Ler depois", agora
+  também nos itens da Estante, com "já li").
+- As quatro áreas ficam em duas colunas independentes, sem buraco embaixo do Radar ou do Debate.
+- Blocos vazios ocupam uma linha. A barra "Nesta página" fica presa no topo ao rolar.
+- Em "Todas as notícias": filtro por **tipo de evento** e legenda das marcas.
+
+**Achar o que importa**
+- **Marca por tipo** em toda linha de notícia, sempre com a mesma letra e cor:
+  - F: fato relevante ou CVM
+  - R: resultado
+  - O: opinião de casa
+  - C: carta
+  - E: estudo ou research
+  - N: notícia
+- **Tipo de evento** pela manchete, só em notícia de empresa: recompra, fusões e aquisições, guidance, troca na gestão,
+  emissão de dívida e oferta de ações. "Bradesco reduz projeção do PIB" e os avisos de participação acionária (art. 12)
+  não contam.
+- **Brasil › Mudanças de recomendação**: quando uma casa muda a recomendação, o preço-alvo ou o sentido sobre um ativo
+  (Oregon e VIP), lado a lado com a visão anterior da mesma casa. Períodos de 7, 30 ou 90 dias. Sem média nem consenso.
+- **Termômetro das cartas**: além da contagem, até duas frases literais da carta por empresa, com o link. Há também a
+  visão **Ao longo dos meses**, uma grade empresa × mês que agora cobre 6 meses.
+- **Busca com filtros**, na Pesquisa e na busca do topo:
+  - `"frase exata"`
+  - `fonte:Valor`
+  - `desde:10/2026` e `até:15/11/2026`
+  - `ativo:PETR4`
+  - `evento:recompra`
+  - `tipo:carta`
+  - `-palavra` para deixar de fora
+
+**Consolidar**
+- **Carteiras › Fechamento da semana**: a semana em oito blocos, com Copiar e Imprimir, para esta semana e as três
+  anteriores. Os blocos são fatos e resultados, eventos corporativos, mudanças de recomendação, opiniões, proventos
+  anunciados, cartas, research e o que foi levado ao comitê.
+- **Imprimir** no Comitê do mês, nas Pautas da semana (Oregon e VIP) e no Fechamento: a folha sai em A4 limpa, e o
+  navegador também salva em PDF.
+- **Telegram**: o resumo diário ganha "Data-com amanhã" e "Cartas novas que citam a carteira".
+
+**Visual e celular**
+- **Modo escuro**: segue o aparelho ou é escolhido no quadro do topo.
+- As explicações cinza de cada tela ficam num **"?"** ao lado do título. O texto continua lá; marque "sempre mostrar" se
+  preferir.
+- **Mapa de atenção da VIP enxuto**: só ganha quadrado quem teve acontecimento; os demais aparecem numa linha
+  "sem notícias: …".
+- **Ficha mais larga**: a lista de ativos da aba Brasil recolhe num botão e a ficha ocupa a largura toda. Os nomes da
+  lista não quebram mais em três linhas.
+- **No celular**:
+  - as seções ficam numa barra embaixo, ao alcance do polegar;
+  - as áreas do Hoje abrem fechadas, com a contagem (só o Radar abre aberto), e o celular lembra o que você abriu;
+  - cada notícia ocupa duas linhas de título mais uma linha com hora, veículo e ativo.
+  - Com os dados de teste, o Hoje no celular caiu de cerca de 5.000 px para menos de 2.000 px de altura.
+- **Títulos**: o site já usa a IBM Plex Serif, a fonte da identidade da Oregon. A Times que aparecia nas minhas capturas
+  anteriores era só do meu ambiente de teste, que não baixa fontes. Por isso a tipografia ficou como está. O que mudou
+  foram os números alinhados nas tabelas.
+
+**Correção na Estante.** Na rodada real de 08/11, a GMO apareceu como "completa" com 0 itens, e o Compounding Quality
+ficou sem vez: o limite de páginas da rodada acabou nas primeiras coleções. Agora a coleção que nunca foi lida vai
+primeiro, e só fica "completa" depois de lida.
+
+## 1. Suba os arquivos (um só envio)
+
+1. Descompacte o `robo-oregon-v3.7-alterados.zip`. Ele tem os 39 arquivos que mudaram desde a v3.5, nas pastas certas.
+2. No GitHub, repositório `robo-oregon` → **Add file** → **Upload files**.
+3. Arraste **as pastas** `docs`, `painel`, `robo`, `site` e `testes` e o `README.md` de uma vez.
+4. Escreva "Oregon Intelligence v3.7" e **Commit changes**.
+
+## 2. Mude o horário do robô (um minuto, no próprio GitHub)
+
+A pasta `.github` costuma ficar escondida no computador, então o jeito mais simples é editar no site:
+
+1. Abra `https://github.com/lucaslimaequity-a11y/robo-oregon/blob/main/.github/workflows/robo.yml` e toque no lápis
+   (**Edit this file**).
+2. Troque as duas linhas:
+   ```
+       - cron: '*/30 10-23 * * *'
+       - cron: '*/30 0,1 * * *'
+   ```
+   por:
+   ```
+       - cron: '7,37 10-23 * * *'
+       - cron: '7,37 0,1 * * *'
+   ```
+3. **Commit changes**. O arquivo completo também está no pacote, em `.github/workflows/robo.yml`, e a cópia visível fica em
+   `docs/workflow_robo.yml`.
+
+Arquivos do pacote (novos desde a v3.5 marcados com ★):
+
+```
+.github/workflows/robo.yml  README.md
+docs/ARQUITETURA.md  docs/ATUALIZACAO.md  docs/FONTES.md  docs/RESULTADOS_TESTES.md  docs/workflow_robo.yml
+painel/build.py  painel/dist/Oregon_Intelligence.html  painel/dist/painel_artifact.html
+painel/src/app.css  painel/src/intel.js  painel/src/store.js  painel/src/ui_base.js  painel/src/ui_bib.js
+painel/src/ui_hoje.js  painel/src/ui_oregon.js  painel/src/ui_vip.js
+painel/src/ui_br36.js ★  painel/src/ui_comite.js ★  painel/src/ui_estudo36.js ★  painel/src/ui_v37.js ★
+painel/test/areas.js  painel/test/gera_dados_teste.py
+robo/analise.py  robo/biblioteca.py  robo/config.json  robo/conteudo.py  robo/estante.py  robo/fontes.json  robo/intel.py
+robo/cartas.py ★  robo/fundos.py ★  robo/pdftexto.py ★  robo/proventos.py ★
+site/index.html
+testes/painel.test.js  testes/test_v36.py ★  testes/test_v37.py ★
+```
+
+O pacote completo (`robo-oregon-v3.7.zip`) tem o repositório inteiro, para guardar ou começar do zero.
+
+## 3. Primeira rodada
+
+Depois do envio, o GitHub já roda o robô sozinho (o envio dispara uma rodada). Se quiser, rode à mão: **Actions** →
+**Oregon Intelligence** → **Run workflow** → `normal`. O que acontece:
+
+- **Histórico**: é reclassificado com as regras novas (versão 37), e os itens de empresa ganham o tipo de evento. Nada é
+  apagado.
+- **Cartas**: até 6 por rodada. As novas vêm primeiro; depois as já lidas são reabertas uma vez, para tirar os trechos.
+- **Proventos e Lente global**: entram já na primeira rodada.
+- **Quem tem a ação**: só na rodada da noite (a partir das 21h).
+- **Estante**: GMO e Compounding Quality são lidos nas próximas rodadas.
+- **Resumo do Telegram**: sai na primeira rodada depois das 7h30.
+
+## 4. Conferência (5 minutos)
+
+1. **Hoje**: faixa do dia, Alertas e Fila, áreas em duas colunas, letras coloridas nas notícias. Toque no ponto da coleta
+   no topo e confira o quadro com "Coletar agora" e a aparência.
+2. **Brasil › Mudanças de recomendação** e **Carteiras › Fechamento da semana**.
+3. **Brasil › Termômetro das cartas**: trechos dentro de "N gestoras" e a visão "Ao longo dos meses".
+4. **Biblioteca › Pesquisa**: teste `evento:recompra` ou `fonte:"Money Times" ativo:KLBN4`.
+5. **No celular**: as seções na barra de baixo, as áreas do Hoje fechadas e abrindo ao toque.
+6. **Nas próximas horas**: em Actions, rodadas "schedule" aos :07 e :37.
+
+## 5. Voltar atrás
+
+No GitHub, abra o commit "Oregon Intelligence v3.7" → **Revert**. Para o horário, edite o `robo.yml` de volta para
+`*/30`. Nada do que o robô publicou no ramo `dados` é apagado. O tema, a fila e as buscas salvas ficam no seu navegador.
+
+---
+
+# Guia da v3.6 (histórico)
+
+O pacote `robo-oregon-v3.6-alterados.zip` atualiza a v3.5 que está no seu GitHub (commit "Add files via upload" de
+08/11, 15:56; conferi que ele é idêntico à v3.5 que preparei). Tudo pelo site do GitHub, sem instalar nada. Nenhuma
+chave vai para arquivo, nenhuma API paga entra e o workflow (`robo.yml`) **não muda**. Nada foi retirado: a v3.6 só
+acrescenta.
+
+## O que entra na v3.6
+
+**Comitê do mês (Carteiras › Comitê do mês)**
+- Pauta mensal nas seções do comitê: Macro e cenário, Dividendos (core), Valor (satellite), Fundos, Global, Riscos e
+  Estudos.
+- Botão **Levar ao comitê** em toda notícia, na janela de leitura e nos itens da Estante (toque de novo para tirar).
+- **Sugestões do robô** do mês: fatos e opiniões sobre empresas das carteiras, documentos à CVM, macro oficial e research
+  que saiu em mais de uma fonte. Veículo pouco conhecido fica de fora.
+- **+ Item à mão** para o que não veio do robô (uma ideia, um link, um ponto da reunião), com seção e nota.
+- **Copiar pauta**, baixar em texto, exportar e importar (JSON). A pauta fica neste navegador; para usar em outro aparelho,
+  exporte num e importe no outro.
+
+**Brasil**
+- **Agenda de proventos**: dividendos, JCP e rendimentos anunciados (B3), em três visões. "Próximas datas" separa o que
+  ainda dá direito (data-com à frente) dos pagamentos a receber. "Anunciado no ano" traz o DY 2026 pelo preço de referência
+  (print da VIP ou Teses da Oregon, nunca a cotação do dia). "Todos os anúncios" lista tudo.
+  Os próximos 14 dias aparecem também na Agenda decisiva do Hoje e na ficha de cada ação.
+- **Quem tem a ação**: fundos e gestoras com a ação na carteira mensal entregue à CVM (CDA), quem entrou e quem saiu em
+  relação ao mês anterior. Aparece também na ficha.
+- **Termômetro das cartas**: quais empresas as cartas mensais das gestoras brasileiras citaram, mês a mês, e quais
+  gestoras citaram. É contagem, não opinião. O robô lê o PDF da carta ou a página da carta; quando a página só traz "Leia
+  aqui" (Dynamo, JGP), ele abre o PDF do mesmo site. O texto não é guardado.
+- **Lente global** na ficha (Oregon e VIP): o que acontece com o setor no mundo, com os pares globais (ex.: Klabin →
+  Suzano, UPM, Stora Enso). São 16 setores, pesquisados em inglês a cada 6 horas.
+- **Ponte Oregon e VIP**: na ficha de um ativo que está nas duas, "Também na VG VIP · Carteira X" (e o caminho inverso).
+
+**Mundo e Estratégia › Wealth e consultorias**: indústria de wealth, consultoria e planejamento financeiro. Entram
+Kitces, InvestmentNews, WealthManagement.com, Financial Planning, Thinking Ahead Institute, notícias da CVM (regulação) e
+seis pesquisas em português (consultorias CVM, assessorias, family offices, private banking, wealth no Brasil,
+planejamento financeiro e CFP). Filtros: Brasil, Mundo, Regulação e Estudos.
+
+**Biblioteca**
+- **Trilha de estudo**: CFP (os 8 módulos do exame da Planejar) e CFA nível III (8 blocos). Para cada módulo, o que
+  saiu no Research e na Estante sobre o tema.
+- **Estante**: quatro acervos novos de alocação e wealth: Thinking Ahead Institute, NBIM (fundo soberano da Noruega),
+  CAIA e Vanguard (research).
+- **Hoje › Research › Clássico da semana**: um texto da Estante ligado ao tema que mais apareceu no research dos últimos 7
+  dias. Muda toda semana e não repete as últimas 26 escolhas.
+
+## 1. Suba os arquivos (um só envio)
+
+1. Descompacte o `robo-oregon-v3.6-alterados.zip`. Ele tem só os 34 arquivos que mudaram, nas pastas certas.
+2. No GitHub, repositório `robo-oregon` → **Add file** → **Upload files**.
+3. Arraste **as pastas** de dentro do ZIP (`docs`, `painel`, `robo`, `site`, `testes`) e o `README.md` de uma vez.
+4. Escreva "Oregon Intelligence v3.6" e **Commit changes**.
+
+Arquivos do pacote (novos marcados com ★):
+
+```
+README.md
+docs/ARQUITETURA.md  docs/ATUALIZACAO.md  docs/FONTES.md  docs/RESULTADOS_TESTES.md
+painel/build.py  painel/dist/Oregon_Intelligence.html  painel/dist/painel_artifact.html
+painel/src/app.css  painel/src/intel.js  painel/src/store.js  painel/src/ui_bib.js  painel/src/ui_hoje.js
+painel/src/ui_oregon.js  painel/src/ui_vip.js
+painel/src/ui_br36.js ★  painel/src/ui_comite.js ★  painel/src/ui_estudo36.js ★
+painel/test/areas.js  painel/test/gera_dados_teste.py
+robo/analise.py  robo/biblioteca.py  robo/config.json  robo/conteudo.py  robo/estante.py  robo/fontes.json  robo/intel.py
+robo/cartas.py ★  robo/fundos.py ★  robo/pdftexto.py ★  robo/proventos.py ★
+site/index.html
+testes/painel.test.js  testes/test_v36.py ★
+```
+
+O pacote completo (`robo-oregon-v3.6.zip`) tem o repositório inteiro, para guardar ou para começar do zero.
+
+## 2. Primeira rodada
+
+**Actions** → **Oregon Intelligence** → **Run workflow** → modo `normal` → **Run workflow**. O que acontece:
+
+- **Agenda de proventos**: lida na primeira rodada do dia (uma consulta por empresa, com pausa de 1 s). Aparece já na
+  primeira rodada.
+- **Termômetro das cartas**: até 6 cartas por rodada, das mais novas para as mais antigas (últimos 4 meses). Hoje há 13
+  cartas no histórico (set–nov); em três rodadas todas estão lidas.
+- **Quem tem a ação**: só na rodada da noite (a partir das 21 h), quando a CVM tem um mês completo novo. O arquivo da CVM
+  tem uns 25 MB; a leitura leva poucos minutos.
+- **Lente global e Wealth**: as pesquisas entram na primeira rodada; as fontes novas aparecem como "a validar" e passam a
+  "ativa" quando respondem.
+- **Estante**: as quatro coleções novas se completam aos poucos, como as da v3.5.
+- As regras de classificação não mudaram de versão: nada é reclassificado.
+
+## 3. Conferência (5 minutos)
+
+1. **Carteiras › Comitê do mês**: sugestões à direita. Toque em **Levar** numa delas e em **+ Item à mão**. Numa notícia
+   do Hoje, abra a linha e toque em **Levar ao comitê**.
+2. **Brasil › Agenda de proventos**: data-com à frente e pagamentos a receber. Em **Anunciado no ano**, o DY 2026.
+3. **Brasil › Termômetro das cartas**: o mês corrente com "N cartas lidas de M".
+4. **Brasil › Quem tem a ação**: depois da primeira rodada da noite.
+5. **Mundo e Estratégia › Wealth e consultorias** e **Biblioteca › Trilha de estudo**.
+6. Ficha da Klabin (Brasil › Ativos): "Também na VG VIP", **Lente global · Celulose**, proventos e (à noite) fundos.
+7. **Biblioteca › Fontes e coleta**: `wealth-kitces`, `wealth-investmentnews`, `wealth-wealthmanagement`,
+   `wealth-financial-planning`, `wealth-thinking-ahead` e `cvm-noticias` com a primeira leitura.
+
+Se "Quem tem a ação" não aparecer depois da rodada da noite, o log da rodada (Actions › rodada › "Coleta") traz a linha
+`quem tem a ação:` com as colunas que a CVM usou. Mande para mim e eu ajusto. Os dados anteriores nunca são apagados.
+
+## 4. Voltar atrás
+
+No GitHub, abra o commit "Oregon Intelligence v3.6" → **Revert**. Os arquivos novos do ramo `dados`
+(`biblioteca/proventos.json`, `fundos_acoes.json`, `cartas_mencoes.json`, `estante_destaque.json`) ficam lá, só param de
+ser atualizados. A pauta do comitê fica no seu navegador e não é afetada.
+
+---
+
+# Guia da v3.5 (histórico)
 
 O pacote `robo-oregon-v3.5-alterados.zip` atualiza a v3.4 que está no seu GitHub (commit "Add files via upload" de
 08/11, 14:02). Tudo pelo site do GitHub, sem instalar nada. Nenhuma chave vai para arquivo e o workflow (`robo.yml`)

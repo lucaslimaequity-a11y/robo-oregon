@@ -1128,6 +1128,453 @@
      "contratos atípicos",
      "atípico"
     ]
+   },
+   {
+    "nome": "Bancos no mundo",
+    "consulta": "bank earnings net interest margin",
+    "mkt": "en-US",
+    "ativos": [
+     "BBDC3",
+     "ITSA4",
+     "BBAS3",
+     "BMGB4",
+     "INBR34",
+     "BRBI11"
+    ],
+    "termos": [
+     "bank",
+     "banks",
+     "lender",
+     "lenders"
+    ],
+    "lente": true,
+    "pares": [
+     "JPMorgan Chase",
+     "Santander",
+     "BBVA",
+     "Bancolombia",
+     "Nu Holdings"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Seguradoras no mundo",
+    "consulta": "insurers earnings premiums",
+    "mkt": "en-US",
+    "ativos": [
+     "BBSE3",
+     "PSSA3",
+     "SAUD3"
+    ],
+    "termos": [
+     "insurer",
+     "insurers",
+     "insurance",
+     "reinsur"
+    ],
+    "lente": true,
+    "pares": [
+     "Allianz",
+     "AXA",
+     "Zurich Insurance",
+     "Chubb",
+     "Prudential"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Celulose no mundo",
+    "consulta": "pulp prices China hardwood",
+    "mkt": "en-US",
+    "ativos": [
+     "KLBN4"
+    ],
+    "termos": [
+     "pulp",
+     "paper",
+     "packaging",
+     "containerboard"
+    ],
+    "lente": true,
+    "pares": [
+     "Suzano",
+     "UPM",
+     "Stora Enso",
+     "Mondi",
+     "Smurfit Westrock"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Petróleo no mundo",
+    "consulta": "Brent oil OPEC+ supply",
+    "mkt": "en-US",
+    "ativos": [
+     "PETR4",
+     "PRIO3",
+     "RECV3"
+    ],
+    "termos": [
+     "oil",
+     "brent",
+     "opec",
+     "crude"
+    ],
+    "lente": true,
+    "pares": [
+     "ExxonMobil",
+     "Shell",
+     "Equinor",
+     "Ecopetrol",
+     "YPF"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Minério de ferro no mundo",
+    "consulta": "iron ore price China steel",
+    "mkt": "en-US",
+    "ativos": [
+     "VALE3"
+    ],
+    "termos": [
+     "iron ore",
+     "steel",
+     "miner",
+     "mining"
+    ],
+    "lente": true,
+    "pares": [
+     "BHP",
+     "Rio Tinto",
+     "Fortescue",
+     "Anglo American"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Energia elétrica no mundo",
+    "consulta": "electric utilities grid investment power demand",
+    "mkt": "en-US",
+    "ativos": [
+     "CPLE3",
+     "AXIA3",
+     "EQTL3",
+     "ENGI11",
+     "ALUP11",
+     "CPFE3"
+    ],
+    "termos": [
+     "utilit",
+     "grid",
+     "power",
+     "electricity",
+     "transmission"
+    ],
+    "lente": true,
+    "pares": [
+     "NextEra Energy",
+     "Iberdrola",
+     "Enel",
+     "Duke Energy",
+     "National Grid"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Saneamento no mundo",
+    "consulta": "water utility tariffs investment",
+    "mkt": "en-US",
+    "ativos": [
+     "SBSP3"
+    ],
+    "termos": [
+     "water"
+    ],
+    "lente": true,
+    "pares": [
+     "American Water Works",
+     "Veolia",
+     "Severn Trent",
+     "United Utilities"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Shoppings e REITs no mundo",
+    "consulta": "shopping mall REIT occupancy retail sales",
+    "mkt": "en-US",
+    "ativos": [
+     "ALOS3",
+     "JHSF3"
+    ],
+    "termos": [
+     "mall",
+     "malls",
+     "reit",
+     "retail"
+    ],
+    "lente": true,
+    "pares": [
+     "Simon Property Group",
+     "Unibail-Rodamco-Westfield",
+     "Klépierre"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Agronegócio no mundo",
+    "consulta": "soybean crop fertilizer prices farmers",
+    "mkt": "en-US",
+    "ativos": [
+     "TTEN3"
+    ],
+    "termos": [
+     "soybean",
+     "soy",
+     "crop",
+     "fertilizer",
+     "farm",
+     "grain"
+    ],
+    "lente": true,
+    "pares": [
+     "Nutrien",
+     "Deere",
+     "CF Industries",
+     "Corteva"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Locação de veículos pesados no mundo",
+    "consulta": "truck leasing rental fleet demand",
+    "mkt": "en-US",
+    "ativos": [
+     "VAMO3"
+    ],
+    "termos": [
+     "truck",
+     "leasing",
+     "rental",
+     "fleet"
+    ],
+    "lente": true,
+    "pares": [
+     "Ryder",
+     "United Rentals",
+     "Ashtead",
+     "Penske"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Varejo de moda e joias no mundo",
+    "consulta": "apparel retailers sales jewelry demand",
+    "mkt": "en-US",
+    "ativos": [
+     "LREN3",
+     "VIVA3",
+     "SBFG3"
+    ],
+    "termos": [
+     "apparel",
+     "retailer",
+     "retail",
+     "fashion",
+     "jewel",
+     "sportswear"
+    ],
+    "lente": true,
+    "pares": [
+     "Inditex",
+     "H&M",
+     "TJX",
+     "Nike",
+     "Pandora"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Saúde no mundo",
+    "consulta": "hospital operators diagnostics earnings",
+    "mkt": "en-US",
+    "ativos": [
+     "RDOR3",
+     "FLRY3"
+    ],
+    "termos": [
+     "hospital",
+     "diagnostic",
+     "healthcare",
+     "health care",
+     "lab"
+    ],
+    "lente": true,
+    "pares": [
+     "HCA Healthcare",
+     "Quest Diagnostics",
+     "Labcorp",
+     "Fresenius"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Incorporadoras no mundo",
+    "consulta": "homebuilders mortgage rates housing demand",
+    "mkt": "en-US",
+    "ativos": [
+     "MRVE3",
+     "TRIS3"
+    ],
+    "termos": [
+     "homebuilder",
+     "housing",
+     "home sales",
+     "mortgage"
+    ],
+    "lente": true,
+    "pares": [
+     "D.R. Horton",
+     "Lennar",
+     "PulteGroup"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Academias no mundo",
+    "consulta": "gym chains fitness memberships",
+    "mkt": "en-US",
+    "ativos": [
+     "SMFT3"
+    ],
+    "termos": [
+     "gym",
+     "fitness"
+    ],
+    "lente": true,
+    "pares": [
+     "Planet Fitness",
+     "Basic-Fit",
+     "Life Time Group"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Educação superior no mundo",
+    "consulta": "online higher education enrollment",
+    "mkt": "en-US",
+    "ativos": [
+     "VTRU3"
+    ],
+    "termos": [
+     "education",
+     "university",
+     "enrollment",
+     "college",
+     "online learning"
+    ],
+    "lente": true,
+    "pares": [
+     "Grand Canyon Education",
+     "Adtalem",
+     "Coursera",
+     "Strategic Education"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Banda larga no mundo",
+    "consulta": "fiber broadband operators subscribers",
+    "mkt": "en-US",
+    "ativos": [
+     "FIQE3"
+    ],
+    "termos": [
+     "broadband",
+     "fiber",
+     "fibre",
+     "internet provider"
+    ],
+    "lente": true,
+    "pares": [
+     "Comcast",
+     "Charter Communications",
+     "Telefónica"
+    ],
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Consultorias de investimento (CVM)",
+    "consulta": "\"consultoria de investimentos\" CVM",
+    "mkt": "pt-BR",
+    "ativos": [],
+    "termos": [
+     "consultoria",
+     "consultor"
+    ],
+    "industria": "wealth",
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Assessorias: fusões e aquisições",
+    "consulta": "\"assessoria de investimentos\" (fusão OR aquisição OR compra)",
+    "mkt": "pt-BR",
+    "ativos": [],
+    "termos": [
+     "assessoria",
+     "escritório"
+    ],
+    "industria": "wealth",
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Family offices no Brasil",
+    "consulta": "\"family office\" Brasil patrimônio",
+    "mkt": "pt-BR",
+    "ativos": [],
+    "termos": [
+     "family office"
+    ],
+    "industria": "wealth",
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Private banking (ANBIMA)",
+    "consulta": "\"private banking\" ANBIMA",
+    "mkt": "pt-BR",
+    "ativos": [],
+    "termos": [
+     "private"
+    ],
+    "industria": "wealth",
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Wealth management no Brasil",
+    "consulta": "(\"gestão de patrimônio\" OR \"wealth management\") Brasil assessoria",
+    "mkt": "pt-BR",
+    "ativos": [],
+    "termos": [
+     "patrimônio",
+     "wealth"
+    ],
+    "industria": "wealth",
+    "intervalo_min": 360
+   },
+   {
+    "nome": "Planejamento financeiro e CFP",
+    "consulta": "(\"planejador financeiro\" OR \"certificação CFP\") Planejar",
+    "mkt": "pt-BR",
+    "ativos": [],
+    "termos": [
+     "planejador",
+     "planejamento financeiro",
+     "cfp",
+     "planejar"
+    ],
+    "industria": "wealth",
+    "intervalo_min": 360
    }
   ],
   "cvm_ipe": {
@@ -1142,7 +1589,9 @@
    "Expert XP": "Grupo XP — não citar em material de cliente",
    "Conteúdos XP": "Grupo XP — não citar em material de cliente"
   },
-  "_nota_fundos": "v3.5: fundos que quase não aparecem pelo código recebem as notícias do segmento (FI-Infra, papel/CRI, Fiagro, fundos de fundos, logística, shoppings, renda urbana) em \"Setor e cadeia\" e as do fator que os move (juro real, crédito privado, CDI) como \"Tema geral\". Conteúdo didático genérico (\"o que são fundos imobiliários\") não é ligado aos fundos."
+  "_nota_fundos": "v3.5: fundos que quase não aparecem pelo código recebem as notícias do segmento (FI-Infra, papel/CRI, Fiagro, fundos de fundos, logística, shoppings, renda urbana) em \"Setor e cadeia\" e as do fator que os move (juro real, crédito privado, CDI) como \"Tema geral\". Conteúdo didático genérico (\"o que são fundos imobiliários\") não é ligado aos fundos.",
+  "_nota_lentes": "v3.6 · lente global por setor: busca em inglês do mesmo setor no mundo (lente: true) e os pares internacionais (pares), mostrados na ficha em \"Lente global\". Ativo só da VG VIP fica em setor_de_vip. Busca a cada 6 horas.",
+  "_nota_wealth": "v3.6 · indústria de wealth e consultorias: fontes com \"industria\": \"wealth\" (fontes.json) e buscas em português (buscas_setor com industria). Aparecem em Mundo e Estratégia › Wealth e consultorias. Nada do Grupo XP."
  },
  "ativos": [
   {
@@ -2859,6 +3308,38 @@
     "INBR34": "INBR32"
    },
    "_nota": "v3.5: relatórios da Genial pela página de cada ação (/acoes/<TICKER>/), com o endereço do relatório montado pelo título quando o link não está no HTML. tickers: código que a Genial usa quando difere do da carteira."
+  },
+  "cartas_termometro": {
+   "ativo": true,
+   "max_por_rodada": 6,
+   "meses": 6,
+   "max_mb": 12,
+   "timeout": 40,
+   "prazo_min": 3,
+   "_nota": "v3.6 · Termômetro das cartas: o robô abre a carta pública das gestoras brasileiras (PDF ou página, até 6 por rodada), conta as empresas citadas (código ou nome das empresas das carteiras) e publica biblioteca/cartas_mencoes.json. v3.7: guarda também até 2 frases literais por empresa e por carta (até 280 caracteres, com o link), e a janela passou a 6 meses. O texto completo não é guardado."
+  },
+  "proventos": {
+   "ativo": true,
+   "pausa_seg": 1.0,
+   "prazo_min": 3,
+   "_nota": "v3.6 · Agenda de proventos: página Empresas listadas da B3 (proventos em dinheiro dos últimos ~12 meses), uma consulta por empresa, uma vez por dia → biblioteca/proventos.json. API da página pública, não documentada: se a B3 mudar ou bloquear, o publicado fica e a falha aparece no log."
+  },
+  "fundos_cda": {
+   "ativo": true,
+   "hora_min": 21,
+   "timeout": 240,
+   "prazo_min": 8,
+   "_nota": "v3.6 · Quem tem a ação: CVM Dados Abertos (CDA, carteira mensal dos fundos; cadastro registro_fundo_classe para a gestora). Na rodada da noite, só quando sai um mês completo novo → biblioteca/fundos_acoes.json."
+  },
+  "fluxo_fundos": {
+   "ativo": true,
+   "hora_min": 9,
+   "timeout": 240,
+   "prazo_min": 6,
+   "pausa_seg": 10,
+   "cadastro_dias": 7,
+   "dias_guardados": 400,
+   "_nota": "v3.8 · Fluxo dos fundos: captação menos resgate por classe (Ações, Multimercado, Renda Fixa, Cambial), do informe diário da CVM (mês corrente e anterior, uma vez por dia a partir das 9h). Fundos de cotas ficam de fora (contariam duas vezes). Respeita o Crawl-Delay de 10 s da CVM → biblioteca/fluxo_fundos.json."
   }
  },
  "_nota_vip": "v3.5 · ativos das carteiras VG VIP que não estão na Oregon (\"carteira\": \"vip\"). O robô liga as notícias deles em ativos_vip, separado de ativos, para a seção Oregon nunca misturar as duas carteiras. A lista e os números das carteiras ficam em painel/src/vip.json. CNPJs conferidos na B3 (lista de companhias listadas) e, em 12 deles, também no cadastro da CVM, em 08/11/2026; cvm_nome é só um trecho estável do nome (a CVM e a B3 escrevem o nome de formas diferentes). SAUD3 sem trecho de nome: o CNPJ é o da antiga Odontoprev, renomeada Bradsaúde.",
@@ -3051,6 +3532,83 @@
     "ler_item": true,
     "ler_item_max": 8,
     "sufixo_titulo": "\\s*[-|]\\s*(by\\s+)?Compounding Quality.*$"
+   },
+   {
+    "id": "tai",
+    "nome": "Thinking Ahead Institute",
+    "autor": "Thinking Ahead Institute (WTW)",
+    "organizacao": "Thinking Ahead Institute",
+    "descricao": "Pesquisa sobre investidores institucionais: os estudos anuais dos ativos globais de fundos de pensão e das 500 maiores gestoras, alocação, governança e o investidor do futuro.",
+    "site": "https://www.thinkingaheadinstitute.org/research-papers/",
+    "listagens": [
+     {
+      "url": "https://www.thinkingaheadinstitute.org/research-papers-sitemap.xml",
+      "metodo": "sitemap",
+      "padrao": "/research-papers/[a-z0-9-]+/?$",
+      "maximo": 800,
+      "instituicao": "Thinking Ahead Institute",
+      "tipo": "Paper"
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 8,
+    "sufixo_titulo": "\\s*[-|–]\\s*Thinking Ahead Institute.*$"
+   },
+   {
+    "id": "nbim",
+    "nome": "Fundo soberano norueguês (NBIM)",
+    "autor": "Norges Bank Investment Management",
+    "organizacao": "NBIM",
+    "descricao": "Publicações do maior fundo soberano do mundo: notas de discussão, posições e relatórios sobre alocação, retorno e risco de longo prazo.",
+    "site": "https://www.nbim.no/en/news-and-insights/publications/",
+    "listagens": [
+     {
+      "url": "https://www.nbim.no/en/news-and-insights/publications/",
+      "padrao": "/news-and-insights/publications/[a-z0-9-]+/\\d{4}/[a-z0-9-]+/?$",
+      "ano_link": "/publications/[a-z0-9-]+/(\\d{4})/",
+      "instituicao": "NBIM"
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 4
+   },
+   {
+    "id": "caia",
+    "nome": "CAIA · Portfolio for the Future",
+    "autor": "CAIA Association",
+    "organizacao": "CAIA Association",
+    "descricao": "Artigos da CAIA sobre investimentos alternativos, alocação e construção de carteira (blog Portfolio for the Future).",
+    "site": "https://caia.org/blog",
+    "listagens": [
+     {
+      "url": "https://caia.org/blog",
+      "padrao": "/blog/\\d{4}/\\d{2}/\\d{2}/[a-z0-9-]+/?$",
+      "padrao_data": "\\d{4}/\\d{2}/\\d{2}",
+      "instituicao": "CAIA Association",
+      "tipo": "Artigo"
+     }
+    ]
+   },
+   {
+    "id": "vanguard",
+    "nome": "Vanguard · pesquisa",
+    "autor": "Vanguard",
+    "organizacao": "Vanguard",
+    "descricao": "Artigos e pesquisas da Vanguard sobre alocação, retornos esperados, comportamento do investidor e o valor do assessor (Advisor's Alpha).",
+    "site": "https://corporate.vanguard.com/content/corporatesite/us/en/corp/what-we-think/investing-insights/research-library.html",
+    "listagens": [
+     {
+      "url": "https://corporate.vanguard.com/content/corporatesite/us/en.sitemap.xml",
+      "metodo": "sitemap",
+      "padrao": "/corp/articles/[a-z0-9-]+\\.html$",
+      "maximo": 1500,
+      "instituicao": "Vanguard",
+      "tipo": "Artigo"
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 8,
+    "sufixo_titulo": "\\s*[|–-]\\s*Vanguard.*$"
    }
   ]
  }

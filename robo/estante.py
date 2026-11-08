@@ -303,9 +303,11 @@ def atualizar(cfg, rede, robots, hoje, agora_, estado, publicado, log_=print):
     ler_total = int(ec.get('ler_item_total', 30))  # páginas de item por rodada, somando as coleções
     intervalo = dt.timedelta(hours=float(ec.get('intervalo_horas', 168)))
     colecoes, itens = [], dict(ant)
-    for col in ec.get('colecoes') or []:
-        if col.get('ativo') is False:
-            continue
+    # v3.7 · coleção que nunca foi lida vai primeiro: o orçamento de páginas da rodada não fica todo com as primeiras da lista
+    # (na rodada real de 08/11 a GMO e o Compounding Quality ficaram sem vez). A ordem publicada continua a do config.
+    ordem = [c for c in ec.get('colecoes') or [] if c.get('ativo') is not False]
+    por_id = {}
+    for col in sorted(ordem, key=lambda c: 0 if not (st.get(c['id']) or {}).get('lido_em') and (c.get('listagens') or c.get('feeds')) else 1):
         s = st.setdefault(col['id'], {})
         info = dict(cols_ant.get(col['id']) or {})
         info.update({k: col.get(k) for k in ('id', 'nome', 'autor', 'organizacao', 'descricao', 'site', 'idioma', 'nota_links') if col.get(k)})
@@ -415,12 +417,53 @@ def atualizar(cfg, rede, robots, hoje, agora_, estado, publicado, log_=print):
         anos = sorted(int(x['ano']) for x in mine if x.get('ano'))
         info.update({'total': len(mine), 'de': anos[0] if anos else None, 'ate': anos[-1] if anos else None,
                      'verificado_em': agora_.isoformat(timespec='minutes') if lidos else info.get('verificado_em'),
-                     'status': 'erro' if erros and not lidos else 'completo' if all(s.get('lst%d_fim' % i, not l.get('paginas')) for i, l in enumerate(col.get('listagens') or [])) and all(s.get('feed%d_fim' % i) for i in range(len(col.get('feeds') or []))) else 'enchendo',
+                     'status': 'erro' if erros and not lidos else 'completo' if (s.get('lido_em') or not (col.get('listagens') or col.get('feeds'))) and all(s.get('lst%d_fim' % i, not l.get('paginas')) for i, l in enumerate(col.get('listagens') or [])) and all(s.get('feed%d_fim' % i) for i in range(len(col.get('feeds') or []))) else 'enchendo',
                      'erro': '; '.join(erros)[:200] if erros else None})
-        colecoes.append({k: v for k, v in info.items() if v is not None})
+        por_id[col['id']] = {k: v for k, v in info.items() if v is not None}
         log_('  estante %s: %d itens (%d páginas lidas%s)' % (col['id'], len(mine), lidos, '; falha: ' + '; '.join(erros)[:120] if erros else ''))
+    colecoes = [por_id[c['id']] for c in ordem if c['id'] in por_id]
     out = sorted(itens.values(), key=lambda x: (x.get('data') or str(x.get('ano') or '')), reverse=True)
     for x in out:
         x.pop('posicao', None)
     return {'gerado_em': agora_.isoformat(timespec='minutes'), 'colecoes': colecoes, 'temas': [[k, n] for k, n, _ in TEMAS], 'n': len(out), 'itens': out,
             'nota': 'Acervo permanente: título, data e link para a fonte original. Nenhum texto integral é copiado.'}
+
+
+# v3.6 · clássico da semana: um item da Estante ligado ao tema que mais apareceu no research dos últimos 7 dias
+COLECOES_CLASSICAS = ('mauboussin', 'howard-marks', 'cfa-rf', 'damodaran', 'aqr', 'gmo', 'tai', 'nbim', 'vanguard')
+
+
+def destaque_semana(est, titulos_semana, hoje, estado):
+    """Escolhe o clássico da semana. Tema em alta = tema da Estante (palavras-chave) mais frequente nos títulos de research
+    publicados nos últimos 7 dias. Entre os itens da Estante desse tema (coleções de papers, livros e memos; posts de blog
+    e newsletter ficam de fora), um por semana, sem repetir as últimas 26 escolhas. Determinístico (mesma semana, mesmo item)."""
+    itens = [x for x in (est or {}).get('itens') or [] if x.get('col') in COLECOES_CLASSICAS and x.get('link') and (x.get('tipo') or '') not in ('Post',) and not x.get('titulo_provisorio')]
+    if not itens:
+        return None
+    cont = {}
+    for t in titulos_semana or []:
+        for k in temas_de(t):
+            cont[k] = cont.get(k, 0) + 1
+    nomes = {k: n for k, n, _ in TEMAS}
+    ordem = sorted(cont, key=lambda k: -cont[k])
+    sem = '%d-W%02d' % hoje.isocalendar()[:2]
+    st = estado.setdefault('estante_destaque', {})
+    if st.get('semana') == sem and st.get('id') and any(x['id'] == st['id'] for x in itens):
+        esc = next(x for x in itens if x['id'] == st['id'])
+        tema = st.get('tema')
+    else:
+        usados = st.get('usados') or []
+        esc, tema = None, None
+        for k in ordem + [None]:
+            cand = [x for x in itens if (k is None or k in (x.get('temas') or [])) and x['id'] not in usados]
+            if cand:
+                cand.sort(key=lambda x: hashlib.sha1((sem + x['id']).encode()).hexdigest())
+                esc, tema = cand[0], k
+                break
+        if not esc:
+            return None
+        st.update({'semana': sem, 'id': esc['id'], 'tema': tema, 'usados': (usados + [esc['id']])[-26:]})
+    col = next((c for c in (est.get('colecoes') or []) if c.get('id') == esc.get('col')), {})
+    return {'semana': sem, 'tema': tema, 'tema_nome': nomes.get(tema), 'n_tema': cont.get(tema, 0) if tema else 0, 'n_titulos': len(titulos_semana or []),
+            'item': {k: esc.get(k) for k in ('id', 'col', 'titulo', 'link', 'link_tipo', 'link_nota', 'data', 'ano', 'instituicao', 'autor', 'resumo', 'anexos', 'temas')},
+            'colecao': col.get('nome') or esc.get('col'), 'autor': col.get('autor')}

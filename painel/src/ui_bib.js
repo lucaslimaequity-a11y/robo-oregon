@@ -35,7 +35,8 @@
   // Para o Hoje e para a Biblioteca: cada busca salva com quantos itens novos (detectados depois da sua visita anterior)
   A.buscasSalvas = function () {
     var itens = A.itensAtivo ? A.itensAtivo() : A.itens();
-    return buscas().map(function (b) { var l = aplicaBusca(itens, b.f); return {b: b, total: l.length, novos: A.visitaAnterior && A.visitaAnterior() ? l.filter(function (x) { return A.novoParaVoce(x); }).length : 0}; });
+    return buscas().map(function (b) { var l = aplicaBusca(itens, b.f), nv = A.visitaAnterior && A.visitaAnterior() ? l.filter(function (x) { return A.novoParaVoce(x); }) : [];
+      return {b: b, total: l.length, novos: nv.length, itensNovos: nv.sort(function (x, y) { return I.pub(y).localeCompare(I.pub(x)); }).slice(0, 3)}; });
   };
   A.abrirBusca = function (b) { A.go('bib', 'busca'); A.bibFiltro(Object.assign({}, b.f)); };
   function salvarBusca() {
@@ -76,7 +77,7 @@
     if (F.lidos === 'sim') lista = lista.filter(function (x) { return A.lido(x.id); });
     var ordem = F.ordem || 'data';
     lista = ordem === 'prioridade' ? I.ordenar(lista) : lista;
-    var q = h('input', {class: 'inp search', type: 'search', value: F.q, placeholder: 'Assunto, autor, gestora, ativo… (ex.: juro real, Oaktree, PETR4)', 'aria-label': 'Buscar', oninput: function () { F.q = q.value; clearTimeout(q.t); q.t = setTimeout(function () { A.rerender(); }, 250); }});
+    var q = h('input', {class: 'inp search', type: 'search', value: F.q, placeholder: 'Assunto, autor, ativo ou filtros (ex.: "juro real" fonte:Valor desde:10/2026)', 'aria-label': 'Buscar', oninput: function () { F.q = q.value; clearTimeout(q.t); q.t = setTimeout(function () { A.rerender(); }, 250); }});
     var de = h('input', {class: 'inp', type: 'date', value: F.de, 'aria-label': 'De', onchange: function () { F.de = de.value; A.rerender(); }}), ate = h('input', {class: 'inp', type: 'date', value: F.ate, 'aria-label': 'Até', onchange: function () { F.ate = ate.value; A.rerender(); }});
     var nAv = AVANC.filter(function (k) { return F[k]; }).length + (F.lidos !== 'todos' ? 1 : 0);
     var grupos = h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Tipo de fonte'}, GRUPOS.map(function (g) {
@@ -100,7 +101,12 @@
       h('select', {class: 'inp', 'aria-label': 'Leitura', onchange: function (ev) { F.lidos = ev.target.value; A.rerender(); }}, [['todos', 'lidos e não lidos'], ['nao', 'só não lidos'], ['sim', 'só lidos']].map(function (o) { return h('option', {value: o[0], selected: F.lidos === o[0] || null}, o[1]); }))));
     wrap.appendChild(A.pageHead('Biblioteca', 'Pesquisa', 'Tudo o que o robô coletou, mês a mês, sem apagar nada.' + (e.versao ? ' ' + A.mesesDisponiveis().length + ' meses disponíveis.' : '')));
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
-    wrap.appendChild(h('div', {class: 'busca-box'}, q, h('div', {class: 'busca-l'}, grupos, filtros), avanc));
+    // v3.7 · como escrever os filtros na busca
+    var ajuda = h('details', {class: 'mais-f bq-aj'}, h('summary', null, 'Como filtrar pela busca'), h('ul', {class: 'bq-l'},
+      [['"frase exata"', 'as palavras nessa ordem'], ['fonte:Valor', 'veículo, gestora ou instituição'], ['desde:10/2026 · até:15/11/2026', 'período (dia, mês ou ano)'], ['ativo:PETR4', 'ativo das carteiras (Oregon ou VIP)'],
+        ['evento:recompra', 'recompra, M&A, guidance, gestão (CEO, CFO), dívida, oferta'], ['tipo:carta', 'fato, resultado, opiniao, carta, research, noticia'], ['-palavra', 'deixa de fora']].map(function (o) { return h('li', null, h('code', null, o[0]), ' ', h('span', {class: 'muted'}, o[1])); })),
+      A.legendaMarcas ? A.legendaMarcas() : null);
+    wrap.appendChild(h('div', {class: 'busca-box'}, q, h('div', {class: 'busca-l'}, grupos, filtros), avanc, ajuda));
     var bv = buscasView(); if (bv) wrap.appendChild(bv);
     if (F.grupo === 'salvos') wrap.appendChild(h('p', {class: 'hint'}, 'Itens marcados com “Ler depois” na janela de leitura ou na linha da notícia. Para tirar da lista, abra o item e toque em “Salvo para ler”.'));
     wrap.appendChild(h('p', {class: 'muted', style: 'font-size:.88rem'}, lista.length + ' de ' + (F.grupo === 'salvos' ? A.salvos().length : base.length) + ' itens' + (pend ? ' · carregando meses…' : '') + (F.tema ? ' · assunto: ' + I.temaNome(F.tema) : '') + (F.ativo ? ' · ativo: ' + F.ativo : '')));
@@ -217,12 +223,12 @@
     var ids = {}; fl.forEach(function (f) { ids[f.id] = 1; }); Object.keys(cont).forEach(function (k) { ids[k] = 1; });
     var rows = Object.keys(ids).map(function (id) { var f = porId[id] || {}, c = cont[id] || {}, r = c.ultima_rodada || {}; var rej = Object.keys(c.rejeitados || {}).map(function (k) { return k + ' ' + c.rejeitados[k]; }).join(', ');
       var up = c.ultimo_publicado || null, dias = up ? Math.floor((Date.now() - Date.parse(up.length <= 10 ? up + 'T12:00:00-03:00' : up)) / 864e5) : null;
-      return {id: id, nome: f.nome || c.nome || id, cat: I.CATEGORIA[f.categoria] || f.categoria || '', metodo: f.metodo || '', ativo: f.ativo, motivo: f.motivo_desligada, aguardando: c.aguardando, pais: f.pais || '', recebidos: c.recebidos, rejeitados: rej, novos: c.novos, publicados: c.publicados, erros: c.erros, ok: c.ultima_ok, erro: c.ultimo_erro, erroEm: c.ultimo_erro_em, tent: r.quando || null, tentErro: r.erro || null, up: up, dias: dias, rnovos: r.novos, url: f.url_fonte, status: f.status_validacao}; });
+      return {id: id, nome: f.nome || c.nome || id, cat: I.CATEGORIA[f.categoria] || f.categoria || '', metodo: f.metodo || '', ativo: f.ativo, motivo: f.motivo_desligada, aguardando: c.aguardando, pais: f.pais || '', recebidos: c.recebidos, rejeitados: rej, novos: c.novos, publicados: c.publicados, erros: c.erros, ok: c.ultima_ok, erro: c.ultimo_erro, erroEm: c.ultimo_erro_em, tent: r.quando || null, tentErro: r.erro || null, pausa: !!c.pausa || (c.seguidas || 0) >= 3, up: up, dias: dias, rnovos: r.novos, url: f.url_fonte, status: f.status_validacao}; });
     var paradas = rows.filter(function (r) { return r.ativo !== false && r.dias != null && r.dias > 90; }).length, semConteudo = rows.filter(function (r) { return r.ativo !== false && r.tent && r.up == null; }).length;
     if (paradas || semConteudo) wrap.appendChild(h('p', {class: 'hint'}, (paradas ? paradas + ' fonte(s) ativas sem conteúdo novo há mais de 90 dias' : '') + (paradas && semConteudo ? '; ' : '') + (semConteudo ? semConteudo + ' sem data de publicação lida até agora' : '') + '. Conteúdo antigo dessas fontes não aparece como notícia.'));
     var tabela = A.table([
       {k: 'nome', t: 'Fonte', f: function (r) { return h('span', null, A.link(r.url) ? h('a', {href: A.link(r.url), target: '_blank', rel: 'noopener'}, r.nome) : r.nome, h('div', {class: 'muted', style: 'font-size:.78rem'}, [r.cat, r.pais, r.metodo].filter(Boolean).join(' · ') + (r.ativo === false ? ' · desligada: ' + (r.motivo || '') : r.aguardando ? ' · aguardando chave' : ''))); }},
-      {k: 'tent', t: 'Última tentativa', f: function (r) { return r.tent ? h('span', {class: r.tentErro ? 'down' : null, title: r.tentErro ? 'Falhou: ' + r.tentErro : 'Leitura ok'}, A.dataBR(r.tent).slice(0, 5) + ' ' + A.hm(r.tent) + (r.tentErro ? ' · falhou' : '')) : (r.ativo === false ? '—' : 'ainda não'); }},
+      {k: 'tent', t: 'Última tentativa', f: function (r) { return r.tent ? h('span', {class: r.tentErro ? 'down' : null, title: r.tentErro ? 'Falhou: ' + r.tentErro : 'Leitura ok'}, A.dataBR(r.tent).slice(0, 5) + ' ' + A.hm(r.tent) + (r.tentErro ? ' · falhou' : ''), r.pausa && r.tentErro ? h('small', {class: 'muted', style: 'display:block', title: 'Falhou várias vezes seguidas (bloqueio, tempo esgotado ou endereço sumido): o robô tenta uma vez por dia, sem contornar nada.'}, 'em pausa · 1 tentativa por dia') : null) : (r.ativo === false ? '—' : 'ainda não'); }},
       {k: 'dias', t: 'Último conteúdo', f: function (r) { return r.up ? h('span', {class: r.dias > 90 ? 'down' : r.dias > 30 ? 'muted' : null, title: 'Data de publicação do item mais recente que a fonte oferece'}, A.dataBR(r.up) + ' · ' + (r.dias <= 0 ? 'hoje' : 'há ' + r.dias + ' d')) : h('span', {class: 'muted'}, '—'); }},
       {k: 'erros', t: 'Falha', r: 1, f: function (r) { return r.erros ? h('span', {class: 'down', title: (r.erroEm ? A.dataBR(r.erroEm) + ' ' + A.hm(r.erroEm) + ': ' : '') + (r.erro || '')}, r.erros + (r.erro ? ' · ' + String(r.erro).slice(0, 28) : '')) : (r.aguardando ? h('span', {class: 'muted', title: r.aguardando}, 'chave') : '0'); }},
       {k: 'publicados', t: 'Publicados', r: 1}, {k: 'novos', t: 'Novos', r: 1}, {k: 'recebidos', t: 'Recebidos', r: 1}, {k: 'rejeitados', t: 'Rejeitados', f: function (r) { return r.rejeitados || '—'; }, s: false}
@@ -291,6 +297,8 @@
           x.resumo ? h('p', {class: 'est-r'}, x.resumo.length > 260 ? x.resumo.slice(0, 257) + '…' : x.resumo) : null,
           h('div', {class: 'est-f'}, (x.anexos || []).map(function (a) { return h('a', {class: 'chip', href: A.link(a.url), target: '_blank', rel: 'noopener'}, a.rotulo + ' ↗'); }),
             (x.temas || []).slice(0, 3).map(function (t) { return h('button', {class: 'tag sm', onclick: function () { ES.tema = t; ES.max = 60; A.rerender(); }}, nomeTema[t] || t); }),
+            A.botaoComite ? A.botaoComite(x) : null,
+            (function () { var y = Object.assign({}, x, {fonte: c0.nome || x.instituicao || ''}), bl = h('button', {class: 'btn sm', title: 'Põe na sua fila de leitura (aparece no Hoje)', onclick: async function () { await A.salvar(y, !A.salvo(x.id)); bl.textContent = A.salvo(x.id) ? 'Na fila' : 'Ler depois'; }}, A.salvo(x.id) ? 'Na fila' : 'Ler depois'); return bl; })(),
             h('button', {class: 'btn link sm', onclick: function () { A.drawer('Anotar o que aprendi', A.formAprendizado(null, {tipo: 'aprendizado', titulo: x.titulo, fonte: (c0.nome || '') + (x.ano ? ' · ' + x.ano : ''), link: x.link, temas: []})); }}, 'anotar o que aprendi')))));
     });
     wrap.appendChild(lista);
@@ -300,6 +308,7 @@
     return wrap;
   }
 
+  A.abrirEstante = function (col) { ES.col = col || ''; ES.max = 60; A.go('bib', 'estante'); };
   A.SUBS.bib = [['busca', 'Pesquisa'], ['estante', 'Estante'], ['mes', 'Resumo do mês'], ['semanal', 'Resumos semanais'], ['aprendizados', 'Meus aprendizados'], ['fontes', 'Fontes e coleta']];
   A.areas.bib = function () {
     var wrap = h('div'), s = S.sub.bib;

@@ -1,3 +1,294 @@
+# Resultados dos testes · v3.8 · 08/11/2026 (Brasília)
+
+Simulado = rede e arquivos de mentira; os formatos seguem o que foi conferido (metadado do informe diário da CVM,
+cadastro pós-175, perfil da SPX no Issuu). O que vem dos dados reais está dito como tal.
+
+## 1. Dados reais (rodada de 19:20 de 08/11, ramo `dados`)
+
+Fontes cuja última tentativa falhou: Squadra, Safra, Santander e Itaú (403); IBGE, Genial (tempo esgotado);
+SPX (formato); CNN Brasil (404, nunca funcionou). Sobre cada uma:
+- **SPX:** o perfil `issuu.com/spx_capital` lista "CARTA À EQUIPE - 10.26" (08/10/2026) e "09.26" (16/09/2026). O padrão
+  exigia "issuu.com" no link e o Issuu usa link relativo. Corrigido.
+- **CNN Brasil:** a página de Economia não anuncia feed; o sitemap é numerado (`/sitemap/3673.xml`…), sem um sitemap de
+  notícias estável. Desligada com o motivo registrado.
+- **Squadra, Safra, Santander, Itaú:** bloqueiam robôs. Ficam em pausa (1 tentativa por dia), sem contornar.
+
+## 2. Robô (Python)
+
+```
+python -m unittest discover -s testes -p "test_*.py"
+Ran 153 tests in 11.725s
+OK
+```
+
+Novos (`testes/test_v38.py`, 10):
+
+```
+test_cadastro ... ok                                    classe pelo cadastro pós-175; FIC marcado
+test_cadastro_sem_coluna_vira_diagnostico ... ok
+test_informe_diario ... ok                              FIC fora; subclasses somadas; linha da classe vale; sem cadastro → Outros
+test_colunas_desconhecidas ... ok
+test_rodada_semanas_meses_e_uma_vez_por_dia ... ok      CNPJ não publicado; CVM fora não apaga nada
+test_semanas_antigas_ficam ... ok
+test_contador_de_falhas_seguidas ... ok
+test_rodada_pula_fonte_em_pausa_e_tenta_no_dia_seguinte ... ok
+test_links_relativos_e_mes_pelo_titulo ... ok           SPX: só a carta em português, mês 10.26 → 2026-10
+test_cnn_desligada_com_motivo ... ok
+```
+
+## 3. Painel e navegador
+
+```
+node testes/painel.test.js
+60 de 60 testes do painel passaram; modelos quantitativos ok
+
+node painel/test/areas.js http://localhost:8777/index.html
+214 PASS · tudo ok
+PASS 1440 fluxo dos fundos: semana a semana e mês a mês, com barras ({"sem":2,"meses":2,"barras":4,"res":true,"neg":true,"sw":true})
+PASS 1440 fechamento da semana com as nove seções (com o fluxo dos fundos), copiar e imprimir
+PASS 390 (as mesmas verificações no celular)
+```
+
+Na revisão das capturas, os valores quebravam em duas linhas no celular ("+R$ 3" / "mi"). Corrigido.
+
+## 4. O que confirma no GitHub
+
+- O informe diário da CVM a partir do GitHub: o arquivo do mês tem uns 11 MB.
+- Os nomes `Classificacao` e `Classe_Cotas` no cadastro real. Se vierem diferentes, o log mostra as colunas e nada é
+  publicado errado.
+- A primeira leitura da SPX.
+
+---
+
+# Resultados dos testes · v3.7 · 08/11/2026 (Brasília)
+
+Três tipos de prova, sempre ditos pelo nome: **dados reais já capturados** (o que o robô publicou às 16:10 de 08/11, na
+rodada da v3.5, lido com o código da v3.7, sem coletar de novo), **conteúdo real conferido** (página Actions do
+repositório, documentação do GitHub, páginas das cartas) e **simulado** (rede de mentira dentro do teste).
+
+## 1. O que os dados reais mostraram
+
+**A agenda do robô quase não roda.** Na página Actions (lida em 08/11, ~17h30), as 10 últimas rodadas são 9 de envio de
+arquivos (push) e **1 agendada** (#14). A documentação do GitHub: "High load times include the start of every hour. If the
+load is sufficiently high enough, some queued jobs may be dropped. To decrease the chance of delay, schedule your
+workflow to run at a different time of the hour." O horário passou para os minutos 7 e 37.
+
+**Estante na rodada real da v3.5** (`biblioteca/estante.json`, 15:57):
+
+```
+estante gerado 2026-11-08T15:57-03:00 itens 1341
+{'damodaran': 105, 'howard-marks': 166, 'mauboussin': 235, 'cfa-rf': 282, 'aqr': 553}
+  mauboussin erro · acesso bloqueado (403)    (as 235 da semente continuam)
+  cfa-rf enchendo · howard-marks completo · damodaran completo · aqr completo
+  gmo completo (0 itens)  ← errado: nunca foi lida
+  compounding-quality enchendo (0 itens)
+```
+
+Causa: o limite de 8 páginas por rodada acabou nas primeiras coleções; a GMO tem uma listagem só e era marcada "completo"
+sem ter sido lida. Corrigido (a nunca lida vai primeiro; "completo" só depois de lida) e testado com o estado real.
+
+**Tipo de evento nas manchetes reais** (1.966 itens; 390 de empresa):
+
+```
+guidance 7  ex.: Lucro da Porto Seguro cai 14% e empresa reduz projeção de receita
+            ex.: Renner retira projeções de receita até 2030 citando consumo fraco e concorrência estrangeira
+fusao    8  ex.: Rede D'Or e Fleury negam negociações para fusão, apesar de rumores no mercado
+divida   1  ex.: AXIA3 — Comunicado ao Mercado: 14ª Emissão de Debêntures - AXIA Energia
+```
+
+Duas manchetes erradas na primeira versão e retiradas por regra: "Bradesco reduz projeção do PIB de 2027 para 0,4%"
+(guidance) e seis avisos "Aquisição/Alienação de Participação Acionária (art. 12 da Instr. CVM nº 358)" (M&A).
+
+**Termômetro com a janela de 6 meses** sobre as cartas reais: 2026-11 3 cartas, 10 8, 09 2, 08/07/06 0. Sem rede aqui,
+as 6 primeiras ficam marcadas como tentadas e nada se perde.
+
+## 2. Robô (Python)
+
+```
+python -m unittest discover -s testes -p "test_*.py"
+Ran 143 tests in 12.611s
+OK
+```
+
+Novos da v3.7 (`testes/test_v37.py`, 12, simulados):
+
+```
+test_frases_literais_por_empresa ... ok
+test_frase_longa_corta_com_a_citacao_dentro ... ok
+test_quebra_de_linha_do_pdf_nao_corta_a_frase ... ok
+test_sem_mencao_sem_trecho ... ok
+test_janela_de_seis_meses_e_trechos_publicados ... ok
+test_carta_lida_antes_e_reaberta_uma_vez_depois_das_novas ... ok
+test_releitura_que_falha_nao_apaga_a_contagem ... ok
+test_data_com_amanha_e_cartas_novas ... ok          (Telegram)
+test_sem_nada_nao_acrescenta_secao ... ok
+test_manchetes ... ok                               (tipo de evento: manchetes reais acima)
+test_so_item_de_empresa ... ok
+test_quem_nunca_foi_lido_vai_primeiro ... ok        (Estante, com o estado real de 08/11)
+```
+
+## 3. Painel
+
+```
+node testes/painel.test.js
+59 de 59 testes do painel passaram; modelos quantitativos ok
+```
+
+## 4. Navegador (Chromium, 1440 px e 390 px, site de teste, com as fontes IBM Plex que o site usa)
+
+```
+node painel/test/areas.js http://localhost:8777/index.html
+210 PASS · tudo ok
+PASS 1440 topo: ponto + hora; detalhes, tema escuro e "Coletar agora" no toque
+PASS 1440 aviso depois do Atualizar e "Coletar agora" no Hoje
+PASS 1440 Hoje: duas colunas, faixa do dia, alertas e fila, vazios em uma linha, atalhos fixos, marcas e eventos
+PASS 1440 explicação recolhida no "?" e aberta ao tocar ({"antes":"none","depois":"block"})
+PASS 1440 mudanças de recomendação: a mesma casa contra a visão anterior (Itaú BBA, KLBN4: Compra · R$ 25,00 → Neutro)
+PASS 1440 fechamento da semana com as oito seções, copiar e imprimir
+PASS 1440 busca com filtros: evento, fonte, frase, exclusão, período e tipo
+PASS 1440 termômetro: trecho literal da carta e grade empresa × mês
+PASS 1440 ficha mais larga: a lista recolhe e volta ({"larg":1352})
+PASS 1440 comitê: botão Imprimir e folha limpa na impressão
+PASS 1440 Hoje VIP: mapa enxuto com os 35 ativos (6 quadrados, 29 na linha "sem notícias")
+PASS 390 celular: seções embaixo, áreas recolhíveis e notícias em duas linhas ({"navBaixo":true,"clamp":"2","alt":2})
+PASS 1440 nenhuma tela escreve "null", "undefined" ou "NaN" ()      (17 telas; o mesmo no celular)
+```
+
+Na revisão das capturas: o "O" da opinião ficava sozinho numa linha (a marca agora vai dentro do título); a etiqueta do
+evento aparecia cortada (conflito com uma classe antiga `.ev`, renomeada); uma classe `tp` já existia no registro de
+aprendizados (renomeada para `mt`); e o cabeçalho das páginas sem botão à direita escrevia "null" no canto (achado na
+captura do Termômetro; agora há uma verificação em 17 telas). As quatro ficaram corrigidas antes de fechar o pacote.
+
+## 5. O que funciona, o que depende de autorização e o que não está disponível
+
+- **Funciona (conferido aqui):** todas as telas novas, tema escuro, impressão, busca com filtros, regras de evento sobre
+  manchetes reais, correção da Estante com o estado real.
+- **Confirma no GitHub:** as rodadas agendadas aos :07 e :37 (o GitHub não garante horário), a releitura das cartas para os
+  trechos, a mensagem nova do Telegram.
+- **Depende de autorização:** resumo automático de estudos, cartas e notícias (chave paga da Anthropic); disparar o robô
+  por um serviço externo de agenda (exigiria um token do GitHub fora dos Secrets).
+- **Não disponível:** captação e resgate dos fundos; cartas que são só imagem.
+
+---
+
+# Resultados dos testes · v3.6 · 08/11/2026 (Brasília)
+
+O contêiner onde os testes rodaram não alcança a maior parte da internet. Três tipos de prova, sempre ditos pelo nome:
+
+- **Dados reais já capturados**: o que o robô publicou às 14:13 de 08/11 (ramo `dados`, última rodada antes da v3.5
+  subir), lido com o código da v3.6. Nada foi coletado de novo.
+- **Conteúdo real conferido**: endereços e formatos lidos nas páginas públicas em 08/11 (B3, CVM, feeds de wealth,
+  Estante, páginas de carta da Dynamo e da JGP).
+- **Simulado**: rede de mentira dentro do teste. Prova a lógica, não a internet. B3, CVM, cartas e fontes novas só se
+  confirmam na primeira rodada no GitHub.
+
+## 1. Termômetro das cartas sobre os dados REAIS (cartas das gestoras brasileiras no histórico)
+
+```
+2026-11  3 cartas  JGP Gestão de Recursos
+2026-10  8 cartas  Dynamo, JGP, Kinea, Legacy Capital
+2026-09  2 cartas  Kinea, Legacy Capital
+2026-08  0 cartas
+formato do link: 2 PDF · 11 página
+```
+
+Dois problemas achados aqui e corrigidos antes de fechar o pacote:
+
+- A janela de meses era contada de 31 em 31 dias e pulava setembro (nov, out, **ago**, jul). Agora é mês a mês.
+- 11 das 13 cartas são páginas, não PDF. Na primeira versão elas ficariam de fora. Abrindo as páginas reais (08/11): a
+  da Dynamo ("Carta 130 – O Tácito do Tempo") e a da JGP ("Relatório de setembro") só têm o título e o "Leia aqui"; o
+  texto está no PDF do mesmo site (`/wp-content/uploads/2026/10/Carta-Dynamo-130.pdf`,
+  `/wp-content/uploads/2026/10/JGP_Relatorio-de-Gestao_Fundos-de-Multimercados_Set26.pdf`). O robô agora lê a página e,
+  se ela for curta, abre o PDF da carta no mesmo site (o que tem "carta" ou "relatório" no nome ou palavras do título;
+  política, regulamento e formulário ficam de fora). As cartas da Kinea são texto na página. Vídeo é pulado.
+
+## 2. Clássico da semana com as sementes reais e os títulos reais de research
+
+```
+estante (só sementes, sem rede): itens 459
+research com data de 01 a 08/11: 126
+temas da Estante nos títulos: macro 18, ia_tecnologia 13, risco_ciclos 7, decisao 5, privados 3, mercados 2
+semana 2026-W45 · tema "Macro, inflação e moedas" · Damodaran, "Valuing emerging market companies"
+mesma semana, mesmo item: True
+semana seguinte (2026-W46): outro item (Howard Marks), sem repetir
+```
+
+## 3. Robô (Python)
+
+```
+python -m unittest discover -s testes -p "test_*.py"
+Ran 131 tests in 9.599s
+OK
+```
+
+Novos da v3.6 (`testes/test_v36.py`, 17, simulados com formatos conferidos):
+
+```
+test_literal_e_cid ... ok                      leitor de PDF: texto simples e fonte com mapa ToUnicode (Word/LibreOffice)
+test_pdf_quebrado_nao_derruba ... ok
+test_codigo_e_nome_somam_na_mesma_empresa ... ok   PETR3 soma em PETR4; "Vale do Silício" e "quanto vale" não são a Vale
+test_mes_da_carta ... ok
+test_janela_de_meses_nao_pula_setembro ... ok
+test_carta_publicada_como_pagina ... ok        miolo da página sem menu, script e rodapé; PDF da carta, não o da política
+test_tres_formas_de_carta ... ok               PDF, página curta com PDF, texto na página e vídeo; segunda rodada não reabre
+test_classe_pelo_isin_e_soma_do_ano ... ok     B3: ON/PN/unit pelo ISIN, valor "0,47156696000", datas DD/MM/AAAA
+test_falha_mantem_o_publicado ... ok           B3 fora do ar: o publicado fica
+test_mes_completo_pelo_tamanho ... ok          CVM: mês completo pelo tamanho do arquivo
+test_leitura_gestoras_e_comparacao ... ok      quem entrou e quem saiu em relação ao mês anterior
+test_colunas_desconhecidas_viram_diagnostico ... ok
+test_fluxo_completo_e_sem_repetir_o_mes ... ok
+test_tema_em_alta_e_estavel_na_semana ... ok
+test_buscas_geradas ... ok                     lente global (en-US, pares) e wealth (pt-BR)
+test_feed_com_html_cru ... ok                  feed do Kitces com HTML cru
+test_sitemap_de_noticias_com_titulo ... ok     Financial Planning: título do sitemap
+```
+
+## 4. Painel
+
+```
+node testes/painel.test.js
+58 de 58 testes do painel passaram; modelos quantitativos ok
+```
+
+Novo: confere a sintaxe de todos os arquivos de `painel/src` (um erro de digitação numa expressão regular chegou a travar
+o painel inteiro durante o desenvolvimento; agora esse tipo de erro para o teste).
+
+## 5. Navegador (Chromium, 1440 px e 390 px, site de teste)
+
+```
+node painel/test/areas.js http://localhost:8777/index.html
+184 PASS · tudo ok
+PASS 1440 comitê do mês: sugestão levada e item à mão na pauta (1|2|true)
+PASS 1440 "Levar ao comitê" numa notícia liga e desliga (Na pauta do comitê→Levar ao comitê→Na pauta do comitê)
+PASS 1440 agenda de proventos: data-com à frente e pagamentos a receber separados ({"tabelas":2,"linhas":45,"vir":true,"receber":true,"dcFut":true})
+PASS 1440 quem tem a ação: mês da CVM e gestora
+PASS 1440 termômetro das cartas, só empresas das carteiras por padrão ({"emp":2,"petr":true})
+PASS 1440 Wealth e consultorias com CVM e imprensa especializada
+PASS 1440 trilha CFP (8) e CFA III (8) ({"mods":16,"cfp":true})
+PASS 1440 clássico da semana no Research do Hoje
+PASS 1440 ponte Oregon → VIP na ficha
+PASS 390 (as mesmas verificações no celular)
+```
+
+Todas as telas novas sem rolagem lateral e sem erro de JavaScript em 1440 e 390 px. Na revisão das capturas: a lista de
+proventos misturava data-com à frente com pagamentos de data-com já passada (no celular a coluna de pagamento fica fora
+da tela); agora são duas listas. As sugestões do comitê ganharam a fonte e a data em linha menor.
+
+## 6. O que funciona, o que depende de autorização e o que não está disponível
+
+- **Funciona (conferido aqui):** comitê do mês, telas novas, leitor de PDF, contagem nas cartas sobre o histórico real,
+  clássico da semana com as sementes reais.
+- **Confirma na primeira rodada no GitHub:** consulta de proventos da B3 (API interna da página, pode recusar endereços
+  de nuvem), carteira dos fundos na CVM (nomes de três colunas), leitura das cartas, fontes de wealth, pesquisas da lente
+  global, coleções novas da Estante.
+- **Depende de autorização:** resumo automático de estudos, cartas e notícias (precisa da chave paga da Anthropic,
+  `docs/IA.md`); posts do X (API paga).
+- **Não disponível:** captação e resgate dos fundos (informe diário da CVM; não entrou nesta versão); cartas que são só
+  imagem (sem texto para contar); ThinkAdvisor, Citywire, ANBIMA, Valor Investe e Planejar (recusam leitura automática ou
+  não têm lista legível).
+
+---
+
 # Resultados dos testes · v3.5 · 08/11/2026 (Brasília)
 
 O contêiner onde os testes rodaram não alcança a maior parte da internet. Três tipos de prova, sempre ditos pelo nome:

@@ -71,11 +71,14 @@
     return h('div', {class: 'vip-mapa'}, CARTS.map(function (c) {
       var l = (c.ativos || []).map(function (a) { return a.ticker; }).sort(function (a, b) { return ((por[b] || {}).n || 0) - ((por[a] || {}).n || 0) || a.localeCompare(b); });
       return h('div', {class: 'vip-mapa-c'}, h('p', {class: 'vip-mapa-h'}, cartChip(c.id), h('span', {class: 'muted'}, ' · ' + l.filter(function (t) { return por[t]; }).length + ' de ' + l.length + ' com acontecimentos')),
-        h('div', {class: 'atn', role: 'list'}, l.map(function (t) {
-          var o = por[t] || {n: 0, k: {}}, nivel = o.n ? Math.min(4, Math.ceil(4 * o.n / mx)) : 0, det = ['resultado', 'cvm', 'opiniao', 'noticia'].filter(function (k) { return o.k[k]; }).slice(0, 2).map(function (k) { return cur(k, o.k[k]); });
-          return h('button', {class: 'atn-t n' + nivel, role: 'listitem', title: nome(t) + (o.n ? ': ' + det.join(', ') : ': nada nos últimos 7 dias') + '. Toque para a ficha.', onclick: function () { abrir(t); }},
-            h('b', null, t), h('span', {class: 'atn-n'}, String(o.n)), h('small', null, o.n ? det.join(' · ') : 'sem notícias'));
-        })));
+        // v3.7 · mapa enxuto: quadrado só para quem teve acontecimento; os demais numa linha, cada código abre a ficha
+        (function () { var com = l.filter(function (t) { return por[t]; }), sem = l.filter(function (t) { return !por[t]; });
+          return [com.length ? h('div', {class: 'atn', role: 'list'}, com.map(function (t) {
+            var o = por[t], nivel = Math.min(4, Math.ceil(4 * o.n / mx)), det = ['resultado', 'cvm', 'opiniao', 'noticia'].filter(function (k) { return o.k[k]; }).slice(0, 2).map(function (k) { return cur(k, o.k[k]); });
+            return h('button', {class: 'atn-t n' + nivel, role: 'listitem', title: nome(t) + ': ' + det.join(', ') + '. Toque para a ficha.', onclick: function () { abrir(t); }},
+              h('b', null, t), h('span', {class: 'atn-n'}, String(o.n)), h('small', null, det.join(' · ')));
+          })) : null,
+          sem.length ? h('p', {class: 'atn-zero'}, h('span', {class: 'muted'}, 'sem notícias: '), sem.map(function (t) { return h('button', {class: 'atn-z', title: nome(t) + ': nada nos últimos 7 dias. Toque para a ficha.', onclick: function () { abrir(t); }}, t); })) : null]; })());
     }));
   }
 
@@ -216,6 +219,12 @@
     }
     box.appendChild(op);
     if (c.oficiais.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, 'Documentos à CVM · ' + c.oficiais.length), listaG(t, 'cvm', c.oficiais, 4)));
+    // v3.6 · proventos anunciados e quem tem a ação (fundos)
+    var pvf = A.proventosNaFicha ? A.proventosNaFicha(t) : null; if (pvf) box.appendChild(pvf);
+    var fdf = A.fundosNaFicha ? A.fundosNaFicha(t) : null; if (fdf) box.appendChild(fdf);
+    // v3.6 · lente global do setor (pares e o setor no mundo)
+    var n = tkN(t), vis = {}, lente = itens().filter(function (x) { if (!x.lente || vis[x.id] || x.acervo) return false; vis[x.id] = 1; return (x.setor_de || []).concat(x.setor_de_vip || []).indexOf(n) >= 0; }).sort(function (a, b) { return I.pub(b).localeCompare(I.pub(a)); });
+    var lg = A.lenteGlobal ? A.lenteGlobal(n, lente, function (l, k, m) { return listaG(t, k, l, m); }) : null; if (lg) box.appendChild(lg);
     if (c.mencoes.length) box.appendChild(A.more('Menções incidentais (' + c.mencoes.length + ')', listaG(t, 'men', c.mencoes, 8)));
     return box;
   }
@@ -233,6 +242,9 @@
     wrap.appendChild(h('p', null, h('button', {class: 'btn link', onclick: function () { AT.t = null; A.rerender(); }}, '← Ativos VIP')));
     wrap.appendChild(h('div', {class: 'vip-fh'}, h('div', null, h('h1', null, t, h('span', null, a.empresa)), h('p', {class: 'muted'}, cartChip(a.cart), ' · ' + a.setor + ' · posição ' + a.rank + ' na carteira')), h('div', {class: 'vip-fh-r'}, sugChip(a.sugestao), riscoChip(a.risco))));
     if (a.noticias_de) wrap.appendChild(h('p', {class: 'hint'}, 'Notícias e opiniões lidas pelo código ' + a.noticias_de + ' (a mesma companhia).'));
+    // v3.6 · ponte com a Oregon: só o aviso e o link, sem trazer os pesos da Oregon para cá
+    var ao = C.ATV[tkN(t)];
+    if (ao && ao.status !== 'placeholder') wrap.appendChild(h('p', {class: 'ponte-vip'}, 'Também na Carteira Oregon · ', h('button', {class: 'btn link', onclick: function () { A.abrirFicha(tkN(t)); }}, (ao.pilar && C.PIL && C.PIL[ao.pilar] ? 'pilar ' + C.PIL[ao.pilar].nome : 'ficha Oregon') + (tkN(t) !== t ? ' (' + tkN(t) + ')' : ''))));
     var g = h('div', {class: 'grid2 vip-g'});
     g.appendChild(h('div', null, A.sec('Números do print · ' + printBR(), {flush: false}, numeros(a)), A.casasTab ? A.casasTab(tkN(t), true) : null));
     g.appendChild(painelNoticias(t));
@@ -279,6 +291,7 @@
     var wrap = h('div'), P = pautaDados();
     wrap.appendChild(A.pageHead('VG VIP', 'Pauta da semana · carteiras VIP', 'Notícias de cada empresa das carteiras Dividendos, Valor e Smallcaps no período: resultados, documentos à CVM, opiniões publicadas e notícias em que a empresa é o assunto.',
       h('div', {class: 'row', style: 'gap:6px'}, h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Período', style: 'margin:0'}, [[7, '7 dias'], [14, '14 dias']].map(function (o) { return h('button', {'aria-pressed': PT.dias === o[0] ? 'true' : 'false', onclick: function () { PT.dias = o[0]; A.rerender(); }}, o[1]); })),
+        A.btnImprimir ? A.btnImprimir() : null,
         h('button', {class: 'btn pri', onclick: function () { var txt = textoPauta(P); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { A.toast('Pauta VIP copiada: cole no material ou nas notas.'); }, function () { A.drawer('Pauta da semana VIP (texto)', h('textarea', {class: 'inp', style: 'min-height:60vh;width:100%', readonly: true}, txt)); }); }}, 'Copiar pauta'))));
     var fx = A.intelFaixa && A.intelFaixa(); if (fx) wrap.appendChild(fx);
     P.forEach(function (g) {
@@ -312,5 +325,5 @@
     wrap.appendChild(s === 'ativos' ? ativos() : s === 'pauta' ? pauta() : hoje());
     return wrap;
   };
-  A.VIP = {ativos: ATV, ordem: ORDEM, carteiras: CARTS, eventos: eventos, conteudo: conteudo};
+  A.VIP = {ativos: ATV, ordem: ORDEM, carteiras: CARTS, eventos: eventos, conteudo: conteudo, print_em: VD.print_em ? VD.print_em.slice(8, 10) + '/' + VD.print_em.slice(5, 7) + '/' + VD.print_em.slice(0, 4) : ''};
 })(APP, CORE, INTEL);

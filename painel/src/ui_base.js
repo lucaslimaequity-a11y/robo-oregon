@@ -83,8 +83,12 @@ var APP = (function () {
   /* ---------- seção ---------- */
   A.sec = function (titulo, opts, body) {
     opts = opts || {};
-    var hd = h('header', null, h('h2', null, titulo), opts.badge || null, opts.mtd ? A.ibtn(opts.mtd) : null, opts.right ? h('div', {class: 'right row'}, opts.right) : null, opts.hint ? h('p', {class: 'hint sh'}, opts.hint) : null);
-    return h('section', {class: 'sec' + (opts.cls ? ' ' + opts.cls : ''), id: opts.id || null}, hd, h('div', {class: 'body' + (opts.flush ? ' flush' : '')}, body), opts.more || null);
+    // v3.7 · a explicação (hint) fica recolhida num "?" ao lado do título; o texto continua na página
+    var sec = h('section', {class: 'sec' + (opts.cls ? ' ' + opts.cls : ''), id: opts.id || null});
+    var hd = h('header', null, h('h2', null, titulo), opts.hint ? A.qBtn(sec) : null, opts.badge || null, opts.mtd ? A.ibtn(opts.mtd) : null, opts.right ? h('div', {class: 'right row'}, opts.right) : null, opts.hint ? h('p', {class: 'hint sh'}, opts.hint) : null);
+    sec.append(hd, h('div', {class: 'body' + (opts.flush ? ' flush' : '')}, body));
+    if (opts.more) sec.appendChild(opts.more);
+    return sec;
   };
   A.more = function (label, body, open) { return h('details', {class: 'x', open: open || null}, h('summary', null, label), h('div', {class: 'body'}, body)); };
 
@@ -267,11 +271,13 @@ var APP = (function () {
     if (A.salvos) A.salvos().slice(0, 5).forEach(function (s0) { topo.push({t: s0.titulo, d: 'salvo para ler · ' + (s0.fonte || ''), go: function () { var x = A.itemPorId(s0.id) || s0.item; if (x) A.abrirItem(x); }}); });
     if (A.itens) (A.itensAtivo ? A.itensAtivo() : A.itens()).slice(0, 600).forEach(function (x) { itens.push({t: x.titulo, d: 'conteúdo · ' + (x.organizacao || x.fonte || '') + (x.publicado_em ? ' · ' + A.dataBR(x.publicado_em) : ''), go: function () { A.abrirItem(x); }}); });
     if (typeof INTEL !== 'undefined') Object.keys(INTEL.TX.temas || {}).forEach(function (k) { itens.push({t: INTEL.temaNome(k), d: 'assunto', go: function () { A.go('bib', 'busca'); A.bibFiltro({tema: k}); }}); });
-    var inp = h('input', {type: 'search', placeholder: 'Conteúdo, assunto, ativo, carteira ou seção (ex.: juro real, Oaktree, PRIO3, Arrojado)', 'aria-label': 'Buscar'}), ul = h('ul', {role: 'listbox'}), sel = 0, vis = [];
+    var inp = h('input', {type: 'search', placeholder: 'Conteúdo, ativo, carteira ou seção · filtros: "frase" fonte:Valor desde:10/2026 evento:recompra', 'aria-label': 'Buscar'}), ul = h('ul', {role: 'listbox'}), sel = 0, vis = [];
     var bg = h('div', {class: 'cmdk-bg', onclick: function (e) { if (e.target === bg) fechar(); }}, h('div', {class: 'cmdk', role: 'dialog', 'aria-label': 'Busca rápida'}, inp, ul));
     function norm(x) { return String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
     function draw() {
-      var q = norm(inp.value.trim()); vis = (q ? itens.filter(function (it) { return norm(it.t + ' ' + it.d).indexOf(q) >= 0; }) : topo.concat(itens.filter(function (it) { return it.d === 'seção' || it.d.indexOf('carteira') === 0; }))).slice(0, 40);
+      var bruto = inp.value.trim(), q = norm(bruto); vis = (q ? itens.filter(function (it) { return norm(it.t + ' ' + it.d).indexOf(q) >= 0; }) : topo.concat(itens.filter(function (it) { return it.d === 'seção' || it.d.indexOf('carteira') === 0; }))).slice(0, 40);
+      // v3.7 · busca com filtros ("frase", fonte:, desde:, até:, ativo:, evento:, tipo:, -palavra): vai para a Pesquisa da Biblioteca
+      if (q && typeof INTEL !== 'undefined' && INTEL.parseBusca) { var pb = INTEL.parseBusca(bruto); if (pb.ops || q.split(/\s+/).length > 1) vis.unshift({t: 'Pesquisar em tudo o que foi coletado: ' + bruto, d: pb.ops ? 'Biblioteca · com filtros' : 'Biblioteca', go: function () { A.go('bib', 'busca'); if (A.bibFiltro) A.bibFiltro({q: bruto}); }}); }
       sel = Math.min(sel, Math.max(0, vis.length - 1));
       ul.replaceChildren.apply(ul, vis.length ? vis.map(function (it, i) { return h('li', {role: 'option', 'aria-selected': i === sel ? 'true' : 'false', onclick: function () { fechar(); it.go(); }}, h('span', null, it.t), h('small', null, it.d)); }) : [h('li', null, h('span', {class: 'muted'}, 'Nada encontrado.'))]);
     }
@@ -487,7 +493,17 @@ var APP = (function () {
   A.rerender = function () { var y = window.scrollY; A.render(); if (y) requestAnimationFrame(function () { window.scrollTo(0, y); }); };
   // Cabeçalho de página: título em serifa, frase de contexto e subnavegação
   A.pageHead = function (kick, titulo, frase, right) {
-    return h('div', {class: 'page-h'}, h('div', {class: 'grow'}, kick ? h('p', {class: 'kick'}, kick) : null, h('h1', null, titulo), frase ? h('p', null, frase) : null), right || null);
+    var ph = h('div', {class: 'page-h'});
+    ph.appendChild(h('div', {class: 'grow'}, kick ? h('p', {class: 'kick'}, kick) : null, h('h1', null, titulo, frase ? A.qBtn(ph) : null), frase ? h('p', {class: 'ph-f'}, frase) : null));
+    if (right) ph.appendChild(right);  // append(null) escreveria "null" na página
+    return ph;
+  };
+  // botão "?" que mostra e recolhe a explicação do bloco (classe .mostra no alvo); "sempre mostrar" fica guardado neste navegador
+  A.qBtn = function (alvo) {
+    var b = h('button', {class: 'qbtn', type: 'button', 'aria-expanded': 'false', title: 'Mostrar a explicação', 'aria-label': 'Mostrar a explicação', onclick: function (ev) {
+      ev.stopPropagation(); var on = !alvo.classList.contains('mostra'); alvo.classList.toggle('mostra', on); b.setAttribute('aria-expanded', on ? 'true' : 'false'); b.title = on ? 'Recolher a explicação' : 'Mostrar a explicação';
+    }}, '?');
+    return b;
   };
   A.subnav = function (area, items, ativo) {
     var cur = ativo || S.sub[area];

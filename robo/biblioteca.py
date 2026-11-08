@@ -273,7 +273,7 @@ def publicar_recentes(hoje, agora_, dias=10, maximo=1500, oregon=None):
 CAMPOS_OPINIAO = ('id', 'titulo', 'link', 'fonte', 'fonte_id', 'organizacao', 'categoria', 'pais', 'tipo', 'publicado_em', 'detectado_em', 'data_estimada', 'resumo', 'autor',
                   'ativos', 'ativos_porque', 'vinculos', 'casas', 'posicao', 'natureza', 'via', 'confiavel', 'aviso_fonte', 'temas', 'regioes', 'tambem_em', 'prioridade',
                   'recomendacao', 'preco_alvo', 'horizonte', 'analista', 'casa_fonte', 'verificacao', 'nota_pesquisa', 'atualizado_em', 'data_e_atualizacao', 'origem', 'debate', 'setor_de', 'pagina_lida_em',
-                  'data_edicao', 'data_futura', 'tipo', 'fatores', 'ativos_vip', 'vinculos_vip', 'ativos_porque_vip')
+                  'data_edicao', 'data_futura', 'tipo', 'fatores', 'ativos_vip', 'vinculos_vip', 'ativos_porque_vip', 'setor_de_vip', 'lente', 'setor_nome', 'industria', 'industria_secao')
 
 
 def publicar_opinioes(hoje, agora_, dias=365, oregon=None):
@@ -356,6 +356,19 @@ def registrar(coleta, fid, nome, recebidos=0, rejeitados=None, duplicados=0, nov
     if erro:
         c['erros'] += 1
         c['ultimo_erro'], c['ultimo_erro_em'] = str(erro)[:200], marca
+        c['seguidas'] = falhas_seguidas(c) + 1 if c.get('seguidas') is not None else falhas_seguidas(c)
     else:
         c['ultima_ok'] = marca
+        c['seguidas'] = 0
+        c.pop('pausa', None)
     return c
+
+
+def falhas_seguidas(c):
+    """Falhas desde o último sucesso (v3.8). Para fontes registradas antes do contador, estima pelo histórico:
+    sem sucesso depois do último erro → o total de erros."""
+    if c.get('seguidas') is not None:
+        return int(c['seguidas'])
+    if c.get('ultimo_erro_em') and (not c.get('ultima_ok') or c['ultimo_erro_em'] > c['ultima_ok']):
+        return int(c.get('erros') or 0)
+    return 0

@@ -51,7 +51,36 @@
    `analise.separar_vip` move o vínculo para `ativos_vip` / `vinculos_vip` / `ativos_porque_vip`. A seção Oregon lê só
    `ativos` e `vinculos` (prioridade, radar, pauta, temporada), então nada da VIP aparece lá. CNPJ dos ativos VIP em
    `robo/config.json` (documentos à CVM e resultados).
-13. **Telegram** (opcional) — briefing uma vez por dia. **Saídas** — `status.json`, `versao.json`, `estado.json`, Summary.
+13. **Termômetro das cartas** (v3.6) — `cartas.atualizar`: cartas das gestoras brasileiras dos últimos 6 meses (4 na v3.6; mês a mês,
+   pela data de publicação ou pelo mês escrito no título). Até 6 por rodada: PDF (`pdftexto.texto`, leitor próprio em
+   Python puro: objetos, FlateDecode, ObjStm e mapas ToUnicode) ou página (miolo sem menu e rodapé; página curta → PDF da
+   carta no mesmo site). `citacoes` conta códigos de negociação e nomes das empresas das carteiras (mesmos termos e
+   exclusões das notícias; código e nome da mesma empresa somam). Estado em `estado.cartas_lidas`; saída
+   `biblioteca/cartas_mencoes.json`. O texto não é guardado; desde a v3.7 ficam até duas frases literais por empresa e carta
+   (`trechos`, até 280 caracteres, com o link), e as cartas lidas antes são reabertas uma vez (`v: 2`) depois das novas.
+14. **Proventos** (v3.6) — `proventos.atualizar`: uma vez por dia, uma consulta por empresa na página Empresas listadas
+   da B3; classe pelo ISIN; resumo por ativo (soma do ano pela data-com, próxima data-com, próximo pagamento). Falha mantém
+   o que foi publicado. Saída `biblioteca/proventos.json`.
+15. **Quem tem a ação** (v3.6) — `fundos.atualizar`: na rodada da noite, escolhe o mês completo mais novo da CDA pela
+   listagem da CVM (tamanho dos arquivos), lê o bloco 4 (ações) só para os códigos das carteiras e o cadastro das
+   gestoras; compara com o mês anterior (`estado.fundos_cda`). Mês já publicado sem erro não é relido. Saída
+   `biblioteca/fundos_acoes.json`.
+16. **Clássico da semana** (v3.6) — `estante.destaque_semana`: tema da Estante mais frequente nos títulos de research
+   dos últimos 7 dias; um item por semana ISO, determinístico, sem repetir as últimas 26 escolhas. Saída
+   `biblioteca/estante_destaque.json`. Também na v3.6: buscas com `lente` (setor no mundo, `mkt` en-US, pares globais,
+   guardadas em `setor_de`/`setor_de_vip` com `lente: true`) e com `industria` (wealth), e fontes com `industria`/
+   `secao_industria`.
+17. **Tipo de evento** (v3.7) — `analise.eventos_de` pela manchete (sem acento): recompra, fusão e aquisição, guidance,
+   troca na gestão, emissão de dívida, oferta de ações, com exclusões (`EVENTOS_FORA`: projeção de PIB/inflação, aviso de
+   participação acionária). Só em item de empresa (ativo ligado ou documento à CVM) → campo `eventos`. `REGRAS_VERSAO` 37.
+   Estante: a coleção nunca lida é processada primeiro e só vira "completo" depois de lida.
+18. **Fluxo dos fundos** (v3.8) — `fluxo.atualizar`: uma vez por dia a partir das 9h, cadastro (`mapa_classes`, renovado a
+   cada 7 dias no estado interno) e informe diário do mês corrente e do anterior (`ler_inf`: FIC fora; linha da classe ou
+   soma das subclasses), 10 s entre arquivos. `montar` gera dias, semanas (seg–dom) e meses; semanas e meses antigos
+   publicados nunca saem. Saída `biblioteca/fluxo_fundos.json`. Também na v3.8: `biblioteca.falhas_seguidas` e a pausa
+   de fonte (3 falhas seguidas → 1 tentativa por dia; `rodada.em_pausa`).
+19. **Telegram** (opcional) — briefing uma vez por dia; desde a v3.7 com "Data-com amanhã" (proventos.json) e "Cartas novas
+   que citam a carteira" (`intel.extras_digesto`). **Saídas** — `status.json`, `versao.json`, `estado.json`, Summary.
 
 Reaproveitados da v2 sem mudança de função: `fontes_macro.py`, `agenda.py`, `resultados.py`, `avisos.py`, `util.py`
 (`Rede` com backoff, disjuntor e prazo; agora com HEAD e cabeçalhos), `calendario.py`, `config.py`. `coletar.py`,
@@ -72,6 +101,12 @@ Reaproveitados da v2 sem mudança de função: `fontes_macro.py`, `agenda.py`, `
 | `data/biblioteca/research.json` | cartas, research e instituições com data nos últimos 90 dias | sim |
 | `data/biblioteca/pesquisas.json` | pesquisa ativo × fator da janela de leitura (título, link, veículo, data) | sim |
 | `data/fontes.json` | cópia de `robo/fontes.json` | sim |
+| `data/biblioteca/estante.json` | Estante (v3.5): coleções e itens | sim |
+| `data/biblioteca/estante_destaque.json` | clássico da semana (v3.6) | sim |
+| `data/biblioteca/cartas_mencoes.json` | termômetro das cartas por mês: cartas, lidas, empresas citadas e por quem (v3.6) | sim |
+| `data/biblioteca/proventos.json` | proventos anunciados por ativo, com resumo do ano (v3.6) | sim |
+| `data/biblioteca/fundos_acoes.json` | fundos e gestoras com cada ação no mês da CDA, entradas e saídas (v3.6) | sim |
+| `data/biblioteca/fluxo_fundos.json` | fluxo dos fundos por classe: dias, semanas e meses (v3.8) | sim |
 | `data/estado.json` | controle interno (IA, caches, digesto, marca das sementes, endereços do InvesTalk já tentados) | **não** |
 
 Item (`biblioteca`): `id, titulo, link, pdf?, fonte_id, fonte, organizacao, categoria, pais, idioma, tipo, publicado_em,
@@ -91,6 +126,20 @@ visto_em`. Itens absorvidos como "também em" recebem `agrupado_em` e saem das l
   consultas externas, ETFs globais). `ui_bib.js` — Biblioteca (com Salvos para ler e o diagnóstico das fontes). `ui_mapa.js` + `ui_mesa.js` — as 15 carteiras (pesos como
   aprovados, validação, exposições agregadas). `ui_teses.js`, `core.js`, `store.js` (coleções `aprendizados`, `leituras` e `salvos`
   neste navegador; no claude.ai, no banco do artefato), `quant.js` (só o que a validação usa).
+- v3.6: `ui_comite.js` — Comitê do mês (coleção `comite` no `store.js`, ids `AAAA-MM:item`; `A.botaoComite` aparece nas
+  linhas de notícia, na janela de leitura e na Estante). `ui_br36.js` — Brasil › Agenda de proventos, Quem tem a ação e
+  Termômetro das cartas, e os blocos da ficha (`A.proventosNaFicha`, `A.fundosNaFicha`). `ui_estudo36.js` — Mundo e
+  Estratégia › Wealth e consultorias, Biblioteca › Trilha de estudo (CFP e CFA III por palavras-chave) e o clássico da
+  semana. `A.arquivo(nome)` (em `intel.js`) carrega esses arquivos do robô só quando a tela pede. `A.lenteGlobal` e a
+  ponte Oregon e VIP ficam em `ui_oregon.js` e `ui_vip.js`.
+- v3.7: `ui_v37.js` — topo com o ponto da coleta e o quadro (próxima coleta, "Coletar agora" para a página do workflow no
+  GitHub, tema automático/claro/escuro, explicações sempre visíveis), aviso depois do Atualizar, faixa do dia, alertas das
+  buscas salvas, fila de leitura, Brasil › Mudanças de recomendação (`A.mudancasRecomendacao`: mesma casa e ativo contra a
+  visão anterior no acervo), Carteiras › Fechamento da semana (`A.fechamentoSemana`) e `A.btnImprimir`. Em `intel.js`:
+  `I.parseBusca` (operadores da busca dentro de `I.filtrar`), `I.eventosDe` (usa `x.eventos` ou a tabela `TAXON.eventos`
+  injetada pelo build), `I.marca`/`A.marcaEl` (letra e cor por tipo: F, R, O, C, E, N). Em `ui_base.js`: o "?" de
+  `A.pageHead` e `A.sec` (`A.qBtn`). Em `ui_hoje.js`: duas colunas independentes e `A.recolhivel` (áreas fechadas no
+  celular, estado em `oregon-intel-v3:area-<id>`).
 - `painel/arquivo/` — módulos arquivados sem apagar: cotações/mercado ao vivo, Sala de Gestão, Comitê, laboratório de
   propostas, risco e cenários, importação de séries, Mundo e Estratégia, Research Brasil antigo.
 - Endereços antigos (`#res/...`, `#cart/risco`, `#global`, `#sala/...`) são traduzidos para as cinco seções (`A.traduz`).
@@ -99,4 +148,5 @@ visto_em`. Itens absorvidos como "também em" recebem `agrupado_em` e saem das l
 
 Permissões zeradas por padrão; o job de coleta tem `contents: write` (ramo `dados`) e o de publicação `pages: write` +
 `id-token: write`. Portão de testes antes de qualquer coisa; `data/` inteira restaurada do ramo `dados`; `git add -f data`
-guarda tudo; o site recebe só os arquivos públicos (nunca `estado.json`). Crons `40 9,14,20 * * *` e `40 0 * * *` (UTC).
+guarda tudo; o site recebe só os arquivos públicos (nunca `estado.json`). Crons (UTC) `7,37 10-23 * * *`, `7,37 0,1 * * *` e `15 4,7 * * *` (v3.7: fora da hora cheia e da meia hora, que o GitHub
+trata como pico e onde atrasa ou descarta rodadas agendadas). Envio de arquivos (push) e "Run workflow" também rodam.

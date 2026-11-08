@@ -313,6 +313,30 @@ def _casa(txt, termos):
     return out
 
 
+# v3.7 · tipo de evento corporativo, pela manchete (sem acento, minúsculas). Só para itens de empresa (com ativo ligado ou
+# documento à CVM): "Focus eleva projeção" ou "Treasury bonds" não viram evento. Mesma tabela no painel (TAXON.eventos).
+EVENTOS = [
+    ('recompra', 'Recompra', r'\brecompra|\bbuy ?back|\bshare repurchase|\brepurchase (program|plan)|\bprograma de recompra'),
+    ('fusao', 'Fusões e aquisições', r'\baquisic|\badquir|\bfusao\b|\bfusoes\b|\bcompra (o )?controle|\bcompra (a |uma )?(fatia|participacao)|\bvend(e|er|a) (sua |a )?(fatia|participacao|controle|subsidiaria)|\bvenda (de|da|do) (fatia|participacao|controle|subsidiaria|unidade|ativos?)\b|\bdesinvest|\bmerger\b|\bacquisition|\bacquires?\b|\btakeover\b|\bm&a\b|\boferta publica de aquisicao|\bopa\b|\bjoint venture'),
+    ('guidance', 'Guidance e projeções', r'\bguidance\b|\b(eleva|reduz|revisa|reafirma|mantem|corta|divulga) (o |a |as |os |seu |sua |suas )?(guidance|projec|metas)|\bprojec(ao|oes) (de|para) (producao|vendas|capex|investimentos?|ebitda|lucro|receita)|\bplano estrategico|\bplano de negocios|\bcapex (de|para) (r\$ ?)?20\d\d|\b(raises|cuts|lowers|reaffirms) (its |full.year )?(guidance|outlook|forecast)'),
+    ('gestao', 'Troca na gestão', r'\b(novo|nova) (ceo|cfo|presidente|diretor|diretora|conselheir)|\brenunci|\bdeixa (o cargo|a presidencia|o comando|a empresa|a diretoria)|\bassume (a |o )?(presidencia|comando|cargo)|\bnomead[oa]|\bnomeia\b|\bsucessao\b|\btroca (de|no|na) (comando|ceo|cfo|presidente|presidencia|diretoria)|\bnames (new )?(ceo|cfo|chief)|\b(ceo|cfo) (to )?steps? down|\bresign'),
+    ('divida', 'Emissão de dívida', r'\bdebentur|\bemissao de (divida|notas|bonds?|titulos|cri|cra|debentures)|\bnotas comerciais|\bnotas promissorias|\bbonds?\b|\bcapta (r\$|us\$)|\bcaptac(ao|oes) de (r\$|us\$|divida)|\bnotes offering|\bdebt offering|\bsenior notes|\brefinanci'),
+    ('oferta', 'Oferta de ações', r'\bfollow.?on\b|\bipo\b|\bre.?ipo\b|\boferta (publica )?(primaria|secundaria|subsequente|inicial)|\boferta (restrita )?de acoes|\baumento de capital|\bsubscricao de acoes|\bblock ?trade|\bshare offering'),
+]
+# o que parece evento mas não é: projeção de PIB/inflação feita por banco; aviso de participação relevante (art. 12)
+EVENTOS_FORA = {
+    'guidance': r'projec\w* (do |da |de |para o |para a )?(pib|ipca|inflacao|selic|juros?|cambio|dolar|crescimento economico|economia)',
+    'fusao': r'participacao acionaria|art\.? ?12 da instr|participacao relevante',
+}
+_EVENTOS_RE = [(k, re.compile(rx), re.compile(EVENTOS_FORA[k]) if k in EVENTOS_FORA else None) for k, _n, rx in EVENTOS]
+
+
+def eventos_de(titulo):
+    """Tipos de evento corporativo citados na manchete (lista de chaves de EVENTOS, na ordem da tabela)."""
+    t = sem_acento(titulo or '').lower()
+    return [k for k, rx, fora in _EVENTOS_RE if rx.search(t) and not (fora and fora.search(t))]
+
+
 def classificar(item, oregon, hoje):
     """Preenche temas, regioes, ativos, setores, fatores, natureza e prioridade. Não remove nenhum item."""
     txt = _texto(item)
@@ -380,6 +404,7 @@ def classificar(item, oregon, hoje):
     if re.search(DIDATICO, tit_n):
         etfs_tema = []
         item.pop('setor_de', None)
+        item.pop('setor_de_vip', None)
         item['didatico'] = True
     verif = item.get('opiniao_verificada')  # opinião conferida na página (pesquisa de 12 meses): casas e sentido lidos ali
     if verif:
@@ -420,6 +445,11 @@ def classificar(item, oregon, hoje):
     item['vinculos'] = vinculos(item, oregon)
     separar_vip(item, oregon)
     item['ativos'] = item['ativos'][:8]
+    ev = eventos_de(item.get('titulo')) if (item['ativos'] or item.get('ativos_vip') or item.get('categoria') == 'oficial_empresa') else []
+    if ev:
+        item['eventos'] = ev
+    else:
+        item.pop('eventos', None)
     item['prioridade'] = prioridade(item, hoje)
     return item
 
@@ -509,7 +539,7 @@ def prioridade(item, hoje):
     return {'pontos': p, 'nivel': nivel, 'porque': porque}
 
 
-REGRAS_VERSAO = 36  # itens classificados por regras anteriores são reclassificados na publicação (biblioteca.atualizar_leitura)
+REGRAS_VERSAO = 37  # itens classificados por regras anteriores são reclassificados na publicação (biblioteca.atualizar_leitura)
 
 
 # ------------------------------------------------------------------ vínculo do item com cada ativo citado

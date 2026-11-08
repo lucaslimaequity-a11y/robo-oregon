@@ -12,6 +12,12 @@ global.INTEL = require(path.join(S, 'intel.js'));
 // notícias reais já capturadas (testes/amostras_reais): o painel e o robô precisam classificar o vínculo igual
 global.AMOSTRAS_LEITURA = require(path.join(__dirname, 'amostras_reais', 'leitura_vinculos_2026-11-08.json'));
 const res = T.run(C, Q, D, null);
+// v3.6 · todo arquivo que entra no site precisa ao menos compilar (um erro de sintaxe derruba o painel inteiro)
+const fs = require('fs');
+for (const arq of fs.readdirSync(S).filter(n => /\.js$/.test(n))) {
+  try { new Function(fs.readFileSync(path.join(S, arq), 'utf8')); res.push({ok: true, nome: 'sintaxe de ' + arq}); }
+  catch (e) { res.push({ok: false, nome: 'sintaxe de ' + arq, det: String(e.message)}); }
+}
 let f = 0; for (const r of res) { console.log((r.ok ? 'PASS ' : 'FAIL ') + r.nome + (r.det ? ' · ' + r.det : '')); if (!r.ok) f++; }
 const q = require('child_process').spawnSync(process.execPath, [path.join(__dirname, 'quant.test.js')], {encoding: 'utf8'});
 process.stdout.write(q.stdout); if (q.status !== 0) f++;

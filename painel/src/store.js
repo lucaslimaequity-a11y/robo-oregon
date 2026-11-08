@@ -4,7 +4,7 @@
    Nenhuma função aqui altera a carteira aprovada sem um registro de aprovação humana. */
 var STORE = (function () {
   'use strict';
-  var COLS = ['propostas', 'aprovadas', 'versoes', 'decisoes', 'teses', 'auditoria', 'reunioes', 'config', 'aprendizados', 'leituras', 'salvos'];  // aprendizados, leituras e "ler depois": Oregon Intelligence
+  var COLS = ['propostas', 'aprovadas', 'versoes', 'decisoes', 'teses', 'auditoria', 'reunioes', 'config', 'aprendizados', 'leituras', 'salvos', 'comite'];  // aprendizados, leituras e "ler depois": Oregon Intelligence; comite: pauta do comitê mensal (v3.6)
   var LS = 'oregon-pm-v2:';
   var mode = 'local', db = null, user = null, sample = null, downloads = null, canWrite = null, uid = null;
   var cache = {}, subs = [], ready = false;

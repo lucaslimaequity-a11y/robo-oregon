@@ -40,10 +40,15 @@ import fontes_macro  # noqa: E402
 import noticias  # noqa: E402  (desambiguação por empresa, reaproveitada da v2)
 import casas  # noqa: E402
 import estante  # noqa: E402  (v3.5 · acervo permanente)
+import cartas  # noqa: E402  (v3.6 · termômetro das cartas)
+import fundos  # noqa: E402  (v3.6 · quem tem a ação)
+import fluxo  # noqa: E402  (v3.8 · fluxo dos fundos)
+import proventos  # noqa: E402  (v3.6 · agenda de proventos)
 import pesquisas  # noqa: E402
 import resultados  # noqa: E402
 import semanal  # noqa: E402
 from util import ErroFonte, Rede, agora, dados_dir, gravar, ler, log, sem_acento  # noqa: E402
+from util import num as util_num  # noqa: E402
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 # minutos entre leituras de uma mesma fonte (0 = toda rodada). Imprensa e instituições mudam ao longo do dia;
@@ -113,9 +118,10 @@ def fontes_de_busca(cfg):
             if not st.get('ativo', True):
                 continue
             mkt = st.get('mkt', 'pt-BR')
-            out.append(dict(base, id='busca-setor-' + _slug(st['nome']), nome='Busca setorial · ' + st['nome'], pais='Brasil' if mkt == 'pt-BR' else 'Global', idioma='pt' if mkt == 'pt-BR' else 'en',
+            out.append(dict(base, id='busca-setor-' + _slug(st['nome']), nome=('Lente global · ' if st.get('lente') else 'Busca setorial · ') + st['nome'], pais='Brasil' if mkt == 'pt-BR' else 'Global', idioma='pt' if mkt == 'pt-BR' else 'en',
                             url_fonte=url(st['consulta'], mkt).replace('&format=rss', ''), url_coleta=url(st['consulta'], mkt), setor_de=list(st.get('ativos') or []),
-                            termos_exigidos=list(st.get('termos') or []), consulta=st['consulta'], setor_nome=st['nome']))
+                            termos_exigidos=list(st.get('termos') or []), consulta=st['consulta'], setor_nome=st['nome'], lente=bool(st.get('lente')),
+                            industria=st.get('industria'), intervalo_min=int(st.get('intervalo_min', base['intervalo_min']))))
         for te in n.get('etfs') or []:
             if not te.get('ativo', True) or not te.get('busca'):
                 continue
@@ -324,7 +330,7 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
     for m in biblioteca.meses_disponiveis()[-6:]:
         vistos |= biblioteca.ids_vistos(biblioteca.ler_mes(m).get('itens') or [])
     robots = conteudo.Robots(rede)
-    novos, erros, ok, aguardando, a_validar, adiadas = [], [], [], [], [], []
+    novos, erros, ok, aguardando, a_validar, adiadas, pausadas = [], [], [], [], [], [], []
     leituras = estado.setdefault('ultima_leitura', {})
     lidas_antes = estado.setdefault('fontes_lidas', {})
     n_cfg = cfg.get('noticias') or {}
@@ -347,6 +353,18 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
             try:
                 if (agora_ - dt.datetime.fromisoformat(ult)).total_seconds() < (intervalo - 5) * 60:
                     adiadas.append(f['id'])
+                    continue
+            except ValueError:
+                pass
+        # v3.8 · fonte que falhou várias vezes seguidas (bloqueio 403, tempo esgotado, endereço sumido) entra em pausa:
+        # uma tentativa por dia, sem gastar o prazo da rodada nem aparecer como falha a cada 30 minutos. Nada é contornado.
+        c0 = cont.get(f['id']) or {}
+        if not manual and biblioteca.falhas_seguidas(c0) >= int(ic.get('pausa_falhas', 3)) and c0.get('ultimo_erro_em'):
+            try:
+                if (agora_ - dt.datetime.fromisoformat(c0['ultimo_erro_em'])).total_seconds() < float(ic.get('pausa_horas', 24)) * 3600:
+                    c0['pausa'] = True
+                    adiadas.append(f['id'])
+                    pausadas.append(nome)
                     continue
             except ValueError:
                 pass
@@ -418,9 +436,22 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
             if f.get('etfs'):
                 x['etfs_tema'] = list(f['etfs'])
                 x['tema_etf'] = f.get('tema_etf')
+            if f.get('industria'):
+                x['industria'] = f['industria']  # v3.6 · indústria de wealth e consultorias (aba própria em Mundo e Estratégia)
+                if f.get('secao_industria'):
+                    x['industria_secao'] = f['secao_industria']
             if f.get('setor_de'):
-                x['setor_de'] = list(f['setor_de'])
+                # v3.6 · ativo só da VG VIP fica em setor_de_vip, para a seção Oregon nunca mostrar o setor de um ativo VIP
+                at_or = (oregon or {}).get('ativos') or {}
+                x['setor_de'] = [t for t in f['setor_de'] if not (at_or.get(t) or {}).get('so_vip')]
+                vip_s = [t for t in f['setor_de'] if (at_or.get(t) or {}).get('so_vip')]
+                if vip_s:
+                    x['setor_de_vip'] = vip_s
+                if not x['setor_de']:
+                    x.pop('setor_de')
                 x['setor_nome'] = f.get('setor_nome')
+                if f.get('lente'):
+                    x['lente'] = True  # lente global do setor (v3.6): pares e leitura internacional
             org = sem_acento(x.get('organizacao') or '').lower()
             if f.get('agregador'):
                 x['confiavel'] = any(v and (v in org or org in v) for v in confiaveis) if org else False
@@ -501,7 +532,7 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
             c['publicados'] += 1
     for c in cont.values():
         c['publicados'] = min(c['publicados'], c['novos'])
-    rodada = {'quando': marca, 'fontes_ok': len(ok), 'fontes_erro': len(erros), 'a_validar': a_validar[:20], 'adiadas': len(adiadas), 'recebidos': sum((c.get('ultima_rodada') or {}).get('recebidos', 0) for c in cont.values()),
+    rodada = {'quando': marca, 'fontes_ok': len(ok), 'fontes_erro': len(erros), 'a_validar': a_validar[:20], 'adiadas': len(adiadas), 'em_pausa': pausadas[:30], 'recebidos': sum((c.get('ultima_rodada') or {}).get('recebidos', 0) for c in cont.values()),
               'novos': len(novos), 'publicados': len(gravados), 'duplicados_titulo': res['duplicados_titulo'], 'duplicados_id': res['duplicados_id'], 'janela_dias': janela, 'erros': erros[:20], 'aguardando_chave': aguardando[:30]}
     hist = (coleta.get('rodadas') or [])[-29:] + [rodada]
     coleta = {'gerado_em': marca, 'fontes': cont, 'rodadas': hist, 'ultima': rodada,
@@ -634,6 +665,70 @@ def alertas_imediatos(novos, estado, agora_, maximo=5):
             out.append(x)
     out.sort(key=lambda y: (0 if y.get('tipo') == 'fato_relevante' else 1, y.get('publicado_em') or ''))
     return out[:maximo]
+
+
+def _quando(iso, ref):
+    try:
+        d = dt.datetime.fromisoformat(iso)
+    except (TypeError, ValueError):
+        return None
+    if (d.tzinfo is None) != (ref.tzinfo is None):
+        d = d.replace(tzinfo=ref.tzinfo) if d.tzinfo is None else d.replace(tzinfo=None)
+    return d
+
+
+def extras_digesto(oregon, estado, agora_, hoje, maximo=8):
+    """v3.7 · duas seções do briefing diário do Telegram, só quando há o que dizer:
+    data-com amanhã (proventos anunciados na B3, empresas das carteiras) e cartas lidas nas últimas 24 h que citam
+    empresas das carteiras Oregon ou VG VIP (só a contagem: nada de opinião atribuída à gestora)."""
+    at = (oregon or {}).get('ativos') or {}
+    linhas = []
+    amanha = (hoje + dt.timedelta(days=1)).isoformat()
+    pv = ler('biblioteca/proventos.json') or {}
+    dc, vistos = [], set()
+    for t, o in sorted(((pv.get('ativos') or {}).items())):
+        if t not in at:
+            continue
+        for e in o.get('eventos') or []:
+            if e.get('data_com') != amanha:
+                continue
+            ch = (t, e.get('tipo'), e.get('valor'))
+            if ch in vistos:
+                continue
+            vistos.add(ch)
+            ln = '%s · %s%s' % (t, e.get('tipo') or 'Provento', (' R$ ' + util_num(e['valor'], 4)) if e.get('valor') is not None else '')
+            if e.get('pagamento'):
+                ln += ' · paga %s/%s' % (e['pagamento'][8:10], e['pagamento'][5:7])
+            dc.append(ln)
+    if dc:
+        linhas.append('\n<b>Data-com amanhã (%s/%s)</b>' % (amanha[8:10], amanha[5:7]))
+        linhas += ['• ' + html.escape(x) for x in dc[:maximo]]
+        if len(dc) > maximo:
+            linhas.append('• e mais %d' % (len(dc) - maximo))
+    pub = ler('biblioteca/cartas_mencoes.json') or {}
+    info = {}
+    for m in pub.get('meses') or []:
+        for c in m.get('cartas') or []:
+            info[c.get('id')] = c
+    novas = []
+    for xid, s in ((estado or {}).get('cartas_lidas') or {}).items():
+        quando = _quando(s.get('em'), agora_)
+        if not quando or not s.get('mencoes') or agora_ - quando > dt.timedelta(hours=24) or quando > agora_ + dt.timedelta(minutes=5):
+            continue
+        tks = sorted((t for t in s['mencoes'] if t in at), key=lambda t: (-s['mencoes'][t], t))
+        if not tks:
+            continue
+        c = info.get(xid) or {}
+        novas.append((quando, c.get('gestora') or '', c.get('titulo') or 'carta', c.get('link'), tks))
+    if novas:
+        novas.sort(key=lambda r: r[0], reverse=True)
+        linhas.append('\n<b>Cartas novas que citam a carteira</b>')
+        for _, g, tit, lk, tks in novas[:maximo]:
+            nome = '<a href="%s">%s</a>' % (html.escape(lk, quote=True), html.escape(tit)) if lk else html.escape(tit)
+            linhas.append('• %s%s: %s' % ((html.escape(g) + ' · ') if g else '', nome, ', '.join(tks[:6]) + (' e mais %d' % (len(tks) - 6) if len(tks) > 6 else '')))
+        if len(novas) > maximo:
+            linhas.append('• e mais %d cartas' % (len(novas) - maximo))
+    return linhas
 
 
 def texto_alertas(itens, agora_):
@@ -806,6 +901,7 @@ def main():
 
     # 4 e 5. índice, recentes, briefing e semanal: um erro aqui nunca impede a publicação do que já foi coletado
     hoje_js, sem_arq, idx = {}, ler('semanal.json', {}) or {}, {'total': 0, 'meses': []}
+    research_90 = []
     try:
         # 4. índice, recentes, briefing
         biblioteca.FONTES_BLOQUEADAS = list((cfg.get('noticias') or {}).get('fontes_bloqueadas') or [])
@@ -817,7 +913,7 @@ def main():
         except Exception as e:  # o histórico de opiniões é acessório: nunca impede o resto da publicação
             log('  opiniões de 12 meses não publicadas: %s' % e)
         try:
-            biblioteca.publicar_research(hoje, agora_, oregon=oregon)
+            research_90 = biblioteca.publicar_research(hoje, agora_, oregon=oregon)
         except Exception as e:  # idem para o research de 90 dias
             log('  research de 90 dias não publicado: %s' % e)
         hoje_js = semanal.briefing(recentes, macro, hoje, agora_, estado)
@@ -877,8 +973,55 @@ def main():
         if est and est.get('itens'):
             os.makedirs(os.path.join(dados_dir(), 'biblioteca'), exist_ok=True)
             gravar('biblioteca/estante.json', est)
+            # v3.6 · clássico da semana (arquivo pequeno, lido pelo Hoje)
+            lim7 = (hoje - dt.timedelta(days=7)).isoformat()
+            tit7 = [x.get('titulo') or '' for x in (research_90 or []) if (x.get('publicado_em') or '')[:10] >= lim7]
+            dq = estante.destaque_semana(est, tit7, hoje, estado)
+            if dq:
+                gravar('biblioteca/estante_destaque.json', dict(dq, gerado_em=agora_.isoformat(timespec='minutes')))
     except Exception as e:  # pragma: no cover - proteção
         log('  estante não atualizada: %s' % type(e).__name__)
+
+    # 5d. Termômetro das cartas (v3.6): empresas citadas nas cartas das gestoras brasileiras, alguns PDFs por rodada
+    try:
+        rede_k = Rede(prazo_seg=int(((cfg.get('intel') or {}).get('cartas_termometro') or {}).get('prazo_min', 3)) * 60)
+        tc = cartas.atualizar(cfg, oregon, rede_k, conteudo.Robots(rede_k), hoje, agora_, estado, log_=log)
+        if tc:
+            os.makedirs(os.path.join(dados_dir(), 'biblioteca'), exist_ok=True)
+            gravar('biblioteca/cartas_mencoes.json', tc)
+    except Exception as e:  # pragma: no cover - proteção
+        log('  termômetro das cartas não atualizado: %s' % type(e).__name__)
+
+    # 5e. Agenda de proventos (v3.6): B3, uma vez por dia; uma falha mantém o publicado
+    try:
+        rede_p = Rede(prazo_seg=int(((cfg.get('intel') or {}).get('proventos') or {}).get('prazo_min', 3)) * 60)
+        pv_ant = ler('biblioteca/proventos.json') or {}
+        pv = proventos.atualizar(cfg, oregon, rede_p, conteudo.Robots(rede_p), hoje, agora_, estado, pv_ant, log_=log)
+        if pv:
+            os.makedirs(os.path.join(dados_dir(), 'biblioteca'), exist_ok=True)
+            gravar('biblioteca/proventos.json', pv)
+    except Exception as e:  # pragma: no cover - proteção
+        log('  proventos não atualizados: %s' % type(e).__name__)
+    # 5f. Quem tem a ação (v3.6): carteira dos fundos (CVM, CDA), na rodada da noite, quando sai um mês novo completo
+    try:
+        rede_f = Rede(prazo_seg=int(((cfg.get('intel') or {}).get('fundos_cda') or {}).get('prazo_min', 8)) * 60)
+        fd_ant = ler('biblioteca/fundos_acoes.json') or {}
+        fd = fundos.atualizar(cfg, oregon, rede_f, hoje, agora_, estado, fd_ant, manual=manual, log_=log)
+        if fd:
+            os.makedirs(os.path.join(dados_dir(), 'biblioteca'), exist_ok=True)
+            gravar('biblioteca/fundos_acoes.json', fd)
+    except Exception as e:  # pragma: no cover - proteção
+        log('  fundos (CVM) não atualizados: %s' % (e if isinstance(e, (ErroFonte, RuntimeError)) else type(e).__name__))
+    # 5g. Fluxo dos fundos (v3.8): captação líquida por classe (CVM, informe diário), uma vez por dia a partir das 9h
+    try:
+        rede_x = Rede(prazo_seg=int(((cfg.get('intel') or {}).get('fluxo_fundos') or {}).get('prazo_min', 6)) * 60)
+        fx_ant = ler('biblioteca/fluxo_fundos.json') or {}
+        fx = fluxo.atualizar(cfg, rede_x, hoje, agora_, estado, fx_ant, manual=manual, log_=log)
+        if fx:
+            os.makedirs(os.path.join(dados_dir(), 'biblioteca'), exist_ok=True)
+            gravar('biblioteca/fluxo_fundos.json', fx)
+    except Exception as e:  # pragma: no cover - proteção
+        log('  fluxo dos fundos não atualizado: %s' % (e if isinstance(e, (ErroFonte, RuntimeError)) else type(e).__name__))
 
     # 6. Telegram (opcional): digesto diário com as prioridades, uma vez por dia
     tem_tg = bool(os.environ.get('TELEGRAM_TOKEN'))
@@ -893,6 +1036,10 @@ def main():
                 linhas.append('• <a href="%s">%s</a> — %s' % (x.get('link'), html.escape(x.get('titulo') or ''), html.escape(x.get('organizacao') or x.get('fonte') or '')))
         if hoje_js.get('estudo'):
             linhas.append('<i>Estudo do dia:</i> ' + html.escape(hoje_js['estudo'][0]))
+        try:
+            linhas += extras_digesto(oregon, estado, agora_, hoje)  # v3.7 · data-com amanhã e cartas novas
+        except Exception as e:  # pragma: no cover - proteção: o briefing sai mesmo sem as seções novas
+            log('  briefing: seções de proventos e cartas fora (%s)' % type(e).__name__)
         okk, m = avisos.enviar('\n'.join(linhas))
         tg = {'ok': okk, 'msg': m or 'briefing enviado'}
         if okk and modo != 'teste_telegram':

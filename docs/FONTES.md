@@ -10,6 +10,107 @@ Validação feita em 07–08/11/2026 (217 fontes no cadastro, 152 ativas, depois
 
 Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública e que o formato bate com o método, acrescente a entrada com `"ativo": true` e rode o workflow à mão; o Summary da rodada mostra recebidos/novos/erro daquela fonte. Para **desligar**: `"ativo": false`.
 
+## v3.8 (08/11/2026): fluxo dos fundos e fontes que falhavam
+
+- **Fluxo dos fundos · CVM** (`robo/fluxo.py`). Fontes:
+  - Informe diário: `dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_AAAAMM.zip`, colunas `CNPJ_FUNDO_CLASSE`,
+    `DT_COMPTC`, `CAPTC_DIA`, `RESG_DIA`, `VL_PATRIM_LIQ` e `ID_SUBCLASSE`, conferidas no metadado da CVM.
+  - Cadastro pós-175: `registro_fundo_classe.zip`, com `Classificacao` e `Classe_Cotas` em `registro_classe.csv`.
+
+  Regras:
+  - Os fundos de cotas ficam de fora.
+  - Vale a linha da classe; sem ela, a soma das subclasses.
+  - A classe que não está no cadastro vai para "Outros".
+  - A pasta `/dados/` é liberada no robots.txt; o robô espera 10 segundos entre arquivos (Crawl-Delay da CVM).
+  - O cadastro fica no estado interno, renovado a cada 7 dias, e não é publicado.
+- **Pausa de fontes**: com 3 falhas seguidas, a fonte é tentada uma vez por dia (`intel.pausa_falhas`, `pausa_horas`).
+  O contador `seguidas` fica em `coleta.json`. Na rodada real de 08/11, falhavam seguidamente:
+  - com bloqueio 403: Squadra (5 vezes), Safra O Especialista (5), Santander Análise Econômica (3) e Itaú Análises (3);
+  - com tempo esgotado: IBGE releases (7) e os dois sitemaps da Genial Analisa (2 cada).
+
+  A Genial continua lida pela página de cada ação (v3.5). Uma rodada disparada pelo envio de arquivos ou por "Run
+  workflow" tenta todas as fontes, inclusive as em pausa.
+- **SPX Capital (Issuu)**: o padrão passa a ser `/spx_capital/docs/carta_equipe` (o Issuu usa link relativo), com
+  `ref_mes_ponto_ano`. Conferido em 08/11: o perfil traz "CARTA À EQUIPE - 10.26" (08/10/2026) e "09.26" (16/09/2026).
+- **CNN Brasil · Economia**: desligada com o motivo registrado. A página de Economia não anuncia feed, o `/economia/feed/`
+  devolve 404 e o sitemap é numerado, sem um sitemap de notícias estável.
+
+## v3.7 (08/11/2026): trechos das cartas, tipo de evento e horário do robô
+
+- **Termômetro das cartas**: além da contagem, o robô guarda até **duas frases literais** por empresa em cada carta (até
+  280 caracteres cada, com o link para a carta), e a janela passou de 4 para 6 meses. O texto integral continua não
+  sendo guardado. Nenhum sentido ou opinião é atribuído à gestora: a frase é a dela, com o link para conferir.
+- **Tipo de evento** (recompra, fusões e aquisições, guidance, troca na gestão, emissão de dívida, oferta de ações): regra
+  pela manchete, só para notícia de empresa. Conferido nas 390 manchetes de empresa do site em 08/11. Duas exclusões
+  saíram dessa conferência: "Bradesco reduz projeção do PIB" (projeção macro de banco) e os avisos de "Aquisição/Alienação
+  de Participação Acionária" (art. 12), que são participação relevante, não M&A.
+- **Horário do robô**: na página Actions, em 08/11 só houve uma rodada agendada; as demais vieram de envios de arquivos.
+  A documentação do GitHub diz: "The schedule event can be delayed during periods of high loads of GitHub Actions
+  workflow runs. High load times include the start of every hour. If the load is sufficiently high enough, some queued
+  jobs may be dropped. To decrease the chance of delay, schedule your workflow to run at a different time of the hour."
+  O robô passa a rodar aos 7 e aos 37 minutos de cada hora.
+- **Estante**: a coleção que nunca foi lida vai primeiro na rodada (GMO e Compounding Quality ficaram sem vez em 08/11).
+
+## v3.6 (08/11/2026): wealth, Estante de alocação, proventos, fundos e cartas
+
+Conferido em 08/11/2026 lendo cada endereço; nenhum veículo do Grupo XP. As fontes novas entram com `"status":
+"a_validar"` e `verificar_na_rodada`: a primeira rodada no GitHub confirma o que cada uma entrega.
+
+**Indústria de wealth e consultorias** (`industria: "wealth"`, aparecem em Mundo e Estratégia › Wealth e consultorias):
+
+| Fonte | Como é lida | Observação |
+|---|---|---|
+| Kitces · Nerd's Eye View (`wealth-kitces`) | RSS `feeds.kitces.com/KitcesNerdsEyeView` | O feed vem com HTML cru dentro de `content:encoded`, que quebra o XML; o robô tira esse bloco antes de ler (`limpar_xml`). Os links são os do FeedPress, guardados como estão. |
+| InvestmentNews (`wealth-investmentnews`) | RSS `investmentnews.com/rss` | Título, link, data e resumo do feed. |
+| WealthManagement.com (`wealth-wealthmanagement`) | RSS `wealthmanagement.com/rss.xml` | O site veta por nome alguns robôs de IA; o robô do Oregon usa nome próprio e respeita o robots.txt. |
+| Financial Planning (`wealth-financial-planning`) | Sitemap de notícias `news-sitemap-1.xml` (só `/news/` e `/opinion/`) | Título e data vêm do próprio sitemap (`news:title`); a matéria pode pedir cadastro no site. |
+| Thinking Ahead Institute (`wealth-thinking-ahead`) | Página de notícias, com leitura da página de cada item | Instituto da WTW sobre gestão de patrimônio de fundos de pensão e soberanos. |
+| CVM · notícias (`cvm-noticias`) | Página de notícias da CVM | Vai para o filtro Regulação (`secao_industria: "regulacao"`). |
+
+Mais seis pesquisas em português no Bing Notícias (`noticias.buscas_setor` com `industria: "wealth"`, a cada 6 horas):
+consultorias de investimento na CVM, assessorias (fusões e aquisições), family offices, private banking (ANBIMA), wealth
+management no Brasil e planejamento financeiro/CFP.
+
+Não entraram: ThinkAdvisor e Citywire (recusam leitura automática; artigos com cadastro), ANBIMA e Valor Investe (o site
+recusa o robô), Planejar (sem feed nem lista legível de notícias), McKinsey e BCG (não conferidos).
+
+**Estante de alocação e wealth** (Biblioteca › Estante, mesma regra da v3.5: título, data, link e resumo declarado):
+
+| Coleção | De onde vem |
+|---|---|
+| Thinking Ahead Institute (`tai`) | Sitemap `research-papers-sitemap.xml` |
+| NBIM · Norges Bank Investment Management (`nbim`) | Página de publicações |
+| CAIA Association (`caia`) | Blog da CAIA |
+| Vanguard (`vanguard`) | Sitemap `en.sitemap.xml`, só `/corp/articles/` |
+
+Ficaram de fora por enquanto: J.P. Morgan AM, BlackRock e Cambridge Associates (listagem só parcial na conferência),
+Research Affiliates (o research mudou para Syzygy/VettaFi) e Morningstar (não conferida).
+
+**Lente global por setor**: 16 pesquisas em inglês no Bing Notícias (`mkt: en-US`, `lente: true`, a cada 6 horas), uma
+por setor das carteiras (bancos, seguradoras, celulose, petróleo, minério, energia elétrica, saneamento, shoppings/REITs,
+agronegócio, locação de pesados, varejo de moda e joias, saúde, incorporadoras, academias, educação superior, banda
+larga), com os pares globais de cada um. A manchete só fica se citar um termo do setor.
+
+**Agenda de proventos · B3** (`robo/proventos.py`): a página pública "Empresas listadas" da B3 consulta os proventos em
+dinheiro de cada empresa (`listedCompaniesProxy/CompanyCall/GetListedSupplementCompany/<código em base64>`). Campos lidos:
+tipo (dividendo, JCP, rendimento), valor por ação, data de aprovação, data-com (`lastDatePrior`), pagamento e "referente
+a". A classe (ON, PN, unit) vem do ISIN. Cobre cerca de 12 meses. Uma consulta por empresa, uma vez por dia, com pausa de
+1 s. É a API interna da página, sem documentação: se a B3 mudar o formato ou recusar o GitHub, o que já foi publicado
+fica e a falha aparece no log e na tela ("não lidas na última rodada").
+
+**Quem tem a ação · CVM** (`robo/fundos.py`): dados abertos da CVM (`dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/`,
+liberado no robots.txt), carteira mensal dos fundos (CDA, bloco 4: ações), e o cadastro `registro_fundo_classe.zip` para
+o nome da gestora. A CVM publica os meses com atraso (cerca de 4 meses até o mês ficar completo); o robô escolhe o mês
+completo pelo tamanho do arquivo. As colunas da CDA depois da Resolução CVM 175 (`CNPJ_FUNDO_CLASSE`,
+`VL_MERC_POS_FINAL`) foram conferidas; `CD_ATIVO`, `TP_APLIC` e `DENOM_SOCIAL` são lidas por nome flexível e, se a
+CVM usar outro nome, a rodada registra as colunas encontradas e mantém o mês anterior.
+
+**Termômetro das cartas** (`robo/cartas.py` + `robo/pdftexto.py`): as cartas das gestoras brasileiras já cadastradas
+(categoria `gestora_brasil`). O robô abre a carta pública (o PDF, ou a página da carta; quando a página só traz "Leia
+aqui", como na Dynamo e na JGP, o PDF do mesmo site), respeitando o robots.txt, até 6 por rodada e no máximo 12 MB. O
+texto do PDF é extraído por um leitor próprio, sem biblioteca externa. Conta código de negociação e nome das empresas das
+carteiras; guarda só a contagem. PDF que é só imagem não tem texto para contar e aparece como tal. Vídeo fica de fora.
+
 ## v3.4 (08/11/2026): opiniões das casas, research global e debate
 
 **Os três relatórios de ALOS3 que faltavam estão no site.** InvesTalk (BB Investimentos) "Allos (ALOS3) 3T26" de 06/11

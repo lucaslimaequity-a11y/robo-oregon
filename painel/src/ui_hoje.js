@@ -39,7 +39,7 @@
     itens.forEach(function (x) {
       if (vis[x.id] || !dentro(x, horas)) return; vis[x.id] = 1;
       var ts0 = I.diretos(x).map(function (t) { return {t: t, k: tipoEvento(x, t)}; });
-      if (!ts0.length) ts0 = (x.setor_de || []).map(function (t) { return {t: t, k: 'setor'}; });
+      if (!ts0.length && !x.lente) ts0 = (x.setor_de || []).map(function (t) { return {t: t, k: 'setor'}; });  // a lente global (v3.6) fica só na ficha
       if (ts0.length) out.push({x: x, ts: ts0, k: ts0[0].k});
     });
     return out;
@@ -77,7 +77,7 @@
     var acoes = Object.keys(C.ATV).filter(function (t) { var a = C.ATV[t]; return a.status !== 'placeholder' && a.classe === 'Ações' && a.moeda !== 'USD'; });
     if (!acoes.length) return null;
     // sem os dados da CVM nem documentos das companhias, "0 de 13" seria afirmar o que não se sabe
-    if (!res && !itens.some(function (x) { return x.categoria === 'oficial_empresa'; })) return h('p', {class: 'empty sm'}, 'Temporada de resultados: sem dados da CVM nesta visualização.');
+    if (!res && !itens.some(function (x) { return x.categoria === 'oficial_empresa'; })) return h('p', {class: 'vz1'}, h('b', null, 'Temporada de resultados'), ': sem dados da CVM nesta visualização.');
     var linhas = acoes.map(function (t) {
       var r = res && res[t], tri0 = r && (r.trimestres || []).slice(-1)[0], cvmDoc = itens.filter(function (x) { return x.categoria === 'oficial_empresa' && (x.ativos || []).indexOf(t) >= 0 && rx.test(x.titulo); })[0];
       var ok = (tri0 && tri0.periodo === tri) || !!cvmDoc;
@@ -112,8 +112,20 @@
       h('button', {class: 'nwl', onclick: function () { A.abrirItem(esc); }}, esc.titulo),
       h('p', {class: 'muted'}, (esc.organizacao || esc.fonte) + ' · ' + I.quando(esc) + ' · ', h('button', {class: 'btn link', onclick: function () { A.drawer('Paper da semana', h('div', null, h('p', {class: 'tv-lead'}, esc.titulo), A.formAprendizado(esc))); }}, 'anotar o que aprendi')));
   }
+  // v3.7 · no celular, as áreas abrem fechadas (menos o Radar), com a contagem no título; o aparelho lembra o que ficou aberto
+  function celular() { return window.matchMedia && window.matchMedia('(max-width: 640px)').matches; }
+  function abertaCel(id) { var v = A.lsGet ? A.lsGet('area-' + id, null) : null; return v == null ? id === 'radar' : !!v; }
+  A.recolhivel = function (sec, id, cab) {
+    if (!celular()) return sec;
+    if (!abertaCel(id)) sec.classList.add('fechada');
+    cab.classList.add('ar-tg'); cab.setAttribute('role', 'button'); cab.setAttribute('tabindex', '0'); cab.setAttribute('aria-expanded', sec.classList.contains('fechada') ? 'false' : 'true');
+    function tg(ev) { if (ev.target.closest && ev.target.closest('button,a,select,input') && ev.target !== cab) return; var f = sec.classList.toggle('fechada'); cab.setAttribute('aria-expanded', f ? 'false' : 'true'); if (A.lsSet) A.lsSet('area-' + id, !f); }
+    cab.addEventListener('click', tg); cab.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); tg(ev); } });
+    return sec;
+  };
   function area(id, cls, titulo, conta, corpo, mais) {
-    return h('section', {class: 'ar ' + cls, id: id, 'aria-labelledby': id + '-t'}, h('header', null, h('h2', {id: id + '-t'}, titulo), conta != null ? h('span', {class: 'ar-n'}, conta) : null, mais || null), h('div', {class: 'ar-b'}, corpo));
+    var cab = h('header', null, h('h2', {id: id + '-t'}, titulo), conta != null ? h('span', {class: 'ar-n'}, conta) : null, mais || null);
+    return A.recolhivel(h('section', {class: 'ar ' + cls, id: id, 'aria-labelledby': id + '-t'}, cab, h('div', {class: 'ar-b'}, corpo)), id, cab);
   }
   function vazio(txt) { return h('p', {class: 'empty sm'}, txt); }
 
@@ -124,7 +136,7 @@
     var semDados = !v && !itens.length;
 
     // ---- topo da mesa
-    var status = v ? h('p', {class: 'status-l', title: 'O robô lê as fontes a cada 30 minutos, das 7h às 22h30; esta página se atualiza sozinha. A hora de cada notícia é a de publicação na fonte.'},
+    var status = v ? h('p', {class: 'status-l', title: 'O robô lê as fontes aos 7 e aos 37 minutos de cada hora, das 7h às 22h37 (o GitHub pode atrasar); esta página se atualiza sozinha. A hora de cada notícia é a de publicação na fonte.'},
       'Última coleta concluída ', h('b', null, I.horaAbs(v.gerado_em)), h('span', {class: 'muted'}, ' (' + I.quando({publicado_em: v.gerado_em}) + ')'), ' · ', h('b', null, String(n24)), ' notícias nas últimas 24 h',
       u ? [' · ', u.fontes_erro ? h('button', {class: 'btn link', onclick: function () { A.go('bib', 'fontes'); }}, u.fontes_erro + (u.fontes_erro > 1 ? ' fontes com erro' : ' fonte com erro')) : 'nenhuma fonte com erro'] : null)
       : h('p', {class: 'status-l'}, e.carregando ? 'Buscando os dados do robô…' : 'Sem dados do robô nesta visualização.');
@@ -132,8 +144,11 @@
       return h('button', {role: 'radio', 'aria-checked': prof === p[0] ? 'true' : 'false', title: p[2], onclick: function () { A.setProf(p[0]); }}, p[1]);
     }));
     wrap.appendChild(h('div', {class: 'mesa-h'}, h('div', {class: 'grow'}, h('h1', null, DIAS[d.getUTCDay()].replace(/^./, function (c) { return c.toUpperCase(); }) + ', ' + d.getUTCDate() + ' de ' + MESES[d.getUTCMonth()]), status),
-      h('div', {class: 'mesa-ctl'}, seg, h('button', {class: 'btn sm', title: 'Busca agora o que o robô já publicou', onclick: function () { A.intelAtualizar(); }}, e.carregando ? 'Atualizando…' : 'Atualizar'))));
+      h('div', {class: 'mesa-ctl'}, seg, h('button', {class: 'btn sm', title: 'Relê agora o que o robô já publicou no site (não manda o robô coletar)', onclick: function () { A.intelAtualizar(); }}, e.carregando ? 'Atualizando…' : 'Atualizar'),
+        A.GH_ACTIONS ? h('a', {class: 'btn sm', href: A.GH_ACTIONS, target: '_blank', rel: 'noopener', title: 'Abre a página do robô no GitHub: toque em "Run workflow". Usa o seu login do GitHub; nenhuma chave fica no site. A rodada leva uns 10 minutos.'}, 'Coletar agora ↗') : null)));
+    if (e.ultimoAviso) wrap.appendChild(h('p', {class: 'aviso-at', role: 'status'}, e.ultimoAviso));
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
+    var fxd = h('div', {class: 'fxd-slot'}); wrap.appendChild(fxd);  // v3.7 · faixa do dia (preenchida no fim, com as contagens das áreas)
 
     // ---- desde a sua última visita, ativos vistos por último e sumário da página
     var ref = A.visitaAnterior(), novos = ref ? todos.filter(function (x) { return !x.acervo && !x.agrupado_em && A.novoParaVoce(x); }) : [];
@@ -148,17 +163,21 @@
       rec.length ? h('p', {class: 'rec'}, h('span', {class: 'muted'}, 'Vistos por último: '), rec.slice(0, 6).map(function (t) { return h('button', {class: 'tag tk', onclick: function () { A.abrirFicha(t); }}, t); })) : null,
       (function () { var bs = A.buscasSalvas ? A.buscasSalvas() : []; if (!bs.length) return null; return h('p', {class: 'rec'}, h('span', {class: 'muted'}, 'Buscas salvas: '), bs.slice(0, 6).map(function (o) { return h('button', {class: 'tag', title: o.total + ' itens', onclick: function () { A.abrirBusca(o.b); }}, o.b.nome + (o.novos ? ' · ' + o.novos + (o.novos > 1 ? ' novos' : ' novo') : '')); })); })());
     wrap.appendChild(faixa);
+    if (A.alertasHoje && A.filaHoje) wrap.appendChild(h('div', {class: 'hx-g'}, A.alertasHoje(), A.filaHoje()));
     var sum = [['radar', 'Radar das teses'], ['agenda-decisiva', 'Agenda decisiva'], ['research', 'Research global'], ['debate', 'Debate de mercado']];
     if (M.ult) sum.push(['ultimas', 'Todas as notícias']);
     if (prof === 'aprofundada') sum.push(['estudo-dia', 'Estudo do dia']);
-    wrap.appendChild(h('nav', {class: 'sumario', 'aria-label': 'Nesta página'}, h('span', {class: 'muted'}, 'Nesta página:'), sum.map(function (s0) { return h('a', {href: '#' + s0[0]}, s0[1]); })));
+    sum.push(['alertas', 'Alertas e fila']);
+    wrap.appendChild(h('nav', {class: 'sumario', 'aria-label': 'Nesta página'}, h('span', {class: 'muted'}, 'Nesta página:'), sum.map(function (s0) { return h('a', {href: '#' + s0[0], onclick: function () { var el = document.getElementById(s0[0]); if (el) el.classList.remove('fechada'); }}, s0[1]); })));
 
     // ---- mapa de atenção (7 dias)
     var ev7 = eventos(todos, 168), mapa = mapaAtencao(ev7);
     if (mapa) wrap.appendChild(h('section', {class: 'atencao', id: 'atencao', 'aria-labelledby': 'atn-t'}, h('header', null, h('h2', {id: 'atn-t'}, 'Mapa de atenção da carteira'), h('span', {class: 'ar-n'}, '7 dias'),
       h('span', {class: 'atn-leg'}, 'Acontecimentos em que o ativo é o assunto (resultado, documento à CVM, opinião, notícia). Quantidade não é risco nem oportunidade.')), mapa));
 
-    var mesa = h('div', {class: 'mesa'}); wrap.appendChild(mesa);
+    // v3.7 · duas colunas independentes (Radar e Research | Agenda e Debate): sem buraco quando uma área é curta
+    var mesaG = h('div', {class: 'mesa'}), colA = h('div', {class: 'mesa-col'}), colB = h('div', {class: 'mesa-col'}); mesaG.append(colA, colB); wrap.appendChild(mesaG);
+    var mesa = {appendChild: function (el) { (/^(radar|research)$/.test(el.id) ? colA : colB).appendChild(el); return el; }};
 
     // ---- 1. Radar das teses (72 h)
     // peso por tipo de acontecimento; veículo pouco conhecido achado pela busca pesa menos (continua em "Todas as notícias")
@@ -178,9 +197,13 @@
     var vistosDoc = {}, docs = todos.filter(function (x) { return x.categoria === 'oficial_empresa' && dentro(x, 168); }).sort(function (a, b) { return ts(b) - ts(a); })
       .filter(function (x) { var k = x.titulo + '|' + I.pub(x).slice(0, 10); if (vistosDoc[k]) return false; vistosDoc[k] = 1; return true; });
     var ag = A.agendaView(M.agenda);
+    var pvp = A.proventosProximos ? A.proventosProximos(14, true) : [];
     mesa.appendChild(area('agenda-decisiva', 'a-agenda', 'Agenda decisiva', null, h('div', null,
       temporada(todos),
-      h('h3', {class: 'ar-sub'}, 'Documentos das companhias · 7 dias'), docs.length ? A.listaLinhas(docs, Math.max(3, M.agenda - 2)) : vazio(semDados ? 'Sem dados do robô.' : 'Nenhum documento das companhias acompanhadas na CVM nos últimos 7 dias.'),
+      pvp.length ? h('div', null, h('h3', {class: 'ar-sub'}, 'Proventos · próximos 14 dias'), h('ul', {class: 'ag-ref'}, pvp.slice(0, 6).map(function (e) {
+        return h('li', null, h('button', {class: 'tag tk', onclick: function () { A.abrirFicha(e.t); }}, e.t), ' ' + (e.k === 'data-com' ? 'data-com ' : 'pagamento ') + e.d.slice(8, 10) + '/' + e.d.slice(5, 7) + ' · ' + e.tipo + ' R$ ' + A.num(e.valor, 4));
+      })), h('button', {class: 'btn link', onclick: function () { A.go('brasil', 'proventos'); }}, 'Agenda de proventos ↗')) : null,
+      docs.length ? [h('h3', {class: 'ar-sub'}, 'Documentos das companhias · 7 dias'), A.listaLinhas(docs, Math.max(3, M.agenda - 2))] : h('p', {class: 'vz1'}, h('b', null, 'Documentos das companhias · 7 dias'), semDados ? ': sem dados do robô.' : ': nenhum na CVM.'),
       h('h3', {class: 'ar-sub'}, 'Agenda macro oficial'), h('div', {id: 'agenda'}, ag))));
 
     // ---- 3. Research global: leituras do dia (cartas, research, documentos oficiais), leitura recomendada, estudo
@@ -190,7 +213,8 @@
     if (!prior.length) prior = todos.filter(function (x) { return /^gestora_|^instituicao$|^academia$/.test(x.categoria || '') && dentro(x, 168); }).sort(function (a, b) { return ts(b) - ts(a); }).slice(0, M.research);
     var leit = hj && hj.leitura ? resolver([hj.leitura])[0] : null;
     var pap = prof !== 'rapida' ? paperDaSemana() : null;
-    var resBody = h('div', null, pap,
+    var cla = prof !== 'rapida' && A.classicoDaSemana ? A.classicoDaSemana() : null;  // v3.6 · clássico da Estante ligado ao tema em alta
+    var resBody = h('div', null, pap, cla,
       leit && prof !== 'rapida' ? h('div', {id: 'leitura', class: 'destaque-leit'}, h('p', {class: 'ar-k'}, 'Leitura recomendada'), A.itemCard(leit)) : null,
       prior.length ? h('div', {id: 'prioridades'}, A.listaRows(prior.slice(0, M.research), {abrir: true, dias: false})) : vazio(semDados ? 'Sem dados do robô.' : 'Nada novo de gestoras, bancos e instituições nos últimos 7 dias.'));
     if (hj && (hj.estudo || []).length && prof !== 'rapida') resBody.appendChild(h('details', {class: 'estudo-d', id: 'estudo-dia', open: prof === 'aprofundada' ? true : null}, h('summary', null, 'Estudo do dia · ' + hj.estudo.length + ' perguntas'),
@@ -219,13 +243,23 @@
         return h('button', {'aria-pressed': F.filtro === x[0] ? 'true' : 'false', disabled: !cont[x[0]] && x[0] !== 'tudo' ? true : null, title: x[0] === 'carteira' ? 'Notícias em que um ativo das carteiras é o assunto (menções incidentais ficam de fora)' : null,
           onclick: function () { F.filtro = x[0]; F.max = M.ult; A.rerender(); }}, x[1], cont[x[0]] ? h('small', null, String(cont[x[0]])) : null);
       }));
+      // v3.7 · tipo de evento corporativo (pela manchete): recompra, M&A, guidance, gestão, dívida, oferta
+      var evc = {}; ult.forEach(function (x) { I.eventosDe(x).forEach(function (k) { evc[k] = (evc[k] || 0) + 1; }); });
+      if (F.evento && !evc[F.evento]) F.evento = null;
+      var barraEv = Object.keys(evc).length ? h('div', {class: 'sub filt ev-f', role: 'toolbar', 'aria-label': 'Tipo de evento'}, h('span', {class: 'muted ev-fl'}, 'Evento:'), I.EVENTOS.filter(function (o) { return evc[o[0]]; }).map(function (o) {
+        return h('button', {'aria-pressed': F.evento === o[0] ? 'true' : 'false', onclick: function () { F.evento = F.evento === o[0] ? null : o[0]; A.rerender(); }}, o[1], h('small', null, String(evc[o[0]])));
+      })) : null;
+      if (F.evento) ult = ult.filter(function (x) { return I.eventosDe(x).indexOf(F.evento) >= 0; });
       var mx = Math.max(F.max, M.ult), dest = I.destaques(ult, 5), resto = ult.filter(function (x) { return dest.indexOf(x) < 0; });
       var corpo = ult.length ? [h('h3', {class: 'nr-h'}, 'Em destaque'), A.listaRows(dest),
         resto.length ? [h('h3', {class: 'nr-h'}, 'Mais recentes'), A.listaRows(resto, {max: mx}),
           resto.length > mx ? h('p', {class: 'mais'}, h('button', {class: 'btn sm', onclick: function () { F.max = mx + 20; A.rerender(); }}, 'Mostrar mais ' + Math.min(20, resto.length - mx))) : null] : null]
         : h('p', {class: 'empty'}, e.carregando ? 'Buscando as notícias…' : (itens.length ? 'Nada com este filtro nos ' + janelaTxt(horas) + '.' : e.versao ? 'O robô ainda não publicou notícias.' : 'Sem dados do robô: as notícias aparecem quando os arquivos publicados puderem ser lidos.'));
-      wrap.appendChild(A.sec('Todas as notícias', {id: 'ultimas', cls: 'sec-ult', badge: h('span', {class: 'sec-n'}, janelaTxt(horas))}, h('div', null, barra, corpo)));
+      var secU = A.sec('Todas as notícias', {id: 'ultimas', cls: 'sec-ult', badge: h('span', {class: 'sec-n'}, janelaTxt(horas) + (ult.length ? ' · ' + ult.length : ''))}, h('div', null, barra, barraEv, A.legendaMarcas ? A.legendaMarcas() : null, corpo));
+      wrap.appendChild(A.recolhivel(secU, 'ultimas', secU.querySelector('header')));
     }
+    // v3.7 · faixa do dia, com as contagens já calculadas
+    if (A.faixaDoDia) fxd.appendChild(A.faixaDoDia({fatos: ev.length, opinioes: ops.filter(function (x) { return dentro(x, 168); }).length}));
     return wrap;
   };
 })(APP, CORE, INTEL);

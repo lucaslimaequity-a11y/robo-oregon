@@ -76,10 +76,13 @@
     var rb = recolhidos(t, 'nb', baixas); if (rb) box.appendChild(rb);
     box.appendChild(opinioesBox(t, c));
     if (c.oficiais.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, 'Documentos à CVM · ' + c.oficiais.length), lista(t, 'cvm', c.oficiais, 4)));
-    if (c.tema.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, etf ? 'Índice e tema do ETF' : 'Setor e cadeia'),
+    var temaBR = c.tema.filter(function (x) { return !x.lente; }), lente = c.tema.filter(function (x) { return x.lente; });
+    if (temaBR.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, etf ? 'Índice e tema do ETF' : 'Setor e cadeia'),
       h('p', {class: 'hint', style: 'margin:0 0 4px'}, etf ? 'Sobre o mercado que o ETF acompanha, não sobre o fundo.' : 'Notícias do setor e da cadeia que movem a empresa; não citam a empresa.'),
-      c.tema.filter(function (x) { return !I.desconhecido(x); }).length ? lista(t, 'tema', c.tema.filter(function (x) { return !I.desconhecido(x); }), 6) : h('p', {class: 'muted np-vz'}, 'Só veículos pouco conhecidos no período.'),
-      recolhidos(t, 'temab', c.tema.filter(I.desconhecido))));
+      temaBR.filter(function (x) { return !I.desconhecido(x); }).length ? lista(t, 'tema', temaBR.filter(function (x) { return !I.desconhecido(x); }), 6) : h('p', {class: 'muted np-vz'}, 'Só veículos pouco conhecidos no período.'),
+      recolhidos(t, 'temab', temaBR.filter(I.desconhecido))));
+    var lg = A.lenteGlobal ? A.lenteGlobal(t, lente, function (l, k, n) { return lista(t, k, l, n); }) : null; if (lg) box.appendChild(lg);
+    if (!etf) { var pvf = A.proventosNaFicha ? A.proventosNaFicha(t) : null; if (pvf) box.appendChild(pvf); var fdf = A.fundosNaFicha ? A.fundosNaFicha(t) : null; if (fdf) box.appendChild(fdf); }
     if (c.mencoes.length) box.appendChild(A.more('Menções incidentais (' + c.mencoes.length + ')', h('div', null, h('p', {class: 'hint', style: 'margin:0 0 4px'}, 'Manchetes que citam ' + t + ' numa lista (dividendos da semana, destaques do dia) ou só no resumo. Não entram nos contadores.'), lista(t, 'men', c.mencoes, 8))));
     box.appendChild(h('p', {class: 'hint np-pe'}, 'Portais, busca por ativo e CVM. ', h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({ativo: t}); }}, 'Histórico na Biblioteca')));
     return box;
@@ -144,8 +147,28 @@
   /* ---------- opinião da casa (único preenchimento manual) ---------- */
   var RASC = {};
   function blocoTxt(tit, conteudo) { return conteudo ? h('div', {class: 'fbloco'}, h('h3', null, tit), conteudo) : null; }
+  // v3.6 · ponte com a VG VIP: só o aviso e o link, sem trazer os números da VIP para a Oregon
+  function naVip(t) {
+    var V = A.VIP; if (!V) return [];
+    return Object.keys(V.ativos).map(function (k) { return V.ativos[k]; }).filter(function (v) { return v.ticker === t || v.noticias_de === t; });
+  }
+  function ponteVip(t) {
+    var l = naVip(t); if (!l.length) return null;
+    return h('p', {class: 'ponte-vip'}, 'Também na VG VIP · ', l.map(function (v, i) { return h('span', null, i ? ', ' : '', h('button', {class: 'btn link', onclick: function (ev) { ev.stopPropagation(); var d = document.querySelector('.drawer'); if (d) d.remove(); A.abrirFichaVip(v.ticker); }}, 'Carteira ' + v.cartNome + (v.ticker !== t ? ' (' + v.ticker + ')' : ''))); }));
+  }
+  A.ponteVip = ponteVip;
+  // v3.6 · lente global do setor: os pares internacionais (cadastro) e as notícias do mesmo setor no mundo (busca em inglês)
+  A.lenteGlobal = function (t, itens, listaFn) {
+    var cad = (I.TX.lentes || {})[t] || [];
+    if (!cad.length && !itens.length) return null;
+    var pares = []; cad.forEach(function (c0) { (c0.pares || []).forEach(function (p) { if (pares.indexOf(p) < 0) pares.push(p); }); });
+    var bons = itens.filter(function (x) { return !I.desconhecido(x); });
+    return h('div', {class: 'lente-g'}, h('h4', {class: 'np-sub'}, 'Lente global' + (cad.length ? ' · ' + cad.map(function (c0) { return c0.nome.replace(/ no mundo$/, ''); }).join(', ') : '')),
+      pares.length ? h('p', {class: 'hint', style: 'margin:0 0 4px'}, 'Pares no mundo: ' + pares.join(', ') + '.') : null,
+      bons.length ? listaFn(bons, 'lente', 5) : h('p', {class: 'muted np-vz'}, itens.length ? 'Só veículos pouco conhecidos no período.' : 'As notícias do setor no mundo chegam a partir da primeira rodada do robô com a v3.6.'));
+  };
   function cabecalho(t, a, nm) {
-    return h('div', {class: 'tv'}, h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' + (C.PIL[a.pilar] ? C.PIL[a.pilar].nome : '') + ' · ' : '') + (a.setor || a.tipo || '')), h('h2', {class: 'tv-nome', style: (nm || '').length > 60 ? 'font-size:1.45rem' : null}, nm || a.nome, h('span', {class: 'tv-tk'}, t), A.stchip(a.status), a.rec ? h('span', {class: 'tv-peso'}, a.rec) : null));
+    return h('div', {class: 'tv'}, ponteVip(t), h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' + (C.PIL[a.pilar] ? C.PIL[a.pilar].nome : '') + ' · ' : '') + (a.setor || a.tipo || '')), h('h2', {class: 'tv-nome', style: (nm || '').length > 60 ? 'font-size:1.45rem' : null}, nm || a.nome, h('span', {class: 'tv-tk'}, t), A.stchip(a.status), a.rec ? h('span', {class: 'tv-peso'}, a.rec) : null));
   }
   // Ficha: cabeçalho curto, painel de notícias ao lado (no celular, logo abaixo do cabeçalho) e subvisões em abas.
   // O que muda (fatos recentes, critérios da tese, opinião da casa) vem primeiro; o texto estático das Teses fica em Fundamentos.
@@ -278,6 +301,7 @@
     A.registrarAtivo(t);
     var e = etfInfo(t), tx = A.teseDe(t), T = tx && tx.tese, c = conteudoDe(t), body = h('div');
     body.appendChild(h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' : '') + (a.setor || a.tipo)));
+    var pv = ponteVip(t); if (pv) body.appendChild(pv);
     body.appendChild(h('h3', null, 'Últimas notícias'));
     body.appendChild(linksBusca(t));
     body.appendChild(A.listaLinhas(c.direto.filter(function (x) { return x.natureza !== 'opiniao_casa' || nos7(x); }), 8, 'Nenhuma notícia recente tem ' + (A.ehETF(t) ? 'o fundo' : 'a empresa') + ' como assunto.', t));
@@ -317,13 +341,17 @@
     if (!st.t || lista.indexOf(st.t) < 0) st.t = rows.length ? rows[0].t : null;
     var fsel = h('div', {class: 'sub', style: 'margin:0 0 8px'}, grupos.map(function (x) { return h('button', {'aria-pressed': st.f === x[0] && !st.setor ? 'true' : 'false', onclick: function () { st.f = x[0]; st.setor = null; st.t = null; A.render(); }}, x[0]); }),
       st.setor ? h('button', {'aria-pressed': 'true', title: 'Tirar o filtro de setor', onclick: function () { st.setor = null; A.render(); }}, 'Setor: ' + st.setor + ' ✕') : null);
-    var g = h('div', {class: 'grid-emp'}), L = h('div', {class: 'sticky lista-at'}), R = h('div', {class: 'ficha-at'}); g.append(L, R); wrap.appendChild(g);
-    L.appendChild(A.sec('Ativos', {flush: true, badge: h('span', {class: 'sec-n'}, 'pela notícia direta mais recente')}, [h('div', {style: 'padding:0 14px'}, fsel), A.table([
-      {k: 't', t: 'Ativo', f: function (r) { return h('span', null, h('b', null, r.t), h('div', {class: 'muted', style: 'font-size:.78rem'}, (r.p ? r.p + ' · ' : '') + (r.setor || r.nome) + (r.op ? ' · ' + r.op + (r.op > 1 ? ' opiniões' : ' opinião') : ''))); }, s: function (r) { return +(r.p || 'P99').slice(1) * 1000 + r.t.charCodeAt(0); }},
+    // v3.7 · ficha mais larga: a lista recolhe num botão (lembrado neste navegador) e a faixa de ativos troca de ficha
+    var recolhida = A.lsGet ? !!A.lsGet('lista-at-recolhida', false) : false;
+    var g = h('div', {class: 'grid-emp' + (recolhida ? ' recolhida' : '')}), L = h('div', {class: 'sticky lista-at'}), R = h('div', {class: 'ficha-at'}); g.append(L, R); wrap.appendChild(g);
+    function recolher(v) { if (A.lsSet) A.lsSet('lista-at-recolhida', v); A.rerender(); }
+    L.appendChild(A.sec('Ativos', {flush: true, badge: h('span', {class: 'sec-n'}, 'pela notícia direta mais recente'), right: h('button', {class: 'btn link sm rec-l', title: 'Recolher a lista e dar a largura toda à ficha', onclick: function () { recolher(true); }}, '◂ Recolher')}, [h('div', {style: 'padding:0 14px'}, fsel), A.table([
+      {k: 't', t: 'Ativo', f: function (r) { return h('span', null, h('b', null, r.t), h('div', {class: 'muted at-sub', title: (r.p ? r.p + ' · ' : '') + (r.setor || r.nome)}, (r.p ? r.p + ' · ' : '') + (r.setor || r.nome) + (r.op ? ' · ' + r.op + (r.op > 1 ? ' opiniões' : ' opinião') : ''))); }, s: function (r) { return +(r.p || 'P99').slice(1) * 1000 + r.t.charCodeAt(0); }},
       {k: 'n7', t: '7 d', r: 1, title: 'Notícias em que o ativo é o assunto nos últimos 7 dias. Menções de passagem (listas de dividendos, destaques do dia) e notícias do setor não contam.', f: function (r) { var tip = [r.m7 ? r.m7 + ' menção(ões) de passagem' : null, r.nt ? r.nt + ' do setor ou do tema' : null].filter(Boolean).join(' · ') || null; return r.n7 ? h('b', {title: tip}, String(r.n7)) : h('span', {class: 'muted', title: tip}, '0'); }},
       {k: 'ult', t: 'Última', f: function (r) { return r.ultX ? h('span', {class: 'nw-when'}, I.quando(r.ultX)) : h('span', {class: 'muted'}, '—'); }}
     ], rows, {sort: null, search: 'Filtrar', onRow: function (r) { st.t = r.t; A.rerender(); }, rowClass: function (r) { return r.t === st.t ? 'sel' : null; }})]));
     // celular: a ficha vem antes da lista; esta faixa troca de ativo sem descer até a lista
+    if (recolhida) R.appendChild(h('button', {class: 'btn sm rec-a', title: 'Mostrar a lista de ativos', onclick: function () { recolher(false); }}, 'Lista de ativos ▸'));
     R.appendChild(h('div', {class: 'tk-strip', role: 'toolbar', 'aria-label': 'Trocar de ativo'}, rows.slice(0, 60).map(function (r) {
       return h('button', {'aria-pressed': r.t === st.t ? 'true' : 'false', onclick: function () { st.t = r.t; A.rerender(); }}, r.t, r.n7 ? h('small', null, String(r.n7)) : null);
     })));
@@ -641,6 +669,7 @@
     var wrap = h('div'), P = pautaDados();
     wrap.appendChild(A.pageHead('Brasil', 'Pauta da semana · Carteira Oregon', 'Notícias de cada empresa dos pilares Dividendos e Valor no período, separadas por pilar: resultados, documentos à CVM, opiniões publicadas e notícias em que a empresa é o assunto.',
       h('div', {class: 'row', style: 'gap:6px'}, h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Período', style: 'margin:0'}, [[7, '7 dias'], [14, '14 dias']].map(function (o) { return h('button', {'aria-pressed': PT.dias === o[0] ? 'true' : 'false', onclick: function () { PT.dias = o[0]; A.rerender(); }}, o[1]); })),
+        A.btnImprimir ? A.btnImprimir() : null,
         h('button', {class: 'btn pri', onclick: function () { var txt = textoPauta(P); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { A.toast('Pauta copiada: cole no deck ou nas notas.'); }, function () { A.drawer('Pauta da semana (texto)', h('textarea', {class: 'inp', style: 'min-height:60vh;width:100%', readonly: true}, txt)); }); }}, 'Copiar pauta'))));
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
     var g = h('div', {class: 'grid2 pauta'}); wrap.appendChild(g);

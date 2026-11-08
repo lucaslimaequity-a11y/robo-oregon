@@ -257,6 +257,9 @@ def rss(rede, f, agora_, desde_iso, bloqueio=()):
     Em feeds agregadores (Google Notícias) o <source> vira a organização e veículos bloqueados são descartados."""
     nome = f.get('nome') or f['id']
     corpo = rede.get(nome, f['url_coleta'], timeout=25, tentativas=2)
+    if f.get('limpar_xml'):  # v3.6 · feed com HTML cru dentro de uma tag (Kitces): a tag sai antes da leitura; o resumo vem de description
+        for tag in f['limpar_xml']:
+            corpo = re.sub(rb'<' + re.escape(tag.encode()) + rb'[\s>].*?</' + re.escape(tag.encode()) + rb'>', b'', corpo, flags=re.S)
     try:
         raiz = xml_tolerante(corpo)
     except ET.ParseError:
@@ -403,6 +406,10 @@ def pagina(rede, f, agora_, vistos):
             perto = limpa_texto(trecho[:k] if k >= 0 else trecho, 260)
             quando = data_escrita(perto)
         extra = {'posicao_pagina': n}  # ordem do link na listagem: arquivos antigos ficam no fim da página
+        if quando is None and f.get('ref_mes_ponto_ano'):  # v3.8 · "CARTA À EQUIPE - 10.26" = outubro de 2026 (SPX)
+            mr = re.search(r'(?<![\d.])(0[1-9]|1[0-2])\.(\d{2})(?![\d])', rotulo + ' ' + urllib.parse.unquote(href))
+            if mr:
+                extra['referencia'] = '20%s-%s' % (mr.group(2), mr.group(1))
         if link.lower().split('?')[0].endswith('.pdf'):
             extra['pdf'] = link
         x = _novo_item(f, titulo, link, quando, agora_, '', '', extra)
@@ -485,8 +492,16 @@ def sitemap(rede, f, agora_, desde_iso):
         if not loc or not padrao.search(loc):
             continue
         n += 1
-        quando = data_iso(mod)
+        # v3.6 · sitemap de notícias (Google News): título e data de publicação declarados no próprio sitemap
+        nt = next((e.text for e in u.iter() if e.tag.endswith('}title') and e.text), None)
+        npub = next((e.text for e in u.iter() if e.tag.endswith('}publication_date') and e.text), None)
+        quando = data_iso(npub or mod)
         if quando and quando[:10] < desde_iso:
+            continue
+        if nt:
+            x = _novo_item(f, html.unescape(nt), loc, quando, agora_, '', '', None)
+            if x:
+                out.append(x)
             continue
         slug = urllib.parse.unquote(loc.rstrip('/').rsplit('/', 1)[-1]).replace('-', ' ').replace('_', ' ')
         x = _novo_item(f, slug[:1].upper() + slug[1:], loc, quando, agora_, '', '', {'titulo_provisorio': True})

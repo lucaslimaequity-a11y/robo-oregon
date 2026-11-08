@@ -226,6 +226,29 @@ var INTEL = (function () {
   // Busca e filtros da Biblioteca (funções puras, testadas no Node)
   function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
   I.norm = norm;
+  /* v3.7 · tipo de evento corporativo (mesma tabela do robô, analise.EVENTOS): só para item de empresa */
+  var EV_RX = (TX.eventos || []).map(function (e) { return {k: e[0], n: e[1], rx: new RegExp(e[2]), fora: e[3] ? new RegExp(e[3]) : null}; });
+  var EV_SIN = {fusao: ['m&a', 'aquisicao', 'fusao', 'ma'], gestao: ['ceo', 'cfo', 'gestao'], divida: ['debenture', 'debentures', 'bond', 'divida'], oferta: ['follow-on', 'followon', 'ipo', 'oferta']};
+  I.EVENTOS = EV_RX.map(function (e) { return [e.k, e.n]; });
+  I.eventoNome = function (k) { var e = EV_RX.filter(function (o) { return o.k === k; })[0]; return e ? e.n : k; };
+  I.eventosDe = function (x) {
+    if (x.eventos) return x.eventos;
+    if (x._ev) return x._ev;
+    var emp = (x.ativos || []).length || (x.ativos_vip || []).length || x.categoria === 'oficial_empresa', t = norm(x.titulo);
+    x._ev = emp ? EV_RX.filter(function (e) { return e.rx.test(t) && !(e.fora && e.fora.test(t)); }).map(function (e) { return e.k; }) : [];
+    return x._ev;
+  };
+  /* v3.7 · marca por tipo de notícia: a mesma letra e cor em todo o painel */
+  I.MARCAS = {fato: ['F', 'Fato relevante ou documento à CVM'], resultado: ['R', 'Resultado da empresa'], opiniao: ['O', 'Opinião de casa de análise'],
+    carta: ['C', 'Carta de gestora'], research: ['E', 'Estudo ou research'], noticia: ['N', 'Notícia']};
+  I.marca = function (x) {
+    if (x.categoria === 'oficial_empresa') return {k: 'fato', t: x.tipo === 'fato_relevante' ? 'Fato relevante' : 'Documento à CVM'};
+    if (x.natureza === 'opiniao_casa') return {k: 'opiniao', t: I.MARCAS.opiniao[1]};
+    if ((x.ativos || []).some(function (t) { var v = I.vinculo(x, t); return v.tipo === 'direto' && v.evento === 'resultado'; })) return {k: 'resultado', t: I.MARCAS.resultado[1]};
+    if (x.tipo === 'carta' || /^gestora_/.test(x.categoria || '') && /carta/i.test(x.titulo || '')) return {k: 'carta', t: I.MARCAS.carta[1]};
+    if (/^gestora_|^instituicao$|^academia$/.test(x.categoria || '') || /^(research|paper|relatorio|discurso|macro)$/.test(x.tipo || '')) return {k: 'research', t: I.MARCAS.research[1]};
+    return {k: 'noticia', t: I.MARCAS.noticia[1]};
+  };
   // v3.5 · relevância. Veículo pouco conhecido (achado pela busca) sem fato da empresa: recolhido no Radar, na ficha e na pauta.
   I.desconhecido = function (x) { return !!(x && x.via && x.confiavel === false); };
   I.baixaRelevancia = function (x) {
@@ -272,9 +295,36 @@ var INTEL = (function () {
     if (soltos.length === 1 && casas.length >= 1 && !out.length) out.push({casa: casas[0], v: soltos[0]});
     return out;
   };
+  /* v3.7 · busca com filtros. "frase exata", fonte:valor, desde:10/2026, ate:15/11/2026, ativo:PETR4, evento:recompra,
+     tipo:carta (fato, resultado, opiniao, carta, research, noticia) e -palavra para excluir. O resto: todas as palavras. */
+  function dataOp(v, fim) {
+    var m;
+    if ((m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v))) return v;
+    if ((m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(v))) return m[3] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);
+    if ((m = /^(\d{1,2})\/(\d{4})$/.exec(v))) { var mm = ('0' + m[1]).slice(-2); return m[2] + '-' + mm + (fim ? '-31' : '-01'); }
+    if ((m = /^(\d{4})$/.exec(v))) return v + (fim ? '-12-31' : '-01-01');
+    return '';
+  }
+  I.parseBusca = function (txt) {
+    var o = {frases: [], termos: [], fora: [], fonte: [], ativo: [], evento: [], tipo: [], de: '', ate: '', ops: false};
+    String(txt || '').replace(/(-?)(?:([A-Za-zÀ-ÿ]+):)?"([^"]+)"|(\S+)/g, function (all, neg, op, frase, palavra) {
+      var k = op, v = frase;
+      if (palavra) { var m = /^(-?)([A-Za-zÀ-ÿ]+):(.+)$/.exec(palavra); if (m && /^(fonte|veiculo|desde|de|ate|ativo|evento|tipo)$/.test(norm(m[2]))) { k = m[2]; v = m[3]; neg = m[1]; } else { k = null; v = palavra; } }
+      k = k ? norm(k) : null;
+      if (k === 'veiculo') k = 'fonte';
+      if (k === 'de') k = 'desde';
+      if (k === 'desde' || k === 'ate') { var d = dataOp(v, k === 'ate'); if (d) { o[k === 'desde' ? 'de' : 'ate'] = d; o.ops = true; } return all; }
+      if (k && o[k]) { o[k].push(k === 'ativo' ? String(v).toUpperCase() : norm(v)); o.ops = true; return all; }
+      if (frase && !op) { o.frases.push(norm(frase)); o.ops = true; return all; }
+      var w = norm(v); if (!w) return all;
+      if (neg === '-' || (palavra && palavra.charAt(0) === '-' && w.length > 1)) { o.fora.push(w.replace(/^-/, '')); o.ops = true; } else o.termos.push(w);
+      return all;
+    });
+    return o;
+  };
   I.filtrar = function (itens, f) {
     f = f || {};
-    var q = norm(f.q || '').trim(), de = f.de || '', ate = f.ate || '';
+    var pb = I.parseBusca(f.q || ''), q = pb.termos.join(' '), de = f.de || pb.de || '', ate = f.ate || pb.ate || '';
     return itens.filter(function (x) {
       if (f.tema && (x.temas || []).indexOf(f.tema) < 0) return false;
       if (f.regiao && (x.regioes || []).indexOf(f.regiao) < 0) return false;
@@ -286,7 +336,14 @@ var INTEL = (function () {
       var d = pub(x).slice(0, 10);
       if (de && d < de) return false;
       if (ate && d > ate) return false;
-      if (q) { var alvo = norm([x.titulo, x.resumo, x.organizacao, x.fonte, x.autor, (x.temas || []).map(I.temaNome).join(' '), (x.ativos || []).join(' ')].join(' ')); if (q.split(/\s+/).some(function (w) { return alvo.indexOf(w) < 0; })) return false; }
+      if (q || pb.frases.length || pb.fora.length) { var alvo = norm([x.titulo, x.resumo, x.organizacao, x.fonte, x.autor, (x.temas || []).map(I.temaNome).join(' '), (x.ativos || []).join(' '), (x.ativos_vip || []).join(' ')].join(' '));
+        if (q && q.split(/\s+/).some(function (w) { return alvo.indexOf(w) < 0; })) return false;
+        if (pb.frases.some(function (w) { return alvo.indexOf(w) < 0; })) return false;
+        if (pb.fora.some(function (w) { return alvo.indexOf(w) >= 0; })) return false; }
+      if (pb.fonte.length) { var fo = norm((x.fonte || '') + ' ' + (x.organizacao || '')); if (!pb.fonte.some(function (w) { return fo.indexOf(w) >= 0; })) return false; }
+      if (pb.ativo.length) { var at = (x.ativos || []).concat(x.ativos_vip || []); if (!pb.ativo.some(function (t) { return at.indexOf(t) >= 0; })) return false; }
+      if (pb.evento.length) { var ev = I.eventosDe(x); if (!pb.evento.some(function (w) { return ev.some(function (k) { return k === w || norm(I.eventoNome(k)).indexOf(w) >= 0 || (EV_SIN[k] || []).indexOf(w) >= 0; }); })) return false; }
+      if (pb.tipo.length) { var mk = I.marca(x).k; if (!pb.tipo.some(function (w) { return mk === w || norm(I.MARCAS[mk][1]).indexOf(w) >= 0; })) return false; }
       return true;
     });
   };
@@ -376,6 +433,17 @@ var INTEL = (function () {
     E.estanteP = getJSON(base() + 'biblioteca/estante.json' + marca(), 40000).then(function (j) { E.estante = j && j.itens ? j : {itens: [], colecoes: []}; E.estanteP = null; renderSeguro(); return E.estante; },
       function (e) { E.estante = {itens: [], colecoes: [], erro: motivo(e)}; E.estanteP = null; renderSeguro(); return E.estante; });
     return E.estanteP;
+  };
+  // v3.6 · arquivos publicados pelo robô carregados sob demanda (termômetro das cartas, fundos, proventos, clássico da semana)
+  E.arq = E.arq || {};
+  A.arquivo = function (nome) {
+    var a = E.arq[nome];
+    if (a && (a.dados || a.erro)) return a;
+    if (!a) {
+      E.arq[nome] = {carregando: true};
+      getJSON(base() + nome + marca(), 40000).then(function (j) { E.arq[nome] = {dados: j || {}}; renderSeguro(); }, function (e) { E.arq[nome] = {erro: motivo(e), ausente: /404/.test(String(e && e.message))}; renderSeguro(); });
+    }
+    return E.arq[nome];
   };
   A.mesesDisponiveis = function () { return (E.versao && E.versao.meses) || []; };
   // Opiniões de casas de análise dos últimos 12 meses (biblioteca/opinioes.json) e o conjunto usado nas fichas dos ativos
@@ -484,7 +552,7 @@ var INTEL = (function () {
   A.itemLinha = function (x, t, outros) {
     var lk = A.link(x.link), men = t && (x.ativos || []).indexOf(t) >= 0 && I.vinculo(x, t).tipo !== 'direto', corpo;
     var li = h('li', {class: 'nl' + (A.lido(x.id) ? ' lido' : '') + (men ? ' men' : ''), 'data-id': x.id}, h('time', {class: 'nw-when' + (x.publicado_em ? '' : ' sem')}, quandoTxt(x)),
-      corpo = h('div', null, h('button', {class: 'nwl', onclick: function () { A.abrirItem(x); }}, x.titulo),
+      corpo = h('div', null, h('button', {class: 'nwl', onclick: function () { A.abrirItem(x); }}, A.marcaEl(x), x.titulo),
         h('div', {class: 'nl-src'}, x.categoria === 'oficial_empresa' ? 'CVM · ' + (x.categoria_cvm || 'documento') : (x.fonte && x.via ? x.fonte : x.organizacao || x.fonte),
           lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', title: 'Abrir a matéria original', 'aria-label': 'Abrir a matéria original'}, '↗') : null,
           marcadores(x), outros && outros.length ? outrosLinha(outros, t, function () { return corpo; }) : null)));
@@ -514,6 +582,7 @@ var INTEL = (function () {
     if (x.natureza === 'opiniao_casa') m.push(h('span', {class: 'mk casa' + (x.posicao ? ' p-' + x.posicao : ''), title: 'Opinião ' + ((x.casas || []).join(', ') || 'de analistas') + (x.posicao ? ' · ' + I.POSICAO[x.posicao] : ' · sem sentido explícito') + (x.recomendacao || x.preco_alvo ? ' (recomendação e preço-alvo como publicados)' : ' (lido do título)')},
       ((x.casas || [])[0] || 'opinião') + (x.posicao === 'favoravel' ? ' ▲' : x.posicao === 'contraria' ? ' ▼' : '') + (x.recomendacao ? ' · ' + x.recomendacao : '') + (x.preco_alvo ? ' · alvo ' + x.preco_alvo : '')));
     if (x.categoria === 'oficial_empresa') m.push(h('span', {class: 'mk cvm', title: 'Documento entregue pela companhia à CVM'}, x.tipo === 'fato_relevante' ? 'fato relevante' : 'CVM'));
+    I.eventosDe(x).slice(0, 2).forEach(function (k) { m.push(h('span', {class: 'mk evc evc-' + k, title: 'Tipo de evento (pela manchete): ' + I.eventoNome(k)}, I.eventoNome(k))); });
     if (x.aviso_fonte) m.push(h('span', {class: 'mk av', title: x.aviso_fonte}, '!'));
     if (x.via && x.confiavel === false) m.push(h('span', {class: 'mk av', title: 'Veículo pouco conhecido, achado pela busca do ' + x.via + '. Confira na fonte.'}, '?'));
     return m;
@@ -540,7 +609,7 @@ var INTEL = (function () {
       var d = row.querySelector('.nr-d'); if (d) d.remove();
       if (ABERTO[x.id]) row.appendChild(detalheRow(x, id));
       row.classList.toggle('aberto', !!ABERTO[x.id]); bt.setAttribute('aria-expanded', ABERTO[x.id] ? 'true' : 'false');
-    }}, x.titulo);
+    }}, A.marcaEl(x), h('span', {class: 'nr-tx'}, x.titulo));
     row.append(h('time', {class: 'nw-when' + (hr.sem ? ' sem' : ''), datetime: x.publicado_em || x.detectado_em || '', title: hr.tip + (x.publicado_em ? ' · ' + I.quando(x) : '')}, hr.txt),
       h('span', {class: 'nw-src', title: org}, org),
       h('div', {class: 'nr-tt'}, bt, marcadores(x), opt.outros ? outrosBtn(opt.outros, row) : null, opt.extra ? opt.extra(x) : null),
@@ -568,10 +637,14 @@ var INTEL = (function () {
     if (pq.length) d.appendChild(h('ul', {class: 'nr-pq'}, pq.map(function (f) { return h('li', null, rotulo(f.r), ' ', f.t); })));
     var bs = h('button', {class: 'btn sm', onclick: async function () { await A.salvar(x, !A.salvo(x.id)); bs.textContent = A.salvo(x.id) ? 'Salvo' : 'Ler depois'; }}, A.salvo(x.id) ? 'Salvo' : 'Ler depois');
     d.appendChild(h('div', {class: 'nr-act'}, h('button', {class: 'btn sm', onclick: function () { A.abrirItem(x); }}, 'Ler mais'),
-      lk ? h('a', {class: 'btn sm pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte ↗') : null, bs,
+      lk ? h('a', {class: 'btn sm pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte ↗') : null, bs, A.botaoComite ? A.botaoComite(x) : null,
       h('span', {class: 'muted nr-dt'}, datasTxt(x, true))));
     return d;
   }
+  A.marcaEl = function (x) { var m = I.marca(x); return h('i', {class: 'mt mt-' + m.k, title: m.t, 'aria-label': m.t + ':'}, I.MARCAS[m.k][0]); };
+  A.legendaMarcas = function () {
+    return h('p', {class: 'mt-leg', 'aria-label': 'Legenda dos tipos'}, Object.keys(I.MARCAS).map(function (k) { return h('span', null, h('i', {class: 'mt mt-' + k}, I.MARCAS[k][0]), ' ' + I.MARCAS[k][1].replace(' ou documento à CVM', ' ou CVM').replace(' de casa de análise', ' de casa')); }));
+  };
   // Lista de linhas com separador por dia (a hora de cada linha é a de publicação; o dia fica no separador)
   A.listaRows = function (itens, opt) {
     opt = opt || {};
@@ -741,7 +814,7 @@ var INTEL = (function () {
     var lido = A.lido(x.id), btL = h('button', {class: 'btn sm', onclick: async function () { await A.marcarLido(x, !A.lido(x.id)); btL.textContent = A.lido(x.id) ? 'Desmarcar leitura' : 'Marcar como lido'; }}, lido ? 'Desmarcar leitura' : 'Marcar como lido');
     var btS = h('button', {class: 'btn sm', onclick: async function () { await A.salvar(x, !A.salvo(x.id)); btS.textContent = A.salvo(x.id) ? 'Salvo para ler' : 'Ler depois'; }}, A.salvo(x.id) ? 'Salvo para ler' : 'Ler depois');
     box.appendChild(h('div', {class: 'lr-acts'}, lk ? h('a', {class: 'btn pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte original ↗') : h('span', {class: 'muted'}, 'Item sem link válido.'),
-      x.pdf && A.link(x.pdf) && x.pdf !== x.link ? h('a', {class: 'btn sm', href: A.link(x.pdf), target: '_blank', rel: 'noopener'}, 'PDF') : null, btS, btL));
+      x.pdf && A.link(x.pdf) && x.pdf !== x.link ? h('a', {class: 'btn sm', href: A.link(x.pdf), target: '_blank', rel: 'noopener'}, 'PDF') : null, btS, A.botaoComite ? A.botaoComite(x) : null, btL));
     function sec(tit, rot, corpo, cls) { return h('section', {class: 'lr-s' + (cls ? ' ' + cls : '')}, h('h3', null, tit, rot ? rotulo(rot) : null), corpo); }
     // 0. opinião publicada: casa, analista, recomendação, preço-alvo e horizonte só quando escritos; mudança frente à visão anterior da mesma casa
     if (x.natureza === 'opiniao_casa') { var op = opiniaoView(x); if (op) box.appendChild(sec('Opinião publicada', 'fonte', op, 'lr-op')); }

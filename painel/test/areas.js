@@ -3,7 +3,7 @@
 // montam e rolagem horizontal. Uso: python painel/test/gera_dados_teste.py <pasta> && (cd <pasta> && python -m http.server 8777) && node painel/test/areas.js http://localhost:8777/index.html
 const { chromium } = require('playwright');
 const url = process.argv[2];
-const ROTAS = ['hoje', 'brasil/ativos', 'brasil/pauta', 'bib/mes', 'bib/estante', 'vip/hoje', 'vip/ativos', 'vip/pauta', 'mundo/agora', 'mundo/cartas', 'mundo/debate', 'mundo/etfs', 'cart/ref', 'cart/mapa', 'cart/carteira', 'cart/perfis', 'bib/busca', 'bib/semanal', 'bib/aprendizados', 'bib/fontes',
+const ROTAS = ['brasil/fluxo', 'brasil/recomendacoes', 'cart/semana', 'hoje', 'brasil/ativos', 'brasil/pauta', 'bib/mes', 'bib/estante', 'vip/hoje', 'vip/ativos', 'vip/pauta', 'cart/comite', 'brasil/proventos', 'brasil/fundos', 'brasil/cartas', 'mundo/wealth', 'bib/trilha', 'mundo/agora', 'mundo/cartas', 'mundo/debate', 'mundo/etfs', 'cart/ref', 'cart/mapa', 'cart/carteira', 'cart/perfis', 'bib/busca', 'bib/semanal', 'bib/aprendizados', 'bib/fontes',
   // endereços antigos continuam funcionando
   'oregon/ativos', 'oregon/carteiras', 'oregon/setores', 'res/empresas', 'res/etfs', 'res/eventos', 'cart/risco', 'cart/construcao', 'global', 'sala/reuniao', 'mesa/mercado', 'cons/editor'];
 const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 'oregon/setores': 'brasil/ativos', 'res/empresas': 'brasil/ativos', 'res/etfs': 'brasil/ativos', 'res/eventos': 'hoje/',
@@ -30,7 +30,7 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     const ln = await p.evaluate(() => { const r = document.querySelector('#ultimas .nr'), bt = r.querySelector('.nr-t'); bt.click(); const d = r.querySelector('.nr-d'); const ok1 = !!d && bt.getAttribute('aria-expanded') === 'true' && !!d.querySelector('a.btn[href^="http"]'); bt.click(); return ok1 && !r.querySelector('.nr-d') ? 'ok' : 'linha não abriu/fechou'; });
     rep(ln === 'ok', vw + ' linha de notícia abre e fecha no lugar (' + ln + ')');
     // janela de leitura: título, fonte e data em destaque, link original, sem os sete pontos nem "não avaliado"; aprofundar recolhido
-    const y0 = await p.evaluate(() => { const c = document.querySelector('#prioridades .nw'); c.scrollIntoView(); window.scrollBy(0, -120); return window.scrollY; });
+    const y0 = await p.evaluate(() => { const r = document.getElementById('research'); if (r && r.classList.contains('fechada')) r.querySelector('header').click(); const c = document.querySelector('#prioridades .nw'); c.scrollIntoView(); window.scrollBy(0, -120); return window.scrollY; });
     const an = await p.evaluate(() => { const bt = document.querySelector('#prioridades .nw .nwl'); bt.focus(); bt.click(); const d = document.querySelector('.drawer'); if (!d) return 'gaveta não abriu';
       const t = d.innerText, tit = d.querySelector('.lr-t'), orig = !!d.querySelector('.lr-acts a.btn.pri[href^="http"]'), pts = d.querySelectorAll('.an-p').length, mais = d.querySelector('details.lr-mais');
       return tit && /Publicado|Sem data de publicação|Acervo/.test(t) && orig && pts === 0 && !/Não avaliado|não avaliado/.test(t) && mais && !mais.open && d.querySelectorAll('.lr-s').length <= 4 ? 'ok' : 'título ' + !!tit + ' original ' + orig + ' pontos ' + pts + ' seções ' + d.querySelectorAll('.lr-s').length; });
@@ -161,8 +161,8 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     const hm = await p.evaluate(() => { const l = Array.from(document.querySelectorAll('.est-it')); return l.length && l.every(x => !/Mauboussin/.test(x.querySelector('.est-m').textContent)) ? l.length : 0; });
     rep(hm > 20, vw + ' Estante filtra pela coleção (' + hm + ' memos)');
     await p.evaluate(() => APP.go('vip', 'hoje')); await p.waitForTimeout(600);
-    const vh = await p.evaluate(() => ({mapa: document.querySelectorAll('.vip-mapa .atn-t').length, radar: !!document.getElementById('vip-radar'), debate: !!document.getElementById('vip-debate'), vale: /VALE3/.test(document.getElementById('vip-radar').innerText)}));
-    rep(vh.mapa === 35 && vh.radar && vh.debate && vh.vale, vw + ' Hoje VIP: mapa com os 35 ativos, radar e debate (' + JSON.stringify(vh) + ')');
+    const vh = await p.evaluate(() => ({mapa: document.querySelectorAll('.vip-mapa .atn-t').length + document.querySelectorAll('.vip-mapa .atn-z').length, quad: document.querySelectorAll('.vip-mapa .atn-t').length, radar: !!document.getElementById('vip-radar'), debate: !!document.getElementById('vip-debate'), vale: /VALE3/.test(document.getElementById('vip-radar').innerText)}));
+    rep(vh.mapa === 35 && vh.quad < 35 && vh.radar && vh.debate && vh.vale, vw + ' Hoje VIP: mapa enxuto com os 35 ativos (quadrado só com acontecimento), radar e debate (' + JSON.stringify(vh) + ')');
     await p.evaluate(() => APP.go('vip', 'ativos')); await p.waitForTimeout(400);
     const va = await p.evaluate(() => ({tabelas: document.querySelectorAll('.vip-tw table').length, linhas: document.querySelectorAll('.vip-tw tbody tr').length, dy26: /DY PAGO 2026/i.test(document.getElementById('main').innerText), sw: document.documentElement.scrollWidth <= innerWidth + 1}));
     rep(va.tabelas === 3 && va.linhas === 35 && va.dy26 && va.sw, vw + ' Ativos VIP: três carteiras, 35 linhas, todas as colunas, sem rolagem lateral da página (' + JSON.stringify(va) + ')');
@@ -176,6 +176,105 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     await p.evaluate(() => APP.go('vip', 'pauta')); await p.waitForTimeout(400);
     const vp = await p.evaluate(() => ({secs: document.querySelectorAll('#main .sec').length, copiar: !!Array.from(document.querySelectorAll('button')).find(b => b.textContent === 'Copiar pauta')}));
     rep(vp.secs === 3 && vp.copiar, vw + ' Pauta VIP por carteira (' + JSON.stringify(vp) + ')');
+    // ---- v3.6 · comitê do mês (sugestão, item à mão), proventos, fundos, cartas, wealth, trilha, clássico, ponte VIP
+    const cm = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms));
+      try { localStorage.removeItem('oregon-v3:comite'); } catch (e) {}
+      APP.go('cart', 'comite'); await z(400);
+      const lv = Array.from(document.querySelectorAll('.cm-sug button')).find(b => b.textContent === 'Levar'); if (!lv) return 'sem sugestão';
+      lv.click(); await z(400);
+      const n1 = document.querySelectorAll('.cm-it').length;
+      Array.from(document.querySelectorAll('button')).find(b => b.textContent === '+ Item à mão').click(); await z(300);
+      const f = document.querySelector('.cm-form'); f.querySelector('input').value = 'Revisar peso de Klabin'; Array.from(f.querySelectorAll('button')).find(b => b.textContent === 'Pôr na pauta').click(); await z(400);
+      const n2 = document.querySelectorAll('.cm-it').length, manual = /Revisar peso de Klabin/.test(document.getElementById('main').innerText);
+      return n1 + '|' + n2 + '|' + manual;
+    });
+    rep(cm === '1|2|true', vw + ' comitê do mês: sugestão levada e item à mão na pauta (' + cm + ')');
+    const fav = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('hoje'); await z(400); const r = document.querySelector('#ultimas .nr') || document.querySelector('.nr'); r.querySelector('.nr-t').click(); await z(200); if (!r.querySelector('.nr-d')) { r.querySelector('.nr-t').click(); await z(200); }
+      const b = r.querySelector('.cm-b'); if (!b) return 'sem botão'; const t0 = b.textContent; b.click(); await z(300); const t1 = b.textContent; b.click(); await z(300); return t0 + '→' + t1 + '→' + b.textContent; });
+    rep(/^(Levar ao comitê→Na pauta do comitê→Levar ao comitê|Na pauta do comitê→Levar ao comitê→Na pauta do comitê)$/.test(fav), vw + ' "Levar ao comitê" numa notícia liga e desliga (' + fav + ')');
+    await p.evaluate(() => APP.go('brasil', 'proventos')); await p.waitForTimeout(700);
+    const pv = await p.evaluate(() => { const ts = Array.from(document.querySelectorAll('.pv-t')); const tags = Array.from(document.querySelectorAll('.pv-tag')).map(x => x.textContent);
+      return {tabelas: ts.length, linhas: document.querySelectorAll('.pv-t tbody tr').length, vir: tags.includes('a vir'), receber: tags.includes('a receber'),
+        dcFut: ts[0] ? Array.from(ts[0].querySelectorAll('tbody tr')).every(r => r.querySelector('.pv-tag')) : false}; });
+    rep(pv.tabelas === 2 && pv.linhas > 0 && pv.vir && pv.receber && pv.dcFut, vw + ' agenda de proventos: data-com à frente e pagamentos a receber separados (' + JSON.stringify(pv) + ')');
+    await p.evaluate(() => APP.go('brasil', 'fundos')); await p.waitForTimeout(700);
+    const fd = await p.evaluate(() => { const t = document.getElementById('main').innerText; return /Carteiras de julho de 2026/.test(t) && /Gestora Alfa/.test(t); });
+    rep(fd, vw + ' quem tem a ação: mês da CVM e gestora');
+    await p.evaluate(() => APP.go('brasil', 'cartas')); await p.waitForTimeout(700);
+    const tc = await p.evaluate(() => ({emp: document.querySelectorAll('.tc-i').length, petr: /PETR4/.test(document.getElementById('main').innerText)}));
+    rep(tc.emp === 2 && tc.petr, vw + ' termômetro das cartas, só empresas das carteiras por padrão (' + JSON.stringify(tc) + ')');
+    await p.evaluate(() => APP.go('mundo', 'wealth')); await p.waitForTimeout(500);
+    const wl = await p.evaluate(() => { const t = document.getElementById('main').innerText; return /CVM abre audiência/.test(t) && /RIA M&A/.test(t); });
+    rep(wl, vw + ' Wealth e consultorias com CVM e imprensa especializada');
+    await p.evaluate(() => APP.go('bib', 'trilha')); await p.waitForTimeout(900);
+    const tr = await p.evaluate(() => ({mods: document.querySelectorAll('.tr-m').length, cfp: /VIII · Psicologia/.test(document.getElementById('main').innerText)}));
+    rep(tr.mods === 16 && tr.cfp, vw + ' trilha CFP (8) e CFA III (8) (' + JSON.stringify(tr) + ')');
+    await p.evaluate(() => { APP.setProf && APP.setProf('briefing'); APP.go('hoje'); }); await p.waitForTimeout(800);
+    const cl = await p.evaluate(() => !!document.querySelector('.paper-sem.classico'));
+    rep(cl, vw + ' clássico da semana no Research do Hoje');
+    const pte = await p.evaluate(async () => { APP.abrirFicha('KLBN4'); await new Promise(r => setTimeout(r, 400)); const t = document.querySelector('.drawer').innerText; document.querySelector('.drawer').remove(); return /Também na VG VIP/.test(t); });
+    rep(pte, vw + ' ponte Oregon → VIP na ficha');
+    // ---- v3.7 · topo, aviso ao atualizar, explicações, Hoje, marcas, eventos, recomendações, fechamento, busca, cartas, celular, impressão, tema
+    await p.evaluate(() => APP.go('hoje')); await p.waitForTimeout(500);
+    const tp7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); const d = document.querySelector('.top .dstat'); const txt = d.innerText; d.click(); await z(150);
+      const pop = document.querySelector('.pop'); const r = {txt: txt, pop: !!pop, coletar: !!(pop && pop.querySelector('a[href*="actions/workflows/robo.yml"]')), prox: !!(pop && /Próxima coleta prevista/.test(pop.innerText))};
+      const esc = pop && Array.from(pop.querySelectorAll('.seg button')).find(b => b.textContent === 'Escuro'); if (esc) esc.click(); await z(100);
+      r.dark = document.documentElement.getAttribute('data-theme') === 'dark' && getComputedStyle(document.body).backgroundColor !== 'rgb(242, 244, 248)';
+      const auto = pop && Array.from(pop.querySelectorAll('.seg button')).find(b => b.textContent === 'Automático'); if (auto) auto.click(); document.body.click(); await z(100); r.fechou = !document.querySelector('.pop'); return r; });
+    rep(tp7.pop && tp7.coletar && tp7.prox && tp7.dark && tp7.fechou && !/atrasado/.test(tp7.txt), vw + ' topo: ponto + hora; detalhes, tema escuro e "Coletar agora" no toque (' + JSON.stringify(tp7) + ')');
+    const av7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); const b = Array.from(document.querySelectorAll('.mesa-ctl button')).find(x => /Atualizar/.test(x.textContent)); b.click(); await z(1200);
+      const a = document.querySelector('.aviso-at'); return {aviso: a ? a.textContent : null, coletar: !!document.querySelector('.mesa-ctl a[href*="actions/workflows/robo.yml"]')}; });
+    rep(av7.aviso && /^Conferido às \d\d:\d\d: (nada novo desde a coleta (das \d|de )|chegou)/.test(av7.aviso) && av7.coletar, vw + ' aviso depois do Atualizar e "Coletar agora" no Hoje (' + JSON.stringify(av7) + ')');
+    const hj7 = await p.evaluate(() => { const cols = document.querySelectorAll('.mesa > .mesa-col'); const fx = document.querySelector('.fxd');
+      return {cols: cols.length, colA: cols[0] ? Array.from(cols[0].children).map(x => x.id).join(',') : '', fxd: fx ? fx.querySelectorAll('.fxd-i').length : -1, alertas: !!document.getElementById('alertas'), fila: !!document.getElementById('fila'),
+        vz1: document.querySelectorAll('#agenda-decisiva .vz1').length, sticky: getComputedStyle(document.querySelector('.sumario')).position, tp: document.querySelectorAll('#ultimas .mt').length, leg: !!document.querySelector('#ultimas .mt-leg'),
+        ev: Array.from(document.querySelectorAll('.mk.evc')).map(x => x.textContent).join('|'), evf: !!document.querySelector('.ev-f button'), divVip: INTEL.eventosDe(APP.itemPorId('vip3')).join() === 'divida'}; });
+    rep(hj7.cols === 2 && hj7.colA === 'radar,research' && hj7.fxd >= 2 && hj7.alertas && hj7.fila && hj7.vz1 >= 1 && hj7.sticky === 'sticky' && hj7.tp > 5 && hj7.leg && /Recompra/.test(hj7.ev) && hj7.evf && hj7.divVip,
+      vw + ' Hoje: duas colunas, faixa do dia, alertas e fila, vazios em uma linha, atalhos fixos, marcas e eventos (' + JSON.stringify(hj7) + ')');
+    const ph7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('brasil', 'proventos'); await z(400); const f = document.querySelector('.page-h .ph-f'); const v0 = getComputedStyle(f).display;
+      document.querySelector('.page-h .qbtn').click(); await z(50); return {antes: v0, depois: getComputedStyle(f).display}; });
+    rep(ph7.antes === 'none' && ph7.depois === 'block', vw + ' explicação recolhida no "?" e aberta ao tocar (' + JSON.stringify(ph7) + ')');
+    const rm7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('brasil', 'recomendacoes'); await z(400); const t = document.querySelector('.rm-t'); const tx = t ? t.innerText : '';
+      return {linhas: t ? t.querySelectorAll('tbody tr').length : 0, klbn: /KLBN4[\s\S]*Itaú BBA[\s\S]*Compra · R\$ 25,00\s+Neutro/.test(tx), txt: tx.slice(0, 300)}; });
+    rep(rm7.linhas >= 1 && rm7.klbn, vw + ' mudanças de recomendação: a mesma casa contra a visão anterior (' + JSON.stringify(rm7) + ')');
+    const fs7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'semana'); await z(500); const t = document.getElementById('main').innerText;
+      return {secs: document.querySelectorAll('.fs .sec').length, fluxo: /Ações [−+]?R\$/.test(t), copiar: /Copiar/.test(t), imprimir: /Imprimir/.test(t), mud: /Klabin|KLBN4/.test(t), recompra: /recompra/i.test(t), carta: /Gestora Teste A/.test(t)}; });
+    rep(fs7.secs === 9 && fs7.fluxo && fs7.copiar && fs7.imprimir && fs7.mud && fs7.recompra && fs7.carta, vw + ' fechamento da semana com as nove seções (com o fluxo dos fundos), copiar e imprimir (' + JSON.stringify(fs7) + ')');
+    const bq7 = await p.evaluate(() => { const it = APP.itensAtivo(), f = q => INTEL.filtrar(it, {q: q}).map(x => x.id);
+      return {ev: f('evento:recompra').join(','), fonte: f('fonte:"Money Times" ativo:KLBN4').length, frase: f('"programa de recompra"').join(','), fora: f('Klabin -corta').some(id => id === 'op_new'), periodo: f('ativo:KLBN4 desde:01/11/2026').indexOf('op_old') < 0, tipo: f('tipo:opiniao ativo:KLBN4').length}; });
+    rep(bq7.ev === 'e1' && bq7.fonte >= 2 && bq7.frase === 'e1' && !bq7.fora && bq7.periodo && bq7.tipo >= 2, vw + ' busca com filtros: evento, fonte, frase, exclusão, período e tipo (' + JSON.stringify(bq7) + ')');
+    const tc7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('brasil', 'cartas'); await z(500); const d = document.querySelector('.tc-d'); if (d) d.open = true; await z(50);
+      const tr = document.querySelector('.tc-tr'); const g = Array.from(document.querySelectorAll('.sub.filt button')).find(b => b.textContent === 'Ao longo dos meses'); g.click(); await z(200);
+      const tb = document.querySelector('.tc-g'); return {trecho: tr ? tr.textContent.slice(0, 40) : null, meses: tb ? tb.querySelectorAll('thead th').length - 2 : 0, petr: tb ? /PETR4/.test(tb.innerText) : false}; });
+    await p.evaluate(() => { const g = Array.from(document.querySelectorAll('.sub.filt button')).find(b => b.textContent === 'Um mês'); if (g) g.click(); });
+    rep(tc7.trecho && /Petrobras/.test(tc7.trecho) && tc7.meses >= 2 && tc7.petr, vw + ' termômetro: trecho literal da carta e grade empresa × mês (' + JSON.stringify(tc7) + ')');
+    if (vw === 1440) {
+      const fl7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('brasil', 'ativos'); await z(400); const b = document.querySelector('.rec-l'); b.click(); await z(300);
+        const g = document.querySelector('.grid-emp'), r = {rec: g.classList.contains('recolhida'), lista: getComputedStyle(document.querySelector('.lista-at')).display, strip: getComputedStyle(document.querySelector('.tk-strip')).display, larg: document.querySelector('.ficha-at').offsetWidth};
+        document.querySelector('.rec-a').click(); await z(300); r.volta = !document.querySelector('.grid-emp').classList.contains('recolhida'); return r; });
+      rep(fl7.rec && fl7.lista === 'none' && fl7.strip === 'flex' && fl7.larg > 1200 && fl7.volta, vw + ' ficha mais larga: a lista recolhe e volta (' + JSON.stringify(fl7) + ')');
+    } else {
+      const ce7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.lsSet('area-research', false); APP.go('hoje'); await z(500); const nav = document.getElementById('nav').getBoundingClientRect();
+        const r = {navBaixo: Math.abs(nav.bottom - window.innerHeight) < 2, radar: !document.getElementById('radar').classList.contains('fechada'), research: document.getElementById('research').classList.contains('fechada')};
+        document.querySelector('#debate > header').click(); await z(80); r.abre = !document.getElementById('debate').classList.contains('fechada');
+        document.querySelector('#debate > header').click(); await z(80);
+        const tt = document.querySelector('#radar .nr-tx'); r.clamp = tt ? getComputedStyle(tt).webkitLineClamp : null; r.alt = tt ? Math.round(tt.getBoundingClientRect().height / parseFloat(getComputedStyle(tt).lineHeight)) : null; return r; });
+      rep(ce7.navBaixo && ce7.radar && ce7.research && ce7.abre && String(ce7.clamp) === '2', vw + ' celular: seções embaixo, áreas recolhíveis e notícias em duas linhas (' + JSON.stringify(ce7) + ')');
+    }
+    const nul7 = await p.evaluate(async (rotas) => { const z = ms => new Promise(r => setTimeout(r, ms)); const ruins = [];
+      for (const r of rotas) { const [a, s] = r.split('/'); APP.go(a, s); await z(250); if (/(^|\s)(null|undefined|NaN)(\s|$)/.test(document.getElementById('main').innerText)) ruins.push(r); }
+      return ruins; }, ['hoje', 'brasil/ativos', 'brasil/pauta', 'brasil/proventos', 'brasil/fundos', 'brasil/cartas', 'brasil/recomendacoes', 'brasil/fluxo', 'mundo/agora', 'mundo/wealth', 'cart/comite', 'cart/semana', 'bib/busca', 'bib/estante', 'bib/trilha', 'vip/hoje', 'vip/ativos', 'vip/pauta']);
+    rep(!nul7.length, vw + ' nenhuma tela escreve "null", "undefined" ou "NaN" (' + nul7.join(', ') + ')');
+    const fx8 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('brasil', 'fluxo'); await z(500); const t = document.getElementById('main').innerText;
+      return {sem: document.querySelectorAll('.fx-t')[0] ? document.querySelectorAll('.fx-t')[0].querySelectorAll('tbody tr').length : 0, meses: document.querySelectorAll('.fx-t').length, barras: document.querySelectorAll('.fx-bar i.pos, .fx-bar i.neg').length,
+        res: /Semana de \d\d\/\d\d a \d\d\/\d\d/.test(t), neg: /−R\$ 8 mi/.test(t), sw: document.documentElement.scrollWidth <= innerWidth}; });
+    rep(fx8.sem >= 2 && fx8.meses === 2 && fx8.barras >= 2 && fx8.res && fx8.neg && fx8.sw, vw + ' fluxo dos fundos: semana a semana e mês a mês, com barras (' + JSON.stringify(fx8) + ')');
+    await p.emulateMedia({media: 'print'});
+    const pr7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'comite'); await z(400);
+      return {top: getComputedStyle(document.querySelector('.top')).display, sug: getComputedStyle(document.querySelector('.cm-g > .no-print')).display, imp: Array.from(document.querySelectorAll('button')).some(b => b.textContent === 'Imprimir')}; });
+    await p.emulateMedia({media: 'screen'});
+    rep(pr7.top === 'none' && pr7.sug === 'none' && pr7.imp, vw + ' comitê: botão Imprimir e folha limpa na impressão (' + JSON.stringify(pr7) + ')');
     if (errs.length) rep(false, 'erros de JavaScript: ' + errs.join(' | '));
     await p.close();
   }

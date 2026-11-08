@@ -1,0 +1,159 @@
+name: Oregon Intelligence
+
+# Coleta sete dias por semana. Horários em UTC (Brasília = UTC−3):
+#   a cada 30 minutos das 07:00 às 22:30 em Brasília; de madrugada, às 01:15 e 04:15.
+# Imprensa e instituições são lidas a cada rodada; páginas de cartas, a cada 6 horas (robo/intel.py).
+# O GitHub às vezes atrasa o disparo alguns minutos; o robô não depende do minuto exato.
+# Cópia visível deste arquivo em docs/workflow_robo.yml (os testes conferem que as duas são iguais).
+on:
+  schedule:
+    - cron: '*/30 10-23 * * *'
+    - cron: '*/30 0,1 * * *'
+    - cron: '15 4,7 * * *'
+  push:
+    branches: [main]
+    paths: ['painel/**', 'site/**', 'robo/**', 'testes/**', '.github/workflows/robo.yml']
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'normal = coleta agora · semanal = também refaz o resumo da semana · teste_telegram = manda o briefing de teste'
+        type: choice
+        options: [normal, semanal, teste_telegram]
+        default: normal
+
+# Nada de permissão por padrão; cada etapa recebe só o que usa.
+permissions: {}
+
+concurrency:
+  group: robo-oregon
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write   # gravar os dados no ramo "dados" e o arquivo que mantém o agendamento ativo
+    outputs:
+      pular: ${{ steps.robo.outputs.pular }}
+      status: ${{ steps.robo.outputs.status }}
+      motivos: ${{ steps.robo.outputs.motivos }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Testes do robô e do painel (se algum falhar, nada é publicado e o site fica como estava)
+        env:
+          ROBO_PORTAO: '1'
+        run: |
+          python -m unittest discover -s testes
+          node testes/painel.test.js
+
+      - name: Trazer a biblioteca e o estado da rodada anterior
+        run: |
+          mkdir -p data
+          # 0 = o ramo existe; 2 = ainda não existe (primeira rodada); qualquer outro código = falha de rede:
+          # nesse caso a rodada para aqui, para nunca sobrescrever a biblioteca guardada com uma pasta vazia
+          set +e; git ls-remote --exit-code --heads origin dados > /dev/null; r=$?; set -e
+          if [ "$r" = "0" ]; then
+            git fetch --depth=1 origin dados
+            # toda a pasta data/ (biblioteca por mês, contadores, estado); arquivos da versão antiga ficam, mas não são publicados
+            git checkout FETCH_HEAD -- data || true
+            git reset -q -- data || true
+            ls -la data data/biblioteca 2>/dev/null || true
+          elif [ "$r" = "2" ]; then
+            echo "Ramo 'dados' ainda não existe: primeira rodada."
+          else
+            echo "::error::Não consegui consultar o ramo 'dados' (código $r). Nada foi publicado; os dados guardados ficam como estão."
+            exit 1
+          fi
+
+      - name: Coletar macro e conteúdo, analisar e montar o briefing
+        id: robo
+        env:
+          ROBO_MODO: ${{ github.event_name == 'workflow_dispatch' && inputs.modo || 'normal' }}
+          ROBO_MANUAL: ${{ github.event_name != 'schedule' }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python robo/intel.py
+
+      - name: Manter o agendamento ativo (o GitHub pausa robôs de repositórios parados há 60 dias)
+        if: github.event_name == 'schedule'
+        run: |
+          ultimo=$(git log -1 --format=%ct HEAD)
+          if [ $(( ($(date +%s) - ultimo) / 86400 )) -ge 45 ]; then
+            git config user.name "robo-oregon"
+            git config user.email "robo-oregon@users.noreply.github.com"
+            date -u +%Y-%m-%dT%H:%MZ > .robo-ativo
+            git add .robo-ativo
+            git commit -q -m "robô ativo $(date -u +%Y-%m-%d)"
+            git push -q origin HEAD:main || true
+          fi
+
+      - name: Guardar a biblioteca e o estado no ramo "dados" (nunca apaga meses anteriores)
+        if: steps.robo.outputs.pular != 'true'
+        run: |
+          git config user.name "robo-oregon"
+          git config user.email "robo-oregon@users.noreply.github.com"
+          git checkout -q --orphan dados-novo
+          git rm -r --cached -q .
+          git add -f data
+          git commit -q -m "dados $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -f -q origin dados-novo:dados
+
+      - name: Montar o site (painel gerado a partir de painel/src + dados públicos do robô)
+        if: steps.robo.outputs.pular != 'true'
+        run: |
+          python painel/build.py
+          mkdir -p _site/data/biblioteca
+          cp -r site/. _site/
+          # Só arquivos públicos. estado.json (controle interno) fica de fora.
+          for f in macro.json recentes.json hoje.json coleta.json semanal.json versao.json status.json resultados.json; do
+            [ -f data/$f ] && cp data/$f _site/data/$f || true
+          done
+          cp data/biblioteca/*.json _site/data/biblioteca/ 2>/dev/null || true
+          cp robo/fontes.json _site/data/fontes.json
+          touch _site/.nojekyll
+
+      - if: steps.robo.outputs.pular != 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  publicar:
+    needs: coletar
+    if: needs.coletar.outputs.pular != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Situação da rodada
+        env:
+          STATUS: ${{ needs.coletar.outputs.status }}
+          MOTIVOS: ${{ needs.coletar.outputs.motivos }}
+        run: |
+          m="${MOTIVOS//%/%25}"
+          case "$STATUS" in
+            critico) echo "::error title=Rodada CRÍTICA::$m"; exit 1 ;;
+            parcial) echo "::warning title=Rodada parcial::$m" ;;
+            *)       echo "Rodada completa." ;;
+          esac

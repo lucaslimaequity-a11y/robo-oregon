@@ -1,5 +1,5 @@
 name: Oregon Intelligence
- 
+
 # Coleta sete dias por semana. Horários em UTC (Brasília = UTC−3): 06:40, 11:40, 17:40 e 21:40 em Brasília.
 # O GitHub às vezes atrasa o disparo; o robô não depende do minuto exato.
 # Cópia visível deste arquivo em docs/workflow_robo.yml (os testes conferem que as duas são iguais).
@@ -17,14 +17,14 @@ on:
         type: choice
         options: [normal, semanal, teste_telegram]
         default: normal
- 
+
 # Nada de permissão por padrão; cada etapa recebe só o que usa.
 permissions: {}
- 
+
 concurrency:
   group: robo-oregon
   cancel-in-progress: false
- 
+
 jobs:
   coletar:
     runs-on: ubuntu-latest
@@ -39,22 +39,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
- 
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
- 
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
- 
+
       - name: Testes do robô e do painel (se algum falhar, nada é publicado e o site fica como estava)
         env:
           ROBO_PORTAO: '1'
         run: |
           python -m unittest discover -s testes
           node testes/painel.test.js
- 
+
       - name: Trazer a biblioteca e o estado da rodada anterior
         run: |
           mkdir -p data
@@ -73,7 +73,7 @@ jobs:
             echo "::error::Não consegui consultar o ramo 'dados' (código $r). Nada foi publicado; os dados guardados ficam como estão."
             exit 1
           fi
- 
+
       - name: Coletar macro e conteúdo, analisar e montar o briefing
         id: robo
         env:
@@ -84,7 +84,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: python robo/intel.py
- 
+
       - name: Manter o agendamento ativo (o GitHub pausa robôs de repositórios parados há 60 dias)
         if: github.event_name == 'schedule'
         run: |
@@ -97,7 +97,7 @@ jobs:
             git commit -q -m "robô ativo $(date -u +%Y-%m-%d)"
             git push -q origin HEAD:main || true
           fi
- 
+
       - name: Guardar a biblioteca e o estado no ramo "dados" (nunca apaga meses anteriores)
         if: steps.robo.outputs.pular != 'true'
         run: |
@@ -108,7 +108,7 @@ jobs:
           git add -f data
           git commit -q -m "dados $(date -u +%Y-%m-%dT%H:%MZ)"
           git push -f -q origin dados-novo:dados
- 
+
       - name: Montar o site (painel gerado a partir de painel/src + dados públicos do robô)
         if: steps.robo.outputs.pular != 'true'
         run: |
@@ -122,12 +122,12 @@ jobs:
           cp data/biblioteca/*.json _site/data/biblioteca/ 2>/dev/null || true
           cp robo/fontes.json _site/data/fontes.json
           touch _site/.nojekyll
- 
+
       - if: steps.robo.outputs.pular != 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
- 
+
   publicar:
     needs: coletar
     if: needs.coletar.outputs.pular != 'true'
@@ -142,7 +142,7 @@ jobs:
     steps:
       - id: deploy
         uses: actions/deploy-pages@v4
- 
+
       - name: Situação da rodada
         env:
           STATUS: ${{ needs.coletar.outputs.status }}

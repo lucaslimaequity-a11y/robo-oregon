@@ -36,6 +36,8 @@ PADRAO = {
                  'temas_macro': [], 'rss': [], 'etfs': []},
     'agenda_macro': {'dias': 14, 'ibge': True, 'ibge_produtos': [], 'copom': {}, 'fomc': {}},
     'resultados': {'ativo': True, 'intervalo_dias': 3, 'arquivos': 4},
+    'intel': {'janela_dias': 10, 'janela_inicial_dias': 45, 'recentes_dias': 14, 'prazo_min': 12, 'telegram_digesto': True, 'telegram_hora': '07:30',
+              'ia': {'ativo': False, 'max_itens_dia': 12, 'max_tokens_dia': 150000, 'max_tokens_item': 1200}},
     'prazo_rodada_min': 15,
     'feriados_b3': [],
 }
@@ -163,6 +165,15 @@ def validar(cfg):
     r = cfg.get('resultados') or {}
     if not isinstance(r.get('ativo', True), bool):
         erros.append('resultados: "ativo" precisa ser true ou false, sem aspas')
+    it = cfg.get('intel') or {}
+    if not isinstance((it.get('ia') or {}).get('ativo', False), bool):
+        erros.append('intel/ia: "ativo" precisa ser true ou false, sem aspas')
+    for k in ('janela_dias', 'janela_inicial_dias', 'recentes_dias', 'prazo_min'):
+        if not isinstance(it.get(k, 1), int) or it.get(k, 1) < 1:
+            erros.append('intel: "%s" precisa ser um número inteiro de dias maior que zero' % k)
+    for k in ('max_itens_dia', 'max_tokens_dia', 'max_tokens_item'):
+        if not isinstance((it.get('ia') or {}).get(k, 1), int) or (it.get('ia') or {}).get(k, 1) < 0:
+            erros.append('intel/ia: "%s" precisa ser um número inteiro' % k)
     for i, s in enumerate(cfg.get('bcb_series') or []):
         if not isinstance(s.get('codigo'), int) or not s.get('id'):
             erros.append('séries do Banco Central %d: precisa de "id" e "codigo" (número do SGS)' % (i + 1))

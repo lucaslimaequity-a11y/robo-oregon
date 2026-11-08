@@ -22,7 +22,7 @@ import urllib.parse
 import urllib.request
 
 BRT = dt.timezone(dt.timedelta(hours=-3))
-UA = 'RoboOregon/2.0 (+https://github.com; coleta de dados publicos de mercado)'
+UA = 'RoboOregon/3.0 (+https://github.com/lucaslimaequity-a11y/robo-oregon; leitura de conteudo publico)'
 
 TIPOS_ERRO = {
     'sem_chave': 'chave não configurada',
@@ -38,6 +38,7 @@ TIPOS_ERRO = {
     'http': 'erro do servidor',
     'pausado': 'fonte pausada nesta rodada',
     'invalido': 'valor impossível (preço zero, negativo ou vazio)',
+    'robots': 'caminho vedado pelo robots.txt do site',
 }
 # Falhas que indicam problema da FONTE (e não do ativo): só estas contam para pausar a fonte.
 FALHAS_DA_FONTE = ('limite', 'bloqueio', 'autenticacao', 'tempo', 'rede', 'http')
@@ -141,8 +142,9 @@ class Rede:
                 self.pausadas[fonte] = tipo
         return ErroFonte(fonte, tipo, detalhe)
 
-    def get(self, fonte, url, timeout=20, tentativas=3, cab=None, dados=None, tipo_403='bloqueio', bruto_erro=False):
-        """Baixa `url`. Erros saem como ErroFonte classificado; a URL nunca aparece na mensagem."""
+    def get(self, fonte, url, timeout=20, tentativas=3, cab=None, dados=None, tipo_403='bloqueio', bruto_erro=False, metodo=None, cabecalhos=None):
+        """Baixa `url`. Erros saem como ErroFonte classificado; a URL nunca aparece na mensagem.
+        `metodo='HEAD'` só lê os cabeçalhos; `cabecalhos` (dict) recebe os cabeçalhos da resposta, quando informado."""
         if fonte in self.pausadas:
             st = self._st(fonte)
             st['falhas']['pausado'] = st['falhas'].get('pausado', 0) + 1
@@ -156,9 +158,14 @@ class Rede:
             try:
                 h = {'User-Agent': UA, 'Accept': '*/*'}
                 h.update(cab or {})
-                rq = urllib.request.Request(url, headers=h, data=dados)
+                rq = urllib.request.Request(url, headers=h, data=dados, method=metodo)
                 with urllib.request.urlopen(rq, timeout=timeout) as r:
-                    corpo = r.read()
+                    corpo = r.read() if metodo != 'HEAD' else b''
+                    if cabecalhos is not None:
+                        try:
+                            cabecalhos.update({k.lower(): v for k, v in r.headers.items()})
+                        except Exception:
+                            pass
                 self.acerto(fonte)
                 return corpo
             except urllib.error.HTTPError as e:

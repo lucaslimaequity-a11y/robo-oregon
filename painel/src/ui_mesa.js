@@ -4,13 +4,12 @@
   var h = A.h, S = A.S;
 
   A.renderTop = function () {
-    // direita do topo: busca e estado dos dados (sempre visíveis)
     var tr = document.getElementById('top-r');
     if (tr) tr.replaceChildren(
-      h('button', {class: 'kbtn', title: 'Buscar empresa, ETF, carteira ou seção (tecla /)', onclick: function () { A.busca(); }}, '⌕', h('span', null, ' Buscar'), h('kbd', null, '/')),
+      h('button', {class: 'kbtn', title: 'Buscar conteúdo, ativo, carteira ou seção (tecla /)', onclick: function () { A.busca(); }}, '⌕', h('span', null, ' Buscar'), h('kbd', null, '/')),
       A.dadosPill ? A.dadosPill() : null);
-    var cg = document.getElementById('cg-host'); if (cg) cg.hidden = !(S.area === 'sala' && S.sub.sala === 'comite');
-    // faixa de contexto: só nas áreas em que a carteira escolhida vale (Carteiras e Sala)
+    // faixa de contexto: só em Oregon › Carteiras fora da referência (qualquer das 15 pode ser escolhida)
+    var ctx = document.getElementById('ctx'); if (ctx) ctx.hidden = !A.mostraCtx();
     var top = document.getElementById('top-ctl'); if (!top || !A.mostraCtx()) return;
     var v = A.versao(); if (!v) { S.ver = 'aprovada'; v = A.versao(); }
     var val = A.valida(v);
@@ -19,18 +18,10 @@
     C.CARTS.forEach(function (m) { if (m.familia !== fam) { fam = m.familia; og = h('optgroup', {label: fam}); sel.appendChild(og); } og.appendChild(h('option', {value: m.id, selected: m.id === S.cart || null}, m.rotulo + (m.status !== 'ativa' ? ' · ' + m.status : ''))); });
     var vs = h('select', {id: 'sel-ver', 'aria-label': 'Versão', onchange: function () { S.ver = vs.value; A.render(); }}, A.versoes(S.cart).map(function (o) { return h('option', {value: o.id, selected: o.id === S.ver || null}, o.rotulo); }));
     var st = {invalida: 'Inválida', parcial: 'Parcial', valida: 'Válida'}[val.status];
-    var pill = h('button', {class: 'pill ' + val.status, style: 'border:0;cursor:pointer', title: 'Ver os problemas da versão', onclick: function () { A.go('cart', 'carteira'); setTimeout(function () { var e = document.getElementById('integridade'); if (e) e.scrollIntoView({behavior: 'smooth'}); }, 50); }},
+    var pill = h('button', {class: 'pill ' + val.status, style: 'border:0;cursor:pointer', title: 'Ver os problemas da versão', onclick: function () { A.go('cart', 'carteira'); setTimeout(function () { var e = document.getElementById('integridade'); if (e) e.scrollIntoView({behavior: 'smooth', block: 'start'}); }, 50); }},
       st + (val.contagem.critica ? ' · ' + val.contagem.critica + ' crítico(s)' : '') + (val.contagem.alta ? ' · ' + val.contagem.alta + ' alto(s)' : ''));
-    var modo = STORE.mode === 'db' ? (STORE.sample ? 'claude.ai · com Claude' : 'claude.ai') : 'propostas salvas neste navegador';
-    top.replaceChildren(
-      h('span', null, h('label', {for: 'sel-cart'}, 'Carteira'), sel),
-      h('span', null, h('label', {for: 'sel-ver'}, 'Versão'), vs),
-      pill,
-      h('span', {class: 'grow'}),
-      h('span', {class: 'pill modo', title: STORE.mode === 'db' ? 'Propostas, decisões e premissas ficam no banco deste painel no claude.ai.' : 'Propostas, decisões e premissas ficam neste navegador. Use “Dados” para exportar o pacote e levar a outro aparelho.'}, modo),
-      h('button', {class: 'tbtn', onclick: function () { A.abrirDados(); }}, 'Dados'),
-      h('button', {class: 'tbtn', onclick: function () { A.abrirMetodologia(); }}, 'Metodologia')
-    );
+    top.replaceChildren(h('span', null, h('label', {for: 'sel-cart'}, 'Carteira'), sel), h('span', null, h('label', {for: 'sel-ver'}, 'Versão'), vs), pill, h('span', {class: 'grow'}),
+      h('span', {class: 'pill modo', title: 'Pesos como aprovados; nada é normalizado nem simulado.'}, 'pesos aprovados'));
   };
 
   /* ---------- Mesa ---------- */
@@ -44,7 +35,7 @@
     // 1. Integridade
     var crit = val.issues.filter(function (i) { return i.g !== 'info'; }), info = val.issues.filter(function (i) { return i.g === 'info'; });
     var motivoInv = val.issues.filter(function (i) { return i.g === 'critica' && /R1|R2|R3/.test(i.regra); }).map(function (i) { return i.titulo; });
-    var resumo = val.status === 'invalida' ? h('div', {class: 'alert bad'}, h('b', null, 'Carteira inválida: '), motivoInv.join('; ') + '. ', 'Os números de risco ficam bloqueados e os cenários aparecem como parciais, sem normalizar os pesos. A correção depende do Comitê: crie uma proposta de correção no Laboratório.')
+    var resumo = val.status === 'invalida' ? h('div', {class: 'alert bad'}, h('b', null, 'Carteira inválida: '), motivoInv.join('; ') + '. ', 'Os pesos aparecem como estão, sem normalizar. A correção depende do Comitê.')
       : val.status === 'parcial' ? h('div', {class: 'alert warn'}, h('b', null, 'Análise parcial. '), A.pct(val.cobertura.descoberto, 0) + ' da carteira não tem instrumento investível ou sensibilidade cadastrada (placeholders, lacunas, fundos sem marcação). Essa parte não entra nos números e não é tratada como caixa.')
       : h('div', {class: 'alert ok'}, 'Pesos fecham em 100% e todas as posições têm cadastro e sensibilidade.');
     L.appendChild(A.sec('Situação da carteira', {id: 'integridade', mtd: 'validacao', badge: A.chip({invalida: 'Inválida', parcial: 'Parcial', valida: 'Válida'}[val.status], 'g-' + (val.status === 'invalida' ? 'critica' : val.status === 'parcial' ? 'media' : 'baixa'))}, [
@@ -52,7 +43,7 @@
       crit.length > 6 ? A.more('Ver os outros ' + (crit.length - 6) + ' problemas', issuesList(crit.slice(6))) : null,
       info.length ? A.more('Dados ausentes e verificações não realizadas (' + info.length + ')', issuesList(info)) : null,
       A.more('Auditoria das 15 carteiras', auditoriaTodas()),
-      h('div', {class: 'row', style: 'margin-top:8px'}, h('button', {class: 'btn pri', onclick: function () { A.go('cons', 'editor'); }}, 'Abrir no Laboratório'), val.status === 'invalida' && v.kind === 'aprovada' ? h('button', {class: 'btn', onclick: function () { A.novaPropostaCorrecao(); }}, 'Criar proposta de correção') : null)
+      h('div', {class: 'row', style: 'margin-top:8px'}, val.status === 'invalida' && v.kind === 'aprovada' ? h('button', {class: 'btn', onclick: function () { A.novaPropostaCorrecao(); }}, 'Criar proposta de correção') : null)
     ]));
 
     // 2. Alocação
@@ -122,17 +113,6 @@
       ['Brent', f.brent, '% por 1% de Brent'], ['S&P / desenvolvidos', f.sp, 'carga em USD'], ['Emergentes', f.em, 'carga em USD'], ['Bitcoin', f.btc, '']
     ].filter(function (r) { return Math.abs(r[1]) > 1e-9; });
     R.appendChild(A.sec('Exposições macro', {mtd: 'fatores', hint: 'Agregado das sensibilidades cadastradas. Os valores iniciais são hipóteses geradas por IA a revisar; as editadas viram premissa do gestor.'}, fr.length ? h('table', {class: 't'}, h('tbody', null, fr.map(function (r) { var pctLike = /Dólar direto/.test(r[0]); return h('tr', null, h('td', null, r[0], r[2] ? h('div', {class: 'muted', style: 'font-size:.8rem'}, r[2]) : null), h('td', {class: 'r num'}, pctLike ? A.pct(r[1]) : A.num(r[1], 2)), h('td', null, A.ochip('q'))); }))) : h('p', {class: 'empty'}, 'Sem sensibilidades nas posições investíveis.')));
-    // Cenário ativo (vem do último evento analisado na Sala ou dos choques escolhidos em Risco)
-    var chA = S.choques || {};
-    if (Object.keys(chA).some(function (k) { return chA[k]; }) || Object.keys(S.idio || {}).length) {
-      var rr = C.choqueCarteira(v, chA, P.sens, S.idio);
-      var piores = rr.itens.slice().sort(function (a, b) { return a.ctb - b.ctb; }).slice(0, 3);
-      R.appendChild(A.sec('Cenário ativo', {hint: S.cenEvento ? 'Do evento “' + S.cenEvento + '” (Sala de Gestão).' : 'Choques definidos em Risco e Cenários.', right: h('button', {class: 'btn sm', onclick: function () { A.go('risco', 'cenarios'); }}, 'Detalhar')}, [
-        h('div', {class: 'row'}, h('span', {style: 'font-size:1.6rem;font-weight:600', class: 'num ' + A.cls(rr.total)}, A.spct(rr.total, 2)), h('span', {class: 'muted'}, 'impacto instantâneo estimado nesta versão')),
-        rr.aviso ? h('p', {class: 'hint'}, rr.aviso) : null,
-        piores.length ? h('p', null, 'Mais afetadas: ', piores.map(function (x, k) { return h('span', null, k ? ', ' : '', A.tk(x.t), ' ' + A.pp(x.ctb)); })) : null
-      ]));
-    }
     // 6. Desvios do mandato
     var desv = val.issues.filter(function (i) { return i.regra === 'R7' || i.regra === 'R9'; });
     R.appendChild(A.sec('Desvios do mandato', null, desv.length ? issuesList(desv) : h('p', {class: 'empty'}, 'Nenhum desvio de banda, perfil ou limite nesta versão.')));
@@ -144,17 +124,10 @@
       ['Séries históricas importadas', nSer ? nSer + ' séries, última data ' + A.dataBR(ultima) : 'nenhuma', ultima ? dias(A.dataBR(ultima)) : null]
     ];
     R.appendChild(A.sec('Alertas de dados', null, h('table', {class: 't'}, h('tbody', null, al.map(function (r) { var velho = r[2] != null && r[2] > 7; return h('tr', null, h('td', null, r[0]), h('td', null, r[1]), h('td', {class: 'r'}, r[2] == null ? (nSer ? '' : A.chip('importar', 'g-media')) : A.chip(r[2] + ' dias', velho ? 'g-media' : 'g-baixa'))); })))));
-    // 8. Decisões pendentes
-    var props = STORE.propostas(S.cart).filter(function (p) { return p.status === 'em_comite' || p.status === 'rascunho'; });
-    var semPos = STORE.list('decisoes').filter(function (d) { return d.status === 'aprovada' && !d.pos_avaliacao; });
+    // 8. Pauta do Comitê 05/11 ainda em aberto (registro histórico; a Sala de Gestão foi arquivada)
     var est2 = (C.D.estudo || []).filter(function (e) { var st = (STORE.get('config', 'estudo') || {})[e.id]; return !(st && st.status === 'resolvido') && (e.tipo === 'Votação' || e.tipo === 'Erro no simulador'); });
-    R.appendChild(A.sec('Decisões pendentes', null, [
-      h('dl', {class: 'kv'}, h('dt', null, 'Propostas desta carteira em aberto'), h('dd', null, props.length ? props.map(function (p) { return h('div', null, h('a', {href: '#', onclick: function (e) { e.preventDefault(); S.ver = 'prop:' + p.id; A.go('cons', 'editor'); }}, p.nome), ' · ', p.status); }) : '0'),
-        h('dt', null, 'Decisões aprovadas sem pós-avaliação'), h('dd', null, String(semPos.length)),
-        h('dt', null, 'Pauta do Comitê 05/11 em aberto'), h('dd', null, String(est2.length))),
-      h('ul', {class: 'issues'}, est2.slice(0, 7).map(function (e) { return h('li', null, A.chip(e.prioridade, e.prioridade === 'Alta' ? 'g-alta' : 'g-media'), h('span', null, h('b', null, e.tipo + ': '), e.titulo)); })),
-      h('button', {class: 'btn', onclick: function () { A.go('res', 'pauta'); }}, 'Abrir a pauta')
-    ]));
+    if (est2.length) R.appendChild(A.sec('Pendências do Comitê 05/11', {hint: 'Itens do comitê que dependem de decisão humana. A Sala de Gestão e o laboratório de propostas estão em painel/arquivo.'},
+      h('ul', {class: 'issues'}, est2.slice(0, 7).map(function (e) { return h('li', null, A.chip(e.prioridade, e.prioridade === 'Alta' ? 'g-alta' : 'g-media'), h('span', null, h('b', null, e.tipo + ': '), e.titulo)); }))));
     // 9. Cenário de referência
     R.appendChild(A.sec('Cenário de referência', {hint: 'Níveis e variações observados com a data e a fonte. Focus é a pesquisa do Banco Central.'}, h('table', {class: 't'}, h('tbody', null, (C.D.cenario || []).map(function (c) {
       var vtxt = c.tipo === 'variação' ? A.spct(c.valor) : A.pct(c.valor, 2);

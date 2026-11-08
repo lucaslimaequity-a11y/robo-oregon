@@ -1,0 +1,251 @@
+# -*- coding: utf-8 -*-
+"""Biblioteca persistente do Oregon Intelligence.
+
+Arquivos em data/biblioteca/:
+  AAAA-MM.json  — todos os itens do mês (pela data de publicação; sem data, pela de detecção). Nunca se apaga nada:
+                  uma fonte que falha hoje não tira o que ela publicou ontem.
+  indice.json   — meses disponíveis, contagens por fonte, tipo e tema; o painel carrega os meses sob demanda.
+Em data/:
+  recentes.json — itens dos últimos N dias (o que o painel abre primeiro).
+  coleta.json   — contadores por fonte: recebidos, rejeitados (por motivo), duplicados, novos, classificados,
+                  publicados, erro e última leitura boa. Também as últimas rodadas.
+
+Deduplicação: (1) pelo id (link normalizado); (2) por título: 60% ou mais de palavras em comum com um item
+publicado até 3 dias antes ou depois vira o mesmo acontecimento — o item mais completo fica e o outro entra em
+`tambem_em` (fonte e link), para o leitor abrir qualquer um dos originais.
+"""
+import datetime as dt
+import os
+import re
+
+from util import dados_dir, gravar, ler, sem_acento
+
+PASTA = 'biblioteca'
+PARADAS = {'para', 'com', 'que', 'dos', 'das', 'nos', 'nas', 'uma', 'por', 'mais', 'apos', 'sobre', 'the', 'and', 'for', 'with', 'from', 'this', 'that', 'are', 'how', 'why', 'what', 'into', 'its'}
+
+
+def tokens(t):
+    return {w for w in re.findall(r'[a-z0-9]{3,}', sem_acento(t or '').lower()) if w not in PARADAS}
+
+
+def jaccard(a, b):
+    return len(a & b) / float(len(a | b)) if a and b else 0.0
+
+
+def mes_de(item):
+    return ((item.get('publicado_em') or item.get('detectado_em') or '')[:7]) or 'sem-data'
+
+
+def data_de(item):
+    return (item.get('publicado_em') or item.get('detectado_em') or '')[:10]
+
+
+def _caminho(nome):
+    return os.path.join(PASTA, nome)
+
+
+def ler_mes(mes):
+    return ler(_caminho(mes + '.json'), {}) or {}
+
+
+def gravar_mes(mes, itens):
+    os.makedirs(os.path.join(dados_dir(), PASTA), exist_ok=True)
+    itens = sorted(itens, key=lambda x: (x.get('publicado_em') or x.get('detectado_em') or ''), reverse=True)
+    gravar(_caminho(mes + '.json'), {'mes': mes, 'n': len(itens), 'itens': itens})
+
+
+def ler_indice():
+    return ler(_caminho('indice.json'), {}) or {}
+
+
+def meses_disponiveis():
+    pasta = os.path.join(dados_dir(), PASTA)
+    if not os.path.isdir(pasta):
+        return []
+    return sorted(f[:-5] for f in os.listdir(pasta) if re.match(r'^\d{4}-\d{2}\.json$', f))
+
+
+def ids_vistos(itens):
+    """Ids já conhecidos: os próprios itens e os que foram absorvidos como 'também em'."""
+    out = set()
+    for x in itens:
+        out.add(x['id'])
+        for t in x.get('tambem_em') or []:
+            if t.get('id'):
+                out.add(t['id'])
+    return out
+
+
+def carregar_recentes(hoje, dias=10):
+    """Itens dos últimos `dias` (para deduplicar e montar o recentes.json), lendo só os meses necessários."""
+    ini = hoje - dt.timedelta(days=dias)
+    meses = sorted({ini.strftime('%Y-%m'), hoje.strftime('%Y-%m')})
+    out = []
+    for m in meses:
+        out += [x for x in (ler_mes(m).get('itens') or []) if data_de(x) >= ini.isoformat()]
+    return out
+
+
+def _mais_completo(a, b):
+    """Entre dois itens do mesmo acontecimento, fica o mais original e informativo."""
+    def nota(x):
+        return ((x.get('prioridade') or {}).get('pontos', 0), len(x.get('resumo') or ''), 1 if x.get('publicado_em') else 0)
+    return (a, b) if nota(a) >= nota(b) else (b, a)
+
+
+def incorporar(novos, hoje, agora_, janela_dias=3, limiar=0.6):
+    """Guarda os itens novos na biblioteca. Devolve (resumo, itens_novos_gravados).
+    resumo = {'novos': n, 'duplicados_id': n, 'duplicados_titulo': n, 'atualizados': n, 'meses': [...]}"""
+    marca = agora_.isoformat(timespec='minutes')
+    recentes = carregar_recentes(hoje, dias=janela_dias + 7)
+    por_id = {x['id']: x for x in recentes}
+    tk = {x['id']: tokens(x.get('titulo')) for x in recentes}
+    res = {'novos': 0, 'duplicados_id': 0, 'duplicados_titulo': 0, 'atualizados': 0, 'meses': set()}
+    gravados, alterados = [], {}  # alterados: id -> item (para regravar o mês do principal)
+    for n in sorted(novos, key=lambda x: -((x.get('prioridade') or {}).get('pontos', 0))):
+        ja = por_id.get(n['id'])
+        if ja:  # mesmo link: não é novo; melhora o registro se o novo trouxer resumo/data que faltavam
+            res['duplicados_id'] += 1
+            mudou = False
+            for k in ('resumo', 'autor', 'publicado_em', 'pdf'):
+                if n.get(k) and not ja.get(k):
+                    ja[k] = n[k]
+                    mudou = True
+            if mudou:
+                ja['data_estimada'] = ja.get('publicado_em') is None
+                res['atualizados'] += 1
+                alterados[ja['id']] = ja
+            continue
+        tn = tokens(n.get('titulo'))
+        d_n = data_de(n)
+        dup = None
+        for x in recentes:
+            d_x = data_de(x)
+            if d_x and d_n and abs((dt.date.fromisoformat(d_x) - dt.date.fromisoformat(d_n)).days) > janela_dias:
+                continue
+            if x.get('fonte_id') == n.get('fonte_id'):
+                continue  # a mesma fonte não publica o mesmo fato duas vezes com links diferentes (cartas mensais parecidas são itens distintos)
+            if jaccard(tn, tk.get(x['id'], set())) >= limiar:
+                dup = x
+                break
+        if dup:
+            res['duplicados_titulo'] += 1
+            principal, outro = _mais_completo(dup, n)
+            if principal is dup:
+                te = dup.setdefault('tambem_em', [])
+                if not any(t.get('link') == n.get('link') for t in te) and n.get('fonte') != dup.get('fonte'):
+                    te.append({'id': n['id'], 'fonte': n.get('organizacao') or n.get('fonte'), 'link': n.get('link'), 'publicado_em': n.get('publicado_em')})
+                    alterados[dup['id']] = dup
+            else:  # o novo é mais completo: ele fica como principal e o antigo vira "também em"
+                n['tambem_em'] = list(dup.get('tambem_em') or []) + [{'id': dup['id'], 'fonte': dup.get('organizacao') or dup.get('fonte'), 'link': dup.get('link'), 'publicado_em': dup.get('publicado_em')}]
+                n['substitui'] = dup['id']
+                dup['agrupado_em'] = n['id']
+                alterados[dup['id']] = dup
+                n['visto_em'] = marca
+                gravados.append(n)
+                recentes.append(n)
+                por_id[n['id']] = n
+                tk[n['id']] = tn
+            continue
+        n['visto_em'] = marca
+        gravados.append(n)
+        recentes.append(n)
+        por_id[n['id']] = n
+        tk[n['id']] = tn
+        res['novos'] += 1
+    # grava por mês (lê o mês, junta, regrava): nada é removido
+    por_mes = {}
+    for x in gravados:
+        por_mes.setdefault(mes_de(x), []).append(x)
+    for x in alterados.values():
+        por_mes.setdefault(mes_de(x), [])
+    for mes, lista in por_mes.items():
+        atual = ler_mes(mes).get('itens') or []
+        idx = {x['id']: i for i, x in enumerate(atual)}
+        for x in lista:
+            if x['id'] in idx:
+                atual[idx[x['id']]] = x
+            else:
+                atual.append(x)
+                idx[x['id']] = len(atual) - 1
+        for x in alterados.values():
+            if mes_de(x) == mes and x['id'] in idx:
+                atual[idx[x['id']]] = x
+        gravar_mes(mes, atual)
+        res['meses'].add(mes)
+    res['meses'] = sorted(res['meses'])
+    return res, gravados
+
+
+def atualizar_item(item):
+    """Regrava um item já existente (por exemplo, depois da leitura por IA)."""
+    mes = mes_de(item)
+    atual = ler_mes(mes).get('itens') or []
+    for i, x in enumerate(atual):
+        if x['id'] == item['id']:
+            atual[i] = item
+            gravar_mes(mes, atual)
+            return True
+    return False
+
+
+def reindexar(agora_):
+    """indice.json: meses, totais e contagens por fonte, tipo, tema e região (para os filtros da Biblioteca)."""
+    meses, fontes, tipos, temas, regioes, orgs, total = [], {}, {}, {}, {}, {}, 0
+    for m in meses_disponiveis():
+        itens = ler_mes(m).get('itens') or []
+        meses.append({'mes': m, 'n': len(itens)})
+        total += len(itens)
+        for x in itens:
+            if x.get('agrupado_em'):
+                continue
+            fontes[x.get('fonte_id') or '?'] = fontes.get(x.get('fonte_id') or '?', 0) + 1
+            tipos[x.get('tipo') or '?'] = tipos.get(x.get('tipo') or '?', 0) + 1
+            orgs[x.get('organizacao') or x.get('fonte') or '?'] = orgs.get(x.get('organizacao') or x.get('fonte') or '?', 0) + 1
+            for t in x.get('temas') or []:
+                temas[t] = temas.get(t, 0) + 1
+            for r in x.get('regioes') or []:
+                regioes[r] = regioes.get(r, 0) + 1
+    idx = {'gerado_em': agora_.isoformat(timespec='minutes'), 'total': total, 'meses': meses, 'fontes': fontes, 'tipos': tipos, 'temas': temas, 'regioes': regioes, 'organizacoes': orgs}
+    os.makedirs(os.path.join(dados_dir(), PASTA), exist_ok=True)
+    gravar(_caminho('indice.json'), idx)
+    return idx
+
+
+def publicar_recentes(hoje, agora_, dias=14, maximo=400):
+    itens = [x for x in carregar_recentes(hoje, dias) if not x.get('agrupado_em')]
+    itens.sort(key=lambda x: (x.get('publicado_em') or x.get('detectado_em') or ''), reverse=True)
+    gravar('recentes.json', {'gerado_em': agora_.isoformat(timespec='minutes'), 'dias': dias, 'n': len(itens), 'itens': itens[:maximo]})
+    return itens[:maximo]
+
+
+# ------------------------------------------------------------------ contadores por fonte
+MOTIVOS = ('sem_titulo', 'sem_link', 'antigo', 'bloqueada', 'robots', 'promocional', 'repetido_no_feed')
+
+
+def contadores_iniciais(fontes):
+    return {f['id']: {'nome': f.get('nome') or f['id'], 'recebidos': 0, 'rejeitados': {}, 'duplicados': 0, 'novos': 0, 'classificados': 0, 'publicados': 0,
+                      'erros': 0, 'ultima_ok': None, 'ultimo_erro': None, 'ultimo_erro_em': None, 'ultima_rodada': None} for f in fontes}
+
+
+def registrar(coleta, fid, nome, recebidos=0, rejeitados=None, duplicados=0, novos=0, classificados=0, publicados=0, erro=None, marca=None, aguardando=None):
+    c = coleta.setdefault(fid, {'nome': nome, 'recebidos': 0, 'rejeitados': {}, 'duplicados': 0, 'novos': 0, 'classificados': 0, 'publicados': 0, 'erros': 0,
+                                 'ultima_ok': None, 'ultimo_erro': None, 'ultimo_erro_em': None, 'ultima_rodada': None})
+    c['nome'] = nome
+    c['recebidos'] += recebidos
+    for k, v in (rejeitados or {}).items():
+        c['rejeitados'][k] = c['rejeitados'].get(k, 0) + v
+    c['duplicados'] += duplicados
+    c['novos'] += novos
+    c['classificados'] += classificados
+    c['publicados'] += publicados
+    c['ultima_rodada'] = {'quando': marca, 'recebidos': recebidos, 'rejeitados': sum((rejeitados or {}).values()), 'duplicados': duplicados, 'novos': novos, 'erro': erro, 'aguardando': aguardando}
+    c['aguardando'] = aguardando
+    if aguardando:
+        return c
+    if erro:
+        c['erros'] += 1
+        c['ultimo_erro'], c['ultimo_erro_em'] = str(erro)[:200], marca
+    else:
+        c['ultima_ok'] = marca
+    return c

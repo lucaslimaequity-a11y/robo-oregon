@@ -1,6 +1,6 @@
-/* CARTEIRAS — Construção e Risco. Recupera o mapa visual do painel original (roscas por família, carteiras × pilares,
+/* CARTEIRAS — as 15 carteiras aprovadas, como estão. Recupera o mapa visual do painel original (roscas por família, carteiras × pilares,
    o que mudou da base para o decidido, carteira em camadas, pilar a pilar, escada de risco) e liga cada carteira à
-   validação, ao risco, aos cenários e ao laboratório de propostas. Nenhum peso é ajustado para "fechar" 100%. */
+   validação e às exposições agregadas. Nenhum peso é ajustado para "fechar" 100%. Simuladores e cenários foram arquivados (painel/arquivo). */
 (function (A, C) {
   'use strict';
   var h = A.h, S = A.S;
@@ -91,7 +91,6 @@
   function carteira() {
     var m = C.MAND[S.cart], v = A.versao(), x = integ(S.cart), wrap = h('div');
     wrap.appendChild(A.pageHead(m.familia + ' · ' + (m.perfil || ''), m.rotulo, h('span', null, v.rotulo + (v.data ? ' · ' + A.dataBR(v.data) : '') + ' · ' + A.pct(rv(porPilar(v.pos)), 0) + ' em renda variável · ', h('span', {class: 'muted'}, 'fonte: ' + (v.fonte || '—')))));
-    if (A.mercadoFaixa) { var fx = A.mercadoFaixa(); if (fx) wrap.appendChild(fx); }
     var g = h('div', {class: 'sb-wrap'});
     g.appendChild(A.sec('A carteira em camadas', {hint: 'Anel de dentro: classe. Do meio: pilar. De fora: ativo. Toque num ativo para abrir a ficha.'}, sunburst(v)));
     g.appendChild(A.sec('Pilar a pilar', {hint: 'Barra: soma dos ativos. Faixa clara: banda do decidido. Traço escuro: peso decidido. Círculo: base 30/10. Vermelho: ativos fora da banda.'}, pilarAPilar(v)));
@@ -169,7 +168,6 @@
   /* ---------- Referência: modo simples, Conservador e Arrojado ----------
      Mostra a versão aprovada como ela é. Se não fecha 100%, a tela diz isso no topo e os números de risco ficam
      bloqueados ou parciais; nada é normalizado. */
-  var CEN_REF = ['Abertura da curva (+150 bps)', 'Crise fiscal brasileira', 'Desvalorização do real (+20%)', 'Recessão americana', 'Queda brusca do Brent (−35%)', 'Corte de juros global'];
   function refIds() { return A.REF.map(function (r) { return r[0]; }); }
   function estadoRef(id) {
     var v = aprov(id), val = A.valida(v), x = integ(id), P = A.prem(), ex = C.exposicoes(v, P.sens), pp = porPilar(v.pos);
@@ -183,25 +181,12 @@
   function bannerRef(e) {
     var val = e.val, crit = val.issues.filter(function (i) { return i.g === 'critica'; }), ph = C.sum((e.v.pos || []).filter(function (x) { return x.w > 0 && C.ATV[x.t] && C.ATV[x.t].status === 'placeholder'; }), function (x) { return x.w; });
     var linhas = [];
-    if (val.status === 'invalida') linhas.push(h('div', null, h('b', null, 'Versão aprovada inválida. '), 'Pilares somam ' + A.pct(e.x.somaPil, 1) + ' e ativos somam ' + A.pct(e.x.somaAtv, 1) + '. ' + crit.map(function (i) { return i.titulo; }).slice(0, 2).join('; ') + '. Os pesos aparecem como estão: nada foi ajustado para fechar 100%. Risco estatístico bloqueado; cenários parciais.'));
-    if (ph > C.TOL) linhas.push(h('div', null, h('b', null, 'Fundos de teste: '), A.pct(ph, 0) + ' da carteira está em placeholders (não são recomendação). Essa parte fica fora de risco e cenários, como lacuna, nunca como caixa.'));
+    if (val.status === 'invalida') linhas.push(h('div', null, h('b', null, 'Versão aprovada inválida. '), 'Pilares somam ' + A.pct(e.x.somaPil, 1) + ' e ativos somam ' + A.pct(e.x.somaAtv, 1) + '. ' + crit.map(function (i) { return i.titulo; }).slice(0, 2).join('; ') + '. Os pesos aparecem como estão: nada foi ajustado para fechar 100%. A validação é mostrada como está; nada é normalizado.'));
+    if (ph > C.TOL) linhas.push(h('div', null, h('b', null, 'Fundos de teste: '), A.pct(ph, 0) + ' da carteira está em placeholders (não são recomendação). Essa parte não tem tese nem conteúdo ligado.'));
     if (val.status === 'parcial' && ph <= C.TOL) linhas.push(h('div', null, h('b', null, 'Análise parcial: '), A.pct(val.cobertura.descoberto, 0) + ' da carteira sem instrumento investível ou sensibilidade cadastrada. Essa parte não entra nos números e não é tratada como caixa.'));
     if (!linhas.length) linhas.push(h('div', null, 'Pesos fecham em 100% e todas as posições têm cadastro e sensibilidade.'));
     return h('div', {class: 'alert ' + (val.status === 'invalida' ? 'bad' : val.status === 'parcial' ? 'warn' : 'ok')}, linhas,
       val.status !== 'valida' ? h('div', {class: 'row', style: 'margin-top:6px;gap:8px'}, h('button', {class: 'btn sm', onclick: function () { A.drawer('Problemas da versão aprovada · ' + C.MAND[e.id].rotulo, A.issuesList(val.issues.filter(function (i) { return i.g !== 'info'; }))); }}, 'Ver os problemas'), val.status === 'invalida' ? h('button', {class: 'btn sm', onclick: function () { A.novaPropostaCorrecao && A.novaPropostaCorrecao(); }}, 'Criar proposta de correção') : null) : null);
-  }
-  function riscoResumo(e) {
-    var m = A.modelo(e.v, {meses: 36, lw: true});
-    if (!m.ok || !m.S) return h('div', null, A.na(m.bloqueado ? 'versão inválida: risco estatístico bloqueado' : (m.motivo || m.motivoCov || 'sem séries'), m.bloqueado ? 'proposta corrigida aprovada pelo Comitê' : 'séries históricas do robô (carregam sozinhas uma vez por dia)'),
-      m.fora && m.fora.length ? h('p', {class: 'hint'}, 'Fora do modelo: ' + A.pct(C.sum(m.fora, function (x) { return x.w; }), 0) + ' da carteira (placeholders, crédito sem cadastro ou sem série).') : null);
-    var sig = Q.annualizeVol(Q.portVol(m.w, m.S), m.ppy), dd = Q.drawdown(m.port), vr = Q.varHist(m.port, 0.95);
-    return h('div', null, h('dl', {class: 'kv'},
-      h('dt', null, 'Volatilidade anualizada'), h('dd', {class: 'num'}, A.pct(sig, 2)),
-      h('dt', null, 'Drawdown máximo'), h('dd', {class: 'num down'}, A.spct(dd.mdd, 2)),
-      h('dt', null, 'VaR histórico 95%'), h('dd', null, vr == null ? A.na('menos de 30 observações') : h('span', {class: 'num'}, A.pct(vr, 2) + ' por ' + ({D: 'dia', W: 'semana', M: 'mês'}[m.freq] || 'período'))),
-      h('dt', null, 'Cobertura do modelo'), h('dd', {class: 'num'}, A.pct(m.cobertura, 0))),
-      m.cobertura < 0.995 ? h('div', {class: 'alert warn', style: 'font-size:.86rem'}, 'Os números cobrem só ' + A.pct(m.cobertura, 0) + ' da carteira, com os pesos como estão: não são o risco da carteira inteira. O resto (placeholders, crédito sem cadastro, ativos sem série) fica de fora e não vira caixa.') : null,
-      h('p', {class: 'hint'}, m.n + ' retornos de ' + A.dataBR(m.dates[0]) + ' a ' + A.dataBR(m.dates[m.n - 1]) + '; pesos como estão, sem normalizar. ' + (m.suficiente ? '' : 'Amostra curta: números frágeis. ') + 'Correlação, drawdown por período e VaR completo em Risco e cenários.'));
   }
   function comparativo(es) {
     var lin = [
@@ -209,23 +194,17 @@
       ['Exterior (P9 a P13)', function (e) { return A.pct(C.sum(['P9', 'P10', 'P11', 'P12', 'P13'].map(function (p) { return e.pp[p] || 0; })), 0); }],
       ['Duration prefixada', function (e) { var f = e.ex.fatores.dur_pre; return f ? A.num(f, 2) + ' anos' : '—'; }],
       ['Duration de juro real', function (e) { var f = e.ex.fatores.dur_real; return f ? A.num(f, 2) + ' anos' : '—'; }],
-      ['Beta ao Ibovespa', function (e) { var f = e.ex.fatores.beta_ibov; return f ? A.num(f, 2) : '—'; }],
       ['Dólar direto', function (e) { var f = e.ex.fatores.usd_direto; return f ? A.pct(f, 0) : '—'; }],
       ['Número efetivo de posições', function (e) { return e.ex.effN ? A.num(e.ex.effN, 1) : '—'; }],
       ['Soma dos pesos', function (e) { return h('span', {class: e.val.status === 'invalida' ? 'down' : ''}, A.pct(e.x.somaAtv, 1)); }]
     ];
-    var t = h('table', {class: 't cmp'}, h('thead', null, h('tr', null, h('th', null, ''), es.map(function (e) { return h('th', {class: 'r' + (e.id === S.cart ? ' sel' : '')}, A.REF.filter(function (r) { return r[0] === e.id; })[0][1]); }))),
+    return h('table', {class: 't cmp'}, h('thead', null, h('tr', null, h('th', null, ''), es.map(function (e) { return h('th', {class: 'r' + (e.id === S.cart ? ' sel' : '')}, A.REF.filter(function (r) { return r[0] === e.id; })[0][1]); }))),
       h('tbody', null, lin.map(function (l) { return h('tr', null, h('td', null, l[0]), es.map(function (e) { return h('td', {class: 'r num' + (e.id === S.cart ? ' sel' : '')}, l[1](e)); })); })));
-    return h('div', null, t, h('p', {class: 'hint'}, 'Exposições agregadas das sensibilidades cadastradas (premissas) e dos pesos aprovados, como estão.'));
   }
-  function cenariosRef(es) {
-    var pres = (A.PRESETS || []).filter(function (p) { return CEN_REF.indexOf(p.n) >= 0; });
-    var t = h('table', {class: 't cmp'}, h('thead', null, h('tr', null, h('th', null, 'Cenário'), es.map(function (e) { return h('th', {class: 'r' + (e.id === S.cart ? ' sel' : '')}, A.REF.filter(function (r) { return r[0] === e.id; })[0][1]); }))),
-      h('tbody', null, pres.map(function (p) {
-        return h('tr', {title: Object.keys(p.c).map(function (k) { var f = C.FATORES.filter(function (x) { return x.k === k; })[0]; return (f ? f.n : k) + ' ' + MERCADO.fmtVar(p.c[k], f && f.u === 'pp' ? 'pp' : '%'); }).join(' · ')},
-          h('td', null, p.n), es.map(function (e) { var r = C.choqueCarteira(e.v, p.c, e.P.sens); return h('td', {class: 'r num ' + A.cls(r.total) + (e.id === S.cart ? ' sel' : '')}, A.spct(r.total, 1), r.parcial ? h('sup', {title: r.aviso}, '*') : null); }));
-      })));
-    return h('div', null, t, h('p', {class: 'hint'}, 'Impacto instantâneo pelo motor de choques, com as sensibilidades cadastradas (premissas). * parcial: carteira inválida ou com parte sem cobertura, que não entra e não vira zero. Passe o mouse sobre o cenário para ver os choques. Para montar o seu: Risco e cenários.'));
+  function conteudoCarteira(v) {
+    var ts = {}; (v.pos || []).forEach(function (x) { if (x.w > 0 && C.ATV[x.t] && C.ATV[x.t].status !== 'placeholder') ts[x.t] = 1; });
+    var it = A.itens().filter(function (x) { return (x.ativos || []).some(function (t) { return ts[t]; }); });
+    return it.length ? A.listaItens(it, {max: 6, semResumo: true}) : h('p', {class: 'muted'}, 'Nenhum conteúdo coletado cita os ativos desta carteira nas janelas carregadas.');
   }
   A.cartRef = function () {
     if (refIds().indexOf(S.cart) < 0) S.cart = refIds()[0];
@@ -234,31 +213,27 @@
     wrap.appendChild(A.pageHead('Carteiras de referência · ' + m.familia + ' · ' + (e.v.rotulo || 'versão aprovada') + (e.v.data && !/\d{2}\/\d{2}\/\d{4}/.test(e.v.rotulo || '') ? ' · ' + A.dataBR(e.v.data) : ''), m.perfil || m.rotulo,
       h('span', null, A.pct(e.rv, 0) + ' em renda variável · ' + (e.ex.nTickers || 0) + ' posições investíveis · fonte: ' + (e.v.fonte || '—')), seletorRef()));
     wrap.appendChild(bannerRef(e));
-    if (A.mercadoFaixa) { var fx = A.mercadoFaixa(); if (fx) wrap.appendChild(fx); }
     var g = h('div', {class: 'sb-wrap'});
-    g.appendChild(A.sec('A carteira em camadas', {hint: 'Anel de dentro: classe. Do meio: pilar. De fora: ativo. Toque num ativo para abrir a tese.'}, sunburst(e.v)));
+    g.appendChild(A.sec('A carteira em camadas', {hint: 'Anel de dentro: classe. Do meio: pilar. De fora: ativo. Toque num ativo para abrir a ficha.'}, sunburst(e.v)));
     g.appendChild(A.sec('Pilar a pilar', {hint: 'Barra: soma dos ativos. Faixa clara: banda. Traço escuro: peso decidido. Círculo: base 30/10. Vermelho: fora da banda.'}, pilarAPilar(e.v)));
     wrap.appendChild(g);
     var g2 = h('div', {class: 'grid2'}), L = h('div'), R = h('div'); g2.append(L, R); wrap.appendChild(g2);
-    L.appendChild(A.sec('Cenários', {mtd: 'choques', right: h('button', {class: 'btn sm', onclick: function () { A.go('cart', 'risco'); }}, 'Risco e cenários')}, cenariosRef(es)));
-    L.appendChild(A.sec('Conservador × Arrojado', {hint: 'A mesma régua para as duas versões aprovadas.'}, comparativo(es)));
-    R.appendChild(A.sec('Risco', {mtd: 'risco'}, riscoResumo(e)));
+    L.appendChild(A.sec('Conteúdo ligado a esta carteira', {hint: 'Conteúdo coletado que cita ativos desta versão aprovada (ligação por menção, não por posição presumida). Toque para a análise.'}, conteudoCarteira(e.v)));
+    L.appendChild(A.sec('Conservador × Arrojado', {hint: 'A mesma régua para as duas versões aprovadas: exposições agregadas das premissas e dos pesos, como estão.'}, comparativo(es)));
     var top = (e.v.pos || []).filter(function (x) { return x.w > 0; }).slice().sort(function (a, b) { return b.w - a.w; }).slice(0, 10);
     R.appendChild(A.sec('Maiores posições', {flush: true}, A.table([
       {k: 't', t: 'Ativo', f: function (x) { var a = C.ATV[x.t]; return a && a.status !== 'placeholder' ? h('span', null, A.tk(x.t), ' ', h('span', {class: 'muted', style: 'font-size:.84rem'}, a.nome)) : h('span', {class: 'muted'}, (x.rot || x.t) + ' · placeholder'); }},
       {k: 'p', t: 'Pilar'}, {k: 'w', t: 'Peso', r: 1, f: function (x) { return A.pct(x.w, 1); }}], top, {sort: 'w'})));
-    wrap.appendChild(h('p', {class: 'muted', style: 'font-size:.86rem'}, 'As outras 13 carteiras, o laboratório de propostas, Decidido × base e Performance estão em ', h('button', {class: 'btn link', onclick: function () { A.go('cart', 'mapa'); }}, 'Todas as carteiras · avançado'), '. A escolha das referências fica em uma linha (A.REF, ui_base.js).'));
+    wrap.appendChild(h('p', {class: 'muted', style: 'font-size:.86rem'}, 'As outras 13 carteiras e Decidido × base estão em ', h('button', {class: 'btn link', onclick: function () { A.go('cart', 'mapa'); }}, 'Mapa das 15'), '. Simuladores, cenários e laboratório de propostas foram arquivados (painel/arquivo): este painel é de research, não de simulação.'));
     return wrap;
   };
 
+  A.SUBS.cart = [['ref', 'Referência (Conservador · Arrojado)'], ['mapa', 'Mapa das 15'], ['carteira', 'Carteira'], ['perfis', 'Decidido × base']];
   A.areas.cart = function () {
     var sub = S.sub.cart, wrap = h('div');
-    if (sub !== 'ref' && sub !== 'risco' && !A.ehAvancado(sub)) sub = S.sub.cart = 'ref';
-    var av = A.ehAvancado(sub);
-    wrap.appendChild(A.subnav('cart', A.SUBS.cart, av ? 'mapa' : sub));
-    if (av) wrap.appendChild(h('div', {class: 'sub sub2', role: 'toolbar', 'aria-label': 'Modo avançado'}, h('span', {class: 'k', style: 'align-self:center;margin-right:4px'}, 'Avançado'), A.SUBS_AV.map(function (it) { return h('button', {'aria-pressed': sub === it[0] ? 'true' : 'false', onclick: function () { A.go('cart', it[0]); }}, it[1]); })));
-    var corpo = sub === 'ref' ? (A.cartRef ? A.cartRef() : mapa()) : sub === 'carteira' ? carteira() : sub === 'risco' ? A.areas.risco() : sub === 'construcao' ? A.areas.cons() : sub === 'perfis' ? perfis() : sub === 'perf' && A.resPerf ? A.resPerf() : mapa();
-    wrap.appendChild(corpo);
+    if (!A.SUBS.cart.some(function (x) { return x[0] === sub; })) sub = S.sub.cart = 'ref';
+    wrap.appendChild(h('div', {class: 'sub sub2', role: 'toolbar', 'aria-label': 'Carteiras'}, A.SUBS.cart.map(function (it) { return h('button', {'aria-pressed': sub === it[0] ? 'true' : 'false', onclick: function () { A.go('cart', it[0]); }}, it[1]); })));
+    wrap.appendChild(sub === 'ref' ? A.cartRef() : sub === 'carteira' ? carteira() : sub === 'perfis' ? perfis() : mapa());
     return wrap;
   };
   A.cartSunburst = function (v) { return sunburst(v); };

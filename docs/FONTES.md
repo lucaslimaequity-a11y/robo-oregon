@@ -1,125 +1,147 @@
-# Fontes de dados: o que o robô usa, quanto custa e o que as regras de uso permitem
+# Fontes do Oregon Intelligence
 
-Revisado em 07/11/2026. Os preços e os termos mudam: confira o link de cada fonte antes de contratar.
+Cadastro: `robo/fontes.json`. Regras que valem para todas: só conteúdo público e gratuito; `robots.txt` respeitado (um caminho vedado é pulado e contado como rejeitado); nada de login, paywall ou contorno de bloqueio (403 encerra a fonte na rodada); de imprensa guardamos só título, link, data e veículo; de gestoras e instituições, um resumo curto do próprio feed (até 300 caracteres) e o link para o original. Nenhuma data é inventada: item sem data recebe a data de detecção, marcada como tal.
 
-## Regra geral
+Validação feita em 07–08/11/2026 lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhuma fonte da XP entra, em nenhuma hipótese** (`noticias.fontes_bloqueadas` descarta também manchetes agregadas desses veículos).
 
-- O robô só lê fontes que oferecem acesso aberto e legível por máquina: API pública, arquivo para baixar ou RSS.
-- Ele respeita os limites de cada fonte: espera e tenta de novo, e pausa a fonte quando ela recusa. Não contorna bloqueios e não lê página que exige login.
-- Fonte com chave só funciona com a chave guardada nos Secrets do GitHub. A chave nunca fica no site, no código ou nos registros.
-- Cada número publicado leva fonte, data de referência, hora da coleta e estado: atualizado, desatualizado, em conferência ou indisponível.
+## Campos do cadastro
 
-## O site é público: o que isso muda
+`id`, `nome`, `organizacao`, `categoria` (instituicao · gestora_internacional · gestora_brasil · academia · youtube · veiculo), `pais`, `idioma`, `tipo` (carta · research · paper · macro · relatorio · discurso · documento_oficial · dado_oficial · blog · video · noticia), `metodo`, `url_fonte` (página humana), `url_coleta` (`{ano}` vira o ano corrente), `ativo`. Por método: `padrao` (regex sobre os links da página ou do sitemap), `padrao_data` (regex de data no link), `api` (wp_posts · imf_blog_json · bcb_copom · ibge_releases), `filtro_titulo`/`filtro_link` (regex), `campo_link`, `canal_id` (YouTube), `titulo_item` (documento fixo), `guardar_resumo`, `so_oregon` (feed setorial: só manchetes que citem ativo das carteiras), `maximo`.
 
-Quase todo dado de mercado tem dono, e as regras de uso costumam limitar a republicação. Como o site está aberto na internet, três decisões foram tomadas:
+Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública e que o formato bate com o método, acrescente a entrada com `"ativo": true` e rode o workflow à mão; o Summary da rodada mostra recebidos/novos/erro daquela fonte. Para **desligar**: `"ativo": false`.
 
-1. **Arquivos de cotações da B3 desligados.** A página de cotações históricas da B3 diz: "é expressamente vedada a coleta automatizada, inclusive por meio de ferramentas de inteligência artificial", para quaisquer finalidades, comerciais ou não. Por isso o robô não baixa mais os arquivos COTAHIST, e o modo diagnóstico também não consulta a B3. O código de leitura continua no projeto (`robo/b3.py`), desligado em `config.json` (`b3_arquivos.ativo: false`). Só faz sentido ligar com uma licença de market data da B3.
-2. **Séries com direitos reservados fora do site.** Algumas séries do FRED trazem a marca "Copyrighted: Pre-Approval Required": o S&P 500, o spread de high yield da ICE BofA (BAMLH0A0HYM2) e o VIX da Cboe. O aviso da ICE, por exemplo, diz que a reprodução "in any form is prohibited" sem autorização. Essas séries foram tiradas. Ficaram só as de domínio público ou de uso livre com crédito à fonte: Fed, FMI e OCDE.
-3. **Notícias: só título, link, data e veículo.** Os termos dos veículos proíbem reproduzir o texto. O robô nunca guarda o corpo da notícia.
+## Instituições
 
-Yahoo Finance e brapi também têm regras de uso. O Yahoo não tem API oficial: o endereço que o robô usa é o mesmo do site, sem contrato, e pode bloquear a qualquer momento (foi a causa das falhas do seu log). Para uso pessoal, o risco é baixo. Se o site for compartilhado com outras pessoas, o caminho certo é contratar uma fonte licenciada (plano pago da brapi, ou Economatica, abaixo) ou **tornar o repositório privado**. O GitHub Pages em repositório privado exige o plano GitHub Pro, de US$ 4 por mês ([preços do GitHub](https://github.com/pricing)).
+| Fonte | Método | Status | Limitação / observação |
+|---|---|---|---|
+| [Federal Reserve Board - Speeches](https://www.federalreserve.gov/newsevents/speeches.htm) | RSS/Atom | ativa · ok | RSS 2.0 verificado. Ha feeds por membro (s_t_powell.xml, s_t_waller.xml etc.) e testimony.xml listados em https://www.federalreserve.gov/feeds/feeds.htm. |
+| [Federal Reserve — FOMC e política monetária](https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm) | RSS/Atom | ativa · ok | RSS 2.0 verificado. Cobre statements, minutes e discount-rate minutes. |
+| [Federal Reserve - FEDS Notes](https://www.federalreserve.gov/econres/notes/feds-notes/default.htm) | RSS/Atom | ativa · ok | RSS 2.0 verificado. |
+| [Federal Reserve - Working Papers (FEDS + IFDP)](https://www.federalreserve.gov/econres/feds/index.htm) | RSS/Atom | ativa · ok | Volume alto e academico; considerar filtro por palavras-chave. url_fonte nao foi aberta nesta rodada (inferida do padrao /econres/feds/). |
+| [Liberty Street Economics (NY Fed blog)](https://libertystreeteconomics.newyorkfed.org/) | RSS/Atom | ativa · ok | RSS 2.0 (WordPress) verificado, com autor por item. Fed regional opcional. |
+| [IMF Blog](https://www.imf.org/en/blogs) | API pública | ativa · parcial | Nenhum RSS oficial localizado: /en/rss-list, /en/Blogs/rss, /en/News/RSS e /external/rss/feeds.aspx retornaram erro. O index.json (generatedAtUtc 2026-09-17) e a pagina HTML mostravam o mesmo post de 17/09/2026 como mais recent… |
+| [IMF World Economic Outlook](https://www.imf.org/en/publications/weo) | página (links/PDF) | ativa · parcial | A listagem /en/publications/weo mostrava julho/2026 como mais recente, mas a edicao de outubro/2026 (13/10) existe e foi aberta diretamente - listagem parece servida de cache. Publicacao semestral + updates; alternativa e checa… |
+| [IMF Global Financial Stability Report](https://www.imf.org/en/publications/gfsr) | página (links/PDF) | ativa · parcial | Mesmo problema de cache: listagem mostrava abril/2026 como ultima edicao; a URL de outubro/2026 foi localizada por busca (titulo da pagina ainda 'Coming Soon/Launch'), nao aberta diretamente. |
+| [IMF Working Papers](https://www.imf.org/en/publications/wp) | indisponivel | desligada | listagem só via JavaScript; sem feed público localizado |
+| [BIS - Central bankers' speeches](https://www.bis.org/cbspeeches/index.htm) | RSS/Atom | ativa · ok | RSS 1.0 (RDF) - parser precisa tratar rdf:RDF/dc:date, nao <rss>. Volume alto (discursos de todos os BCs). |
+| [BIS - Management speeches](https://www.bis.org/speeches/index.htm) | RSS/Atom | ativa · ok | RSS 1.0 (RDF). url_fonte inferida, nao aberta. |
+| [BIS - Research papers (Working Papers e BIS Bulletins)](https://www.bis.org/publications/index.htm) | RSS/Atom | ativa · ok | RSS 1.0 (RDF). Feed oficial rotulado 'Research papers' em https://www.bis.org/rss/index.htm; inclui Working Papers e Bulletins. Quarterly Review NAO aparecia nos itens recentes. |
+| [BIS Quarterly Review](https://www.bis.org/quarterlyreviews/index.htm) | página (links/PDF) | ativa · ok | Sem RSS proprio na pagina (so email alerts). Proxima edicao esperada em dezembro/2026. |
+| [BIS - Media releases](https://www.bis.org/press/index.htm) | RSS/Atom | ativa · parcial | Feed oficial existe e responde RSS 1.0 valido, mas veio com lista de itens VAZIA em 08/11/2026. Baixa prioridade; manter so se voltar a popular. |
+| [ECB - Press releases, speeches, interviews](https://www.ecb.europa.eu/press/html/index.en.html) | RSS/Atom | ativa · ok | RSS 2.0 verificado. Links no feed vem com barra dupla (ecb.europa.eu//press/...) - normalizar. Lista oficial de feeds: https://www.ecb.europa.eu/home/html/rss.en.html. |
+| [The ECB Blog](https://www.ecb.europa.eu/press/blog/html/index.en.html) | RSS/Atom | ativa · ok | RSS 2.0 verificado. |
+| [ECB - Publications (todas)](https://www.ecb.europa.eu/press/pubbydate/html/index.en.html) | RSS/Atom | ativa · ok | RSS 2.0 verificado; mistura cartas, working papers e relatorios (muitos itens sao PDF). O feed especifico de Working Papers https://www.ecb.europa.eu/rss/wppub.html tambem responde, mas em 08/11 seu item mais novo era de 31/08/… |
+| [OECD Newsroom / Economic Outlook](https://www.oecd.org/en/about/newsroom.html) | página (links/PDF) | desligada | não verificado (a página devolveu só navegação) |
+| [Banco Central do Brasil — Notas à Imprensa (feed oficial)](https://www.bcb.gov.br/acessoinformacao/rss) | RSS/Atom | ativa · ok | Feed Atom (título 'RSS - Feeds do BC'); usar <updated> como data. O parâmetro ano= precisa ser atualizado a cada virada de ano. Cobre comunicados do Copom, estatísticas fiscais/monetárias/de crédito, Focus e demais notas. A pág… |
+| [Banco Central do Brasil — Notícias (feed oficial)](https://www.bcb.gov.br/) | RSS/Atom | ativa · ok | Feed Atom. Mistura notícias institucionais (estágios, regulação); filtrar por palavras-chave se o hub quiser só macro. Outros feeds do mesmo padrão citados pelo feeder.co mas não testados: /api/feed/app/normativos/normativos?an… |
+| [Banco Central do Brasil — Comunicados do Copom (API)](https://www.bcb.gov.br/controleinflacao/copom) | API pública | ativa · ok | Lista não traz URL de página; a URL de evidência é o endpoint de detalhes (verificado para atas; para comunicados o endpoint consta na documentação do dataset mas não foi aberto). Documentação: https://www.bcb.gov.br/conteudo/d… |
+| [Banco Central do Brasil — Atas do Copom (API)](https://www.bcb.gov.br/publicacoes/atascopom/cronologicos) | API pública | ativa · ok | Ata da 282ª reunião (04/11/2026) ainda não publicada em 08/11 (sai 6 dias úteis depois). A página HTML /publicacoes/atascopom/cronologicos exige JavaScript — usar a API. |
+| [Banco Central do Brasil — Relatório de Política Monetária (RPM)](https://www.bcb.gov.br/publicacoes/rpm) | página (links/PDF) | desligada | coberto pelo feed oficial de Notas à Imprensa do BC (a publicação do RPM sai lá) |
+| [Banco Central do Brasil — Focus Relatório de Mercado](https://www.bcb.gov.br/publicacoes/focus) | página (links/PDF) | desligada | o Focus entra em macro.json pela API Olinda (dados estruturados); a publicação também sai no feed de Notas à Imprensa |
+| [Banco Central do Brasil — Discursos e apresentações](https://www.bcb.gov.br/conheca/discursos) | indisponivel | desligada | não verificado nesta rodada (página exige JavaScript) |
+| [IBGE — Agência de Notícias / Releases (API v3)](https://agenciadenoticias.ibge.gov.br/) | API pública | ativa · ok | A URL base foi fornecida pelo pedido; nem os parâmetros nem a resposta foram confirmados porque o fetch foi bloqueado. Testar diretamente do GitHub Actions com urllib e User-Agent identificado; revisar robots.txt antes de autom… |
+| [Tesouro Nacional — Notícias e relatórios](https://www.gov.br/tesouronacional/pt-br/noticias) | indisponivel | desligada | não verificado nesta rodada |
+| [IPEA — Carta de Conjuntura](https://www.ipea.gov.br/cartadeconjuntura/) | indisponivel | desligada | não verificado nesta rodada |
+| [FGV IBRE — Blog do IBRE / Boletim Macro](https://blogdoibre.fgv.br/) | indisponivel | desligada | não verificado nesta rodada |
+| [ANBIMA — Imprensa / Notícias (fundos, índices)](https://www.anbima.com.br/pt_br/imprensa/) | indisponivel | desligada | não verificado nesta rodada |
 
-## Fontes em uso
+## Gestoras internacionais
 
-| Fonte | O que traz | Acesso | Custo | Observação |
-|---|---|---|---|---|
-| Banco Central · SGS | Selic, CDI, IPCA (mês e 12 meses), PTAX | API aberta | grátis | oficial |
-| Banco Central · Focus | expectativas (IPCA, Selic, PIB, câmbio) | API aberta (Olinda) | grátis | oficial, semanal |
-| Tesouro Transparente | taxas do Tesouro Direto (pré 2032, IPCA+ 2035) | arquivo aberto | grátis | substitui o DI futuro, que não tem fonte aberta |
-| Tesouro dos EUA | Treasuries de 2 e 10 anos | arquivo aberto | grátis | oficial |
-| IBGE | releases (IPCA, PIB etc.) | API aberta | grátis | fonte oficial |
-| CVM · dados abertos (IPE) | fatos relevantes, comunicados, avisos aos acionistas | arquivo aberto (licença ODbL) | grátis | atualizado semanalmente pela CVM; o robô cruza CNPJ e nome |
-| CVM · dados abertos (ITR e DFP) | resultados trimestrais e anuais das companhias (DRE consolidada: receita, lucro, resultado antes do financeiro) | arquivo aberto (licença ODbL, crédito à CVM) | grátis | lido na rodada de fechamento, a cada 3 dias; versão mais recente de cada documento; fundos imobiliários e BDRs ficam de fora (não entregam ITR/DFP) |
-| IBGE · calendário de divulgações | datas do IPCA, PIB, PNAD, indústria, comércio e serviços | API aberta (`servicodados.ibge.gov.br/api/v3/calendario`) | grátis | uma consulta por dia |
-| Banco Central e Federal Reserve · calendários | reuniões do Copom e do FOMC | páginas oficiais, conferidas à mão e guardadas em `config.json` (`agenda_macro`) | grátis | o calendário sai uma vez por ano: acrescente as datas novas; a página do BC exige JavaScript, então as datas do Copom foram conferidas na divulgação reproduzida pela imprensa |
-| Google Notícias (RSS) · temas dos ETFs | manchetes sobre os índices e as estratégias dos ETFs | RSS | grátis | marcadas como notícia do índice, nunca como fato do fundo |
-| Google Notícias (RSS) | manchetes por empresa e por tema | RSS | grátis | só título, link, data e veículo |
-| Brazil Journal (RSS) | manchetes | `braziljournal.com/feed/` | grátis | os termos proíbem reproduzir o texto: o robô guarda só título e link |
-| The News (RSS) | manchetes | `rss.beehiiv.com/feeds/j9teVW9Qmi.xml` | grátis | só título e link |
-| Agrofy News (RSS) | agro | `news.agrofy.com.br/rss.xml` | grátis | entra só quando cita empresa das carteiras (TTEN3, KNCA11); o feed parecia pouco atualizado na revisão |
-| Yahoo Finance | cotações e séries ajustadas (B3 e EUA), Ibovespa, S&P 500, Brent, EEM | endereço não oficial | grátis | sem contrato; bloqueia com frequência (erro 429) |
-| brapi | cotações e séries da B3 (reserva do Yahoo) | API com chave (`BRAPI_TOKEN`) | grátis com limite; planos pagos | ver abaixo |
-| AwesomeAPI | dólar ao vivo | API com chave (`AWESOMEAPI_KEY`) | grátis com chave | sem chave, cai para Yahoo e depois para a PTAX |
-| CoinGecko | bitcoin | API aberta | grátis | — |
-| Alpha Vantage | fechamento dos ETFs de renda fixa da B3 (reserva) | API com chave (`ALPHAVANTAGE_KEY`) | grátis: 25 pedidos/dia; pago a partir de US$ 49,99/mês | o robô usa no máximo 20 por dia e só na rodada de fechamento ou manual |
-| Tiingo | ETFs americanos (reserva do Yahoo) | API com chave (`TIINGO_TOKEN`) | grátis com limite | uso pessoal no plano gratuito |
-| FRED | dólar global do Fed, TIPS 10 anos, minério (FMI), juro de 10 anos da Alemanha (OCDE) | API com chave (`FRED_API_KEY`) | grátis | só séries sem restrição de republicação |
+| Fonte | Método | Status | Limitação / observação |
+|---|---|---|---|
+| [BlackRock Investment Institute (Weekly Commentary, Outlook, Bulletins)](https://www.blackrock.com/corporate/insights/blackrock-investment-institute) | página (links/PDF) | ativa · ok | A URL antiga .../weekly-commentary deu erro; a atual e .../global-weekly-commentary. Pagina do semanal e sobrescrita a cada edicao (mesma URL) - usar o PDF datado como chave. |
+| [Vanguard - Economic and market outlook (VEMO) e insights](https://corporate.vanguard.com/content/corporatesite/us/en/corp/vemo/vanguard-economic-market-outlook.html) | página (links/PDF) | ativa · ok | Listagem legivel sem JS, com 10+ itens datados. |
+| [Fidelity Institutional - Market commentary (AART: Quarterly Market Update, Business Cycle Update)](https://institutional.fidelity.com/advisors/insights/topics/market-commentary) | página (links/PDF) | ativa · parcial | Listagem sem datas e parcialmente destinada a advisors; tratar itens que exijam login como restritos. Q4 2026 QMU provavelmente ja publicado (o botao de PDF do Q3 referenciava 'Fourth Quarter 2026'), nao confirmado. |
+| [PIMCO Insights (Cyclical/Secular Outlook, Economic and Market Commentary)](https://www.pimco.com/us/en/insights) | sitemap XML | ativa · parcial | A pagina /us/en/insights so expoe 2 destaques sem data (resto via JS) e /us/en/insights/economic-and-market-commentary deu erro. O trecho lido do sitemap tinha lastmod mais recente 2026-08-14, anterior ao Cyclical Outlook de 06… |
+| [J.P. Morgan AM - Guide to the Markets (U.S.)](https://am.jpmorgan.com/us/en/asset-management/adv/insights/market-insights/guide-to-the-markets/) | documento de URL fixa (HEAD) | ativa · ok | PDF confirmado (capa '4Q 2026', dados de 30/09/2026). Sem RSS. |
+| [J.P. Morgan - Eye on the Market (Michael Cembalest)](https://privatebank.jpmorgan.com/nam/en/insights/markets-and-investing/eotm) | página (links/PDF) | ativa · ok | Hospedado no Private Bank, nao na Asset Management. Sem RSS. |
+| [AQR - Insights / Research](https://www.aqr.com/Insights/Research) | página (links/PDF) | ativa · ok | Sem RSS. Alguns papers de AQR sao links para SSRN/journals (externos). |
+| [GMO - Research Library (Quarterly Letter, Insights)](https://www.gmo.com/americas/research-library/) | página (links/PDF) | ativa · ok | Sem RSS. |
+| [Oaktree - Memos from Howard Marks](https://www.oaktreecapital.com/insights/memos) | página (links/PDF) | ativa · ok | Sem RSS. Frequencia baixa (poucos memos por ano). |
+| [Bridgewater - Research & Insights](https://www.bridgewater.com/research-and-insights) | restrito | desligada | conteúdo atrás de cadastro (registration wall): não é público; o robô não contorna |
+| [Schroders - Insights](https://www.schroders.com/en-gb/uk/individual/insights/) | indisponivel | desligada | página só renderiza com JavaScript ofuscado; sem feed público localizado |
+| [Robeco - Insights](https://www.robeco.com/en-int/insights) | restrito | desligada | exige declaração de investidor profissional (gate): não é público |
+| [Amundi Investment Institute - Research Center](https://research-center.amundi.com/) | RSS/Atom | ativa · ok | RSS 2.0 verificado - unica gestora grande com feed oficial encontrado. |
+| [Goldman Sachs Asset Management - Insights](https://am.gs.com/en-us/advisors/insights) | indisponivel | desligada | listagem só via JavaScript; sem feed público localizado |
 
-### Chaves opcionais: o que cada uma acrescenta
+## Gestoras brasileiras
 
-- **BRAPI_TOKEN** ([brapi.dev](https://brapi.dev/pricing)). O plano gratuito serve para testes, com cota mensal de pedidos, 1 ativo por pedido e só 3 meses de histórico. Por isso o robô usa a brapi apenas quando o Yahoo falha. Os planos pagos (na revisão, a partir de cerca de R$ 100 por mês no anual) liberam mais pedidos, histórico longo e proventos. Contrate só se o Yahoo continuar bloqueando os ETFs.
-- **ALPHAVANTAGE_KEY** ([alphavantage.co](https://www.alphavantage.co/support/#api-key)). É grátis. Serve de reserva de fechamento para os 9 ETFs de renda fixa quando Yahoo e brapi falham. O plano gratuito tem 25 pedidos por dia ([preços](https://www.alphavantage.co/premium/)): o robô controla a cota e não passa de `alphavantage.limite_dia` (20).
-- **TIINGO_TOKEN** ([tiingo.com](https://www.tiingo.com/about/pricing)): reserva gratuita para os ETFs americanos.
-- **FRED_API_KEY** ([fred.stlouisfed.org](https://fred.stlouisfed.org/docs/api/api_key.html)): grátis. Liga as séries globais de Mundo e Estratégia.
-- **AWESOMEAPI_KEY** ([awesomeapi.com.br](https://docs.awesomeapi.com.br/)): grátis. Dólar ao vivo durante o pregão.
-- **ANTHROPIC_API_KEY** (Claude Console): pago, por uso. Liga uma leitura extra das manchetes por IA. A classificação por regras funciona sem ela, e o painel nunca depende dela.
+| Fonte | Método | Status | Limitação / observação |
+|---|---|---|---|
+| [Dynamo — Cartas Dynamo](https://www.dynamo.com.br/pt/cartas-dynamo) | RSS/Atom | ativa · ok | Feed RSS 2.0 válido (WordPress). Alternativas verificadas: API WP https://www.dynamo.com.br/wp-json/wp/v2/posts?per_page=4 e página de listagem com PDFs em https://www.dynamo.com.br/wp-content/uploads/AAAA/MM/Carta-Dynamo-NNN.p… |
+| [Verde Asset Management — Cartas](https://www.verdeasset.com.br/) | indisponivel | desligada | o site não publica as cartas em página pública (só cópias de terceiros, que não usamos) |
+| [SPX Capital — Carta à Equipe (Issuu)](https://issuu.com/spx_capital) | página (links/PDF) | ativa · parcial | O site oficial (spxcapital.com.br) não lista cartas; só tem 'ASSINE NOSSA CARTA MENSAL' (e-mail) e notícias de mídia em https://www.spxcapital.com.br/noticias/. A conta Issuu 'spx_capital' publica mensalmente a Carta à Equipe e… |
+| [Kapitalo — Cartas do Gestor (K10 e demais fundos)](https://www.kapitalo.com.br/cartas-do-gestor) | página (links/PDF) | ativa · ok | A página mostra só mês (sem dia). Outras páginas por fundo existem mas não foram abertas individualmente: /carta-do-gestor/kapa-e-zeta, /carta-do-gestor/nexus-global, /carta-do-gestor/nw3, /carta-do-gestor/tarkus. Cartas Temáti… |
+| [IP Capital Partners — Relatórios de Gestão](https://ip-capitalpartners.com/relatorios/) | página (links/PDF) | ativa · ok | Baixa frequência (cerca de 1 relatório por ano). www.ipcapitalpartners.com redireciona (302) para ip-capitalpartners.com. /feed/ retornou erro. Seção /insights/ está parada desde 2023. 'Informe Mensal' só por e-mail (não listad… |
+| [JGP — Relatórios de Gestão e Cartas](https://www.jgp.com.br/comunicacoes/relatorios/) | RSS/Atom | ativa · ok | Usar /comunicacao/feed/ (feed do post type 'comunicacao', título 'Arquivo Comunicação - JGP'); o /feed/ principal só tem 1 item de 2025. Cada mês gera 3 posts com o mesmo título (Multimercado, Ações, Imobiliário) — a página do … |
+| [Squadra Investimentos — Cartas aos Cotistas](https://www.squadrainvest.com.br/cartas/) | página (links/PDF) | ativa · ok | Publicação anual (1º semestre, em agosto). Datas inferidas do caminho de upload. |
+| [Legacy Capital — Cartas Mensais](https://www.legacycapital.com.br/cartas-e-calls-mensais/) | API pública | ativa · ok | A busca por 'carta' na API de mídia também pode trazer re-uploads antigos (ex.: 202601_Carta-Mensal-2.pdf em 2026-09-25) — deduplicar pelo prefixo AAAAMM. Também há Cartas de Crédito em https://www.legacycapital.com.br/cartas-e… |
+| [Kinea — Carta do Gestor e Kinea Insights](https://www.kinea.com.br/blog/) | API pública | ativa · ok | /blog/feed/ e /kinea-insights/ retornaram erro; /wp-json/wp/v2/categories?slug=... retornou []. A API de posts funciona. Kinea é ligada ao Itaú (não é XP). |
+| [Alaska Asset Management — Cartas Mensais](https://www.alaska-asset.com.br/cartas/) | página (links/PDF) | ativa · ok | Página mostra só o mês (sem dia). Também existe Informativo Diário em URL fixa https://www.alaska-asset.com.br/pdf/informativo-diario.pdf (sobrescrito). |
+| [Genoa Capital — Carta Mensal](https://www.genoacapital.com.br/relatorios.html) | página (links/PDF) | ativa · ok | Site HTML estático simples, ideal para monitoramento. Data só por mês. |
+| [Atmos Capital — Cartas](https://www.atmoscapital.com.br/cartas.php) | página (links/PDF) | ativa · ok | Semestral; a mais recente listada é 1H25 (não há 2H25 ainda na página). Datas = período de referência, não data de publicação. Fundos fechados para captação; cartas seguem públicas. Há também relatório mensal em http://www.atmo… |
+| [Itaú Asset Management — Insights Economia (Por Dentro do Cenário, Copom em Foco, Projeções)](https://www.itauassetmanagement.com.br/insights/economia/) | página (links/PDF) | ativa · parcial | A página lista poucos itens (3) e sem data explícita em alguns; parte dos PDFs é sobrescrita em URL fixa. Páginas /insights/estudos/ e /noticias/ não foram verificadas. Sem RSS visível. |
+| [Encore Asset Management — Comentário Mensal](https://www.encore.am/) | página (links/PDF) | desligada | não verificado nesta rodada |
+| [Constellation Investimentos — Biblioteca / Documentos](https://www.constellation.com.br/) | indisponivel | desligada | cartas só por mailing (não públicas) |
+| [Ibiuna Investimentos — Cartas](https://www.ibiunainvest.com.br/) | indisponivel | desligada | o site recusa robôs (robots.txt); não contornamos |
+| [Absolute Investimentos — Cartas](https://www.absoluteinvest.com.br/) | indisponivel | desligada | o site recusa robôs (robots.txt); não contornamos |
+| [Truxt Investimentos — Cartas](https://www.truxt.com.br/) | indisponivel | desligada | o site recusa robôs (robots.txt); não contornamos |
 
-## Fichas dos ETFs (`painel/src/etfs.json`)
+## Academia
 
-Montadas em 07/11/2026 com os documentos oficiais:
-- **gestoras:** iShares/BlackRock, Vanguard, State Street, Xtrackers/DWS, J.P. Morgan, Itaú Asset (It Now), Investo, BTG Pactual, Genial/Plural;
-- **documentos:** KID/KIID, factsheet, regulamento, lâmina, informe diário à CVM, FundosNet da B3;
-- **índices:** ANBIMA, MarketVector, Teva, MSCI.
+| Fonte | Método | Status | Limitação / observação |
+|---|---|---|---|
+| [Aswath Damodaran - Musings on Markets](https://aswathdamodaran.blogspot.com/) | RSS/Atom | ativa · ok | Atom verificado (entrada de 03/11/2026); variante RSS: ?alt=rss. No trecho lido do feed o link alternate do item nao apareceu - usar <link rel='alternate'> de cada <entry> e, se ausente, cair para a homepage. Permalinks acima c… |
 
-Cada número tem a data do documento de origem, e cada ficha tem os links.
+## Canais oficiais no YouTube
 
-Os dados são estáticos: o robô não os atualiza. Taxas, patrimônio e principais posições mudam, por isso as fichas devem ser revistas a cada trimestre, pelos links da própria ficha.
+| Fonte | Método | Status | Limitação / observação |
+|---|---|---|---|
+| [Federal Reserve (YouTube)](https://www.youtube.com/@federalreserve) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [IMF (YouTube)](https://www.youtube.com/@IMF) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [European Central Bank (YouTube)](https://www.youtube.com/@ecbeuro) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Bank for International Settlements (YouTube)](https://www.youtube.com/@bisbribiz) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Federal Reserve Bank of St. Louis (YouTube)](https://www.youtube.com/@stlouisfed) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [BlackRock (YouTube)](https://www.youtube.com/@BlackRock) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Vanguard (YouTube)](https://www.youtube.com/@Vanguard) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [PIMCO U.S. (YouTube)](https://www.youtube.com/@PIMCO) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Fidelity Institutional (YouTube)](https://www.youtube.com/@FidelityInstitutional) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [J.P. Morgan Asset Management (YouTube)](https://www.youtube.com/@jpmorganassetmanagement) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [AQR (YouTube)](https://www.youtube.com/@AQRcapital) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Oaktree (YouTube)](https://www.youtube.com/@OaktreeCapital) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Bridgewater Associates (YouTube)](https://www.youtube.com/@Bridgewater) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Principles by Ray Dalio (YouTube)](https://www.youtube.com/@principlesbyraydalio) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Goldman Sachs (YouTube)](https://www.youtube.com/@GoldmanSachs) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Schroders (YouTube)](https://www.youtube.com/@Schroders) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [Aswath Damodaran (YouTube)](https://www.youtube.com/@AswathDamodaranonValuation) | YouTube Data API | ativa · parcial · requer YOUTUBE_API_KEY | Channel ID confirmado em duas vias: campo channel_id no link RSS da pagina do handle e round-trip youtube.com/channel/<ID> devolvendo o mesmo titulo/handle. O conteudo do feed videos.xml NAO foi baixado (bloqueio robots no ambi… |
+| [IBGE — canal oficial no YouTube](https://www.youtube.com/channel/UC83oOOF9lg-g1XMT_UK1tUw) | YouTube Data API | desligada | canal_id veio de ranking de terceiros, não confirmado no YouTube |
+| [Kinea Investimentos — canal oficial no YouTube](https://www.youtube.com/@KineaInvestimentos) | YouTube Data API | desligada | canal_id não confirmado |
+| [Banco Central do Brasil — canal oficial no YouTube]() | YouTube Data API | desligada | canal_id não confirmado |
 
-Os pesos por país de EXUS, EIMI e WSML vêm do factsheet público do índice MSCI, não do fundo, e a ficha diz isso. Dados de índice são propriedade da MSCI. O painel mostra só os maiores pesos, com crédito. Se preferir não exibir, apague o campo `exposicao.paises` desses três ETFs.
+## Imprensa (só título, link e data)
 
-**Diferenças entre o cadastro do painel e o fundo real** aparecem na ficha. Nada foi alterado:
-- **LFTB11:** tem cerca de 9% em NTN-B 2060, e a premissa de sensibilidade o trata como Selic pura.
-- **IDKA11:** replica o IRF-M P3, não um IDkA.
-- **LFIN11:** é de letras financeiras de bancos.
-- **IBIT:** confirmar se o instrumento é o da Nasdaq ou o BDR IBIT39. O par QBTC não é um ETF americano.
-- **EMCA, JPEA, IUVL e EXUS:** o par americano usado para cotação e risco não tem a mesma exposição.
+| Fonte | Método | Status | Limitação / observação |
+|---|---|---|---|
+| [Brazil Journal](https://braziljournal.com) | RSS/Atom | ativa · ok | RSS público do próprio veículo, já usado na v2. Guarda só título, link, data e veículo. |
+| [The News](https://rss.beehiiv.com) | RSS/Atom | ativa · ok | RSS público do próprio veículo, já usado na v2. Guarda só título, link, data e veículo. |
+| [Agrofy News](https://news.agrofy.com.br/rss.xml) | RSS/Atom | ativa · ok | RSS público do próprio veículo, já usado na v2. Guarda só título, link, data e veículo. Só entram manchetes que citem empresa das carteiras. |
+| [Google Notícias · Juros](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Google Notícias · Juros](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Google Notícias · Inflação](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Google Notícias · Bolsa](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Google Notícias · Câmbio](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Google Notícias · EUA](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Google Notícias · Fiscal](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Google Notícias · Commodities](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
 
-## Economatica
+## Limitações conhecidas
 
-A Economatica vende o terminal e, como produtos separados, APIs e Data Feed:
-
-- **APIs:** fundamentos e mercado, fundos (universo da CVM), renda fixa (debêntures, CRI/CRA, curva) e notícias. Usam chave por API, ambiente de teste com dados sintéticos e termos comerciais negociados ([página das APIs](https://www.economatica.com/en/apis/)).
-- **Data Feed:** entrega contínua para bancos de dados ([data feed](https://www.economatica.com/data-feed-en)).
-
-Não há preço público. A própria página separa o terminal das APIs, então **não dá para supor que a sua assinatura do terminal inclui API**. O robô não usa a Economatica e não deve automatizar o acesso pelo navegador, porque isso seria raspagem de área com login.
-
-**Caminhos:**
-
-1. **Agora, sem custo.** Exporte do terminal, à mão, as séries que quiser, como CSV ou Excel. Depois importe no painel em Carteiras → Construção → Dados → Importar séries. As séries importadas por você têm prioridade: o robô nunca as substitui.
-2. **Se quiser automatizar.** Peça à Economatica, por escrito, quatro respostas:
-   - (a) se a sua assinatura inclui API;
-   - (b) o preço da API de Fundamentals and Market Data;
-   - (c) se o uso é "interno";
-   - (d) se pode exibir os dados num site pessoal.
-
-   Com a chave e os termos em mãos, a integração é uma fonte nova no robô, com a chave guardada como Secret.
-
-## Links avaliados (enviados em 07/11/2026)
-
-| Link | Veredito | Motivo |
-|---|---|---|
-| dadosdemercado.com.br/fluxo | só documentado | Tem API (`/v1/investors`, com token) e dados desde 2010, mas não publica preço, limites nem termos de republicação. O dado original é da B3, que veda coleta automatizada. Com token e autorização por escrito, entra como fonte. |
-| reddit.com/r/EconomyCharts | evitar | O RSS do Reddit deixa de funcionar em 13/11/2026 e a API pública fecha em 2027. Os gráficos são reposts, com origem variável. |
-| ratodemercado.com.br (proventos) | evitar | Os termos proíbem coleta automatizada e em massa. Alternativas: avisos aos acionistas na CVM (já no robô) ou proventos da brapi (só nos planos pagos). |
-| braziljournal.com | **em uso** | RSS oficial; só título e link. |
-| NYT Morning Briefing | só documentado | É newsletter por e-mail. Os RSS do NYT são para uso pessoal e não comercial; o uso profissional pede autorização. Os links do NYT já aparecem no Google Notícias. |
-| morningbrew.com | evitar | Sem RSS; os termos proíbem robôs. Leia por e-mail. |
-| thenewscc.beehiiv.com | **em uso** | O próprio editor publica um RSS; só título e link. |
-| finviz.com | evitar | A exportação só existe no plano Elite (na revisão, US$ 39,50 por mês ou US$ 299,50 por ano), e o robots.txt bloqueia a exportação. Para setores americanos, a alternativa é a Tiingo com os ETFs setoriais. |
-| news.agrofy.com.br | **em uso, com filtro** | RSS oficial; entra só quando cita empresa das carteiras. |
-| alphavantage.co | **em uso, como reserva** | API oficial com chave grátis (25 pedidos por dia): só para os ETFs de renda fixa, na rodada de fechamento. |
-| Mais Retorno (MCP) | conector do Claude; robô só com autorização | O endereço `data.maisretorno.com/mr-data/v4/mcp/oauth` liga a Mais Retorno ao Claude, com login OAuth: Configurações → Conectores → Adicionar conector personalizado. O plano grátis tem 500 créditos por mês, 1 ano de histórico e dados do dia anterior ([maisretorno.com/mcp](https://maisretorno.com/mcp)). No robô, só depois de duas coisas: a documentação da API e uma confirmação de que pode exibir os dados num site público. A chave, se usada, vai como Secret `MAISRETORNO_KEY`. |
-| jonasesteves.com/panorama | evitar | Produto pago, com login; os termos proíbem robôs. As séries equivalentes vêm de BC, Tesouro e FRED (já no robô). |
-
-## O que ainda não tem fonte aberta
-
-Estes itens aparecem como falta no painel, nunca como estimativa:
-
-- curva de DI futuro;
-- CDS do Brasil;
-- fluxo estrangeiro na B3;
-- proventos e datas-com;
-- probabilidades do FedWatch;
-- PMI e crédito da China;
-- preço da celulose;
-- lucro esperado do S&P 500.
+- **YouTube**: o `robots.txt` do YouTube veda o feed `videos.xml` a robôs genéricos; por isso o robô só lê vídeos pela API oficial (chave gratuita em `YOUTUBE_API_KEY`). Sem a chave, os canais ficam "aguardando chave" e não contam como falha.
+- **Páginas que listam PDFs** (Kapitalo, Alaska, Genoa, Atmos, Squadra, IP Capital, BlackRock, Oaktree, AQR, GMO, Vanguard, Eye on the Market, FMI, BIS Quarterly Review): o robô detecta links novos; a data vem do link quando existe (`padrao_data`) e, se não, o item recebe a data de detecção, marcada. Mudança de layout do site aparece como erro de formato na coleta, nunca como item inventado.
+- **Documentos de URL fixa** (Guide to the Markets): só os cabeçalhos são lidos (HEAD); uma mudança de ETag/Last-Modified vira o item "edição de <data>". O arquivo não é baixado.
+- **Sitemap** (PIMCO): título provisório humanizado a partir da URL até o leitor abrir o original; o sitemap pode estar defasado em relação ao site.
+- **FMI**: sem RSS; o `index.json` do blog e as listagens de WEO/GFSR pareciam servidos de cache na validação (podem atrasar dias). Working papers só via JavaScript: desligado.
+- **Cache e JavaScript**: sites que só montam a lista com JavaScript (Schroders, GSAM, Verde, Constellation) ou que exigem cadastro/declaração de investidor (Bridgewater, Robeco) ficam desligados, com o motivo no cadastro. Não contornamos.
+- **Google Notícias**: o veículo de cada manchete vira a organização; veículos bloqueados são descartados antes de virar item; duas manchetes do mesmo fato viram um item com "também em".
+- **Dados macro** (BCB SGS, Focus, Tesouro Transparente, Tesouro dos EUA, agenda do IBGE): indicadores oficiais de referência, algumas vezes por dia, nunca cotação em tempo real. Falha de uma fonte mantém o último valor válido, marcado como reaproveitado; nunca vira zero.
+- **Resultados da CVM** (`resultados.json`): lidos dos dados abertos da CVM (ITR/DFP) na rodada da noite, a cada 3 dias (ou em execução manual), para as fichas das empresas na seção Oregon. FIIs e empresas sem CNPJ cadastrado ficam em `fora`. Um arquivo que falha não apaga o que já estava lido.

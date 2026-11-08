@@ -1,0 +1,31 @@
+{
+ "_leia": "Fontes fictícias para os testes do Oregon Intelligence (hosts *.teste respondidos por testes/simulador.py). Nada aqui é uma fonte real.",
+ "fontes": [
+  {"id": "gestora-rss", "nome": "Gestora Teste — Cartas", "organizacao": "Gestora Teste", "categoria": "gestora_brasil", "pais": "Brasil", "idioma": "pt", "tipo": "carta", "metodo": "rss",
+   "url_fonte": "https://gestora.teste/cartas", "url_coleta": "https://gestora.teste/feed/", "ativo": true},
+  {"id": "banco-central-atom", "nome": "Autoridade Monetária Teste — Notas", "organizacao": "Autoridade Monetária Teste", "categoria": "instituicao", "pais": "Brasil", "idioma": "pt", "tipo": "documento_oficial", "metodo": "rss",
+   "url_fonte": "https://bc.teste/", "url_coleta": "https://bc.teste/feed/notas?ano={ano}", "ativo": true},
+  {"id": "bis-rdf", "nome": "Instituição Global Teste — Papers", "organizacao": "Instituição Global Teste", "categoria": "instituicao", "pais": "Global", "idioma": "en", "tipo": "paper", "metodo": "rss",
+   "url_fonte": "https://global.teste/", "url_coleta": "https://global.teste/doclist/papers.rss", "ativo": true},
+  {"id": "pagina-pdf", "nome": "Gestora PDF Teste — Carta do Gestor", "organizacao": "Gestora PDF Teste", "categoria": "gestora_brasil", "pais": "Brasil", "idioma": "pt", "tipo": "carta", "metodo": "pagina",
+   "url_fonte": "https://pdf.teste/cartas", "url_coleta": "https://pdf.teste/cartas", "padrao": "\\.pdf$", "ativo": true},
+  {"id": "wp-api", "nome": "Gestora WP Teste — Blog", "organizacao": "Gestora WP Teste", "categoria": "gestora_brasil", "pais": "Brasil", "idioma": "pt", "tipo": "carta", "metodo": "api", "api": "wp_posts",
+   "url_fonte": "https://wp.teste/blog", "url_coleta": "https://wp.teste/wp-json/wp/v2/posts?per_page=10", "filtro_link": "carta-do-gestor", "ativo": true},
+  {"id": "sitemap-gestora", "nome": "Gestora Sitemap Teste — Insights", "organizacao": "Gestora Sitemap Teste", "categoria": "gestora_internacional", "pais": "EUA", "idioma": "en", "tipo": "research", "metodo": "sitemap",
+   "url_fonte": "https://sitemap.teste/insights", "url_coleta": "https://sitemap.teste/sitemap.xml", "padrao": "/insights/[^/]+/?$", "ativo": true},
+  {"id": "arquivo-fixo", "nome": "Guia Trimestral Teste", "organizacao": "Gestora Guia Teste", "categoria": "gestora_internacional", "pais": "EUA", "idioma": "en", "tipo": "relatorio", "metodo": "arquivo_fixo",
+   "url_fonte": "https://guia.teste/", "url_coleta": "https://guia.teste/guia.pdf", "titulo_item": "Guia Trimestral Teste", "ativo": true},
+  {"id": "veiculo-rss", "nome": "Jornal Teste", "organizacao": "Jornal Teste", "categoria": "veiculo", "pais": "Brasil", "idioma": "pt", "tipo": "noticia", "metodo": "rss",
+   "url_fonte": "https://jornal.teste/", "url_coleta": "https://jornal.teste/feed/", "guardar_resumo": false, "ativo": true},
+  {"id": "gnews-teste", "nome": "Agregador Teste · Juros", "organizacao": "Agregador Teste (vários veículos)", "categoria": "veiculo", "pais": "Brasil", "idioma": "pt", "tipo": "noticia", "metodo": "rss",
+   "url_fonte": "https://agregador.teste/", "url_coleta": "https://agregador.teste/rss?q=juros", "guardar_resumo": false, "ativo": true},
+  {"id": "setorial-so-oregon", "nome": "Portal Setorial Teste", "organizacao": "Portal Setorial Teste", "categoria": "veiculo", "pais": "Brasil", "idioma": "pt", "tipo": "noticia", "metodo": "rss",
+   "url_fonte": "https://setorial.teste/", "url_coleta": "https://setorial.teste/feed/", "guardar_resumo": false, "so_oregon": true, "ativo": true},
+  {"id": "pagina-robots", "nome": "Site Que Veda Robôs", "organizacao": "Site Que Veda Robôs", "categoria": "gestora_internacional", "pais": "EUA", "idioma": "en", "tipo": "research", "metodo": "pagina",
+   "url_fonte": "https://vedado.teste/", "url_coleta": "https://vedado.teste/research", "padrao": "\\.pdf$", "ativo": true},
+  {"id": "youtube-teste", "nome": "Canal Oficial Teste (YouTube)", "organizacao": "Instituição Global Teste", "categoria": "youtube", "pais": "Global", "idioma": "en", "tipo": "video", "metodo": "youtube",
+   "url_fonte": "https://www.youtube.com/@teste", "canal_id": "UCteste00000000000000000", "ativo": true},
+  {"id": "desligada", "nome": "Fonte Desligada", "organizacao": "Fonte Desligada", "categoria": "gestora_internacional", "pais": "EUA", "idioma": "en", "tipo": "research", "metodo": "rss",
+   "url_fonte": "https://desligada.teste/", "url_coleta": "https://desligada.teste/feed", "ativo": false, "motivo_desligada": "exemplo de fonte cadastrada e desligada"}
+ ]
+}

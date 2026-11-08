@@ -1,121 +1,70 @@
-# Oregon Investment Desk: análise comparativa e arquitetura
+# Arquitetura do Oregon Intelligence
 
-## 1. Os dois projetos antes da integração
+## Robô (`robo/`, Python 3 sem dependências externas, GitHub Actions)
 
-### HTML original ("Painel Carteira Oregon")
+`intel.py` é o orquestrador. Cada rodada (4× por dia, 7 dias por semana, e à mão):
 
-**O que ele tinha de melhor e foi preservado:**
+1. **Configuração e cadastro** — `config.py` valida `config.json` (bloco `intel`: janelas, IA, Telegram) e `intel.validar_fontes`
+   valida `fontes.json` (método conhecido, URL http(s), API conhecida, canal do YouTube). Erro = rodada falha visivelmente,
+   nada é publicado.
+2. **Oregon** — `carregar_oregon` monta a lista de ativos a partir de `painel/src/data.json` (ativos das 15 carteiras, sem
+   placeholders) + termos de busca de `config.json`; setores vêm dos grupos do painel. Nenhuma posição é presumida.
+3. **Macro** (`coletar_macro`) — SGS (Selic, CDI, IPCA, PTAX), Focus, Tesouro (pré/IPCA+), Treasuries, agenda (IBGE,
+   Copom, Fed, Focus) → `macro.json`. Falha mantém o último valor, marcado `reaproveitado`; nunca zero.
+4. **Conteúdo** (`coletar_conteudo`) — para cada fonte ativa: `conteudo.coletar_fonte` (rss/atom/rdf, youtube via API,
+   pagina, sitemap, arquivo_fixo, api), com `Robots` por host; rejeições contadas por motivo; `analise.classificar`
+   (temas, regiões, ativos, setores, fatores, natureza, prioridade) e `analise.analisar_regras` (sete pontos rotulados);
+   `biblioteca.incorporar` deduplica por id (link normalizado) e por título (Jaccard ≥ 0,6, janela de 3 dias, nunca
+   entre itens da mesma fonte) e grava por mês. Contadores em `coleta.json`.
+5. **IA opcional** (`ler_com_ia`) — só com `ANTHROPIC_API_KEY` e `intel.ia.ativo = true`; itens de prioridade alta/média
+   sem análise profunda, até `max_itens_dia` e `max_tokens_dia`; a resposta é validada (rótulos FATO/FONTE/INFERÊNCIA) e
+   combinada com as regras (`analise.combinar`); uso registrado em `estado.json` (`ia_uso`, `ia_historico`).
+6. **Índice e recentes** — `biblioteca.reindexar` (`indice.json`) e `publicar_recentes` (`recentes.json`, 14 dias).
+7. **Briefing** — `semanal.briefing` → `hoje.json` (prioridades com variedade, macro, gestoras, vídeos, leitura
+   recomendada rotativa, perguntas de estudo, agenda).
+8. **Semanal** — sábado (ou modo `semanal`) → `semanal.json` (temas, teses, repetidos, assuntos para estudar;
+   "mudanças de visão" só com IA).
+9. **Resultados CVM** — na rodada da noite, a cada 3 dias, `resultados.coletar` (ITR/DFP) → `resultados.json`.
+10. **Telegram** (opcional) — briefing uma vez por dia. **Saídas** — `status.json`, `versao.json`, `estado.json`, Summary.
 
-- **Identidade visual.** Usa a IBM Plex em três papéis: Serif para títulos e números-chave, Sans para leitura e Mono para tabelas. O fundo é cinza-claro, com cartões brancos e cores funcionais.
-- **Mapa visual das carteiras.**
-  - Uma rosca por carteira, colorida por pilar, com o peso em renda variável no centro e um selo vermelho quando a carteira não fecha 100%.
-  - Tabela de carteiras × pilares.
-  - "O que mudou da base 30/10 para o decidido".
-- **Carteira em camadas.** Um sol de três anéis (classe, pilar, ativo) e a visão "pilar a pilar", com bandas.
-- **Separação por bloco.** Brasil, renda fixa, exterior e alternativos, com cores próprias, e o comparativo "Perfis: decidido × base" com a escada de risco.
-- **Sala de Gestão.** Leva o fato à mesa e roda um simulador de choques e o radar.
+Reaproveitados da v2 sem mudança de função: `fontes_macro.py`, `agenda.py`, `resultados.py`, `avisos.py`, `util.py`
+(`Rede` com backoff, disjuntor e prazo; agora com HEAD e cabeçalhos), `calendario.py`, `config.py`. `coletar.py`,
+`cotacoes.py`, `historico.py`, `b3.py`, `qualidade.py`, `diagnostico.py` ficam no repositório, sem agendamento.
 
-**Limitações encontradas:**
+### Arquivos de dados
 
-- Os números do mercado eram fixos, tirados do deck do Comitê; o original não tinha dados vivos.
-- Tinha oito abas planas, sem hierarquia entre "hoje", "carteiras" e "estudo".
-- A IA da Sala só funcionava dentro do claude.ai.
-- Detectava as carteiras que não fecham a soma, mas não oferecia validação nem versões de proposta e aprovação.
-
-### Painel do GitHub (versão anterior desta plataforma)
-
-**O que ele tinha de melhor e foi preservado:**
-
-- **Motor de validação** (`core.js`). Aponta as 10 carteiras inválidas com regra, impacto e o que fazer, sem normalizar.
-- **Laboratório de propostas.** Separa versão aprovada, propostas e registro de aprovação, com histórico e justificativa.
-- **Modelos de risco** (`quant.js`). Volatilidade, beta, drawdown, correlação, número efetivo de posições, otimização e dimensionamento, com metodologia documentada.
-- **Motor de cenários e premissas de sensibilidade.** Cada premissa tem origem marcada: hipótese, premissa do gestor ou estimada.
-- **Fichas das 21 teses**, diário de decisões e performance.
-- **Mercado ao vivo e notícias** vindos do robô.
-
-**Problemas:**
-
-- **Visual.** Cabeçalho escuro e pesado, tabelas azuis gritantes, excesso de caixas e de texto, e nenhum dos gráficos do original.
-- **Navegação.** Quatro áreas com até nove subseções cada. A página inicial era o diagnóstico de uma carteira, não o mercado do dia.
-- **Mercado.** Ficava escondido numa subaba.
-
-### Robô de coleta (v1)
-
-**O que ele tinha de melhor e foi preservado:** a infraestrutura (GitHub Actions, ramo `dados`, Pages, Telegram), as fontes oficiais (BCB, Focus, Tesouro, Treasury) e a classificação de alertas.
-
-**Problemas** (ver `docs/DIAGNOSTICO.md`):
-
-- O Yahoo bloqueava os pedidos e o disjuntor da v1 parava tudo.
-- 1 de 54 cotações chegava, e mesmo assim a rodada aparecia como "saudável".
-- O erro do Telegram vinha sem descrição.
-- As notícias chegavam sem filtro de relevância.
-
-## 2. Arquitetura de informação (revisão de 07/11/2026)
-
-**Objetivo:** abrir o Oregon de manhã e, em cinco minutos, entender o mercado brasileiro, o que mudou nas empresas acompanhadas e qual assunto merece estudo no dia.
-
-Quatro áreas no menu, nessa ordem: **Hoje**, **Research Brasil**, **Carteiras** e **Mundo e Estratégia**. A Sala de Gestão e o guia do Comitê saíram do menu e ficaram dentro de Carteiras, em "Comitê e Sala". Os endereços antigos continuam abrindo: são traduzidos para os novos. No topo ficam a busca rápida (tecla `/`) e a hora da última rodada do robô.
-
-### Auditoria das telas que levou a esta versão
-
-| Tela | Decisão | Por quê |
+| Arquivo | Conteúdo | Publicado no site |
 |---|---|---|
-| Hoje: 15 barras de carteiras na primeira tela | **sai**: ficam as 2 de referência; as 15 abrem num botão | ruído para a leitura da manhã |
-| Hoje: "O que merece atenção" com notícias misturadas aos alertas | **simplifica**: notícias ganham seção própria; alertas viram "Pendências", com 3 itens e o resto num botão | as notícias se perdiam |
-| Hoje: indicadores com fonte, hora, estado e tendência | **mantém** | é a base da leitura |
-| Hoje: o que mudou, agenda, conexão do dia, exercício | **entra** | pedidos do briefing |
-| Sala de Gestão no menu | **sai do menu**, vai para Carteiras | uso eventual |
-| Carteiras abrindo no mapa das 15 | **simplifica**: abre nas duas de referência, com seletor | uma experiência só |
-| Construção, Decidido × base, Performance, mapa das 15 | **avançado** | ferramentas de comitê, não de rotina |
-| Ficha da empresa com formulário de indicadores à mão | **sai**: resultados vêm da CVM; à mão só a opinião da casa | menos preenchimento manual |
-| Ficha da empresa: valuation, tese, estrutural × conjuntural | **mantém e reorganiza** em seções | é o que mais funcionava |
-| ETFs sem ficha | **entra** a ficha educativa dos 27 ETFs | pedido |
-| Estratégia Global | **mantém**, renomeada Mundo e Estratégia, com links para os ETFs globais | — |
+| `data/biblioteca/AAAA-MM.json` | todos os itens do mês (`{mes, n, itens}`) | sim |
+| `data/biblioteca/indice.json` | meses, totais, contagens por fonte/tipo/tema/região | sim |
+| `data/recentes.json` | últimos 14 dias (até 400 itens) | sim |
+| `data/hoje.json` | briefing do dia (referências `{id, mes}`) | sim |
+| `data/coleta.json` | contadores por fonte e últimas 30 rodadas | sim |
+| `data/semanal.json` | até 26 semanas | sim |
+| `data/macro.json`, `data/resultados.json`, `data/status.json`, `data/versao.json` | macro, CVM, situação, versão | sim |
+| `data/fontes.json` | cópia de `robo/fontes.json` | sim |
+| `data/estado.json` | controle interno (IA, caches, digesto) | **não** |
 
-### O que cada área responde
+Item (`biblioteca`): `id, titulo, link, pdf?, fonte_id, fonte, organizacao, categoria, pais, idioma, tipo, publicado_em,
+detectado_em, data_estimada, resumo, autor, temas[], regioes[], ativos[], ativos_porque{}, setores[], fatores[], natureza,
+prioridade{pontos, nivel, porque[]}, analise{modo, profunda, aviso, 1_publicacao..7_monitorar: [{r, t}]}, tambem_em[],
+visto_em`. Itens absorvidos como "também em" recebem `agrupado_em` e saem das listas (o link continua no principal).
 
-| Área | Responde | Conteúdo |
-|---|---|---|
-| **Hoje** (página inicial) | O que aconteceu, o que mudou, o que ler, quem foi afetado, o que estudar | Indicadores do Brasil e do mundo, com nível, variação, tendência, data, fonte e estado. **Notícias do dia**: 5 a 10, de média ou alta relevância nas últimas 48 horas (até 4 dias se faltar), no máximo duas por empresa ou tema, com filtros Brasil, Empresas, Juros e Fiscal, Commodities e Mundo, e "por que importa" com o peso nas carteiras de referência. **O que mudou desde o último pregão**, em ordem de tamanho relativo ao limite de alerta, mais o Focus, documentos da CVM e releases do IBGE. **Carteiras de referência na sessão.** **Agenda** dos próximos 10 dias. **Empresas das carteiras hoje**: primeiro as com fato novo. **Conexão do dia**: o maior movimento externo, o mecanismo, como o Brasil andou no mesmo pregão e o peso exposto. **Exercício do dia**: pergunta com o maior fato real da sessão; a explicação técnica (fato, mecanismo, efeito pelo motor nas duas referências, ativos mais sensíveis, construção de carteira, perguntas para a reunião) só abre depois de pensar. Pendências, Focus e qualidade dos dados. |
-| **Research Brasil** | Entender cada empresa e cada ETF | **Empresas**: preço do robô × preço-teto das Teses e o teto da casa; últimas atualizações (CVM e notícias desambiguadas); fundamentos (tese estrutural, modelo de negócio, drivers, riscos, perguntas a responder) separados da conjuntura (preço, resultados da CVM, setor e pares); exposição a juros, câmbio, regulação e commodities; **opinião da casa** (preço-teto, convicção, premissas, conclusões), o único campo manual. **ETFs**: nome completo, gestora, ISIN ou CNPJ, índice e metodologia, objetivo, países, setores e principais posições com data, taxa, distribuição, riscos dos documentos oficiais, comparação com semelhantes, papel na carteira, documentos com link e notícias do índice (nunca como fato do fundo). Macro → empresas. Acontecimentos (arquivo completo). |
-| **Carteiras** | Construção e risco | **Referência** (modo simples): Conservador e Arrojado da família Brasil Crescimento, versão aprovada, com a validade no topo (a Arrojado não fecha: 106%; a Conservador tem 50% em fundos de teste), camadas, pilar a pilar, cenários das duas lado a lado, comparação de exposições, risco (bloqueado na inválida, parcial na Conservador) e maiores posições. **Risco e cenários** completo. **Comitê e Sala.** **Todas as carteiras · avançado**: mapa das 15, carteira, construção, decidido × base, performance. |
-| **Mundo e Estratégia** | Entender o mundo e ligar ao Brasil | Indicadores globais, cinco transmissões para o Brasil, juros do Brasil e dos EUA, exterior por carteira e os ETFs globais com link para a ficha. |
+## Painel (`painel/src`, JavaScript sem dependências, um HTML)
 
-**Divulgação progressiva.** Tocar numa notícia leva ao ativo, ao setor ou ao fator. Tocar numa empresa abre as últimas atualizações. Tocar num fator abre o mecanismo e o efeito do movimento de hoje nas carteiras de referência. A metodologia fica no botão "i".
+- `intel.js` — módulo `INTEL` (funções puras: juntar, filtrar, ordenar, contagens, importação de aprendizados; taxonomia
+  injetada pelo build a partir de `robo/analise.py`) e a camada de dados: `versao.json` a cada 10 minutos, demais
+  arquivos quando a versão muda, meses sob demanda (`A.carregarMes`), `resultados.json` quando uma ficha pede; vistas
+  `A.itemCard`, `A.abrirItem` (gaveta com sete pontos, fonte original, leitura e aprendizado), `A.macroCards`, `A.agendaView`.
+- `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js` — as três seções. `ui_mapa.js` + `ui_mesa.js` — as 15 carteiras (pesos como
+  aprovados, validação, exposições agregadas). `ui_teses.js`, `core.js`, `store.js` (coleções `aprendizados` e `leituras`
+  neste navegador; no claude.ai, no banco do artefato), `quant.js` (só o que a validação usa).
+- `painel/arquivo/` — módulos arquivados sem apagar: cotações/mercado ao vivo, Sala de Gestão, Comitê, laboratório de
+  propostas, risco e cenários, importação de séries, Mundo e Estratégia, Research Brasil antigo.
+- Endereços antigos (`#res/...`, `#cart/risco`, `#global`, `#sala/...`) são traduzidos para as três seções (`A.traduz`).
 
-**Atualização.** O robô publica a cada 30 minutos em dias úteis. O site consulta um arquivo de poucos bytes (`data/versao.json`) a cada 5 minutos e só baixa os arquivos grandes quando há rodada nova; a área aberta é redesenhada no mesmo ponto de leitura, nunca enquanto você digita ou com uma gaveta aberta. A tela diz a hora da rodada e que não é tempo real.
+## Workflow (`.github/workflows/robo.yml` = `docs/workflow_robo.yml`)
 
-## 3. O que funciona no GitHub Pages e o que não funciona
-
-| Recurso | GitHub Pages / arquivo no computador | claude.ai (artefato privado) |
-|---|---|---|
-| Dados ao vivo do robô | sim | não (a página não acessa a internet) |
-| Validação, risco, cenários, laboratório | sim | sim |
-| Propostas, decisões e premissas salvas | neste navegador (exporte o pacote em "Dados" para levar a outro aparelho) | no banco do artefato |
-| Debate com IA na Sala | não: a Sala roda em modo local, com leitura por regras e o motor de cenários. O botão “Abrir a versão online” copia o fato e abre o painel no claude.ai | sim, pela sua conta do claude.ai, sem chave no navegador |
-
-Não há chave de API no navegador. A leitura por IA das notícias, se você quiser, roda no robô, com a chave nos Secrets e sem dados de carteira.
-
-**Integração segura da IA no site.** O motor de cenários é independente do texto da IA. Para ter debate com IA no próprio site, seria preciso um servidor intermediário com a chave guardada no servidor e login, por exemplo uma função na nuvem. Isso tem custo e manutenção, por isso não foi feito: o artefato privado do claude.ai já cobre esse uso sem expor nada.
-
-## 4. Público × privado
-
-Você autorizou deixar tudo no site público. O site está marcado para não aparecer em buscadores, mas é acessível a quem tiver o link, e o repositório também é público.
-
-Para fechar:
-
-1. Torne o repositório privado. O GitHub Pages exige o plano GitHub Pro, de US$ 4 por mês.
-2. Ou mantenha só o painel no claude.ai (privado) e desligue o Pages.
-
-Os dados do robô não incluem pesos nem textos do comitê. Esse conteúdo está no painel (`painel/src/data.json`).
-
-## 5. Fluxo de dados
-
-```
-GitHub Actions (a cada 30 min, agenda em robo/config.json)
-  testes → coleta (fontes com prioridade e reserva) → status completo/parcial/crítico
-  → ramo "dados" (histórico interno) → site (index.html + data/mercado, historico, noticias, resultados, status, diagnostico, versao)
-Painel (navegador) consulta data/versao.json e, quando muda, lê data/*.json do mesmo endereço; no arquivo local, lê do ramo "dados" do repositório.
-resultados.json (CVM) só é baixado quando uma ficha de empresa é aberta.
-Telegram recebe alertas e o resumo do fim do dia.
-```
+Permissões zeradas por padrão; o job de coleta tem `contents: write` (ramo `dados`) e o de publicação `pages: write` +
+`id-token: write`. Portão de testes antes de qualquer coisa; `data/` inteira restaurada do ramo `dados`; `git add -f data`
+guarda tudo; o site recebe só os arquivos públicos (nunca `estado.json`). Crons `40 9,14,20 * * *` e `40 0 * * *` (UTC).

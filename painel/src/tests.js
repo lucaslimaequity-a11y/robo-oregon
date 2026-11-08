@@ -163,83 +163,29 @@ var TESTS = (function () {
       ['PETR4', 'KLBN4', 'BBSE3', 'ITSA4', 'CPLE3', 'AXIA3', 'EQTL3', 'PRIO3', 'ALOS3', 'INBR34', 'TTEN3', 'VAMO3', 'BTLG11', 'XPML11', 'TRXF11', 'KNCA11', 'CDII11', 'JURO11'].forEach(function (k) { ok(T.teses[k] && DATA.ativos[k], 'sem ligação: ' + k); });
       ok(T.equivalencias.BBDC3.tese === 'BBDC4', 'BBDC3 sem tese');
     });
-    var MK = typeof MERCADO !== 'undefined' ? MERCADO : null;
-    if (MK) t('Mercado ao vivo: fontes, sessão, alertas e carteira do dia (dados sintéticos de teste)', function () {
-      var u = MK.urlRobo('fulano/robo-oregon'); ok(u && u.mercado === 'https://raw.githubusercontent.com/fulano/robo-oregon/dados/data/mercado.json', 'url ' + (u && u.mercado));
-      ok(MK.urlRobo('https://github.com/fulano/robo-oregon').repo === 'fulano/robo-oregon', 'url do GitHub'); ok(MK.urlRobo('isso não é endereço') === null, 'url inválida aceita');
-      var pts = MK.sgsPts([{data: '05/11/2026', valor: '14.25'}, {data: '06/11/2026', valor: '13,75'}, {data: '09/12/2026', valor: '13.75'}], '2026-11-06');
-      ok(pts.length === 2 && pts[1][1] === 13.75, 'data futura da Selic entrou: ' + JSON.stringify(pts));
-      var d = MK.normDireto({s432: [{data: '05/11/2026', valor: '14.25'}, {data: '06/11/2026', valor: '13.75'}], cambio: {USDBRL: {bid: '5.52', varBid: '0.076', pctChange: '1.40', create_date: '2026-11-06 15:29:58'}}}, '2026-11-06', '2026-11-06T18:30:00Z');
-      eq(d.fatores.selic.var, -0.5, 1e-9); eq(d.fatores.usd.var, 1.4, 1e-9); ok(!d.fatores.ibov, 'inventou Ibovespa');
-      var robo = {fatores: {usd: {k: 'usd', ok: true, var: 0.9, uvar: '%', data: '2026-11-06', hora: '15:00', nivel: 5.49, unid: 'R$', fonte: 'robô'}, ibov: {k: 'ibov', ok: true, var: -2, uvar: '%', data: '2026-11-06', hora: '15:00', nivel: 128000, unid: 'pts', fonte: 'robô'}}, indicadores: {},
-        ativos: {VAMO3: {preco: 6.12, var: -5.8, data: '2026-11-06'}, KLBN4: {preco: 20, var: 0.5, data: '2026-11-06'}, VT: {preco: 120, var: 1.0, data: '2026-11-06'}, ITSA4: {preco: 10, var: -1, data: '2026-11-05'}}};
-      var m = MK.mesclar(robo, d); eq(m.fatores.usd.var, 1.4, 1e-9, 'câmbio mais recente'); eq(m.fatores.ibov.var, -2, 1e-9);
-      ok(MK.sessao(m) === '2026-11-06', 'sessão');
-      var ids = MK.detectar(m, MK.LIM_PADRAO, C).map(function (a) { return a.id; });
-      ok(ids.indexOf('usd:2026-11-06:atencao:+') >= 0 && ids.indexOf('ibov:2026-11-06:atencao:-') >= 0, ids.join(','));
-      ok(ids.indexOf('selic:2026-11-06:forte:-') >= 0, 'Selic'); ok(ids.indexOf('VAMO3:2026-11-06:atencao:-') >= 0, 'VAMO3');
-      ok(!ids.some(function (x) { return /^KLBN4|^VT:/.test(x); }), 'alerta abaixo do limite ou de ETF par');
-      var ch = MK.choquesDoDia(m, '2026-11-06'); eq(ch.usd, 1.4, 1e-9); eq(ch.selic, -0.5, 1e-9);
-      var v = {pos: [{t: 'VAMO3', p: 'P6', w: 0.10}, {t: 'ITSA4', p: 'P5', w: 0.20}, {t: 'VWRA', p: 'P12', w: 0.30}, {t: 'Franchini FIDC1', p: 'P3', w: 0.45}]};
-      var r = MK.carteiraHoje(v, m, '2026-11-06', C);
-      eq(r.total, 0.10 * -0.058 + 0.30 * (1.01 * 1.014 - 1), 1e-12, 'realizado'); eq(r.coberto, 0.40, 1e-12); eq(r.soma, 1.05, 1e-12);
-      ok(r.fora.some(function (x) { return x.t === 'ITSA4' && /outra data/.test(x.motivo); }), 'cotação de outra data entrou');
-      var id = MK.idioDoDia(m, '2026-11-06', C, DATA.sens, ch), rr = C.retAtivo('VAMO3', ch, DATA.sens, id);
-      eq(rr.total, -0.058, 2e-4, 'motor + residual não reproduz o preço real');
+    // Oregon Intelligence: funções puras da camada de conteúdo (busca, filtros, ordem, importação do registro de aprendizados)
+    var IN = typeof INTEL !== 'undefined' ? INTEL : null;
+    if (IN) t('Intelligence: busca e filtros da Biblioteca não escondem nada sem filtro; acentos e maiúsculas não importam', function () {
+      var it = function (id, titulo, extra) { return Object.assign({id: id, titulo: titulo, link: 'https://x.test/' + id, publicado_em: '2026-11-0' + (1 + (id % 7)) + 'T10:00', temas: [], regioes: [], ativos: [], fatores: [], tipo: 'noticia', categoria: 'veiculo', organizacao: 'Jornal', prioridade: {pontos: 10 + id, nivel: 'baixa'}}, extra || {}); };
+      var L = [it(1, 'Copom mantém a Selic', {temas: ['juros'], regioes: ['brasil'], tipo: 'documento_oficial', categoria: 'instituicao', organizacao: 'BC', prioridade: {pontos: 50, nivel: 'alta'}}),
+        it(2, 'Petrobras anuncia dividendos', {ativos: ['PETR4'], temas: ['bolsa']}), it(3, 'Oaktree memo: crédito privado', {temas: ['credito'], tipo: 'carta', categoria: 'gestora_internacional', organizacao: 'Oaktree', regioes: ['eua'], publicado_em: '2026-10-02T10:00'}),
+        it(4, 'Item agrupado', {agrupado_em: 'x'}), it(5, 'Inflação de serviços', {temas: ['inflacao']})];
+      var todos = IN.juntar([L, L.slice(0, 2)]); ok(todos.length === 4, 'juntar repetiu ou manteve agrupado: ' + todos.length);
+      ok(IN.filtrar(todos, {}).length === 4, 'sem filtro escondeu item');
+      ok(IN.filtrar(todos, {q: 'SELIC'}).length === 1 && IN.filtrar(todos, {q: 'inflacao'}).length === 1, 'busca sem acento/maiúscula');
+      ok(IN.filtrar(todos, {tema: 'juros'})[0].id === 1 && IN.filtrar(todos, {ativo: 'PETR4'})[0].id === 2 && IN.filtrar(todos, {org: 'Oaktree'}).length === 1, 'filtros por tema, ativo e gestora');
+      ok(IN.filtrar(todos, {de: '2026-11-01'}).length === 3 && IN.filtrar(todos, {tipo: 'carta'}).length === 1 && IN.filtrar(todos, {regiao: 'eua'}).length === 1 && IN.filtrar(todos, {nivel: 'alta'}).length === 1, 'período, tipo, região e prioridade');
+      ok(IN.ordenar(todos)[0].id === 1, 'ordem por prioridade');
+      var c = IN.contagens(todos, 'temas'); ok(c.juros === 1 && c.credito === 1, 'contagens por tema');
+      ok(IN.temaNome('juros') === 'Juros e política monetária' && IN.tipoNome('carta') === 'Carta de gestor', 'taxonomia injetada do robô');
     });
-    if (MK) t('Robô v2: só cotação atualizada entra no cálculo do dia; suspeita e desatualizada ficam de fora, com o motivo', function () {
-      var snap = {fatores: {usd: {k: 'usd', ok: true, status: 'atualizado', var: 1.0, uvar: '%', data: '2026-11-06', nivel: 5.5, unid: 'R$'}, ibov: {k: 'ibov', ok: true, status: 'atualizado', var: -1, uvar: '%', data: '2026-11-06', nivel: 129000, unid: 'pts'}}, indicadores: {},
-        ativos: {VAMO3: {preco: 9, var: 31, data: '2026-11-06', status: 'suspeito'}, ITSA4: {preco: 10, var: -1, data: '2026-11-06', status: 'desatualizado', reaproveitado: true}, PRIO3: {preco: 40, var: -6, data: '2026-11-06', status: 'atualizado'}, KLBN4: {status: 'indisponivel', motivo: 'Yahoo: limite de requisições'}}};
-      ok(MK.estado(snap.ativos.KLBN4) === 'indisponivel' && MK.estado({preco: 1}) === 'atualizado' && MK.estado(null) === 'indisponivel', 'estado');
-      var v = {pos: [{t: 'VAMO3', p: 'P6', w: 0.1}, {t: 'ITSA4', p: 'P5', w: 0.2}, {t: 'PRIO3', p: 'P6', w: 0.1}, {t: 'KLBN4', p: 'P5', w: 0.1}]};
-      var r = MK.carteiraHoje(v, snap, '2026-11-06', C);
-      eq(r.total, 0.1 * -0.06, 1e-12, 'só PRIO3 entra'); eq(r.coberto, 0.1, 1e-12);
-      ok(r.fora.some(function (x) { return x.t === 'VAMO3' && /anormal/.test(x.motivo); }), 'suspeita entrou no cálculo');
-      ok(r.fora.some(function (x) { return x.t === 'ITSA4' && /desatualizado/.test(x.motivo); }), 'desatualizada entrou');
-      ok(r.fora.some(function (x) { return x.t === 'KLBN4' && /limite de requisições/.test(x.motivo); }), 'indisponível sem motivo');
-      var al = MK.detectar(snap, MK.LIM_PADRAO, C), va = al.filter(function (a) { return a.t === 'VAMO3'; })[0];
-      ok(va && va.suspeito && va.nivel === 'conferir' && /conferir/.test(va.texto), 'suspeita sem aviso de conferência');
-      ok(!al.some(function (a) { return a.t === 'ITSA4' || a.t === 'KLBN4'; }), 'alerta em cotação velha ou ausente');
-      var ch = MK.choquesDoDia({fatores: {usd: {ok: true, status: 'desatualizado', var: 2, data: '2026-11-06'}}}, '2026-11-06'); ok(!('usd' in ch), 'fator desatualizado virou choque');
-      var tr = MK.tendencia([['2026-01-02', 100], ['2026-10-01', 110], ['2026-11-06', 121]], 30); eq(tr.r, 0.1, 1e-12, 'tendência 1 mês'); ok(MK.tendencia([['2026-11-01', 1], ['2026-11-06', 2]], 365) === null, 'tendência sem base inventada');
-    });
-    if (MK) t('Revisão: fonte direta não troca dado em conferência, sem data não entra, sessão segue o Ibovespa', function () {
-      var robo = {fatores: {usd: {k: 'usd', ok: true, status: 'suspeito', var: 9, uvar: '%', data: '2026-11-06', hora: '15:00', nivel: 6, unid: 'R$'}, ibov: {k: 'ibov', ok: true, status: 'atualizado', var: 1, uvar: '%', data: '2026-11-06', hora: '15:00', nivel: 1, unid: 'pts'}}, indicadores: {}, ativos: {}};
-      var dir = MK.normDireto({cambio: {USDBRL: {bid: '5.6', varBid: '0.01', pctChange: '0.2', create_date: '2026-11-07 09:30:00'}}}, '2026-11-07', '2026-11-07T12:30:00Z');
-      var m = MK.mesclar(robo, dir); ok(m.fatores.usd.status === 'suspeito' && m.fatores.usd.var === 9, 'direto trocou dado em conferência');
-      ok(!('usd' in MK.choquesDoDia(m, '2026-11-06')), 'dado em conferência virou choque');
-      var sem = MK.normDireto({cambio: {USDBRL: {bid: '5.6', varBid: '0.01', pctChange: '0.2'}}}, '2026-11-07', '2026-11-07T12:30:00Z'); ok(!sem.fatores.usd, 'câmbio sem data entrou com data de hoje');
-      ok(MK.sessao({fatores: {ibov: {ok: true, status: 'atualizado', data: '2026-11-06'}, usd: {ok: true, status: 'atualizado', data: '2026-11-07'}}, ativos: {}}) === '2026-11-06', 'sessão saltou para a data do dólar');
-    });
-    if (MK) t('Briefing: filtros das notícias, seleção do dia sem ruído, o que mudou, conexão e exercício (dados sintéticos)', function () {
-      var ATV = DATA.ativos;
-      var c = function (n) { return MK.catNoticia(n, ATV); };
-      ok(c({tema: 'PRIO3', titulo: 'PRIO conclui aquisição'}).tags.empresas && c({tema: 'PRIO3', titulo: 'x'}).tags.commodities && c({tema: 'PRIO3', titulo: 'x'}).tags.brasil, 'PRIO3: empresa, commodity e Brasil');
-      ok(c({tema: 'Fiscal', titulo: 'Governo revisa meta fiscal'}).principal === 'juros' && c({tema: 'Fiscal', titulo: 'x'}).tags.brasil, 'fiscal → Juros e Fiscal');
-      ok(c({tema: 'EUA', titulo: 'Fed mantém juros'}).tags.mundo && !c({tema: 'EUA', titulo: 'Fed mantém juros'}).tags.brasil, 'Fed → Mundo');
-      ok(c({tema: 'Mercado', titulo: 'Petróleo recua e minério sobe na China'}).tags.commodities, 'commodity pelo título');
-      var ix = c({tema: 'Juro real (IMA-B e NTN-B)', titulo: 'NTN-B sobem', etfs: ['IMAB11']}); ok(ix.tags.juros && ix.tags.brasil && !ix.tags.empresas, 'ETF de NTN-B virou empresa: ' + JSON.stringify(ix));
-      ok(c({tema: 'Ações emergentes', titulo: 'x', etfs: ['EIMI']}).tags.mundo, 'ETF internacional → Mundo');
-      ok(!c({tema: 'Juros', titulo: 'Tesouro Direto: taxas sobem'}).tags.commodities, '"ouro" dentro de "Tesouro" virou commodity');
-      ok(!c({tema: 'Mercado', titulo: 'Banco Safra amplia crédito'}).tags.commodities && c({tema: 'Mercado', titulo: 'Banco Safra amplia crédito'}).tags.brasil, 'Banco Safra virou commodity');
-      var pe = c({tema: 'PETR4', titulo: 'Petrobras emite debêntures', etfs: ['DEBB11']}); ok(pe.tags.empresas && pe.principal === 'empresas', 'notícia de empresa virou notícia de índice');
-      var hoje = '2026-11-07', n = function (tit, tema, rel, quando, pontos, of) { return {titulo: tit, tema: tema, quando: quando, classe: {relevancia: rel, pontos: pontos, oficial: !!of}}; };
-      var itens = [n('a', 'PRIO3', 'alta', '2026-11-07T10:00', 5), n('b', 'PRIO3', 'alta', '2026-11-07T09:00', 5), n('c', 'PRIO3', 'alta', '2026-11-07T08:00', 5), n('ruído', 'VAMO3', 'baixa', '2026-11-07T10:00', 0),
-        n('velha', 'PETR4', 'alta', '2026-10-20T10:00', 9), n('fiscal', 'Fiscal', 'media', '2026-11-06T18:00', 2), n('cvm', 'BBSE3', 'alta', '2026-11-06T00:00', 6, true)];
-      var ds = MK.destaques(itens, {hoje: hoje, held: {PRIO3: 1, BBSE3: 1}});
-      ok(!ds.some(function (x) { return x.titulo === 'ruído'; }), 'baixa relevância entrou'); ok(!ds.some(function (x) { return x.titulo === 'velha'; }), 'notícia velha entrou');
-      ok(ds.filter(function (x) { return x.tema === 'PRIO3'; }).length === 2, 'mais de duas da mesma empresa'); ok(ds.length === 4, 'deveria ter 4: ' + ds.length);
-      ok(MK.destaques([n('só ruído', 'X', 'baixa', '2026-11-07T10:00', 0)], {hoje: hoje}).length === 0, 'completou com ruído');
-      ok(!itens.some(function (x) { return '_score' in x; }), 'seleção alterou as notícias guardadas');
-      var snap = {fatores: {real: {ok: true, status: 'atualizado', var: 0.21, uvar: 'pp', data: '2026-11-06', nivel: 7.46}, pre: {ok: true, status: 'atualizado', var: 0.05, uvar: 'pp', data: '2026-11-06', nivel: 13.4},
-        usd: {ok: true, status: 'desatualizado', var: 3, uvar: '%', data: '2026-11-05', nivel: 5.4}, ust10: {ok: true, status: 'atualizado', var: 0.12, uvar: 'pp', data: '2026-11-06', nivel: 4.18}, ibov: {ok: true, status: 'atualizado', var: -1.1, uvar: '%', data: '2026-11-06', nivel: 148000},
-        selic: {ok: true, status: 'atualizado', var: 0, uvar: 'pp', data: '2026-11-06', nivel: 13.75}}};
-      var ms = MK.mudancas(snap, MK.LIM_PADRAO); ok(ms[0].k === 'real', 'maior movimento relativo ao limite: ' + ms[0].k); ok(!ms.some(function (m) { return m.k === 'usd'; }), 'dado desatualizado entrou no que mudou');
-      var cx = MK.conexao(snap, MK.LIM_PADRAO); ok(cx && cx.k === 'ust10' && cx.br.some(function (b) { return b.k === 'real'; }) && !cx.br.some(function (b) { return b.k === 'usd'; }), 'conexão: ' + JSON.stringify(cx && cx.br));
-      var fx = MK.fatoExercicio(snap, MK.LIM_PADRAO, '2026-11-06'); ok(fx && fx.k === 'real', 'exercício deveria usar o IPCA+: ' + (fx && fx.k));
-      ok(MK.fatoExercicio({fatores: {}}, MK.LIM_PADRAO, '2026-11-06') === null, 'exercício sem fato real');
-      var ag = MK.agendaProx({itens: [{data: '2026-11-05', evento: 'passado'}, {data: '2026-11-10', hora: '09:00', evento: 'IPCA'}, {data: '2026-11-09', evento: 'Focus'}, {data: '2026-12-30', evento: 'longe'}]}, hoje, 10);
-      ok(ag.length === 2 && ag[0].evento === 'Focus', 'agenda: ' + JSON.stringify(ag));
+    if (IN) t('Intelligence: exportar e importar aprendizados preserva o registro e descarta lixo', function () {
+      var reg = [{id: 'ap-1', quando: '2026-11-06T10:00:00Z', item_id: 'x1', titulo: 'Carta 41', fonte: 'Gestora', link: 'https://g.test/c41', temas: ['juros'], tipo: 'tese', nota: 'Premissa: juro real alto por muito tempo.'}];
+      var txt = IN.exportarAprendizados(reg), back = IN.lerImportacao(txt);
+      ok(back.length === 1 && back[0].id === 'ap-1' && back[0].tipo === 'tese' && back[0].nota === reg[0].nota && back[0].link === reg[0].link, 'ida e volta mudou o registro');
+      var sujo = IN.lerImportacao(JSON.stringify({itens: [{id: 'a', nota: 'ok', tipo: 'qualquer', link: 'javascript:alert(1)'}, {sem_id: true}, 'texto', {id: 'b', titulo: 'só título'}]}));
+      ok(sujo.length === 2 && sujo[0].tipo === 'aprendizado' && sujo[0].link === null, 'importação aceitou tipo ou link inválido: ' + JSON.stringify(sujo));
+      var erro = false; try { IN.lerImportacao('{"nada": 1}'); } catch (e) { erro = true; } ok(erro, 'arquivo sem lista deveria falhar');
     });
     t('ETFs: as 27 fichas têm fonte oficial e o cadastro divergente aparece, sem alterar o cadastro', function () {
       var E = DATA.etfs; if (!E) { ok(true); return; }

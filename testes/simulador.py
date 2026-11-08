@@ -92,6 +92,16 @@ class Mundo:
         self.tickers_b3 = kw.get('tickers_b3', [])
         self.agenda_ibge = kw.get('agenda_ibge')  # itens do calendário do IBGE (None = lista padrão de teste)
         self.dre = kw.get('dre', {})  # ('ITR', 2026) -> linhas da DRE consolidada no formato dos dados abertos da CVM
+        # --- Oregon Intelligence: fontes de conteúdo simuladas (hosts *.teste)
+        self.feeds = kw.get('feeds', {})      # url -> lista de dicts {titulo, link, dias, resumo, autor, pdf} (RSS 2.0)
+        self.atom = kw.get('atom', {})        # url -> lista de dicts (Atom)
+        self.rdf = kw.get('rdf', {})          # url -> lista de dicts (RSS 1.0 / RDF, como o BIS)
+        self.paginas = kw.get('paginas', {})  # url -> HTML
+        self.apis = kw.get('apis', {})        # url -> objeto JSON
+        self.heads = kw.get('heads', {})      # url -> cabeçalhos devolvidos ao HEAD
+        self.robots = kw.get('robots', {})    # host -> texto do robots.txt
+        self.ia_respostas = kw.get('ia_respostas')  # lista de respostas JSON da IA para a análise em sete pontos
+        self.ia_pedidos = []
 
     # --- respostas por fonte
     def __call__(self, req, timeout=None):
@@ -99,6 +109,17 @@ class Mundo:
         hdr = {k.lower(): v for k, v in (req.header_items() if hasattr(req, 'header_items') else [])}
         dados = getattr(req, 'data', None)
         self.chamadas.append(url)
+        if url.endswith('/robots.txt'):
+            host = url.split('/')[2]
+            if host in self.robots:
+                return Resp(self.robots[host])
+            raise erro(url, 404)
+        if hasattr(req, 'get_method') and req.get_method() == 'HEAD':
+            if url in self.heads:
+                return Resp(b'', self.heads[url])
+            raise erro(url, 404)
+        if '.teste' in url.split('/')[2] or 'googleapis.com/youtube' in url or 'youtube.com/feeds' in url:
+            return self._conteudo(url, hdr, dados)
         fonte = self._fonte(url)
         if fonte in self.fora:
             raise erro(url, 503)
@@ -291,6 +312,47 @@ class Mundo:
             z.writestr('ipe_cia_aberta_%d.csv' % self.hoje.year, '\n'.join(linhas).encode('latin-1'))
         return Resp(b.getvalue())
 
+    # --- Oregon Intelligence
+    def _conteudo(self, url, hdr, dados):
+        host = url.split('/')[2]
+        if host in self.fora or url in self.fora:
+            raise erro(url, 503)
+        for k in (url, host):
+            if k in self.http:
+                raise erro(url, self.http[k], retry=1)
+        dia = dt.datetime(self.hoje.year, self.hoje.month, self.hoje.day, 12, 0)
+        if url in self.feeds:
+            xml = ''.join('<item><title>%s</title><link>%s</link><pubDate>%s</pubDate><description>%s</description>%s%s%s</item>'
+                          % (i['titulo'].replace('&', '&amp;'), i.get('link', 'https://%s/%d' % (host, n)), (dia - dt.timedelta(days=i.get('dias', 0))).strftime('%a, %d %b %Y %H:%M:%S +0000'),
+                             (i.get('resumo') or '').replace('&', '&amp;'), '<author>%s</author>' % i['autor'] if i.get('autor') else '',
+                             '<enclosure url="%s" type="application/pdf"/>' % i['pdf'] if i.get('pdf') else '', '<source url="https://%s">%s</source>' % (host, i['veiculo']) if i.get('veiculo') else '')
+                          for n, i in enumerate(self.feeds[url]))
+            return Resp('<?xml version="1.0"?><rss version="2.0"><channel><title>feed de teste</title>%s</channel></rss>' % xml)
+        if url in self.atom:
+            xml = ''.join('<entry><title>%s</title><link rel="alternate" href="%s"/><published>%s</published><summary>%s</summary><author><name>%s</name></author></entry>'
+                          % (i['titulo'], i.get('link', 'https://%s/%d' % (host, n)), (dia - dt.timedelta(days=i.get('dias', 0))).strftime('%Y-%m-%dT%H:%M:%SZ'), i.get('resumo') or '', i.get('autor') or '')
+                          for n, i in enumerate(self.atom[url]))
+            return Resp('<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><title>atom de teste</title>%s</feed>' % xml)
+        if url in self.rdf:
+            xml = ''.join('<item rdf:about="%s"><title>%s</title><link>%s</link><dc:date>%s</dc:date><description>%s</description></item>'
+                          % (i.get('link', 'https://%s/%d' % (host, n)), i['titulo'], i.get('link', 'https://%s/%d' % (host, n)), (dia - dt.timedelta(days=i.get('dias', 0))).strftime('%Y-%m-%dT%H:%M:%SZ'), i.get('resumo') or '')
+                          for n, i in enumerate(self.rdf[url]))
+            return Resp('<?xml version="1.0"?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel rdf:about="x"><title>rdf</title></channel>%s</rdf:RDF>' % xml)
+        if url in self.paginas:
+            return Resp(self.paginas[url])
+        if url in self.apis:
+            return Resp(json.dumps(self.apis[url]))
+        if 'googleapis.com/youtube' in url:
+            import urllib.parse
+            q = dict(urllib.parse.parse_qsl(url.split('?', 1)[1]))
+            if q.get('key') != 'chave-yt-teste':
+                raise erro(url, 403)
+            itens = self.apis.get('youtube:' + q.get('playlistId', ''), [])
+            return Resp(json.dumps({'items': [{'snippet': {'title': i['titulo'], 'description': i.get('resumo', ''), 'channelTitle': 'Canal de teste',
+                                                           'publishedAt': (dia - dt.timedelta(days=i.get('dias', 0))).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                                                           'resourceId': {'videoId': i.get('video', 'vid%05d' % n)}}} for n, i in enumerate(itens)]}))
+        raise erro(url, 404)
+
     def _telegram(self, url, hdr, dados):
         if url.endswith('/getMe'):
             return Resp(json.dumps({'ok': True, 'result': {'username': 'robo_teste_bot'}}))
@@ -303,5 +365,9 @@ class Mundo:
 
     def _anthropic(self, url, hdr, dados):
         corpo = json.loads(dados.decode())
+        self.ia_pedidos.append(corpo)
+        if self.ia_respostas is not None:  # análise em sete pontos do Oregon Intelligence
+            r = self.ia_respostas[min(len(self.ia_pedidos) - 1, len(self.ia_respostas) - 1)] if self.ia_respostas else {}
+            return Resp(json.dumps({'stop_reason': 'end_turn', 'usage': {'input_tokens': 700, 'output_tokens': 300}, 'content': [{'type': 'text', 'text': json.dumps(r)}]}))
         itens = [{'i': 0, 'relevancia': 'alta', 'tickers': ['KLBN4'], 'fatores': ['usd', 'inventado'], 'direcao': 'positivo', 'resumo': 'Resumo de teste.'}]
         return Resp(json.dumps({'stop_reason': 'end_turn', 'content': [{'type': 'text', 'text': json.dumps({'itens': itens})}]}))

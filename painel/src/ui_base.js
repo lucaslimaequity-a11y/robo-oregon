@@ -256,17 +256,18 @@ var APP = (function () {
   A.busca = function () {
     if (document.querySelector('.cmdk-bg')) return;
     var itens = [];
-    A.AREAS.forEach(function (a) { itens.push({t: a[1], d: 'área', go: function () { A.go(a[0]); }}); (A.SUBS[a[0]] || []).forEach(function (x) { itens.push({t: a[1] + ' › ' + x[1], d: 'seção', go: function () { A.go(a[0], x[1] && x[0]); }}); }); });
-    A.SUBS_AV.forEach(function (x) { itens.push({t: 'Carteiras › avançado › ' + x[1], d: 'seção', go: function () { A.go('cart', x[0]); }}); });
-    A.SUBS.sala.forEach(function (x) { itens.push({t: 'Comitê e Sala › ' + x[1], d: 'seção', go: function () { A.go('sala', x[0]); }}); });
+    A.AREAS.forEach(function (a) { itens.push({t: a[1], d: 'seção', go: function () { A.go(a[0]); }}); (A.SUBS[a[0]] || []).forEach(function (x) { itens.push({t: a[1] + ' › ' + x[1], d: 'seção', go: function () { A.go(a[0], x[0]); }}); }); });
+    (A.SUBS.cart || []).forEach(function (x) { itens.push({t: 'Oregon › Carteiras › ' + x[1], d: 'seção', go: function () { A.go('cart', x[0]); }}); });
     var refIds = A.REF.map(function (r) { return r[0]; });
     C.CARTS.forEach(function (m) { var ref = refIds.indexOf(m.id) >= 0; itens.push({t: m.rotulo, d: 'carteira · ' + m.familia + (ref ? ' · referência' : ''), go: function () { S.cart = m.id; S.ver = 'aprovada'; A.go('cart', ref ? 'ref' : 'carteira'); }}); });
     Object.keys(C.ATV).forEach(function (t) { var a = C.ATV[t]; if (a.status === 'placeholder') return; var etf = A.ehETF && A.ehETF(t); itens.push({t: t + ' · ' + (a.nome || ''), d: (a.tipo || '') + (etf ? ' · ficha do ETF' : A.temTese && A.temTese(t) ? ' · tese' : ''), go: function () { A.abrirFicha ? A.abrirFicha(t) : A.abrirTese(t); }}); });
-    var inp = h('input', {type: 'search', placeholder: 'Empresa, ETF, carteira ou seção (ex.: PRIO3, IMAB11, Arrojado, cenários)', 'aria-label': 'Buscar'}), ul = h('ul', {role: 'listbox'}), sel = 0, vis = [];
+    if (A.itens) A.itens().slice(0, 400).forEach(function (x) { itens.push({t: x.titulo, d: 'conteúdo · ' + (x.organizacao || x.fonte || '') + (x.publicado_em ? ' · ' + A.dataBR(x.publicado_em) : ''), go: function () { A.abrirItem(x); }}); });
+    if (typeof INTEL !== 'undefined') Object.keys(INTEL.TX.temas || {}).forEach(function (k) { itens.push({t: INTEL.temaNome(k), d: 'assunto', go: function () { A.go('bib', 'busca'); A.bibFiltro({tema: k}); }}); });
+    var inp = h('input', {type: 'search', placeholder: 'Conteúdo, assunto, ativo, carteira ou seção (ex.: juro real, Oaktree, PRIO3, Arrojado)', 'aria-label': 'Buscar'}), ul = h('ul', {role: 'listbox'}), sel = 0, vis = [];
     var bg = h('div', {class: 'cmdk-bg', onclick: function (e) { if (e.target === bg) fechar(); }}, h('div', {class: 'cmdk', role: 'dialog', 'aria-label': 'Busca rápida'}, inp, ul));
     function norm(x) { return String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
     function draw() {
-      var q = norm(inp.value.trim()); vis = (q ? itens.filter(function (it) { return norm(it.t + ' ' + it.d).indexOf(q) >= 0; }) : itens.filter(function (it) { return it.d === 'área' || it.d.indexOf('carteira') === 0; })).slice(0, 40);
+      var q = norm(inp.value.trim()); vis = (q ? itens.filter(function (it) { return norm(it.t + ' ' + it.d).indexOf(q) >= 0; }) : itens.filter(function (it) { return it.d === 'seção' || it.d.indexOf('carteira') === 0; })).slice(0, 40);
       sel = Math.min(sel, Math.max(0, vis.length - 1));
       ul.replaceChildren.apply(ul, vis.length ? vis.map(function (it, i) { return h('li', {role: 'option', 'aria-selected': i === sel ? 'true' : 'false', onclick: function () { fechar(); it.go(); }}, h('span', null, it.t), h('small', null, it.d)); }) : [h('li', null, h('span', {class: 'muted'}, 'Nada encontrado.'))]);
     }
@@ -291,15 +292,14 @@ var APP = (function () {
   var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { document.querySelectorAll('.chart').forEach(function (c) { if (c.__draw) c.__draw(); }); }, 150); });
 
   /* ---------- estado ---------- */
-  var SK = 'oregon-pm-v3:ui';
-  var SUB0 = {hoje: 'mesa', cart: 'ref', res: 'empresas', global: 'mundo', sala: 'reuniao', mesa: 'painel', cons: 'editor', risco: 'cenarios'};
+  var SK = 'oregon-intel-v3:ui';
+  var SUB0 = {hoje: 'briefing', bib: 'busca', oregon: 'ativos', cart: 'ref'};
   // Carteiras de referência do modo simples: versões aprovadas da família Brasil Crescimento (uma linha para trocar)
   A.REF = [['cresc-cons', 'Conservador'], ['cresc-arr', 'Arrojado']];
   var S = {area: 'hoje', sub: Object.assign({}, SUB0), cart: A.REF[0][0], ver: 'aprovada', choques: {}, idio: {}, janela: 36, metodo: 'pearson'};
   try {
     var saved = JSON.parse(localStorage.getItem(SK) || '{}'); Object.assign(S, saved); S.sub = Object.assign({}, SUB0, saved.sub || {});
-    if (['hoje', 'cart', 'res', 'global', 'sala'].indexOf(S.area) < 0) S.area = 'hoje';
-    if (['empresas', 'etfs', 'macro', 'eventos'].indexOf(S.sub.res) < 0) S.sub.res = 'empresas';
+    if (['hoje', 'bib', 'oregon'].indexOf(S.area) < 0) S.area = 'hoje';
   } catch (e) {}
   A.S = S;
   A.save = function () { try { localStorage.setItem(SK, JSON.stringify({area: S.area, sub: S.sub, cart: S.cart, ver: S.ver, janela: S.janela, metodo: S.metodo, choques: S.choques, idio: S.idio, cenEvento: S.cenEvento})); } catch (e) {} };
@@ -448,19 +448,12 @@ var APP = (function () {
 
   /* ---------- áreas ---------- */
   A.areas = {};
-  // Quatro áreas no menu, na ordem do dia de trabalho. A Sala de Gestão e o Comitê ficam dentro de Carteiras.
-  A.AREAS = [['hoje', 'Hoje', null], ['res', 'Research Brasil', 'var(--br)'], ['cart', 'Carteiras', 'var(--rf)'], ['global', 'Mundo e Estratégia', 'var(--intl)']];
-  A.SUBS = {
-    cart: [['ref', 'Referência'], ['risco', 'Risco e cenários'], ['sala', 'Comitê e Sala'], ['mapa', 'Todas as carteiras · avançado']],
-    res: [['empresas', 'Empresas'], ['etfs', 'ETFs'], ['macro', 'Macro → empresas'], ['eventos', 'Acontecimentos']],
-    sala: [['reuniao', 'Reunião'], ['comite', 'Comitê 05/11'], ['decisoes', 'Decisões e diário'], ['pauta', 'Pauta de estudo'], ['textos', 'Textos e consultores'], ['hist', 'Histórico e auditoria']]
-  };
-  // Modo avançado de Carteiras: as 15 carteiras e as ferramentas de construção
-  A.SUBS_AV = [['mapa', 'Mapa das 15'], ['carteira', 'Carteira'], ['construcao', 'Construção'], ['perfis', 'Decidido × base'], ['perf', 'Performance']];
-  A.ehAvancado = function (s) { return A.SUBS_AV.some(function (x) { return x[0] === s; }); };
-  // A faixa de carteira e versão aparece onde qualquer das 15 pode ser escolhida (risco, avançado e Sala); a referência tem o próprio seletor
-  A.mostraCtx = function () { return S.area === 'sala' || (S.area === 'cart' && S.sub.cart !== 'ref'); };
-  A.navAtiva = function () { return S.area === 'sala' ? 'cart' : S.area; };
+  // Três seções: Hoje (briefing), Biblioteca (pesquisa, semanal, aprendizados, fontes) e Oregon (ativos, carteiras, setores).
+  A.AREAS = [['hoje', 'Hoje', null], ['bib', 'Biblioteca', 'var(--br)'], ['oregon', 'Oregon', 'var(--rf)']];
+  A.SUBS = {};  // preenchido por cada módulo (ui_bib.js, ui_oregon.js, ui_mapa.js)
+  // A faixa de carteira e versão aparece onde qualquer das 15 pode ser escolhida (Oregon › Carteiras, fora da referência)
+  A.mostraCtx = function () { return S.area === 'oregon' && S.sub.oregon === 'carteiras' && S.sub.cart !== 'ref'; };
+  A.navAtiva = function () { return S.area; };
   A.render = function () {
     var main = document.getElementById('main'); if (!main) return;
     if (!A.areas[S.area]) S.area = 'hoje';
@@ -485,18 +478,14 @@ var APP = (function () {
       return h('button', {'aria-pressed': cur === it[0] ? 'true' : 'false', onclick: function () { A.go(area, it[0]); }}, it[1]);
     }));
   };
-  // Endereços das versões anteriores continuam funcionando: são traduzidos para a nova navegação
-  var SALA_SUBS = {sala: 'reuniao', comite: 'comite', decisoes: 'decisoes', pauta: 'pauta', textos: 'textos', hist: 'hist'};
+  // Endereços das versões anteriores continuam funcionando: são traduzidos para as três seções
   A.traduz = function (area, sub) {
-    if (area === 'mesa') return sub === 'mercado' ? ['hoje', null] : ['cart', 'carteira'];
-    if (area === 'cons') { if (sub) S.sub.cons = sub; return ['cart', 'construcao']; }
-    if (area === 'risco') { if (sub) S.sub.risco = sub; return ['cart', 'risco']; }
-    if (area === 'res' && sub && SALA_SUBS[sub]) return ['sala', SALA_SUBS[sub]];
-    if (area === 'cart' && sub === 'sala') return ['sala', null];
-    if (area === 'cart' && sub === 'todas') return ['cart', 'mapa'];
-    if (area === 'res' && sub === 'teses') return ['res', 'empresas'];
-    if (area === 'res' && sub === 'noticias') return ['res', 'eventos'];
-    if (area === 'res' && sub === 'perf') return ['cart', 'perf'];
+    if (area === 'cart') { if (sub && (A.SUBS.cart || []).some(function (x) { return x[0] === sub; })) S.sub.cart = sub; else if (sub === 'todas') S.sub.cart = 'mapa'; else if (!sub || sub === 'risco' || sub === 'construcao' || sub === 'perf' || sub === 'sala') S.sub.cart = S.sub.cart || 'ref'; return ['oregon', 'carteiras']; }
+    if (area === 'mesa') return sub === 'mercado' ? ['hoje', null] : ['oregon', 'carteiras'];
+    if (area === 'cons' || area === 'risco' || area === 'sala') return ['oregon', 'carteiras'];
+    if (area === 'res') { if (sub === 'eventos' || sub === 'noticias') return ['bib', 'busca']; if (sub === 'macro') return ['oregon', 'setores']; return ['oregon', 'ativos']; }
+    if (area === 'global') return ['bib', 'busca'];
+    if (area === 'hoje') return ['hoje', null];
     return [area, sub];
   };
   A.go = function (area, sub) { var t = A.traduz(area, sub); area = t[0]; sub = t[1]; S.area = area; if (sub) S.sub[area] = sub; A.render(); window.scrollTo(0, 0); };

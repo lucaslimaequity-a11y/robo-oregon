@@ -1,80 +1,60 @@
-# Oregon Investment Desk
+# Oregon Intelligence
 
-Mesa de análise, risco e estratégia da Carteira Oregon. Um robô coleta os dados de mercado; um site mostra o painel.
+Central de research e formação continuada para quem gere carteiras. Reúne, organiza, interpreta e liga à carteira
+Oregon o conteúdo público de gestoras, instituições e canais oficiais. **Não é** terminal de cotações, plataforma de
+trading nem simulador: cotações, câmbio ao vivo, mini gráficos de preço, cenários e laboratório de propostas foram
+arquivados (`painel/arquivo/`) e saíram da navegação.
 
-- **Site:** https://lucaslimaequity-a11y.github.io/robo-oregon/ (público, fora dos buscadores).
-- **Robô:** GitHub Actions. Roda a cada 30 minutos em dias úteis, das 8h às 20h30, com rodada de fechamento depois das 21h e recuperação no sábado de manhã. Guarda os dados no ramo `dados` e publica o site. Os dados são periódicos, não cotação em tempo real.
-- **Avisos:** Telegram (alertas e resumo do dia).
+Site público (GitHub Pages): `https://lucaslimaequity-a11y.github.io/robo-oregon/`
 
-## O que tem no painel
+## As três seções
 
-O menu tem quatro áreas, na ordem do dia de trabalho:
+| Seção | O que tem | Arquivos que lê |
+|---|---|---|
+| **Hoje** | 5 a 8 conteúdos prioritários (no máximo 2 por fonte e 3 por tema), cada um com análise em sete pontos; macro oficial que explica o dia; agenda; notícias e documentos macro; publicações de gestoras; vídeos; uma leitura recomendada (rotativa, 30 dias); estudo do dia (perguntas para responder por escrito). | `hoje.json`, `recentes.json`, `macro.json` |
+| **Biblioteca** | Pesquisa por assunto, autor/gestora, país/região, período, tipo, origem, ativo e prioridade, mês a mês (nada é apagado); resumos semanais; meus aprendizados (registro com exportar/importar); fontes e coleta (recebidos, rejeitados, duplicados, novos, publicados, por fonte). | `biblioteca/AAAA-MM.json`, `indice.json`, `semanal.json`, `coleta.json`, `fontes.json` |
+| **Oregon** | Ativos das 15 carteiras aprovadas com o conteúdo que os cita, tese, documentos oficiais, resultados da CVM e opinião da casa (sem cotação); as 15 carteiras com pesos aprovados e validação (sem normalizar); setores e fatores de risco com nível oficial e conteúdo ligado. | `painel/src/data.json`, `etfs.json`, `resultados.json` |
 
-| Área | Para quê |
-|---|---|
-| **Hoje** | Briefing de cinco minutos: indicadores com fonte e hora, 5 a 10 notícias que importam (filtros Brasil, Empresas, Juros e Fiscal, Commodities, Mundo), o que mudou desde o último pregão, as carteiras de referência na sessão, a agenda (IBGE, Copom, Fed, Focus), as empresas das carteiras, a conexão do dia (exterior → Brasil) e um exercício de gestão de carteiras com fato real. |
-| **Research Brasil** | O centro da análise. Ficha de cada empresa: fundamentos (tese, modelo de negócio, drivers, riscos, perguntas) separados da conjuntura (preço, resultados da CVM, fatos e notícias, setor e pares), exposição a juros, câmbio, regulação e commodities, e a opinião da casa. Ficha de cada um dos 27 ETFs com os documentos oficiais. Macro → empresas e o arquivo de acontecimentos. |
-| **Carteiras** | Modo simples: as duas carteiras de referência (Conservador e Arrojado, versão aprovada), com camadas, pilar a pilar, risco, cenários e a comparação entre as duas. Risco e cenários completo. Comitê e Sala (reunião, guia do Comitê, decisões, pauta, textos, histórico). Modo avançado: as 15 carteiras, construção, decidido × base, performance. |
-| **Mundo e Estratégia** | Fed, EUA, China, commodities e ETFs globais, e o caminho de cada um até as carteiras. |
-
-Busca rápida: tecla **/** (empresa, ETF, carteira ou seção). Tocar numa notícia leva ao ativo, ao setor ou ao fator; tocar num fator mostra o mecanismo e o efeito nas carteiras de referência.
-
-## Onde fica cada coisa
-
-| Pasta | O que é |
-|---|---|
-| `robo/config.json` | **O que muda com frequência**: ativos, horários, alertas, limites, fontes, notícias e critérios de qualidade. |
-| `robo/` | O robô (Python, sem bibliotecas extras). |
-| `painel/src/` | O painel (HTML, CSS e JavaScript em módulos). O site é montado a partir daqui a cada rodada. |
-| `painel/src/data.json` | Carteiras, pilares, ativos, teses e textos do Comitê. |
-| `painel/src/etfs.json` | Fichas dos ETFs, montadas com os documentos oficiais das gestoras (com links e data de consulta). |
-| `site/index.html` | O painel já montado (gerado por `painel/build.py`; não precisa editar). |
-| `testes/` | Testes do robô (internet simulada) e do painel. |
-| `docs/` | Publicação e rollback, fontes e licenças, auditoria do robô, arquitetura, consistência das carteiras. |
-| `.github/workflows/` | Quando o robô roda e como o site é publicado. |
-
-## Mudanças comuns, só em `robo/config.json`
-
-Edite no GitHub: abra o arquivo, clique no lápis e depois em **Commit changes**. O robô confere a configuração antes de usar.
-
-- **Novo ativo.** Copie um bloco de `ativos` parecido e troque:
-  - `id`, `nome` e `classe` (acao, fii, etf_rf, eua ou cripto);
-  - `mercado` (B3, EUA ou cripto);
-  - `yahoo` (ex.: `XXXX3.SA`);
-  - `distribui` (true, false ou null);
-  - `inicio` (data de início de negociação, se for recente);
-  - `noticias.termos` e `noticias.excluir`, para evitar homônimos: um termo começado por `=` exige maiúsculas exatas, como em `=PRIO`.
-- **Tirar um ativo sem apagar:** `"ativo": false`.
-- **Horários:** `agenda` (dias, início, fim, intervalo de 30, 60 ou 120 minutos, fechamento, resumo diário).
-- **Alertas ligados ou desligados:** `alertas` (fatores, ativos, indicadores, notícias, resumo diário).
-- **Limites de alerta:** `limites` (juros em p.p.; preços em %).
-- **Qualidade:** `qualidade` (a partir de quantos % a rodada é completa ou crítica; anomalia por classe).
-- **Fontes de cada classe:** `fontes_padrao` (ordem de prioridade). Por ativo, use o campo `fontes`.
-- **Notícias:** `noticias.macro` (buscas), `noticias.etfs` (temas dos índices dos ETFs), `noticias.rss` (veículos com RSS), `noticias.veiculos_confiaveis`, `noticias.fontes_bloqueadas`.
-- **Agenda:** `agenda_macro` (produtos do IBGE e as reuniões do Copom e do Fed; quando sair o calendário do ano seguinte, acrescente as datas).
-- **Resultados da CVM:** `resultados` (liga, desliga e de quantos em quantos dias lê).
-- **Carteiras de referência do modo simples:** `A.REF` em `painel/src/ui_base.js` (uma linha).
-- **Feriados da B3:** `feriados_b3`. Inclua os de 2027 antes de janeiro.
-
-## Chaves
-
-Ficam só em **Settings → Secrets and variables → Actions**, nunca em arquivo ou no site.
-
-- **Obrigatórias:** `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`.
-- **Opcionais:** `BRAPI_TOKEN`, `ALPHAVANTAGE_KEY`, `FRED_API_KEY`, `AWESOMEAPI_KEY`, `TIINGO_TOKEN`, `ANTHROPIC_API_KEY`.
-
-Custos e regras de uso estão em `docs/FONTES.md`.
-
-## Testes
+## Como funciona
 
 ```
-python -m unittest discover -s testes     # robô: 46 testes, internet simulada
-node testes/painel.test.js                # painel: 28 testes (carteiras, cenários, modelos, mercado, briefing, ETFs)
-node painel/test/areas.js <endereço>      # passeio pelas telas no computador e no celular (Playwright)
+robo/fontes.json ──► robo/intel.py (GitHub Actions, 4× por dia, 7 dias por semana)
+                      ├─ macro oficial: BCB (SGS, Focus), Tesouro, Tesouro dos EUA, agenda IBGE/Copom/Fed → data/macro.json
+                      ├─ conteúdo: RSS/Atom/RDF, APIs públicas, páginas com PDF, sitemap, documento de URL fixa, YouTube (API oficial)
+                      │    → classificação (temas, regiões, ativos, setores, fatores), prioridade, análise em 7 pontos por regras
+                      │    → IA opcional (teto diário) → biblioteca mensal + recentes.json + coleta.json (contadores por fonte)
+                      ├─ briefing do dia → data/hoje.json · resumo da semana → data/semanal.json
+                      └─ ramo "dados" (histórico completo) e site (arquivos públicos) ──► painel (painel/src → site/index.html)
 ```
 
-Os testes rodam sozinhos antes de cada publicação: se algum falhar, o site fica como estava. Para rodar só os testes, use Actions → **Testes completos** → Run workflow.
+- **Fontes**: só conteúdo público e gratuito; `robots.txt` respeitado; nenhum paywall ou bloqueio contornado. O cadastro
+  e as limitações de cada fonte estão em `robo/fontes.json` e `docs/FONTES.md`.
+- **Análise**: cada frase leva um rótulo — **FATO** (o que a fonte publicou), **OPINIÃO DA FONTE** (tese do autor) ou
+  **INFERÊNCIA DO SISTEMA** (ligação por palavras-chave ou roteiro de estudo). Sem IA, os sete pontos vêm de regras sobre
+  título, resumo público e fonte, e a tela diz isso. Nunca há conclusão de impacto nem recomendação de compra ou venda.
+- **Sem IA continua útil**: a chave da Anthropic é opcional (`docs/IA.md`), desligada por padrão, com teto diário.
+- **Nada some em silêncio**: itens sem prioridade continuam na Biblioteca; fonte que falha não apaga o que publicou;
+  cada rodada registra por fonte o que chegou, foi rejeitado (e por quê), já estava na biblioteca, era novo e foi publicado.
+- **Segurança**: nenhuma chave no site ou no código; chaves só em GitHub Secrets; o workflow não tem permissão por padrão.
 
-## Publicar uma versão nova e voltar atrás
+## Pastas
 
-Ver `docs/ATUALIZACAO.md`.
+- `robo/` — `intel.py` (orquestrador), `conteudo.py` (coletores), `biblioteca.py` (persistência, deduplicação, contadores),
+  `analise.py` (taxonomia, prioridade, sete pontos, IA opcional), `semanal.py` (briefing e resumo semanal), `fontes.json`,
+  `config.json`; reaproveitados da v2: `fontes_macro.py`, `agenda.py`, `avisos.py`, `util.py`, `config.py`, `calendario.py`.
+  `coletar.py` e os módulos de cotação continuam no repositório, mas não são agendados.
+- `painel/src/` — `intel.js` (dados e vistas de conteúdo), `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js`, `ui_mapa.js` (carteiras),
+  `ui_mesa.js` (validação), `ui_teses.js`, `core.js`, `store.js`, `data.json`, `etfs.json`. `painel/arquivo/` guarda o que saiu.
+- `testes/` — robô (internet simulada) e painel (Node). `painel/test/areas.js` percorre as três seções no navegador.
+- `docs/` — `ATUALIZACAO.md` (instalar e voltar atrás), `FONTES.md`, `ARQUITETURA.md`, `DIAGNOSTICO.md` (as 72 manchetes),
+  `VALIDACAO.md`, `RESULTADOS_TESTES.md` (saída da última execução), `IA.md`, `workflow_robo.yml` (cópia visível do workflow).
+
+## Rodar localmente
+
+```
+python -m unittest discover -s testes -v      # robô, com internet simulada
+node testes/painel.test.js                   # painel
+python painel/build.py                       # monta site/index.html
+python painel/test/gera_dados_teste.py /tmp/site_teste && (cd /tmp/site_teste && python -m http.server 8777) &
+node painel/test/areas.js http://localhost:8777/index.html   # percorre as três seções (computador e celular)
+```

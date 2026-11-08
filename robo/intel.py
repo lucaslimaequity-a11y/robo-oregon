@@ -24,6 +24,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -35,15 +36,73 @@ import calendario  # noqa: E402
 import config  # noqa: E402
 import conteudo  # noqa: E402
 import fontes_macro  # noqa: E402
+import noticias  # noqa: E402  (desambiguação por empresa, reaproveitada da v2)
 import resultados  # noqa: E402
 import semanal  # noqa: E402
 from util import ErroFonte, Rede, agora, gravar, ler, log, sem_acento  # noqa: E402
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
+# minutos entre leituras de uma mesma fonte (0 = toda rodada). Imprensa e instituições mudam ao longo do dia;
+# páginas de cartas e sitemaps mudam pouco e não precisam ser lidas a cada 30 minutos.
+INTERVALO_PADRAO = {'rss': 0, 'atom': 0, 'api': 0, 'pagina': 360, 'pagina_html': 360, 'pagina_pdf': 360, 'sitemap': 360, 'arquivo_fixo': 720, 'youtube': 180, 'youtube_rss': 180}
 EXC = (ErroFonte, KeyError, TypeError, ValueError, AttributeError, IndexError)
 
 
 # ------------------------------------------------------------------ carga
+def _slug(t):
+    return re.sub(r'[^a-z0-9]+', '-', sem_acento(t).lower()).strip('-')[:40]
+
+
+def fontes_de_busca(cfg):
+    """Buscas de notícias geradas da configuração (não ficam em fontes.json):
+    - uma por empresa/FII das carteiras (termos de noticias.buscas, ou o primeiro termo do ativo);
+    - uma por setor/cadeia ligada às empresas (noticias.buscas_setor);
+    - uma por tema de ETF (noticias.etfs[].busca), em inglês para os ETFs globais;
+    - documentos oficiais das companhias na CVM (fato relevante, comunicado ao mercado), por CNPJ.
+    O buscador é o RSS público do Bing Notícias, que o robots.txt permite. O do Google Notícias é vedado a robôs."""
+    n = cfg.get('noticias') or {}
+    b = n.get('busca') or {}
+    out = []
+    if b.get('ativo', True) and b.get('url'):
+        base = {'categoria': 'veiculo', 'tipo': 'noticia', 'metodo': 'rss', 'guardar_resumo': False, 'agregador': True, 'filtro_tema': False,
+                'via': b.get('provedor') or 'Bing Notícias', 'organizacao': b.get('provedor') or 'Bing Notícias', 'intervalo_min': int(b.get('intervalo_min', 120)),
+                'busca': True, 'maximo': int(b.get('por_busca', 15)), 'verificar_na_rodada': True}
+
+        def url(q, mkt):
+            return b['url'].replace('{q}', urllib.parse.quote_plus(q)).replace('{mkt}', mkt)
+        for a in cfg.get('ativos') or []:
+            e = a.get('noticias') or {}
+            if not a.get('ativo', True) or not e.get('termos'):
+                continue
+            consultas = e.get('buscas') or [e['termos'][0].lstrip('=')]
+            for i, q in enumerate(consultas):
+                out.append(dict(base, id='busca-%s%s' % (a['id'].lower(), '-%d' % (i + 1) if i else ''), nome='Busca · %s (%s)' % (q, a['id']), pais='Brasil', idioma='pt',
+                                url_fonte=url(q, 'pt-BR').replace('&format=rss', ''), url_coleta=url(q, 'pt-BR'), busca_ativo=a['id'], consulta=q))
+        for st in n.get('buscas_setor') or []:
+            if not st.get('ativo', True):
+                continue
+            mkt = st.get('mkt', 'pt-BR')
+            out.append(dict(base, id='busca-setor-' + _slug(st['nome']), nome='Busca setorial · ' + st['nome'], pais='Brasil' if mkt == 'pt-BR' else 'Global', idioma='pt' if mkt == 'pt-BR' else 'en',
+                            url_fonte=url(st['consulta'], mkt).replace('&format=rss', ''), url_coleta=url(st['consulta'], mkt), setor_de=list(st.get('ativos') or []),
+                            termos_exigidos=list(st.get('termos') or []), consulta=st['consulta'], setor_nome=st['nome']))
+        for te in n.get('etfs') or []:
+            if not te.get('ativo', True) or not te.get('busca'):
+                continue
+            mkt = te.get('mkt', 'pt-BR')
+            out.append(dict(base, id='busca-etf-' + _slug(te['tema']), nome='Busca do tema · ' + te['tema'], pais='Brasil' if mkt == 'pt-BR' else 'Global', idioma='pt' if mkt == 'pt-BR' else 'en',
+                            url_fonte=url(te['busca'], mkt).replace('&format=rss', ''), url_coleta=url(te['busca'], mkt), etfs=list(te.get('etfs') or []),
+                            termos_exigidos=list(te.get('termos_busca') or []), consulta=te['busca'], tema_etf=te['tema']))
+    cv = n.get('cvm_ipe') or {}
+    if n.get('cvm') and cv.get('ativo', True):
+        emp = {a['cnpj']: [a['id'], a.get('cvm_nome') or ''] for a in cfg.get('ativos') or [] if a.get('ativo', True) and a.get('cnpj')}
+        if emp:
+            out.append({'id': 'cvm-ipe', 'nome': 'CVM — fatos relevantes e comunicados das empresas', 'organizacao': 'CVM (documentos entregues pelas companhias)',
+                        'categoria': 'oficial_empresa', 'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'documento_oficial', 'metodo': 'api', 'api': 'cvm_ipe',
+                        'url_fonte': 'https://dados.cvm.gov.br/dataset/cia_aberta-doc-ipe', 'url_coleta': 'https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_{ano}.zip',
+                        'empresas': emp, 'intervalo_min': int(cv.get('intervalo_min', 180)), 'verificar_na_rodada': True, 'guardar_resumo': False})
+    return out
+
+
 def carregar_fontes(caminho=None):
     caminho = caminho or os.environ.get('ROBO_FONTES') or os.path.join(AQUI, 'fontes.json')
     with open(caminho, encoding='utf-8') as f:
@@ -98,7 +157,16 @@ def carregar_oregon(cfg, caminho=None):
             termos += (termos_cfg.get(t) or {}).get('noticias', {}).get('setor') or []
         setores.append({'id': g['id'], 'nome': g.get('nome'), 'tickers': g.get('tickers') or [], 'termos': sorted(set(termos)), 'canal': g.get('canal')})
     carteiras = [{'id': m['id'], 'rotulo': m.get('rotulo'), 'familia': m.get('familia'), 'perfil': m.get('perfil')} for m in d.get('mandatos') or []]
-    return {'ativos': ativos, 'setores': setores, 'carteiras': carteiras, 'fonte': 'painel/src/data.json (ativos das 15 carteiras) + robo/config.json (termos de busca)'}
+    # temas dos ETFs (índice, estratégia, exposição): termos explícitos de robo/config.json (noticias.etfs[].termos)
+    temas_etf = []
+    for e in (cfg.get('noticias') or {}).get('etfs') or []:
+        if not e.get('ativo', True):
+            continue
+        termos = list(e.get('termos') or re.findall(r'"([^"]+)"', e.get('consulta') or ''))
+        etfs = [t for t in e.get('etfs') or [] if t in ativos]
+        if termos and etfs:
+            temas_etf.append({'tema': e.get('tema'), 'termos': termos, 'etfs': etfs})
+    return {'ativos': ativos, 'setores': setores, 'carteiras': carteiras, 'temas_etf': temas_etf, 'fonte': 'painel/src/data.json (ativos das 15 carteiras) + robo/config.json (termos de busca)'}
 
 
 # ------------------------------------------------------------------ macro
@@ -106,6 +174,17 @@ def coletar_macro(cfg, rede, hoje, agora_, estado, anterior):
     """Só o que explica notícias e cenários. Cada bloco traz fonte, data e status; falha vira 'indisponível', nunca zero."""
     marca = agora_.isoformat(timespec='minutes')
     ind, fontes, erros = {}, {}, []
+    focus, curva = None, {}
+    if not (cfg.get('intel') or {}).get('indicadores_macro', False):
+        # indicadores (Selic, IPCA, dólar, curvas, Treasuries) desligados: o painel não os mostra e a falha deles não pode marcar a rodada
+        try:
+            ag = agenda.montar(rede, cfg, hoje, agora_, estado)
+            fontes['agenda'] = {'ok': not ag['erros'], 'quando': marca, 'msg': '%d eventos nos próximos %d dias' % (len(ag['itens']), ag['dias']) + ('; ' + '; '.join(ag['erros']) if ag['erros'] else '')}
+        except Exception as e:
+            ag = anterior.get('agenda')
+            fontes['agenda'] = {'ok': False, 'quando': marca, 'msg': 'agenda não montada: %s' % type(e).__name__}
+        return {'versao': 3, 'gerado_em': agora_.isoformat(timespec='seconds'), 'indicadores': {}, 'focus': None, 'curva': {}, 'agenda': ag, 'fontes': fontes, 'erros': [],
+                'nota': 'Só a agenda de divulgações oficiais. Indicadores de mercado desligados (intel.indicadores_macro = false).'}
     for s in cfg.get('bcb_series') or []:
         try:
             pts = fontes_macro.sgs(rede, s['codigo'], s.get('dias', 30), hoje)
@@ -189,16 +268,42 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
     for m in biblioteca.meses_disponiveis()[-6:]:
         vistos |= biblioteca.ids_vistos(biblioteca.ler_mes(m).get('itens') or [])
     robots = conteudo.Robots(rede)
-    novos, erros, ok, aguardando = [], [], [], []
+    novos, erros, ok, aguardando, a_validar, adiadas = [], [], [], [], [], []
+    leituras = estado.setdefault('ultima_leitura', {})
+    lidas_antes = estado.setdefault('fontes_lidas', {})
+    n_cfg = cfg.get('noticias') or {}
+    manual = bool(os.environ.get('ROBO_TUDO') or os.environ.get('ROBO_MANUAL', '').lower() == 'true')
+    # buscas: as mais atrasadas primeiro, no máximo N por rodada (as demais ficam para a próxima, meia hora depois)
+    buscas = sorted([f for f in fontes_cfg if f.get('busca')], key=lambda f: leituras.get(f['id']) or '')
+    fontes_cfg = [f for f in fontes_cfg if not f.get('busca')] + buscas
+    teto_busca, n_busca = int((n_cfg.get('busca') or {}).get('max_por_rodada', 14)), 0
+    empresas = {a['id']: (a.get('noticias') or {}) for a in cfg.get('ativos') or []}
+    confiaveis = [sem_acento(v).lower() for v in n_cfg.get('veiculos_confiaveis') or []]
+    sinalizadas = {sem_acento(k).lower(): v for k, v in (n_cfg.get('fontes_sinalizadas') or {}).items()}
     for f in fontes_cfg:
         if not f.get('ativo', True):
             continue
         nome = f.get('nome') or f['id']
+        # intervalo por fonte: imprensa e instituições a cada rodada; páginas de gestoras e canais, com mais espaço
+        intervalo = int(f.get('intervalo_min', INTERVALO_PADRAO.get(f.get('metodo'), 0)))
+        ult = leituras.get(f['id'])
+        if intervalo and ult and not manual:  # execução manual lê tudo
+            try:
+                if (agora_ - dt.datetime.fromisoformat(ult)).total_seconds() < (intervalo - 5) * 60:
+                    adiadas.append(f['id'])
+                    continue
+            except ValueError:
+                pass
+        if f.get('busca') and not manual:
+            if n_busca >= teto_busca:
+                adiadas.append(f['id'])
+                continue
+            n_busca += 1
         if rede.sem_tempo():
             erros.append('%s: prazo da rodada esgotado' % nome)
             biblioteca.registrar(cont, f['id'], nome, erro='prazo da rodada esgotado', marca=marca)
             continue
-        if any(b in sem_acento(nome).lower() or b in sem_acento(f.get('organizacao') or '').lower() for b in bloqueio):
+        if not f.get('agregador') and any(b in sem_acento(nome).lower() or b in sem_acento(f.get('organizacao') or '').lower() for b in bloqueio):
             biblioteca.registrar(cont, f['id'], nome, rejeitados={'bloqueada': 1}, marca=marca)
             continue
         try:
@@ -207,6 +312,12 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
             if e.tipo == 'sem_chave':  # fonte cadastrada, à espera de chave: não é falha da rodada
                 aguardando.append('%s: %s' % (nome, e.detalhe))
                 biblioteca.registrar(cont, f['id'], nome, marca=marca, aguardando=e.detalhe)
+                continue
+            leituras[f['id']] = marca
+            if f.get('verificar_na_rodada') and not lidas_antes.get(f['id']):
+                # fonte nova, ainda não confirmada no ar: a falha aparece como "a validar", sem marcar a rodada como parcial
+                a_validar.append(str(e))
+                biblioteca.registrar(cont, f['id'], nome, erro=str(e), marca=marca)
                 continue
             erros.append(str(e))
             biblioteca.registrar(cont, f['id'], nome, erro=str(e), marca=marca)
@@ -221,6 +332,9 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
             erros.append('%s: erro inesperado (%s)' % (nome, type(e).__name__))
             biblioteca.registrar(cont, f['id'], nome, erro='erro inesperado: ' + type(e).__name__, marca=marca)
             continue
+        leituras[f['id']] = marca
+        primeira_leitura = not lidas_antes.get(f['id'])
+        lidas_antes[f['id']] = lidas_antes.get(f['id']) or marca
         rej = {}
         ok.append(nome)
         validos = []
@@ -236,6 +350,27 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
             if f.get('filtro_titulo') and not re.search(f['filtro_titulo'], x['titulo'], re.I):
                 rej['fora_do_filtro'] = rej.get('fora_do_filtro', 0) + 1
                 continue
+            if f.get('busca_ativo'):
+                # a busca devolve homônimos (estação Chácara Klabin, Guiné Equatorial): a manchete precisa citar a empresa pelos termos dela
+                if not noticias.pertence(x['titulo'], empresas.get(f['busca_ativo']) or {}):
+                    rej['outro_assunto'] = rej.get('outro_assunto', 0) + 1
+                    continue
+                x['ativos'] = [f['busca_ativo']]
+            if f.get('termos_exigidos') and not any(sem_acento(t).lower() in sem_acento(x['titulo']).lower() for t in f['termos_exigidos']):
+                rej['outro_assunto'] = rej.get('outro_assunto', 0) + 1
+                continue
+            if f.get('etfs'):
+                x['etfs_tema'] = list(f['etfs'])
+                x['tema_etf'] = f.get('tema_etf')
+            if f.get('setor_de'):
+                x['setor_de'] = list(f['setor_de'])
+                x['setor_nome'] = f.get('setor_nome')
+            org = sem_acento(x.get('organizacao') or '').lower()
+            if f.get('agregador'):
+                x['confiavel'] = any(v and (v in org or org in v) for v in confiaveis) if org else False
+            for k, v in sinalizadas.items():
+                if k and k in org:
+                    x['aviso_fonte'] = v
             validos.append(x)
         rej['antigo'] = max(0, recebidos - len(itens))
         ja = sum(1 for x in validos if x['id'] in vistos)
@@ -246,6 +381,14 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
                 rej['sem_ativo_oregon'] = rej.get('sem_ativo_oregon', 0) + 1
                 ineditos.remove(x)
                 continue
+            if f.get('categoria') == 'veiculo' and f.get('filtro_tema', True) and not (x.get('temas') or x.get('ativos') or x.get('etfs_tema')):
+                # imprensa geral: só entra o que trata de economia, mercados ou de um ativo das carteiras (o resto é contado)
+                rej['fora_do_tema'] = rej.get('fora_do_tema', 0) + 1
+                ineditos.remove(x)
+                continue
+            if primeira_leitura and f.get('metodo') in ('pagina', 'pagina_html', 'pagina_pdf', 'sitemap') and not x.get('publicado_em'):
+                # primeira leitura de uma página: o que já estava lá é acervo, não novidade de hoje
+                x['acervo'] = True
             x['analise'] = analise.analisar_regras(x, oregon)
         novos += ineditos
         biblioteca.registrar(cont, f['id'], nome, recebidos=recebidos, rejeitados={k: v for k, v in rej.items() if v}, duplicados=ja, novos=len(ineditos), classificados=len(ineditos), marca=marca)
@@ -256,11 +399,11 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
             c['publicados'] += 1
     for c in cont.values():
         c['publicados'] = min(c['publicados'], c['novos'])
-    rodada = {'quando': marca, 'fontes_ok': len(ok), 'fontes_erro': len(erros), 'recebidos': sum((c.get('ultima_rodada') or {}).get('recebidos', 0) for c in cont.values()),
+    rodada = {'quando': marca, 'fontes_ok': len(ok), 'fontes_erro': len(erros), 'a_validar': a_validar[:20], 'adiadas': len(adiadas), 'recebidos': sum((c.get('ultima_rodada') or {}).get('recebidos', 0) for c in cont.values()),
               'novos': len(novos), 'publicados': len(gravados), 'duplicados_titulo': res['duplicados_titulo'], 'duplicados_id': res['duplicados_id'], 'janela_dias': janela, 'erros': erros[:20], 'aguardando_chave': aguardando[:30]}
     hist = (coleta.get('rodadas') or [])[-29:] + [rodada]
     coleta = {'gerado_em': marca, 'fontes': cont, 'rodadas': hist, 'ultima': rodada,
-              'legenda': {'recebidos': 'itens lidos da fonte na rodada', 'rejeitados': 'descartados e por quê (sem link, repetido no feed, fora do filtro, antigo, bloqueado, robots)',
+              'legenda': {'recebidos': 'itens lidos da fonte na rodada', 'rejeitados': 'descartados e por quê (sem link, repetido no feed, fora do filtro, fora do tema, antigo, bloqueado, robots)',
                           'duplicados': 'já estavam na biblioteca (mesmo link) ou são o mesmo fato de outra fonte', 'novos': 'ineditos classificados', 'publicados': 'gravados na biblioteca e no site'}}
     gravar('coleta.json', coleta)
     return gravados, erros, ok, coleta
@@ -311,6 +454,34 @@ def ler_com_ia(cfg, rede, hoje, agora_, estado, chave, oregon, candidatos, log_=
     return lidos, ('%d itens lidos hoje, %d tokens de entrada e %d de saída' % (uso['itens'], uso['entrada'], uso['saida'])) + ('; ' + '; '.join(dict.fromkeys(msgs)) if msgs else '')
 
 
+def migrar_acervo(estado, fontes_cfg):
+    """Uma vez (v3.1): itens sem data de publicação gravados até aqui vieram da primeira leitura das páginas de gestoras
+    e são acervo, não novidade; as fontes que já responderam ficam marcadas como lidas."""
+    if estado.get('migracao_acervo_v31'):
+        return 0
+    n = 0
+    for mes in biblioteca.meses_disponiveis():
+        itens = biblioteca.ler_mes(mes).get('itens') or []
+        mudou = False
+        for x in itens:
+            if not x.get('publicado_em') and not x.get('acervo') and x.get('categoria') != 'veiculo':
+                x['acervo'] = True
+                mudou = True
+                n += 1
+        if mudou:
+            biblioteca.gravar_mes(mes, itens)
+    cont = (ler('coleta.json', {}) or {}).get('fontes') or {}
+    lidas = estado.setdefault('fontes_lidas', {})
+    for f in fontes_cfg:
+        c = cont.get(f['id']) or {}
+        if c.get('ultima_ok') and f['id'] not in lidas:
+            lidas[f['id']] = c['ultima_ok']
+    estado['migracao_acervo_v31'] = True
+    if n:
+        log('  acervo: %d itens sem data da primeira leitura marcados como acervo (fora do Hoje)' % n)
+    return n
+
+
 # ------------------------------------------------------------------ rodada
 def gravar_versao(agora_, macro, coleta, hoje_js, sem_js, estado):
     gravar('versao.json', {'versao': 3, 'produto': 'Oregon Intelligence', 'gerado_em': agora_.isoformat(timespec='seconds'), 'macro_em': (macro or {}).get('gerado_em'),
@@ -339,6 +510,7 @@ def main():
         cfg = config.carregar(os.environ.get('ROBO_CONFIG') or os.path.join(AQUI, 'config.json'))
         erros_cfg = config.validar(cfg)
         fontes_cfg = carregar_fontes()
+        fontes_cfg += fontes_de_busca(cfg)
         erros_cfg += validar_fontes(fontes_cfg)
     except Exception as e:
         erros_cfg, cfg, fontes_cfg = ['não consegui ler a configuração: %s' % type(e).__name__], None, []
@@ -353,6 +525,7 @@ def main():
     oregon = carregar_oregon(cfg)
     log('  Oregon: %d ativos, %d setores, %d carteiras' % (len(oregon['ativos']), len(oregon['setores']), len(oregon['carteiras'])))
     rede = Rede(prazo_seg=int(cfg.get('prazo_rodada_min', 15)) * 60)
+    migrar_acervo(estado, fontes_cfg)
 
     # 1. macro
     macro = coletar_macro(cfg, rede, hoje, agora_, estado, anterior)
@@ -365,18 +538,18 @@ def main():
     log('  conteúdo: %d fontes ok, %d com falha, %d itens novos' % (len(ok_c), len(erros_c), len(novos)))
 
     # 3. IA opcional
-    recentes = [x for x in biblioteca.carregar_recentes(hoje, 14) if not x.get('agrupado_em')]
+    recentes = [x for x in biblioteca.carregar_recentes(hoje, 14) if not x.get('agrupado_em') and not x.get('acervo')]
     n_ia, msg_ia = ler_com_ia(cfg, rede_c, hoje, agora_, estado, chaves.get('anthropic'), oregon, recentes)
     log('  IA: ' + msg_ia)
     if n_ia:
-        recentes = [x for x in biblioteca.carregar_recentes(hoje, 14) if not x.get('agrupado_em')]
+        recentes = [x for x in biblioteca.carregar_recentes(hoje, 14) if not x.get('agrupado_em') and not x.get('acervo')]
 
     # 4 e 5. índice, recentes, briefing e semanal: um erro aqui nunca impede a publicação do que já foi coletado
     hoje_js, sem_arq, idx = {}, ler('semanal.json', {}) or {}, {'total': 0, 'meses': []}
     try:
         # 4. índice, recentes, briefing
         idx = biblioteca.reindexar(agora_)
-        recentes = biblioteca.publicar_recentes(hoje, agora_, dias=int((cfg.get('intel') or {}).get('recentes_dias', 14)))
+        recentes = biblioteca.publicar_recentes(hoje, agora_, dias=int((cfg.get('intel') or {}).get('recentes_dias', 10)))
         hoje_js = semanal.briefing(recentes, macro, hoje, agora_, estado)
         gravar('hoje.json', hoje_js)
         log('  briefing: %d prioridades (janela de %s), %d itens recentes, %d na biblioteca' % (len(hoje_js['prioridades']), hoje_js['janela'], len(recentes), idx['total']))
@@ -452,7 +625,10 @@ def main():
             nivel = 'parcial'
     if erros_c:
         motivos.append('%d fonte(s) de conteúdo com falha: %s' % (len(erros_c), '; '.join(erros_c[:3])[:300]))
-        nivel = 'parcial'
+        nivel = 'parcial' if nivel == 'completo' else nivel
+    av = (coleta.get('ultima') or {}).get('a_validar') or []
+    if av:
+        motivos.append('%d fonte(s) nova(s) ainda não confirmada(s) no ar (aparecem em Fontes e coleta como "a validar")' % len(av))
     if not ok_c and fontes_cfg and not idx['total']:
         motivos.append('nenhuma fonte de conteúdo respondeu e a biblioteca está vazia')
         nivel = 'critico'

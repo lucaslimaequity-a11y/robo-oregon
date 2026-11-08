@@ -506,3 +506,53 @@ table.cmp sup{color:var(--warn);font-weight:700}
 .agenda li.hoje b{color:var(--br)}
 @media (max-width:640px){.nw-t{font-size:1rem}.mcs{grid-template-columns:repeat(2,minmax(0,1fr))}.filtros .inp{max-width:100%;flex:1 1 45%}}
 @media (max-width:640px){.agenda li{grid-template-columns:54px 1fr}.agenda li small{display:block}}
+/* ---- v3.2: hora primeiro, painel de notícias ao lado da ficha, opiniões a favor e contra, mundo ---- */
+.nw-when{font-family:var(--mono);font-size:.76rem;font-weight:600;color:var(--blue-ink);white-space:nowrap}
+.nw-when.sem{color:var(--muted);font-weight:500}
+.nw-src{font-weight:600;color:var(--ink2)}
+.chip.casa{background:var(--amber-soft);color:var(--warn)}
+.chip.casa.p-favoravel{background:var(--up-soft);color:var(--up)}
+.chip.casa.p-contraria{background:var(--down-soft);color:var(--down)}
+.tag.tema{font-weight:500;font-family:inherit;color:var(--ink2);border-style:dashed}
+.nls{list-style:none;margin:0;padding:0}
+.nl{display:grid;grid-template-columns:86px minmax(0,1fr);gap:2px 10px;padding:7px 0;border-top:1px solid var(--line)}
+.nl:first-child{border-top:0}
+.nl .nwl{display:inline;border:0;background:none;padding:0;font:inherit;font-size:.92rem;line-height:1.35;color:var(--ink);text-align:left;cursor:pointer}
+.nl .nwl:hover{color:var(--blue-ink);text-decoration:underline}
+.nl .nw-ext{font-size:.74rem;padding:0 5px}
+.nl.lido .nwl{color:var(--muted)}
+.nl-src{font-size:.76rem;color:var(--muted);margin-top:2px;display:flex;gap:4px 6px;flex-wrap:wrap;align-items:center}
+.nl-src .chip{font-size:.68rem}
+.hoje-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:18px;align-items:start}
+.status-l b{color:var(--ink)}
+.pa{list-style:none;margin:0;padding:0}
+.pa li{border-top:1px solid var(--line)}.pa li:first-child{border-top:0}
+.pa-b{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;width:100%;text-align:left;border:0;background:none;padding:7px 0;cursor:pointer;font:inherit;color:var(--ink)}
+.pa-b:hover .pa-u{color:var(--blue-ink)}
+.pa-n{font-size:.8rem;color:var(--ink2);align-self:center}
+.pa-u,.pa-nome{grid-column:1/-1;font-size:.82rem;line-height:1.35;color:var(--ink2)}
+.ficha-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,400px);grid-template-areas:"main news";gap:18px;align-items:start}
+.ficha-main{grid-area:main;min-width:0}
+.ficha-news{grid-area:news;position:sticky;top:calc(var(--top-h,64px) + 10px);max-height:calc(100vh - var(--top-h,64px) - 24px);overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);padding:12px 14px}
+.np-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.np-h h3{margin:0;font-size:1.02rem}
+.np-h .muted{font-size:.78rem}
+.np-links{font-size:.82rem;margin:6px 0 8px;color:var(--muted)}
+.np-links a{font-weight:600}
+.np-sub{margin:14px 0 6px;font-size:.86rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.np-op{border-top:1px solid var(--line);margin-top:10px}
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.op-col{min-width:0}.op-col>b{display:block;font-size:.8rem;margin:2px 0 2px}
+.op-favoravel>b{color:var(--up)}.op-contraria>b{color:var(--down)}
+.op-col .nl{grid-template-columns:1fr}
+.op-sem{font-weight:600}
+.tt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.tt{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--panel2);min-width:0}
+.tt-h{display:flex;justify-content:space-between;gap:8px;font-size:.88rem;margin-bottom:4px}
+.tt p{margin:0 0 6px;font-size:.9rem;line-height:1.4}
+.tt .nwl{border:0;background:none;padding:0;font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.tt .nwl:hover{color:var(--blue-ink);text-decoration:underline}
+.nw.acervo{opacity:.8}
+@media (max-width:1280px){.ficha-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"news" "main"}.ficha-news{position:static;max-height:none}}
+@media (max-width:1000px){.hoje-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.op-grid{grid-template-columns:1fr}.nl{grid-template-columns:minmax(0,1fr);gap:1px}.ficha-news{padding:10px}}

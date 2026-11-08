@@ -38,8 +38,11 @@ def briefing(itens, macro, hoje, agora_, estado, n_min=5, n_max=8):
     """Monta o briefing do dia a partir dos itens recentes (lista já sem agrupados)."""
     ontem = (hoje - dt.timedelta(days=2)).isoformat()
     semana = (hoje - dt.timedelta(days=7)).isoformat()
-    frescos = [x for x in itens if _pub(x)[:10] >= ontem]
-    base = frescos if len(frescos) >= n_min else [x for x in itens if _pub(x)[:10] >= semana]
+    # prioridades de LEITURA: cartas, research e documentos oficiais (a imprensa vai para "Últimas notícias" no painel).
+    # Acervo nunca entra; sem data de publicação, só o que foi detectado como novo nos últimos 2 dias.
+    leitura_itens = [x for x in itens if not x.get('acervo') and x.get('categoria') != 'veiculo' and (x.get('publicado_em') or (x.get('detectado_em') or '')[:10] >= ontem)]
+    frescos = [x for x in leitura_itens if _pub(x)[:10] >= ontem]
+    base = frescos if len(frescos) >= n_min else [x for x in leitura_itens if _pub(x)[:10] >= semana]
     janela = '48 horas' if base is frescos else '7 dias'
     base = sorted(base, key=lambda x: (_pontos(x), _pub(x)), reverse=True)
     sem_ruido = [x for x in base if x.get('natureza') not in ('promocional', 'recomendacao')]
@@ -53,7 +56,7 @@ def briefing(itens, macro, hoje, agora_, estado, n_min=5, n_max=8):
     # leitura recomendada: a carta ou research de maior pontuação dos últimos 30 dias ainda não recomendada
     lidas = estado.setdefault('leituras_recomendadas', [])
     mes = (hoje - dt.timedelta(days=30)).isoformat()
-    cand = [x for x in itens if _pub(x)[:10] >= mes and x.get('tipo') in ('carta', 'research', 'paper', 'macro', 'relatorio') and x['id'] not in lidas and x.get('natureza') == 'original']
+    cand = [x for x in itens if x.get('publicado_em') and _pub(x)[:10] >= mes and not x.get('acervo') and x.get('tipo') in ('carta', 'research', 'paper', 'macro', 'relatorio') and x['id'] not in lidas and x.get('natureza') == 'original']
     cand.sort(key=_pontos, reverse=True)
     leitura = cand[0] if cand else None
     if leitura:

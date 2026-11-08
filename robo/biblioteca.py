@@ -212,8 +212,9 @@ def reindexar(agora_):
     return idx
 
 
-def publicar_recentes(hoje, agora_, dias=14, maximo=400):
-    itens = [x for x in carregar_recentes(hoje, dias) if not x.get('agrupado_em')]
+def publicar_recentes(hoje, agora_, dias=10, maximo=1500):
+    # acervo (o que já estava nas páginas na primeira leitura) fica só na Biblioteca, por mês: não é novidade
+    itens = [x for x in carregar_recentes(hoje, dias) if not x.get('agrupado_em') and not x.get('acervo')]
     itens.sort(key=lambda x: (x.get('publicado_em') or x.get('detectado_em') or ''), reverse=True)
     gravar('recentes.json', {'gerado_em': agora_.isoformat(timespec='minutes'), 'dias': dias, 'n': len(itens), 'itens': itens[:maximo]})
     return itens[:maximo]

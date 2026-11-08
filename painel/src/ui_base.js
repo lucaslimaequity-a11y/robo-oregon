@@ -293,13 +293,13 @@ var APP = (function () {
 
   /* ---------- estado ---------- */
   var SK = 'oregon-intel-v3:ui';
-  var SUB0 = {hoje: 'briefing', bib: 'busca', oregon: 'ativos', cart: 'ref'};
+  var SUB0 = {hoje: 'briefing', brasil: 'ativos', mundo: 'agora', cart: 'ref', bib: 'busca'};
   // Carteiras de referência do modo simples: versões aprovadas da família Brasil Crescimento (uma linha para trocar)
   A.REF = [['cresc-cons', 'Conservador'], ['cresc-arr', 'Arrojado']];
   var S = {area: 'hoje', sub: Object.assign({}, SUB0), cart: A.REF[0][0], ver: 'aprovada', choques: {}, idio: {}, janela: 36, metodo: 'pearson'};
   try {
     var saved = JSON.parse(localStorage.getItem(SK) || '{}'); Object.assign(S, saved); S.sub = Object.assign({}, SUB0, saved.sub || {});
-    if (['hoje', 'bib', 'oregon'].indexOf(S.area) < 0) S.area = 'hoje';
+    if (['hoje', 'brasil', 'mundo', 'cart', 'bib'].indexOf(S.area) < 0) S.area = 'hoje';
   } catch (e) {}
   A.S = S;
   A.save = function () { try { localStorage.setItem(SK, JSON.stringify({area: S.area, sub: S.sub, cart: S.cart, ver: S.ver, janela: S.janela, metodo: S.metodo, choques: S.choques, idio: S.idio, cenEvento: S.cenEvento})); } catch (e) {} };
@@ -448,11 +448,12 @@ var APP = (function () {
 
   /* ---------- áreas ---------- */
   A.areas = {};
-  // Três seções: Hoje (briefing), Biblioteca (pesquisa, semanal, aprendizados, fontes) e Oregon (ativos, carteiras, setores).
-  A.AREAS = [['hoje', 'Hoje', null], ['bib', 'Biblioteca', 'var(--br)'], ['oregon', 'Oregon', 'var(--rf)']];
+  // Cinco seções: Hoje (o que saiu agora), Brasil (cada ativo brasileiro com as notícias ao lado), Mundo e Estratégia
+  // (o que o mundo fala, cartas e research, ETFs globais), Carteiras (as 15 aprovadas) e Biblioteca (busca, semanal, fontes).
+  A.AREAS = [['hoje', 'Hoje', null], ['brasil', 'Brasil', 'var(--br)'], ['mundo', 'Mundo e Estratégia', 'var(--intl)'], ['cart', 'Carteiras', 'var(--rf)'], ['bib', 'Biblioteca', null]];
   A.SUBS = {};  // preenchido por cada módulo (ui_bib.js, ui_oregon.js, ui_mapa.js)
-  // A faixa de carteira e versão aparece onde qualquer das 15 pode ser escolhida (Oregon › Carteiras, fora da referência)
-  A.mostraCtx = function () { return S.area === 'oregon' && S.sub.oregon === 'carteiras' && S.sub.cart !== 'ref'; };
+  // A faixa de carteira e versão aparece onde qualquer das 15 pode ser escolhida (Carteiras, fora da referência)
+  A.mostraCtx = function () { return S.area === 'cart' && S.sub.cart !== 'ref'; };
   A.navAtiva = function () { return S.area; };
   A.render = function () {
     var main = document.getElementById('main'); if (!main) return;
@@ -478,14 +479,16 @@ var APP = (function () {
       return h('button', {'aria-pressed': cur === it[0] ? 'true' : 'false', onclick: function () { A.go(area, it[0]); }}, it[1]);
     }));
   };
-  // Endereços das versões anteriores continuam funcionando: são traduzidos para as três seções
+  // Endereços das versões anteriores continuam funcionando: são traduzidos para as cinco seções
   A.traduz = function (area, sub) {
-    if (area === 'cart') { if (sub && (A.SUBS.cart || []).some(function (x) { return x[0] === sub; })) S.sub.cart = sub; else if (sub === 'todas') S.sub.cart = 'mapa'; else if (!sub || sub === 'risco' || sub === 'construcao' || sub === 'perf' || sub === 'sala') S.sub.cart = S.sub.cart || 'ref'; return ['oregon', 'carteiras']; }
-    if (area === 'mesa') return sub === 'mercado' ? ['hoje', null] : ['oregon', 'carteiras'];
-    if (area === 'cons' || area === 'risco' || area === 'sala') return ['oregon', 'carteiras'];
-    if (area === 'res') { if (sub === 'eventos' || sub === 'noticias') return ['bib', 'busca']; if (sub === 'macro') return ['oregon', 'setores']; return ['oregon', 'ativos']; }
-    if (area === 'global') return ['bib', 'busca'];
+    if (area === 'cart') { if (sub && (A.SUBS.cart || []).some(function (x) { return x[0] === sub; })) return ['cart', sub]; if (sub === 'todas') return ['cart', 'mapa']; return ['cart', S.sub.cart || 'ref']; }
+    if (area === 'oregon') return sub === 'carteiras' ? ['cart', S.sub.cart || 'ref'] : ['brasil', 'ativos'];
+    if (area === 'mesa') return sub === 'mercado' ? ['hoje', null] : ['cart', null];
+    if (area === 'cons' || area === 'risco' || area === 'sala') return ['cart', null];
+    if (area === 'res') { if (sub === 'eventos' || sub === 'noticias') return ['hoje', null]; return ['brasil', 'ativos']; }
+    if (area === 'global') return ['mundo', 'agora'];
     if (area === 'hoje') return ['hoje', null];
+    if (area === 'mundo' && sub && !(A.SUBS.mundo || []).some(function (x) { return x[0] === sub; })) return ['mundo', 'agora'];
     return [area, sub];
   };
   A.go = function (area, sub) { var t = A.traduz(area, sub); area = t[0]; sub = t[1]; S.area = area; if (sub) S.sub[area] = sub; A.render(); window.scrollTo(0, 0); };

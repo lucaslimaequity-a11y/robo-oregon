@@ -17,7 +17,21 @@ data = json.load(open(os.path.join(B, 'src', 'data.json'), encoding='utf-8'))
 _etfs = json.load(open(os.path.join(B, 'src', 'etfs.json'), encoding='utf-8'))
 data['etfs'] = {k: v for k, v in _etfs.items() if not k.startswith('_')}
 def js_const(nome, obj): return 'var %s = %s;' % (nome, json.dumps(obj, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/'))
-taxon = {'temas': analise.TEMA_NOME, 'regioes': analise.REGIAO_NOME, 'fatores': analise.FATOR_NOME, 'tipos': analise.TIPO_NOME}
+# buscas por ativo (links "buscar agora" na ficha) e empresas com CNPJ (documentos da CVM): da mesma configuração do robô
+_cfg = json.load(open(os.path.join(RAIZ, 'robo', 'config.json'), encoding='utf-8'))
+_buscas, _cvm = {}, {}
+for _a in _cfg.get('ativos') or []:
+    _n = _a.get('noticias') or {}
+    if _n.get('busca'):
+        _buscas[_a['id']] = _n['busca']
+    if _a.get('cnpj'):
+        _cvm[_a['id']] = True
+for _te in (_cfg.get('noticias') or {}).get('etfs') or []:
+    for _t in _te.get('etfs') or []:
+        if _te.get('busca') and _t not in _buscas:
+            _buscas[_t] = _te['busca']
+taxon = {'temas': analise.TEMA_NOME, 'regioes': analise.REGIAO_NOME, 'fatores': analise.FATOR_NOME, 'tipos': analise.TIPO_NOME, 'roteiro': analise.ROTEIRO,
+         'buscas': _buscas, 'cvm': _cvm}
 js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'main.js']
 parts = [js_const('DATA', data), js_const('TAXON', taxon)]
 for f in js_order:

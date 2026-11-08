@@ -7,19 +7,22 @@ arquivados (`painel/arquivo/`) e saíram da navegação.
 
 Site público (GitHub Pages): `https://lucaslimaequity-a11y.github.io/robo-oregon/`
 
-## As três seções
+## As cinco seções
 
-| Seção | O que tem | Arquivos que lê |
-|---|---|---|
-| **Hoje** | 5 a 8 conteúdos prioritários (no máximo 2 por fonte e 3 por tema), cada um com análise em sete pontos; macro oficial que explica o dia; agenda; notícias e documentos macro; publicações de gestoras; vídeos; uma leitura recomendada (rotativa, 30 dias); estudo do dia (perguntas para responder por escrito). | `hoje.json`, `recentes.json`, `macro.json` |
-| **Biblioteca** | Pesquisa por assunto, autor/gestora, país/região, período, tipo, origem, ativo e prioridade, mês a mês (nada é apagado); resumos semanais; meus aprendizados (registro com exportar/importar); fontes e coleta (recebidos, rejeitados, duplicados, novos, publicados, por fonte). | `biblioteca/AAAA-MM.json`, `indice.json`, `semanal.json`, `coleta.json`, `fontes.json` |
-| **Oregon** | Ativos das 15 carteiras aprovadas com o conteúdo que os cita, tese, documentos oficiais, resultados da CVM e opinião da casa (sem cotação); as 15 carteiras com pesos aprovados e validação (sem normalizar); setores e fatores de risco com nível oficial e conteúdo ligado. | `painel/src/data.json`, `etfs.json`, `resultados.json` |
+| Seção | O que tem |
+|---|---|
+| **Hoje** | No topo: última coleta, notícias das últimas 24 h e fontes com erro. Últimas notícias (hora · veículo · título · ↗), com filtros Na carteira, Brasil, Mundo, Opiniões e Oficiais; ativos das carteiras citados nas últimas 72 h; agenda oficial; leituras do dia (cartas, research, documentos) com análise em sete pontos; estudo do dia. |
+| **Brasil** | Ativos brasileiros das 15 carteiras, os com notícia mais recente primeiro. Na ficha, ao lado: notícias da empresa (portais, busca por ativo, CVM), opiniões a favor e contra, documentos à CVM, setor e cadeia, links "buscar agora" (Google Notícias, Bing Notícias, CVM). Tese, resultados da CVM e pesos aprovados. |
+| **Mundo e Estratégia** | O que o mundo fala (imprensa internacional e bancos centrais, por região, e temas dos ETFs globais); cartas, research e conteúdo educacional dos últimos 30 dias; ETFs globais com notícias do índice e do tema. |
+| **Carteiras** | As 15 carteiras com pesos aprovados e validação (sem normalizar), mapa e Decidido × base. |
+| **Biblioteca** | Pesquisa em tudo o que já foi coletado, mês a mês; resumos semanais; meus aprendizados; fontes e coleta (por fonte e por busca). |
 
 ## Como funciona
 
 ```
-robo/fontes.json ──► robo/intel.py (GitHub Actions, 4× por dia, 7 dias por semana)
-                      ├─ macro oficial: BCB (SGS, Focus), Tesouro, Tesouro dos EUA, agenda IBGE/Copom/Fed → data/macro.json
+robo/fontes.json + buscas de robo/config.json ──► robo/intel.py (GitHub Actions, a cada 30 min das 7h às 22h30, 7 dias por semana)
+                      ├─ agenda oficial IBGE/Copom/Fed/Focus → data/macro.json (indicadores de mercado desligados)
+                      ├─ buscas por ativo, setor e tema (RSS do Bing Notícias) e fatos relevantes da CVM
                       ├─ conteúdo: RSS/Atom/RDF, APIs públicas, páginas com PDF, sitemap, documento de URL fixa, YouTube (API oficial)
                       │    → classificação (temas, regiões, ativos, setores, fatores), prioridade, análise em 7 pontos por regras
                       │    → IA opcional (teto diário) → biblioteca mensal + recentes.json + coleta.json (contadores por fonte)
@@ -43,9 +46,9 @@ robo/fontes.json ──► robo/intel.py (GitHub Actions, 4× por dia, 7 dias po
   `analise.py` (taxonomia, prioridade, sete pontos, IA opcional), `semanal.py` (briefing e resumo semanal), `fontes.json`,
   `config.json`; reaproveitados da v2: `fontes_macro.py`, `agenda.py`, `avisos.py`, `util.py`, `config.py`, `calendario.py`.
   `coletar.py` e os módulos de cotação continuam no repositório, mas não são agendados.
-- `painel/src/` — `intel.js` (dados e vistas de conteúdo), `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js`, `ui_mapa.js` (carteiras),
+- `painel/src/` — `intel.js` (dados e vistas de conteúdo), `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js` (Brasil e Mundo e Estratégia), `ui_mapa.js` (carteiras),
   `ui_mesa.js` (validação), `ui_teses.js`, `core.js`, `store.js`, `data.json`, `etfs.json`. `painel/arquivo/` guarda o que saiu.
-- `testes/` — robô (internet simulada) e painel (Node). `painel/test/areas.js` percorre as três seções no navegador.
+- `testes/` — robô (internet simulada) e painel (Node). `painel/test/areas.js` percorre as cinco seções no navegador. `testes/amostras_reais/` guarda a amostra real do Bing usada nos testes.
 - `docs/` — `ATUALIZACAO.md` (instalar e voltar atrás), `FONTES.md`, `ARQUITETURA.md`, `DIAGNOSTICO.md` (as 72 manchetes),
   `VALIDACAO.md`, `RESULTADOS_TESTES.md` (saída da última execução), `IA.md`, `workflow_robo.yml` (cópia visível do workflow).
 
@@ -56,5 +59,5 @@ python -m unittest discover -s testes -v      # robô, com internet simulada
 node testes/painel.test.js                   # painel
 python painel/build.py                       # monta site/index.html
 python painel/test/gera_dados_teste.py /tmp/site_teste && (cd /tmp/site_teste && python -m http.server 8777) &
-node painel/test/areas.js http://localhost:8777/index.html   # percorre as três seções (computador e celular)
+node painel/test/areas.js http://localhost:8777/index.html   # percorre as cinco seções (computador e celular)
 ```

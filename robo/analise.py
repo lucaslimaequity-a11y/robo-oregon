@@ -79,9 +79,57 @@ SENSACIONAL = ['dispara', 'despenca', 'derrete', 'desaba', 'explode', 'imperdive
 MOVIMENTO = ['sobe', 'cai ', 'caem', 'sobem', 'salta', 'recua', 'avanca', 'tomba', 'lidera altas', 'lidera quedas', 'fecha em alta', 'fecha em queda', 'abre em alta', 'abre em queda', 'rallies', 'slumps', 'tumbles', 'surges', 'jumps', 'falls', 'rises']
 RECOMENDACAO = ['acoes para comprar', 'comprar ou vender', 'vale a pena investir', 'melhores acoes', 'carteira recomendada', 'preco-alvo', 'preco alvo', 'recomendacao de compra', 'top picks', 'buy rating', 'stocks to buy', 'o que fazer com']
 
-TIPO_PONTOS = {'carta': 30, 'research': 26, 'paper': 26, 'macro': 22, 'dado_oficial': 20, 'documento_oficial': 18, 'discurso': 20, 'relatorio': 20, 'blog': 12, 'podcast': 12, 'video': 12, 'noticia': 8}
+# Casas de análise: só valem quando o título traz também um verbo de opinião (recomenda, eleva, rebaixa, preço-alvo...).
+# É a opinião da casa como a imprensa a publicou; o sistema não recomenda nada.
+CASAS = [('BTG Pactual', r'\bBTG\b'), ('XP', r'\bXP\b'), ('Itaú BBA', r'\bIta[uú] ?BBA\b|\bBBA\b'), ('Bradesco BBI', r'\bBBI\b'), ('Safra', r'\bSafra\b'),
+         ('Santander', r'\bSantander\b'), ('Goldman Sachs', r'\bGoldman\b'), ('J.P. Morgan', r'\bJ\.? ?P\.? ?Morgan\b|\bJPMorgan\b'), ('Morgan Stanley', r'\bMorgan Stanley\b'),
+         ('UBS BB', r'\bUBS\b'), ('Citi', r'\bCiti(group|bank)?\b'), ('Bank of America', r'\bBank of America\b|\bBofA\b'), ('Genial', r'\bGenial\b'), ('Ágora', r'\b[ÁA]gora Investimentos\b'),
+         ('BB Investimentos', r'\bBB Investimentos\b'), ('Inter Invest', r'\bInter Invest\b'), ('Warren', r'\bWarren (Investimentos|Rena)\b'), ('Eleven', r'\bEleven Financial\b'),
+         ('Ativa', r'\bAtiva Investimentos\b'), ('Guide', r'\bGuide Investimentos\b'), ('Levante', r'\bLevante\b'), ('Nord', r'\bNord (Research|Investimentos)\b'),
+         ('Suno Research', r'\bSuno Research\b'), ('Barclays', r'\bBarclays\b'), ('HSBC', r'\bHSBC\b'), ('Jefferies', r'\bJefferies\b'), ('Bernstein', r'\bBernstein\b'), ('Moody\'s', r"\bMoody'?s\b"),
+         ('S&P Global', r'\bS&P Global\b'), ('Fitch', r'\bFitch\b')]
+OPINIAO = ['recomenda', 'recomendacao', 'eleva', 'rebaixa', 'corta', 'preco-alvo', 'preco alvo', 'compra', 'venda', 'neutr', 'overweight', 'underweight', 'outperform', 'underperform',
+           'carteira', 've ', 'veem', 'projeta', 'estima', 'preve', 'espera', 'aposta', 'inicia cobertura', 'upgrade', 'downgrade', 'target', 'rating', 'perspectiva', 'revisa', 'mantem', 'gosta',
+           'prefere', 'favorit', 'top pick', 'ações para', 'acoes para', 'tira', 'inclui', 'reforca', 'sees', 'raises', 'cuts', 'lifts', 'expects', 'forecast',
+           ' diz', 'avalia', 'segundo', 'alerta', 'sinaliza', 'muda o tom', 'says', 'warns']
+
+# Posição de uma opinião publicada, lida SÓ do título/resumo público (nunca do relatório, que não é acessível).
+# 'favoravel' = o título relata recomendação/visão positiva; 'contraria' = negativa; 'neutra'; 'mista' = sinais nos dois sentidos.
+POS_FAVORAVEL = [r'eleva (a |sua )?recomendacao', r'eleva .{0,30}para compra', r'\bupgrade', r'recomenda(m|cao de)? compra', r'inicia cobertura .{0,40}compra', r'\boutperform',
+                 r'\boverweight', r'sobreponderar', r'top pick', r'\bpreferida', r'eleva (o |seu )?preco[- ]alvo', r'raises? .{0,20}target', r'\bbuy\b', r'\botimis',
+                 r've potencial', r'veem potencial', r'\bupside\b', r'esta barata', r'aposta em', r'inclui .{0,40}carteira', r'entra na carteira', r'sinalizam melhora', r've melhora', r'veem melhora']
+POS_CONTRARIA = [r'rebaixa', r'corta (a |sua )?recomendacao', r'\bdowngrade', r'recomenda(m|cao de)? venda', r'para venda\b', r'\bunderperform', r'\bunderweight', r'subponderar',
+                 r'(corta|reduz) (o |seu )?preco[- ]alvo', r'cuts? .{0,20}target', r'lowers? .{0,20}target', r'\bsell\b', r'\bpessimis', r'(ve|veem) riscos', r'\bcautela',
+                 r'tira .{0,40}da carteira', r'retira .{0,40}da carteira', r'sai da carteira', r'baixa qualidade', r'acende alerta']
+POS_NEUTRA = [r'\bneutr[oa]\b', r'\bmanutencao\b', r'equal ?weight', r'market perform', r'\bhold\b', r'mantem (a )?recomendacao']
+SUJEITO_ANALISTA = r'\b(analistas?|bancos|casas? de analise|corretoras?|research|estrategistas?|gestores)\b'
+
+
+def posicao_opiniao(item):
+    """Sentido da opinião relatada no título/resumo. None quando o texto não traz recomendação ou visão explícita."""
+    txt = ' ' + sem_acento((item.get('titulo') or '') + ' ' + (item.get('resumo') or '')).lower() + ' '
+    fav = any(re.search(r, txt) for r in POS_FAVORAVEL)
+    con = any(re.search(r, txt) for r in POS_CONTRARIA)
+    neu = any(re.search(r, txt) for r in POS_NEUTRA)
+    if neu and not (fav and con):
+        return 'neutra'
+    if fav and con:
+        return 'mista'
+    return 'favoravel' if fav else 'contraria' if con else None
+
+
+def casas_citadas(item):
+    """Casas de análise citadas COM verbo de opinião no título ou resumo (lista de nomes)."""
+    bruto = (item.get('titulo') or '') + ' ' + (item.get('resumo') or '')
+    txt = ' ' + sem_acento(bruto).lower() + ' '
+    if not any(o in txt for o in OPINIAO):
+        return []
+    return [nome for nome, rx in CASAS if re.search(rx, bruto)]
+
+
+TIPO_PONTOS = {'fato_relevante': 24, 'carta': 30, 'research': 26, 'paper': 26, 'macro': 22, 'dado_oficial': 20, 'documento_oficial': 18, 'discurso': 20, 'relatorio': 20, 'blog': 12, 'podcast': 12, 'video': 12, 'noticia': 8}
 CATEGORIA_PONTOS = {'gestora_internacional': 10, 'gestora_brasil': 10, 'instituicao': 10, 'academia': 8, 'oficial_empresa': 8, 'youtube': 2, 'veiculo': 0}
-TIPO_NOME = {'carta': 'Carta de gestor', 'research': 'Research', 'paper': 'Paper', 'macro': 'Análise macro', 'dado_oficial': 'Dado oficial', 'documento_oficial': 'Documento oficial', 'discurso': 'Discurso',
+TIPO_NOME = {'fato_relevante': 'Fato relevante (CVM)', 'carta': 'Carta de gestor', 'research': 'Research', 'paper': 'Paper', 'macro': 'Análise macro', 'dado_oficial': 'Dado oficial', 'documento_oficial': 'Documento oficial', 'discurso': 'Discurso',
              'relatorio': 'Relatório', 'blog': 'Artigo', 'podcast': 'Podcast', 'video': 'Vídeo', 'noticia': 'Notícia'}
 
 # Roteiro de estudo por tema: perguntas para contrapor e o que acompanhar. São perguntas, não conclusões.
@@ -222,9 +270,30 @@ def classificar(item, oregon, hoje):
             setores.append(s['id'])
     if item.get('tipo') == 'carta' and 'carta_gestor' not in temas:
         temas.append('carta_gestor')
+    if item.get('categoria') == 'veiculo' and 'carta_gestor' in temas:
+        temas.remove('carta_gestor')  # na imprensa, "cenário" e "perspectivas" não fazem de uma notícia uma carta de gestor
+    temas_etf, etfs_tema = [], []
+    for te in oregon.get('temas_etf') or []:
+        if _casa(txt, te.get('termos') or []):
+            temas_etf.append(te['tema'])
+            etfs_tema += [e for e in te.get('etfs') or [] if e not in etfs_tema]
+    casas = casas_citadas(item)
+    for t in item.get('ativos') or []:  # ativo já ligado pelo coletor (busca específica, documento da CVM): fica
+        if t not in ativos:
+            ativos.insert(0, t)
+            porque_at[t] = porque_at.get(t) or 'busca específica do ativo'
+    etfs_tema = list(dict.fromkeys((item.get('etfs_tema') or []) + etfs_tema))
+    posicao = posicao_opiniao(item)
+    analistas = bool(re.search(SUJEITO_ANALISTA, sem_acento(item.get('titulo') or '').lower()))
+    if not regioes:  # sem região no texto: a do veículo ou da instituição (fato da fonte)
+        r0 = {'Brasil': 'brasil', 'EUA': 'eua', 'Estados Unidos': 'eua', 'Europa': 'europa', 'Global': 'global'}.get(item.get('pais'))
+        if r0:
+            regioes.append(r0)
     natureza = 'original'
     if _casa(txt, PROMOCIONAL):
         natureza = 'promocional'
+    elif casas or (posicao and analistas):
+        natureza = 'opiniao_casa'
     elif _casa(txt, RECOMENDACAO):
         natureza = 'recomendacao'
     elif _casa(txt, SENSACIONAL):
@@ -233,7 +302,12 @@ def classificar(item, oregon, hoje):
         natureza = 'movimento'
     elif item.get('categoria') == 'veiculo':
         natureza = 'noticia'
-    item.update({'temas': temas[:6], 'regioes': regioes[:4], 'ativos': ativos[:8], 'setores': setores[:4], 'fatores': fatores[:4], 'natureza': natureza, 'ativos_porque': porque_at})
+    item.update({'temas': temas[:6], 'regioes': regioes[:4], 'ativos': ativos[:8], 'setores': setores[:4], 'fatores': fatores[:4], 'natureza': natureza, 'ativos_porque': porque_at,
+                 'casas': casas[:4], 'temas_etf': temas_etf[:3], 'etfs_tema': etfs_tema[:8]})
+    if natureza == 'opiniao_casa':
+        item['posicao'] = posicao  # None = opinião sem sentido explícito no título
+    else:
+        item.pop('posicao', None)
     item['prioridade'] = prioridade(item, hoje)
     return item
 
@@ -254,6 +328,9 @@ def prioridade(item, hoje):
     elif item.get('setores'):
         p += 6
         porque.append('toca setor da carteira (+6)')
+    elif item.get('etfs_tema'):
+        p += 5
+        porque.append('toca o índice ou o tema de ETF da carteira (+5)')
     elif item.get('fatores'):
         p += 4
         porque.append('toca fator de risco (+4)')
@@ -280,7 +357,10 @@ def prioridade(item, hoje):
         porque.append('conteúdo promocional (−20)')
     elif nat == 'recomendacao':
         p -= 15
-        porque.append('recomendação de compra/venda (−15)')
+        porque.append('lista de “ações para comprar” sem casa identificada (−15)')
+    elif nat == 'opiniao_casa':
+        p += 4
+        porque.append('opinião de casa de análise: %s (+4)' % ', '.join(item.get('casas') or []))
     elif nat == 'sensacionalista':
         p -= 10
         porque.append('título sensacionalista (−10)')
@@ -339,6 +419,8 @@ def analisar_regras(item, oregon):
         tese.append({'r': 'FONTE', 't': 'Resumo da própria fonte: "%s"' % primeira.rstrip('…') + ('…' if len(primeira) < len(resumo) else '')})
     else:
         tese.append({'r': 'FONTE', 't': 'A fonte afirma, no título: "%s".' % item.get('titulo')})
+    if item.get('casas'):
+        tese.append({'r': 'FONTE', 't': 'Opinião atribuída a %s, como publicada por %s. É a visão da casa de análise, não do Oregon.' % (', '.join(item['casas']), item.get('organizacao') or item.get('fonte'))})
     if item.get('categoria') == 'veiculo':
         tese.append({'r': 'INFERÊNCIA', 't': 'Veículo de imprensa: o título relata um fato ou declaração; a tese, se houver, é de quem foi citado, não do veículo.'})
     A['2_tese'] = tese
@@ -387,6 +469,8 @@ def analisar_regras(item, oregon):
     if st:
         nomes = [next((s['nome'] for s in oregon.get('setores') or [] if s['id'] == x), x) for x in st]
         ore.append({'r': 'INFERÊNCIA', 't': 'Setores da carteira relacionados ao tema: %s.' % ', '.join(nomes)})
+    if item.get('etfs_tema'):
+        ore.append({'r': 'INFERÊNCIA', 't': 'Trata do índice ou do tema de %s (%s). Notícia do tema, não fato do fundo.' % (', '.join(item['etfs_tema'][:5]), '; '.join(item.get('temas_etf') or []))})
     ft = item.get('fatores') or []
     if ft:
         ore.append({'r': 'INFERÊNCIA', 't': 'Fatores de risco acompanhados: %s.' % ', '.join(FATOR_NOME.get(f, f) for f in ft)})
@@ -406,6 +490,12 @@ def analisar_regras(item, oregon):
     if not mon:
         mon.append({'r': 'INFERÊNCIA', 't': 'Definir, após a leitura, o dado que confirmaria ou invalidaria a tese.'})
     A['7_monitorar'] = mon[:5]
+    if item.get('categoria') == 'veiculo':
+        # manchete de imprensa: os pontos 4, 5 e 7 são o roteiro do tema (o mesmo para todas as manchetes do tema);
+        # o painel os monta a partir da taxonomia, em vez de repetir o texto em cada item guardado
+        for k in ('4_contrarios', '5_regioes', '7_monitorar'):
+            A.pop(k, None)
+        A['compacta'] = True
     return A
 
 

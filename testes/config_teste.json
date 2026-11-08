@@ -431,7 +431,7 @@
   ],
   "_rss_nota": "RSS públicos dos próprios veículos. O robô guarda só título, link, data e veículo (os termos de uso não permitem reproduzir o texto). Para tirar um veículo, troque \"ativo\" para false.",
   "por_tema_etf": 3,
-  "_etfs_nota": "Temas dos ETFs: notícias sobre o índice, a estratégia e as exposições, marcadas com os ETFs do tema. Não são fatos do fundo. Consultas montadas com as fichas oficiais (painel/src/etfs.json). Para desligar um tema, \"ativo\": false.",
+  "_etfs_nota": "Temas dos ETFs: manchetes sobre o índice, a estratégia e as exposições ligam-se aos ETFs do tema pelos \"termos\" (não são fatos do fundo). Para desligar um tema, \"ativo\": false; para afinar, edite \"termos\".",
   "etfs": [
    {
     "tema": "Juro real (IMA-B e NTN-B)",
@@ -441,7 +441,14 @@
      "B5P211",
      "IB5M11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "IMA-B",
+     "NTN-B",
+     "Tesouro IPCA+",
+     "juro real",
+     "juros reais"
+    ]
    },
    {
     "tema": "Prefixados (IRF-M)",
@@ -451,7 +458,15 @@
      "5PRE11",
      "IDKA11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "IRF-M",
+     "Tesouro Prefixado",
+     "DI futuro",
+     "juros futuros",
+     "curva de juros",
+     "curva prefixada"
+    ]
    },
    {
     "tema": "Tesouro Selic",
@@ -459,7 +474,13 @@
     "etfs": [
      "LFTB11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "Tesouro Selic",
+     "LFT",
+     "taxa Selic",
+     "Copom"
+    ]
    },
    {
     "tema": "Crédito privado no Brasil",
@@ -469,7 +490,15 @@
      "GICP11",
      "LFIN11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "debêntures",
+     "debênture",
+     "crédito privado",
+     "letras financeiras",
+     "IDA-DI",
+     "spread de crédito"
+    ]
    },
    {
     "tema": "Treasuries",
@@ -479,7 +508,17 @@
      "DTLA",
      "IUAA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "Treasuries",
+     "Treasury yields",
+     "T-bills",
+     "títulos do Tesouro americano",
+     "10-year yield",
+     "2-year yield",
+     "rendimento dos Treasuries",
+     "Treasury"
+    ]
    },
    {
     "tema": "Inflação americana (TIPS)",
@@ -487,7 +526,15 @@
     "etfs": [
      "IDTP"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "TIPS",
+     "inflação americana",
+     "inflação nos EUA",
+     "US CPI",
+     "consumer price index",
+     "PCE"
+    ]
    },
    {
     "tema": "High yield nos EUA",
@@ -496,7 +543,16 @@
      "IHYA",
      "SDHA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "high yield",
+     "high-yield",
+     "junk bonds",
+     "junk bond",
+     "credit spreads",
+     "spreads de crédito",
+     "leveraged loans"
+    ]
    },
    {
     "tema": "Dívida emergente",
@@ -505,7 +561,15 @@
      "JPEA",
      "EMCA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "dívida emergente",
+     "EMBI",
+     "CEMBI",
+     "emerging market debt",
+     "emerging-market debt",
+     "EM debt"
+    ]
    },
    {
     "tema": "Ações globais e desenvolvidos",
@@ -515,7 +579,21 @@
      "VHVE",
      "EXUS"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "MSCI World",
+     "FTSE All-World",
+     "bolsas globais",
+     "ações globais",
+     "global stocks",
+     "world stocks",
+     "S&P 500",
+     "Wall Street",
+     "Nasdaq",
+     "Stoxx 600",
+     "Nikkei",
+     "bolsas de Nova York"
+    ]
    },
    {
     "tema": "Small caps e valor",
@@ -525,7 +603,15 @@
      "WSML",
      "IUVL"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "small caps",
+     "small-cap",
+     "small-caps",
+     "Russell 2000",
+     "ações de valor",
+     "value stocks"
+    ]
    },
    {
     "tema": "Ações emergentes",
@@ -534,7 +620,18 @@
      "EIMI",
      "VFEA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "MSCI Emerging Markets",
+     "mercados emergentes",
+     "emerging markets",
+     "emerging-market stocks",
+     "ações chinesas",
+     "China stocks",
+     "Hang Seng",
+     "CSI 300",
+     "Sensex"
+    ]
    },
    {
     "tema": "Bitcoin",
@@ -542,7 +639,15 @@
     "etfs": [
      "IBIT"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "bitcoin",
+     "ETF de bitcoin",
+     "bitcoin ETF",
+     "criptomoedas",
+     "cripto",
+     "crypto"
+    ]
    }
   ]
  },
@@ -1377,7 +1482,7 @@
  },
  "agenda_macro": {
   "_leia": "Agenda do briefing. IBGE pela API oficial de calendário (uma consulta por dia). Copom e Fed pelos calendários oficiais, publicados uma vez por ano: quando sair o calendário novo, acrescente as reuniões aqui (lista [primeiro dia, dia da decisão]) e atualize conferido_em.",
-  "dias": 14,
+  "dias": 30,
   "ibge": true,
   "ibge_produtos": [
    "IPCA",
@@ -1494,7 +1599,7 @@
   "_leia": "Oregon Intelligence (robo/intel.py). janela_dias: só entram publicações dos últimos N dias (a primeira rodada usa janela_inicial_dias para começar a biblioteca). ia: desligada por padrão; para ligar, cadastre ANTHROPIC_API_KEY nos Secrets e troque ativo para true; max_itens_dia e max_tokens_dia são o teto diário de gasto.",
   "janela_dias": 10,
   "janela_inicial_dias": 45,
-  "recentes_dias": 14,
+  "recentes_dias": 10,
   "prazo_min": 12,
   "telegram_digesto": true,
   "telegram_hora": "07:30",
@@ -1504,6 +1609,7 @@
    "max_tokens_dia": 150000,
    "max_tokens_item": 1200,
    "_custo": "Só itens de prioridade alta/média, um pedido por item (título + resumo público + fonte; nunca posições). Com 12 itens/dia a conta fica na casa de 30 a 40 mil tokens/dia; o preço por milhão de tokens do modelo (ia_modelo) está na página de preços da Anthropic."
-  }
+  },
+  "indicadores_macro": true
  }
 }

@@ -56,12 +56,12 @@ visto_em`. Itens absorvidos como "também em" recebem `agrupado_em` e saem das l
   injetada pelo build a partir de `robo/analise.py`) e a camada de dados: `versao.json` a cada 10 minutos, demais
   arquivos quando a versão muda, meses sob demanda (`A.carregarMes`), `resultados.json` quando uma ficha pede; vistas
   `A.itemCard`, `A.abrirItem` (gaveta com sete pontos, fonte original, leitura e aprendizado), `A.macroCards`, `A.agendaView`.
-- `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js` — as três seções. `ui_mapa.js` + `ui_mesa.js` — as 15 carteiras (pesos como
+- `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js` — Hoje, Biblioteca e as seções Brasil e Mundo e Estratégia. `ui_mapa.js` + `ui_mesa.js` — as 15 carteiras (pesos como
   aprovados, validação, exposições agregadas). `ui_teses.js`, `core.js`, `store.js` (coleções `aprendizados` e `leituras`
   neste navegador; no claude.ai, no banco do artefato), `quant.js` (só o que a validação usa).
 - `painel/arquivo/` — módulos arquivados sem apagar: cotações/mercado ao vivo, Sala de Gestão, Comitê, laboratório de
   propostas, risco e cenários, importação de séries, Mundo e Estratégia, Research Brasil antigo.
-- Endereços antigos (`#res/...`, `#cart/risco`, `#global`, `#sala/...`) são traduzidos para as três seções (`A.traduz`).
+- Endereços antigos (`#res/...`, `#cart/risco`, `#global`, `#sala/...`) são traduzidos para as cinco seções (`A.traduz`).
 
 ## Workflow (`.github/workflows/robo.yml` = `docs/workflow_robo.yml`)
 

@@ -47,7 +47,7 @@ def data_ibge(txt):
 def ibge(rede, hoje, dias, produtos):
     de = hoje.strftime('%m-%d-%Y')
     ate = (hoje + dt.timedelta(days=dias)).strftime('%m-%d-%Y')
-    j = rede.get_json('IBGE agenda', URL_IBGE % (de, ate), timeout=30, tentativas=2)
+    j = rede.get_json('IBGE agenda', URL_IBGE % (de, ate), timeout=60, tentativas=3)  # a API do IBGE às vezes demora mais de 30 s
     itens = j.get('items') if isinstance(j, dict) else j
     if not isinstance(itens, list):
         raise ErroFonte('IBGE agenda', 'formato', 'sem lista de itens')

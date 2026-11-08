@@ -3,8 +3,11 @@
   'use strict';
   C.init(DATA);
   var S = A.S;
-  var m = location.hash.match(/^#(hoje|bib|oregon|cart|res|global|sala|mesa|cons|risco)(?:\/(\w+))?/);
+  var RX = /^#(hoje|brasil|mundo|bib|oregon|cart|res|global|sala|mesa|cons|risco)(?:\/(\w+))?/;
+  var m = location.hash.match(RX);
   if (m) { var tr = A.traduz(m[1], m[2] || null); S.area = tr[0]; if (tr[1]) S.sub[tr[0]] = tr[1]; }
+  // link colado ou endereço digitado com outra seção: troca de seção sem recarregar
+  window.addEventListener('hashchange', function () { var k = location.hash.match(RX); if (k) A.go(k[1], k[2] || null); });
   if (!C.MAND[S.cart]) S.cart = 'cresc-mod';
   if (S.ver && S.ver.indexOf('prop:') === 0) S.ver = 'aprovada'; // propostas carregam depois do banco
   window.addEventListener('unhandledrejection', function (e) { var r = e.reason || {}; A.toast('Não foi possível concluir: ' + (r.message || r.code || r)); });

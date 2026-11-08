@@ -324,12 +324,7 @@
   "maximo": 120,
   "ibge": true,
   "cvm": true,
-  "fontes_bloqueadas": [
-   "InfoMoney",
-   "XP Investimentos",
-   "Expert XP",
-   "Conteúdos XP"
-  ],
+  "fontes_bloqueadas": [],
   "veiculos_confiaveis": [
    "Valor Econômico",
    "Valor Investe",
@@ -350,7 +345,48 @@
    "Poder360",
    "InvestNews",
    "Money Times",
-   "Seu Dinheiro"
+   "Seu Dinheiro",
+   "Valor",
+   "InfoMoney",
+   "Suno",
+   "UOL",
+   "ISTOÉ Dinheiro",
+   "Investing.com",
+   "Times Brasil",
+   "Bloomberg",
+   "Financial Times",
+   "Barron",
+   "Yahoo Finance",
+   "MarketWatch",
+   "Wall Street Journal",
+   "WSJ",
+   "CNBC",
+   "Seeking Alpha",
+   "Morningstar",
+   "ETF.com",
+   "Business Insider",
+   "Forbes",
+   "The Economist",
+   "Nikkei",
+   "South China Morning Post",
+   "Caixin",
+   "Época Negócios",
+   "Veja",
+   "Agência Estado",
+   "BNamericas",
+   "Canal Energia",
+   "Infomoney",
+   "Monitor Mercantil",
+   "Capital Reset",
+   "Pipeline Valor",
+   "Rio Times",
+   "Associated Press",
+   "AP News",
+   "Axios",
+   "Fortune",
+   "Barron's",
+   "ADVFN",
+   "Investing.com Brasil"
   ],
   "macro": [
    {
@@ -431,7 +467,7 @@
   ],
   "_rss_nota": "RSS públicos dos próprios veículos. O robô guarda só título, link, data e veículo (os termos de uso não permitem reproduzir o texto). Para tirar um veículo, troque \"ativo\" para false.",
   "por_tema_etf": 3,
-  "_etfs_nota": "Temas dos ETFs: notícias sobre o índice, a estratégia e as exposições, marcadas com os ETFs do tema. Não são fatos do fundo. Consultas montadas com as fichas oficiais (painel/src/etfs.json). Para desligar um tema, \"ativo\": false.",
+  "_etfs_nota": "Temas dos ETFs: manchetes sobre o índice, a estratégia e as exposições ligam-se aos ETFs do tema pelos \"termos\" (não são fatos do fundo). Para desligar um tema, \"ativo\": false; para afinar, edite \"termos\".",
   "etfs": [
    {
     "tema": "Juro real (IMA-B e NTN-B)",
@@ -441,7 +477,16 @@
      "B5P211",
      "IB5M11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "IMA-B",
+     "NTN-B",
+     "Tesouro IPCA+",
+     "juro real",
+     "juros reais"
+    ],
+    "busca": "NTN-B juro real",
+    "mkt": "pt-BR"
    },
    {
     "tema": "Prefixados (IRF-M)",
@@ -451,7 +496,17 @@
      "5PRE11",
      "IDKA11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "IRF-M",
+     "Tesouro Prefixado",
+     "DI futuro",
+     "juros futuros",
+     "curva de juros",
+     "curva prefixada"
+    ],
+    "busca": "DI futuro juros",
+    "mkt": "pt-BR"
    },
    {
     "tema": "Tesouro Selic",
@@ -459,7 +514,15 @@
     "etfs": [
      "LFTB11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "Tesouro Selic",
+     "LFT",
+     "taxa Selic",
+     "Copom"
+    ],
+    "busca": "Tesouro Selic",
+    "mkt": "pt-BR"
    },
    {
     "tema": "Crédito privado no Brasil",
@@ -469,7 +532,17 @@
      "GICP11",
      "LFIN11"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "debêntures",
+     "debênture",
+     "crédito privado",
+     "letras financeiras",
+     "IDA-DI",
+     "spread de crédito"
+    ],
+    "busca": "debêntures crédito privado",
+    "mkt": "pt-BR"
    },
    {
     "tema": "Treasuries",
@@ -479,7 +552,19 @@
      "DTLA",
      "IUAA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "Treasuries",
+     "Treasury yields",
+     "T-bills",
+     "títulos do Tesouro americano",
+     "10-year yield",
+     "2-year yield",
+     "rendimento dos Treasuries",
+     "Treasury"
+    ],
+    "busca": "Treasury yields",
+    "mkt": "en-US"
    },
    {
     "tema": "Inflação americana (TIPS)",
@@ -487,7 +572,17 @@
     "etfs": [
      "IDTP"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "TIPS",
+     "inflação americana",
+     "inflação nos EUA",
+     "US CPI",
+     "consumer price index",
+     "PCE"
+    ],
+    "busca": "TIPS inflation-protected Treasury",
+    "mkt": "en-US"
    },
    {
     "tema": "High yield nos EUA",
@@ -496,7 +591,18 @@
      "IHYA",
      "SDHA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "high yield",
+     "high-yield",
+     "junk bonds",
+     "junk bond",
+     "credit spreads",
+     "spreads de crédito",
+     "leveraged loans"
+    ],
+    "busca": "high yield bonds",
+    "mkt": "en-US"
    },
    {
     "tema": "Dívida emergente",
@@ -505,7 +611,17 @@
      "JPEA",
      "EMCA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "dívida emergente",
+     "EMBI",
+     "CEMBI",
+     "emerging market debt",
+     "emerging-market debt",
+     "EM debt"
+    ],
+    "busca": "emerging market debt",
+    "mkt": "en-US"
    },
    {
     "tema": "Ações globais e desenvolvidos",
@@ -515,7 +631,23 @@
      "VHVE",
      "EXUS"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "MSCI World",
+     "FTSE All-World",
+     "bolsas globais",
+     "ações globais",
+     "global stocks",
+     "world stocks",
+     "S&P 500",
+     "Wall Street",
+     "Nasdaq",
+     "Stoxx 600",
+     "Nikkei",
+     "bolsas de Nova York"
+    ],
+    "busca": "global stocks MSCI World",
+    "mkt": "en-US"
    },
    {
     "tema": "Small caps e valor",
@@ -525,7 +657,17 @@
      "WSML",
      "IUVL"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "small caps",
+     "small-cap",
+     "small-caps",
+     "Russell 2000",
+     "ações de valor",
+     "value stocks"
+    ],
+    "busca": "small caps Russell 2000",
+    "mkt": "en-US"
    },
    {
     "tema": "Ações emergentes",
@@ -534,7 +676,20 @@
      "EIMI",
      "VFEA"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "MSCI Emerging Markets",
+     "mercados emergentes",
+     "emerging markets",
+     "emerging-market stocks",
+     "ações chinesas",
+     "China stocks",
+     "Hang Seng",
+     "CSI 300",
+     "Sensex"
+    ],
+    "busca": "emerging markets stocks",
+    "mkt": "en-US"
    },
    {
     "tema": "Bitcoin",
@@ -542,9 +697,181 @@
     "etfs": [
      "IBIT"
     ],
-    "ativo": true
+    "ativo": true,
+    "termos": [
+     "bitcoin",
+     "ETF de bitcoin",
+     "bitcoin ETF",
+     "criptomoedas",
+     "cripto",
+     "crypto"
+    ],
+    "busca": "bitcoin ETF",
+    "mkt": "en-US"
    }
-  ]
+  ],
+  "busca": {
+   "_nota": "Buscas de notícias por empresa, setor e tema de ETF no RSS público do Bing Notícias (sem chave, sem custo; o robots.txt do Bing permite /news/search). O Google Notícias veda robôs no robots.txt e não é usado. Guardamos só título, link, veículo e data.",
+   "ativo": true,
+   "provedor": "Bing Notícias",
+   "url": "https://www.bing.com/news/search?q={q}&qft=sortbydate%3d%221%22&format=rss&mkt={mkt}",
+   "intervalo_min": 120,
+   "max_por_rodada": 14,
+   "por_busca": 15
+  },
+  "buscas_setor": [
+   {
+    "nome": "Celulose e papel",
+    "consulta": "celulose preço China",
+    "mkt": "pt-BR",
+    "ativos": [
+     "KLBN4"
+    ],
+    "termos": [
+     "celulose",
+     "papel",
+     "embalage"
+    ]
+   },
+   {
+    "nome": "Pulp and paper (global)",
+    "consulta": "pulp prices China",
+    "mkt": "en-US",
+    "ativos": [
+     "KLBN4"
+    ],
+    "termos": [
+     "pulp",
+     "paper",
+     "packaging"
+    ]
+   },
+   {
+    "nome": "Bancos e crédito",
+    "consulta": "bancos crédito inadimplência",
+    "mkt": "pt-BR",
+    "ativos": [
+     "BBDC3",
+     "ITSA4",
+     "INBR34"
+    ],
+    "termos": [
+     "banco",
+     "crédito",
+     "inadimpl",
+     "spread"
+    ]
+   },
+   {
+    "nome": "Seguros e previdência",
+    "consulta": "seguradoras Susep",
+    "mkt": "pt-BR",
+    "ativos": [
+     "BBSE3"
+    ],
+    "termos": [
+     "segur",
+     "previdência",
+     "Susep",
+     "sinistr"
+    ]
+   },
+   {
+    "nome": "Setor elétrico",
+    "consulta": "setor elétrico Aneel",
+    "mkt": "pt-BR",
+    "ativos": [
+     "CPLE3",
+     "AXIA3",
+     "EQTL3"
+    ],
+    "termos": [
+     "Aneel",
+     "energia",
+     "elétric",
+     "tarifa",
+     "transmiss",
+     "distribuidora"
+    ]
+   },
+   {
+    "nome": "Petróleo",
+    "consulta": "petróleo Brent",
+    "mkt": "pt-BR",
+    "ativos": [
+     "PETR4",
+     "PRIO3"
+    ],
+    "termos": [
+     "petróleo",
+     "Brent",
+     "ANP",
+     "Opep",
+     "combust"
+    ]
+   },
+   {
+    "nome": "Shoppings e varejo",
+    "consulta": "shoppings vendas varejo",
+    "mkt": "pt-BR",
+    "ativos": [
+     "ALOS3",
+     "XPML11"
+    ],
+    "termos": [
+     "shopping",
+     "varejo"
+    ]
+   },
+   {
+    "nome": "Agronegócio e biodiesel",
+    "consulta": "agronegócio soja biodiesel",
+    "mkt": "pt-BR",
+    "ativos": [
+     "TTEN3",
+     "KNCA11"
+    ],
+    "termos": [
+     "soja",
+     "agro",
+     "biodiesel",
+     "safra"
+    ]
+   },
+   {
+    "nome": "Fundos imobiliários",
+    "consulta": "fundos imobiliários IFIX",
+    "mkt": "pt-BR",
+    "ativos": [
+     "BTLG11",
+     "XPML11",
+     "TRXF11",
+     "KNHF11",
+     "HGCR11",
+     "KNCA11",
+     "CDII11",
+     "JURO11"
+    ],
+    "termos": [
+     "FII",
+     "IFIX",
+     "fundos imobiliários",
+     "fundo imobiliário"
+    ]
+   }
+  ],
+  "cvm_ipe": {
+   "ativo": true,
+   "intervalo_min": 180,
+   "_nota": "Fatos relevantes, comunicados ao mercado e avisos aos acionistas das empresas das carteiras (dados.cvm.gov.br, base aberta). Conferidos por CNPJ e nome."
+  },
+  "_bloqueio_nota": "fontes_bloqueadas: veículos que o robô descarta por completo. fontes_sinalizadas: veículos que entram, com aviso (ex.: Grupo XP — útil para pesquisa, não para citar em material de cliente).",
+  "fontes_sinalizadas": {
+   "InfoMoney": "Grupo XP — não citar em material de cliente",
+   "XP Investimentos": "Grupo XP — não citar em material de cliente",
+   "Expert XP": "Grupo XP — não citar em material de cliente",
+   "Conteúdos XP": "Grupo XP — não citar em material de cliente"
+  }
  },
  "ativos": [
   {
@@ -656,6 +983,9 @@
      "Influência do controlador",
      "Reposição de reservas",
      "Refino e alocação de capital"
+    ],
+    "buscas": [
+     "Petrobras"
     ]
    }
   },
@@ -684,6 +1014,15 @@
      "Custos e estoques",
      "Alavancagem",
      "Alocação de capital"
+    ],
+    "buscas": [
+     "Klabin"
+    ],
+    "excluir": [
+     "Chácara Klabin",
+     "Ema Klabin",
+     "Alexander Klabin",
+     "Klabin Segall"
     ]
    }
   },
@@ -714,6 +1053,9 @@
      "Crédito e atividade econômica",
      "Taxas de juros",
      "Dependência do Banco do Brasil"
+    ],
+    "buscas": [
+     "BB Seguridade"
     ]
    }
   },
@@ -742,6 +1084,9 @@
      "Execução da transformação",
      "Concorrência",
      "Seguros e capital"
+    ],
+    "buscas": [
+     "Bradesco"
     ]
    }
   },
@@ -770,6 +1115,9 @@
      "Desconto persistente",
      "Alocação de capital",
      "Custos e estrutura tributária"
+    ],
+    "buscas": [
+     "Itaúsa"
     ]
    }
   },
@@ -798,6 +1146,9 @@
      "Geração e comercialização",
      "Execução dos projetos",
      "Endividamento"
+    ],
+    "buscas": [
+     "Copel"
     ]
    }
   },
@@ -828,6 +1179,10 @@
      "Hidrologia e geração",
      "Fim da RBSE",
      "Passivos, investimentos e governança"
+    ],
+    "buscas": [
+     "Axia Energia",
+     "Eletrobras"
     ]
    }
   },
@@ -862,6 +1217,9 @@
      "Execução em novos negócios",
      "Regulação",
      "Alocação de capital"
+    ],
+    "buscas": [
+     "Equatorial Energia"
     ]
    }
   },
@@ -892,6 +1250,10 @@
      "Produção e operação dos campos",
      "Disciplina nas aquisições",
      "Licenciamento e investimentos"
+    ],
+    "buscas": [
+     "PRIO3",
+     "Prio petróleo"
     ]
    }
   },
@@ -918,6 +1280,9 @@
      "Juros e financiamento",
      "Alocação de capital",
      "Sustentabilidade dos dividendos"
+    ],
+    "buscas": [
+     "Allos shopping"
     ]
    }
   },
@@ -951,6 +1316,9 @@
      "Ciclo econômico",
      "Consignado privado",
      "Concorrência e capital"
+    ],
+    "buscas": [
+     "Banco Inter"
     ]
    }
   },
@@ -981,6 +1349,9 @@
      "Endividamento e covenants",
      "Execução geográfica",
      "Crédito ao produtor"
+    ],
+    "buscas": [
+     "3tentos"
     ]
    }
   },
@@ -1010,6 +1381,9 @@
      "Valor residual dos ativos",
      "Inadimplência e devoluções",
      "Ociosidade da frota"
+    ],
+    "buscas": [
+     "VAMO3"
     ]
    }
   },
@@ -1377,7 +1751,7 @@
  },
  "agenda_macro": {
   "_leia": "Agenda do briefing. IBGE pela API oficial de calendário (uma consulta por dia). Copom e Fed pelos calendários oficiais, publicados uma vez por ano: quando sair o calendário novo, acrescente as reuniões aqui (lista [primeiro dia, dia da decisão]) e atualize conferido_em.",
-  "dias": 14,
+  "dias": 30,
   "ibge": true,
   "ibge_produtos": [
    "IPCA",
@@ -1494,7 +1868,7 @@
   "_leia": "Oregon Intelligence (robo/intel.py). janela_dias: só entram publicações dos últimos N dias (a primeira rodada usa janela_inicial_dias para começar a biblioteca). ia: desligada por padrão; para ligar, cadastre ANTHROPIC_API_KEY nos Secrets e troque ativo para true; max_itens_dia e max_tokens_dia são o teto diário de gasto.",
   "janela_dias": 10,
   "janela_inicial_dias": 45,
-  "recentes_dias": 14,
+  "recentes_dias": 10,
   "prazo_min": 12,
   "telegram_digesto": true,
   "telegram_hora": "07:30",
@@ -1504,6 +1878,7 @@
    "max_tokens_dia": 150000,
    "max_tokens_item": 1200,
    "_custo": "Só itens de prioridade alta/média, um pedido por item (título + resumo público + fonte; nunca posições). Com 12 itens/dia a conta fica na casa de 30 a 40 mil tokens/dia; o preço por milhão de tokens do modelo (ia_modelo) está na página de preços da Anthropic."
-  }
+  },
+  "indicadores_macro": false
  }
 }

@@ -1,0 +1,201 @@
+{
+ "_leia": "Amostra REAL do RSS de busca do Bing Notícias, lida em 08/11/2026 entre 09:20 e 09:45 (Brasília) pela ferramenta de leitura web desta sessão (o contêiner de testes não tem saída para a internet). Títulos, datas (pubDate), veículos (News:Source) e, em Klabin e BB Seguridade, os links das matérias (parâmetro url= do redirecionamento do Bing) estão como vieram; o link da UOL veio cortado pela ferramenta (\"…ghtm\"). Copel e China sem link (a ferramenta truncou). Na Copel ficaram só 8 dos 11 itens lidos (3 fora do assunto, entre eles o \"Pular para o conteúdo\", que foi mantido).",
+ "capturado_em": "2026-11-08T09:35-03:00",
+ "url": "https://www.bing.com/news/search?q={q}&qft=sortbydate%3d%221%22&format=rss&mkt=pt-BR",
+ "buscas": {
+  "Klabin": [
+   {
+    "titulo": "Allied paga R$ 0,63 por ação; Santander, Klabin, Lavvi e outros completam dividendos da semana",
+    "pubDate": "Sun, 08 Nov 2026 03:00:00 GMT",
+    "veiculo": "Estadão",
+    "link": "https://www.estadao.com.br/einvestidor/onde-investir/allied-paga-r-063-por-acao-santander-klabin-lavvi-e-outros-completam-dividendos-da-semana/"
+   },
+   {
+    "titulo": "Linha 5-Lilás terá manutenção corretiva neste sábado (7), próximo à estação Chácara Klabin",
+    "pubDate": "Sat, 07 Nov 2026 01:00:00 GMT",
+    "veiculo": "Diário do Transporte",
+    "link": "https://diariodotransporte.com.br/2026/11/07/linha-5-lilas-tera-manutencao-corretiva-neste-sabado-7-proximo-a-estacao-chacara-klabin/"
+   },
+   {
+    "titulo": "Klabin faz acordo para formação de SPE de madeira no Paraná",
+    "pubDate": "Fri, 06 Nov 2026 15:33:00 GMT",
+    "veiculo": "Portal do Holanda",
+    "link": "https://www.portaldoholanda.com.br/index.php/mundo/klabin-faz-acordo-para-formacao-de-spe-de-madeira-no-parana"
+   },
+   {
+    "titulo": "Klabin firma parceria em ativos florestais no Paraná e garante aporte de R$ 1,2 bi",
+    "pubDate": "Fri, 06 Nov 2026 13:36:00 GMT",
+    "veiculo": "Valor Econômico",
+    "link": "https://valor.globo.com/empresas/noticia/2026/11/06/klabin-firma-parceria-em-ativos-florestais-no-parana-e-garante-aporte-de-r-12-bi.ghtml"
+   },
+   {
+    "titulo": "Klabin (KLBN11): Safra corta preço-alvo e rebaixa recomendação diante de cenário mais desafiador",
+    "pubDate": "Fri, 06 Nov 2026 08:12:00 GMT",
+    "veiculo": "Money Times",
+    "link": "https://www.moneytimes.com.br/klabin-klbn11-safra-corta-preco-alvo-e-rebaixa-recomendacao-diante-de-cenario-mais-desafiador/"
+   },
+   {
+    "titulo": "Diretor da Casa Museu Ema Klabin é eleito para o conselho do DEMHIST",
+    "pubDate": "Fri, 06 Nov 2026 00:04:00 GMT",
+    "veiculo": "Revista PROJETO",
+    "link": "https://revistaprojeto.com.br/noticias/diretor-da-casa-museu-ema-klabin-e-eleito-para-o-conselho-do-demhist/"
+   },
+   {
+    "titulo": "Klabin: resultado do 3T26 mostra lucro menor, mas receita cresce e supera expectativas",
+    "pubDate": "Thu, 05 Nov 2026 16:00:00 GMT",
+    "veiculo": "ADVFN Brasil",
+    "link": "https://br.advfn.com/noticias/PAPERBR/2026/artigo/99576920"
+   },
+   {
+    "titulo": "Queda da bolsa: klabin e yduqs podem ensaiar recuperação?",
+    "pubDate": "Tue, 03 Nov 2026 20:43:00 GMT",
+    "veiculo": "Agora Litoral",
+    "link": "https://agoralitoral.com.br/2026/11/04/queda-da-bolsa-klabin-e-yduqs-podem-ensaiar-recuperacao/"
+   },
+   {
+    "titulo": "Klabin foca no melhoramento genético usual e descarta o transgênico",
+    "pubDate": "Mon, 02 Nov 2026 23:11:00 GMT",
+    "veiculo": "Valor Econômico",
+    "link": "https://valor.globo.com/empresas/noticia/2026/11/03/klabin-foca-no-melhoramento-genetico-usual-e-descarta-o-transgenico.ghtml"
+   },
+   {
+    "titulo": "Klabin (KLBN11) está barata? Lucro cai 81% e dívida de R$ 24 bilhões preocupa investidores",
+    "pubDate": "Sun, 01 Nov 2026 12:06:00 GMT",
+    "veiculo": "O Petróleo",
+    "link": "https://opetroleo.com.br/klabin-klbn11-esta-barata-lucro-cai-81-e-divida-de-r-24-bilhoes-preocupa-investidores/"
+   },
+   {
+    "titulo": "Klabin (KLBN11): lucro cai 18% em 2026 e resultado revela pressão sobre margens e dividendos",
+    "pubDate": "Sun, 01 Nov 2026 06:20:00 GMT",
+    "veiculo": "O Petróleo",
+    "link": "https://opetroleo.com.br/klabin-klbn11-lucro-cai-18-em-2026-e-resultado-revela-pressao-sobre-margens-e-dividendos/"
+   }
+  ],
+  "BB Seguridade": [
+   {
+    "titulo": "BB é desafio para Lula 4 com inadimplência no agro – BB Seguridade pode ser chave",
+    "pubDate": "Fri, 06 Nov 2026 03:31:00 GMT",
+    "veiculo": "InfoMoney",
+    "link": "https://www.infomoney.com.br/mercados/banco-do-brasil-bbas3-e-desafio-para-lula-4-com-inadimplencia-no-agro-bb-seguridade-pode-ser-chave/"
+   },
+   {
+    "titulo": "Crise no agro pressiona Banco do Brasil e põe BB Seguridade no radar",
+    "pubDate": "Fri, 06 Nov 2026 02:07:00 GMT",
+    "veiculo": "ISTOÉ DINHEIRO",
+    "link": "https://istoedinheiro.com.br/banco-do-brasil-inadimplencia-agro-bb-seguridade"
+   },
+   {
+    "titulo": "BB Seguridade registra lucro líquido de R$ 6,8 bilhões nos 9M26",
+    "pubDate": "Thu, 05 Nov 2026 07:59:00 GMT",
+    "veiculo": "SEGS",
+    "link": "https://www.segs.com.br/seguros/458778-bb-seguridade-registra-lucro-liquido-de-r-6-8-bilhoes-nos-9m26"
+   },
+   {
+    "titulo": "BB Seguridade: gigante bancário em dificuldades impõe a Lula desafio logo após as eleições",
+    "pubDate": "Thu, 05 Nov 2026 05:01:00 GMT",
+    "veiculo": "O GLOBO",
+    "link": "https://oglobo.globo.com/economia/noticia/2026/11/05/bb-seguridade-gigante-bancario-em-dificuldades-impoe-a-lula-desafio-logo-apos-as-eleicoes.ghtml"
+   },
+   {
+    "titulo": "BB Seguridade (BBSE3) lucra R$ 2,43 bilhões, mas queda de 19% nos seguros acende alerta para 2027",
+    "pubDate": "Thu, 05 Nov 2026 03:03:00 GMT",
+    "veiculo": "O Petróleo",
+    "link": "https://opetroleo.com.br/bb-seguridade-bbse3-lucra-r-243-bilhoes-mas-queda-de-19-nos-seguros-acende-alerta-para-2027/"
+   },
+   {
+    "titulo": "BB Seguridade despenca na Bolsa e bancos recomendam venda: será que chegou a hora de trocar pela Caixa Seguridade?",
+    "pubDate": "Wed, 04 Nov 2026 16:37:00 GMT",
+    "veiculo": "O Petróleo",
+    "link": "https://opetroleo.com.br/bb-seguridade-despenca-na-bolsa-e-bancos-recomendam-venda-sera-que-chegou-a-hora-de-trocar-pela-caixa-seguridade/"
+   },
+   {
+    "titulo": "BB Seguridade lucra acima do esperado, mas 3T é de \"baixa qualidade\" e ação cai 7%",
+    "pubDate": "Wed, 04 Nov 2026 13:16:00 GMT",
+    "veiculo": "InfoMoney",
+    "link": "https://www.infomoney.com.br/mercados/bb-seguridade-lucra-acima-do-esperado-mas-3t-e-de-baixa-qualidade-e-acao-cai-forte/"
+   },
+   {
+    "titulo": "BB Seguridade desaba 5%, mesmo com lucro acima do esperado no 3T26; entenda",
+    "pubDate": "Wed, 04 Nov 2026 09:39:00 GMT",
+    "veiculo": "UOL Economia",
+    "link": "https://economia.uol.com.br/cotacoes/noticias/redacao/2026/11/04/bb-seguridade-desaba-5-mesmo-com-lucro-acima-do-esperado-no-3t26-entenda.ghtm"
+   },
+   {
+    "titulo": "BB Seguridade (BBSE3) supera expectativas, mas analistas veem riscos após corte de projeções",
+    "pubDate": "Wed, 04 Nov 2026 09:30:00 GMT",
+    "veiculo": "Suno",
+    "link": "https://www.suno.com.br/noticias/bb-seguridade-bbse3-balanco-3t26/"
+   },
+   {
+    "titulo": "BB Seguridade lucra R$ 2,4 bilhões no 3T26",
+    "pubDate": "Wed, 04 Nov 2026 09:09:00 GMT",
+    "veiculo": "Analistas LTDA",
+    "link": "https://www.analistas.com.br/noticias/bb-seguridade-lucra-r-24-bilhoes-no-3t26"
+   }
+  ],
+  "Copel": [
+   {
+    "titulo": "Pular para o conteúdo",
+    "pubDate": "Sat, 07 Nov 2026 14:10:00 GMT",
+    "veiculo": "g1"
+   },
+   {
+    "titulo": "Copel registrou neste sábado o maior número de desligamentos por temporais em 2026",
+    "pubDate": "Sat, 07 Nov 2026 12:39:00 GMT",
+    "veiculo": "aRede"
+   },
+   {
+    "titulo": "No pico da tempestade, Paraná registrou 381,3 mil unidades sem luz; estado segue sob alerta de temporais",
+    "pubDate": "Sat, 07 Nov 2026 11:49:00 GMT",
+    "veiculo": "Portal Banda B"
+   },
+   {
+    "titulo": "Temporais deixam 424 mil imóveis sem energia no Paraná e Copel classifica ocorrência como a maior do ano",
+    "pubDate": "Sat, 07 Nov 2026 10:23:00 GMT",
+    "veiculo": "CGN"
+   },
+   {
+    "titulo": "Moradores completam mais de 88 horas sem energia elétrica em São Mateus do Sul",
+    "pubDate": "Sat, 07 Nov 2026 02:56:00 GMT",
+    "veiculo": "portalrdx"
+   },
+   {
+    "titulo": "Copel divulga novo balanço sobre imóveis que ainda estão sem energia em Maringá após tornado; veja números",
+    "pubDate": "Fri, 06 Nov 2026 16:00:00 GMT",
+    "veiculo": "GMC Online"
+   },
+   {
+    "titulo": "Maringá Tornado Cuts Power to Over 85,000",
+    "pubDate": "Fri, 06 Nov 2026 08:21:00 GMT",
+    "veiculo": "The Rio Times"
+   },
+   {
+    "titulo": "Maringá ainda tem 10,2 mil imóveis sem energia cinco dias após tornado",
+    "pubDate": "Thu, 05 Nov 2026 16:00:00 GMT",
+    "veiculo": "Tribuna PR"
+   }
+  ],
+  "China stocks MSCI (en-US)": [
+   {
+    "titulo": "South Korea crashed 15.57%, China fell 7.17% in October: Are emerging-market funds getting riskier?",
+    "pubDate": "Sat, 07 Nov 2026 04:01:32 GMT",
+    "veiculo": "Business Today on MSN"
+   },
+   {
+    "titulo": "US Vs Asia Stocks: China Outpaces Peers As Support Measures Stabilize Markets Amid Midterms-Led Tech Selloff",
+    "pubDate": "Wed, 04 Nov 2026 22:03:00 GMT",
+    "veiculo": "Yahoo Finance"
+   },
+   {
+    "titulo": "Asian stocks retreat ahead of US midterms, oil steadies",
+    "pubDate": "Mon, 02 Nov 2026 19:46:00 GMT",
+    "veiculo": "ZAWYA"
+   },
+   {
+    "titulo": "China tries to put a floor under its stock market",
+    "pubDate": "Mon, 02 Nov 2026 07:06:00 GMT",
+    "veiculo": "Barron's on MSN"
+   }
+  ]
+ }
+}

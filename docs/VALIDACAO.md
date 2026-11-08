@@ -33,9 +33,9 @@ injetada do robô, exportar/importar aprendizados descartando link `javascript:`
 
 `node painel/test/areas.js` — Playwright, computador (1440) e celular (390), com dados gerados pelo robô contra a
 internet simulada (`painel/test/gera_dados_teste.py`): Hoje (5–8 prioridades, links originais, macro, agenda, estudo,
-leitura), gaveta com sete pontos e rótulos, aprendizado salvo, todas as rotas das três seções e as antigas traduzidas,
+leitura), gaveta com sete pontos e rótulos, aprendizado salvo, todas as rotas das cinco seções e as antigas traduzidas,
 busca e filtros da Biblioteca, prioridade baixa visível, mês anterior sob demanda, fontes e coleta, resumo semanal,
-fichas de PETR4 e IMAB11 sem cotação, busca rápida, carteiras de referência sem simulador, menu com três seções, sem
+fichas de PETR4 e IMAB11 sem cotação, busca rápida, carteiras de referência sem simulador, menu com cinco seções, sem
 erro de JavaScript e sem rolagem horizontal no celular. Resultado da última execução: **tudo ok**.
 
 ## O que foi validado ao vivo e o que só o GitHub mostra

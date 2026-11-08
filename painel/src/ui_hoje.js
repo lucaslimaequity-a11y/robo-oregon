@@ -1,52 +1,59 @@
-/* HOJE — briefing diário do Oregon Intelligence: 5 a 8 conteúdos prioritários com análise, macro que explica o dia,
-   publicações de gestoras, vídeos, uma leitura recomendada e o estudo do dia. Dez a quinze minutos, sem excesso. */
+/* HOJE — o que saiu agora: últimas notícias com hora (portais brasileiros, imprensa internacional, bancos centrais),
+   o que tocou os ativos da carteira, opiniões de casas de análise, agenda, leituras do dia (cartas e research) e estudo. */
 (function (A, C, I) {
   'use strict';
   var h = A.h;
+  var F = {filtro: 'tudo', max: 15};
   function E() { return A.intel; }
-  // Resolve as referências do hoje.json ({id, mes}) para os itens em memória; pede o mês quando o item está fora dos recentes
   function resolver(refs) {
     var out = [], faltam = {};
     (refs || []).forEach(function (r) { var x = A.itemPorId(r.id); if (x) out.push(x); else if (r.mes) faltam[r.mes] = 1; });
     Object.keys(faltam).forEach(function (m) { if (!E().meses[m]) A.carregarMes(m); });
     return out;
   }
-  // Sem hoje.json (robô antigo ou primeira rodada): monta a lista localmente com as mesmas regras de variedade
-  function localmente(itens, n) {
-    var hoje = I.hojeBRT(), rec = itens.filter(function (x) { return I.pub(x).slice(0, 10) >= I.menosDias(hoje, 2); });
-    var base = I.ordenar((rec.length >= 5 ? rec : itens).filter(function (x) { return x.natureza !== 'promocional' && x.natureza !== 'recomendacao'; }));
-    var out = [], pf = {}, pt = {};
-    base.forEach(function (x) { var f = x.fonte_id, t = (x.temas || ['-'])[0]; if (out.length >= n || (pf[f] || 0) >= 2 || (pt[t] || 0) >= 3) return; out.push(x); pf[f] = (pf[f] || 0) + 1; pt[t] = (pt[t] || 0) + 1; });
-    return out;
-  }
-  function secao(tit, itens, opt) { opt = opt || {}; return A.sec(tit, {hint: opt.hint, id: opt.id, right: opt.right}, A.listaItens(itens, {vazio: opt.vazio || 'Nada nesta janela.', max: opt.max, semResumo: opt.semResumo})); }
+  var FILTROS = [['tudo', 'Tudo'], ['carteira', 'Na carteira'], ['brasil', 'Brasil'], ['mundo', 'Mundo'], ['casas', 'Opiniões'], ['oficial', 'Oficiais (CVM, BCs)']];
 
   A.areas.hoje = function () {
     var e = E(), wrap = h('div'), hj = e.hoje, itens = A.itens();
-    var data = hj && hj.data ? A.dataBR(hj.data) : A.dataBR(I.hojeBRT());
-    wrap.appendChild(A.pageHead('Oregon Intelligence · briefing', 'Hoje, ' + data, 'As leituras que mais importam para quem gere carteiras, com análise em sete pontos. ' + (hj ? 'Janela de ' + hj.janela + ', ' + hj.n_itens_janela + ' itens avaliados; aqui ficam ' + hj.prioridades.length + '.' : 'Dez a quinze minutos, sem excesso.'),
-      h('button', {class: 'btn', onclick: function () { A.intelAtualizar(); }}, e.carregando ? 'Atualizando…' : 'Atualizar')));
+    var hoje = I.hojeBRT(), d = new Date(hoje + 'T12:00:00Z'), dia = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'][d.getUTCDay()];
+    var v = e.versao, u = e.coleta && e.coleta.ultima, n24 = I.ultimas(itens, {horas: 24}).length;
+    wrap.appendChild(A.pageHead('Oregon Intelligence', 'Hoje, ' + dia + ' ' + A.dataBR(hoje).slice(0, 5),
+      v ? h('span', {class: 'status-l'}, 'Última coleta concluída ', h('b', null, I.quando({publicado_em: v.gerado_em})), ' · ', h('b', null, String(n24)), ' notícias nas últimas 24 h',
+        u ? [' · ', u.fontes_erro ? h('button', {class: 'btn link', onclick: function () { A.go('bib', 'fontes'); }}, u.fontes_erro + (u.fontes_erro > 1 ? ' fontes com erro' : ' fonte com erro')) : 'nenhuma fonte com erro'] : null,
+        '. O robô lê a cada 30 minutos (7h às 22h30); esta página se atualiza sozinha.') : 'Buscando os dados do robô…',
+      h('button', {class: 'btn', onclick: function () { A.intelAtualizar(); }}, e.carregando ? 'Atualizando…' : 'Atualizar agora')));
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
-    if (hj && hj.aviso) wrap.appendChild(h('p', {class: 'hint', style: 'margin-top:0'}, hj.aviso));
-    var prior = hj ? resolver(hj.prioridades) : localmente(itens, 8);
-    if (hj && prior.length < hj.prioridades.length && !e.carregando) prior = prior.concat(localmente(itens.filter(function (x) { return prior.indexOf(x) < 0; }), hj.prioridades.length - prior.length));
-    wrap.appendChild(secao('Prioridades do dia', prior, {id: 'prioridades', hint: 'Cinco a oito conteúdos, no máximo dois por fonte e três por tema. Toque no título para a análise; ↗ abre a fonte original.', vazio: itens.length ? 'Sem itens recentes com prioridade; veja a Biblioteca.' : (e.carregando ? 'Buscando os dados do robô…' : 'A biblioteca ainda está vazia: o robô publica os primeiros itens na primeira rodada.')}));
-    var g = h('div', {class: 'grid2'}), L = h('div'), R = h('div'); g.append(L, R); wrap.appendChild(g);
-    L.appendChild(A.sec('Macro que explica o dia', {hint: 'Indicadores oficiais de referência (Banco Central, Tesouro, Tesouro dos EUA). Não há cotações de ações nem câmbio ao vivo: este não é um terminal.', id: 'macro'}, A.macroCards(true)));
-    R.appendChild(A.sec('Agenda', {hint: 'Divulgações oficiais dos próximos dias (IBGE, Copom, Fed, Focus).', id: 'agenda'}, A.agendaView(7)));
-    if (hj) {
-      var macro = resolver(hj.macro), gest = resolver(hj.gestoras), vids = resolver(hj.videos);
-      if (macro.length) wrap.appendChild(secao('Notícias e documentos macro', macro, {id: 'macro-itens', hint: 'Instituições oficiais: Banco Central, Fed, BCE, BIS, FMI, IBGE.', semResumo: true}));
-      if (gest.length) wrap.appendChild(secao('Publicações de gestoras', gest, {id: 'gestoras', hint: 'Cartas, research e comentários das gestoras cadastradas. O material mais valioso para aprender método.'}));
-      if (vids.length) wrap.appendChild(secao('Vídeos', vids, {id: 'videos', hint: 'Canais oficiais, pela API do YouTube. Só título, link e descrição curta.', semResumo: true}));
-      var leit = hj.leitura ? resolver([hj.leitura])[0] : null;
-      var g2 = h('div', {class: 'grid2'}), L2 = h('div'), R2 = h('div'); g2.append(L2, R2); wrap.appendChild(g2);
-      L2.appendChild(A.sec('Leitura recomendada', {id: 'leitura', hint: 'Uma carta ou pesquisa original dos últimos 30 dias, sem repetir a recomendação anterior.'}, leit ? A.itemCard(leit) : h('p', {class: 'muted'}, hj.leitura ? 'Carregando a leitura (está no arquivo de ' + hj.leitura.mes + ')…' : 'Nenhuma carta ou pesquisa original na janela.')));
-      R2.appendChild(A.sec('Estudo do dia', {id: 'estudo', hint: 'Perguntas ligadas aos temas das prioridades. Responder por escrito é o que fixa o aprendizado.'}, (hj.estudo || []).length ? h('ol', {class: 'estudo'}, hj.estudo.map(function (q) { return h('li', null, q, ' ', h('button', {class: 'btn link', onclick: function () { A.drawer('Estudo do dia', h('div', null, h('p', {class: 'tv-lead'}, q), A.formAprendizado(null, {tipo: 'duvida', titulo: q, fonte: 'Estudo do dia', temas: hj.temas || []}))); }}, 'responder')); })) : h('p', {class: 'muted'}, 'Sem perguntas hoje.')));
-    } else if (itens.length) {
-      wrap.appendChild(secao('Mais recentes', I.ordenar(itens).slice(0, 12), {hint: 'O briefing completo (macro, gestoras, vídeos, leitura e estudo do dia) aparece quando o robô publicar hoje.json.'}));
-    }
-    wrap.appendChild(h('p', {class: 'muted', style: 'font-size:.88rem'}, 'Tudo o que foi coletado, com busca e filtros, está na ', h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); }}, 'Biblioteca'), '. O que isso toca na carteira está em ', h('button', {class: 'btn link', onclick: function () { A.go('oregon', 'ativos'); }}, 'Oregon'), '.'));
+
+    var g = h('div', {class: 'hoje-grid'}), L = h('div', {class: 'hoje-main'}), R = h('div', {class: 'hoje-side'}); g.append(L, R); wrap.appendChild(g);
+
+    // 1. Últimas notícias
+    var horas = 36, ult = I.ultimas(itens, {horas: horas, filtro: F.filtro});
+    if (ult.length < 8 && F.filtro === 'tudo') { horas = 96; ult = I.ultimas(itens, {horas: horas, filtro: F.filtro}); }
+    var cont = {}; FILTROS.forEach(function (f) { cont[f[0]] = I.ultimas(itens, {horas: horas, filtro: f[0]}).length; });
+    var barra = h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Filtrar notícias'}, FILTROS.map(function (f) {
+      return h('button', {'aria-pressed': F.filtro === f[0] ? 'true' : 'false', disabled: !cont[f[0]] && f[0] !== 'tudo' ? true : null, onclick: function () { F.filtro = f[0]; F.max = 15; A.rerender(); }}, f[1] + (cont[f[0]] ? ' · ' + cont[f[0]] : ''));
+    }));
+    L.appendChild(A.sec('Últimas notícias', {id: 'ultimas', hint: 'Portais brasileiros e internacionais e bancos centrais, nas últimas ' + horas + ' horas, da mais nova para a mais antiga. Toque no título para a análise; ↗ abre a matéria original.'},
+      h('div', null, barra, ult.length ? h('div', null, A.listaItens(ult, {max: F.max, semResumo: true}), ult.length > F.max ? h('p', {style: 'text-align:center;margin:8px 0 0'}, h('button', {class: 'btn', onclick: function () { F.max += 20; A.rerender(); }}, 'Mostrar mais ' + Math.min(20, ult.length - F.max))) : null)
+        : h('p', {class: 'empty'}, e.carregando ? 'Buscando as notícias…' : (itens.length ? 'Nada com este filtro nas últimas ' + horas + ' horas.' : 'O robô ainda não publicou notícias.')))));
+
+    // 2. Leituras do dia (cartas, research, documentos oficiais) com análise em sete pontos
+    var prior = hj ? resolver(hj.prioridades) : [];
+    if (prior.length) L.appendChild(A.sec('Leituras do dia', {id: 'prioridades', hint: 'Cartas de gestores, research e documentos oficiais publicados nos últimos dias, no máximo dois por fonte. Para ler com calma, não para reagir.'}, A.listaItens(prior, {semResumo: false, comNivel: true})));
+    var leit = hj && hj.leitura ? resolver([hj.leitura])[0] : null;
+    if (leit) L.appendChild(A.sec('Leitura recomendada', {id: 'leitura', hint: 'Uma carta ou pesquisa original dos últimos 30 dias, sem repetir a recomendação anterior.'}, A.itemCard(leit)));
+
+    // Coluna lateral: carteira, agenda e estudo
+    var pa = I.porAtivo(itens, {horas: 72});
+    if (pa.length) R.appendChild(A.sec('Na carteira', {id: 'na-carteira', hint: 'Ativos das carteiras citados em notícias nas últimas 72 horas. Toque para a ficha.'},
+      h('ul', {class: 'pa'}, pa.slice(0, 14).map(function (r) {
+        var a = C.ATV[r.t] || {};
+        return h('li', null, h('button', {class: 'pa-b', onclick: function () { A.abrirFicha(r.t); }}, h('b', {class: 'tk'}, r.t), h('span', {class: 'pa-n'}, r.n + (r.n > 1 ? ' notícias' : ' notícia') + (r.casas ? ' · ' + r.casas + ' opinião' + (r.casas > 1 ? 'ões' : '') : '')),
+          h('span', {class: 'pa-u'}, I.quando(r.ultimo) + ' · ' + (r.ultimo.titulo.length > 70 ? r.ultimo.titulo.slice(0, 68) + '…' : r.ultimo.titulo)), a.nome ? h('span', {class: 'muted pa-nome'}, a.nome) : null));
+      }))));
+    R.appendChild(A.sec('Agenda', {id: 'agenda', hint: 'Divulgações oficiais dos próximos 30 dias (IBGE, Copom, Fed, Focus).'}, A.agendaView(8)));
+    if (hj && (hj.estudo || []).length) R.appendChild(A.sec('Estudo do dia', {id: 'estudo', hint: 'Perguntas ligadas aos temas das leituras do dia. Responder por escrito fixa o aprendizado.'},
+      h('ol', {class: 'estudo'}, hj.estudo.map(function (q) { return h('li', null, q, ' ', h('button', {class: 'btn link', onclick: function () { A.drawer('Estudo do dia', h('div', null, h('p', {class: 'tv-lead'}, q), A.formAprendizado(null, {tipo: 'duvida', titulo: q, fonte: 'Estudo do dia', temas: hj.temas || []}))); }}, 'responder')); }))));
     return wrap;
   };
 })(APP, CORE, INTEL);

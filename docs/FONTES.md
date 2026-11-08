@@ -118,21 +118,96 @@ Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública
 | [Kinea Investimentos — canal oficial no YouTube](https://www.youtube.com/@KineaInvestimentos) | YouTube Data API | desligada | canal_id não confirmado |
 | [Banco Central do Brasil — canal oficial no YouTube]() | YouTube Data API | desligada | canal_id não confirmado |
 
-## Imprensa (só título, link e data)
+## Imprensa: RSS próprio de cada veículo (só título, link, data e veículo)
 
-| Fonte | Método | Status | Limitação / observação |
+| Fonte | País | Status | Observação |
 |---|---|---|---|
-| [Brazil Journal](https://braziljournal.com) | RSS/Atom | ativa · ok | RSS público do próprio veículo, já usado na v2. Guarda só título, link, data e veículo. |
-| [The News](https://rss.beehiiv.com) | RSS/Atom | ativa · ok | RSS público do próprio veículo, já usado na v2. Guarda só título, link, data e veículo. |
-| [Agrofy News](https://news.agrofy.com.br/rss.xml) | RSS/Atom | ativa · ok | RSS público do próprio veículo, já usado na v2. Guarda só título, link, data e veículo. Só entram manchetes que citem empresa das carteiras. |
-| [Google Notícias · Juros](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
-| [Google Notícias · Juros](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
-| [Google Notícias · Inflação](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
-| [Google Notícias · Bolsa](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
-| [Google Notícias · Câmbio](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
-| [Google Notícias · EUA](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
-| [Google Notícias · Fiscal](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
-| [Google Notícias · Commodities](https://news.google.com/) | RSS/Atom | ativa · ok | Busca macro no RSS público do Google Notícias (já usada na v2). O veículo de cada manchete vira a organização; veículos bloqueados (config noticias.fontes_bloqueadas) são descartados. |
+| [Brazil Journal](https://braziljournal.com) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [The News](https://rss.beehiiv.com) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Agrofy News](https://news.agrofy.com.br/rss.xml) | Brasil | ativa · ok | só manchetes que citem ativo das carteiras |
+| [Google Notícias · Juros](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Google Notícias · Juros](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Google Notícias · Inflação](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Google Notícias · Bolsa](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Google Notícias · Câmbio](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Google Notícias · EUA](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Google Notícias · Fiscal](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Google Notícias · Commodities](https://news.google.com/) | Brasil | desligada | o robots.txt do Google Notícias veda a busca (/rss/search) a robôs (confirmado na rodada real de 08/11/2026); substituída pelos feeds dos próprios portais |
+| [Money Times](https://www.moneytimes.com.br) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [InvestNews](https://investnews.com.br) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Seu Dinheiro](https://www.seudinheiro.com) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Exame](https://exame.com) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Bloomberg Línea Brasil](https://www.bloomberglinea.com.br) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [NeoFeed](https://neofeed.com.br) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Suno Notícias](https://www.suno.com.br/noticias) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Times Brasil (CNBC)](https://www.timesbrasil.com.br) | Brasil | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Agência Brasil · Economia](https://agenciabrasil.ebc.com.br) | Brasil | ativa · parcial | só manchetes de economia, mercados ou ativos das carteiras |
+| [Folha de S.Paulo · Mercado](https:/) | Brasil | ativa · a validar na 1ª rodada | só manchetes de economia, mercados ou ativos das carteiras |
+| [g1 · Economia](https://g1.globo.com) | Brasil | ativa · a validar na 1ª rodada | só manchetes de economia, mercados ou ativos das carteiras |
+| [Estadão · Economia](https://www.estadao.com.br) | Brasil | ativa · a validar na 1ª rodada | só manchetes de economia, mercados ou ativos das carteiras |
+| [E-Investidor (Estadão)](https://einvestidor.estadao.com.br) | Brasil | ativa · a validar na 1ª rodada | só manchetes de economia, mercados ou ativos das carteiras |
+| [CNN Brasil · Economia](https://www.cnnbrasil.com.br/economia) | Brasil | ativa · a validar na 1ª rodada | só manchetes de economia, mercados ou ativos das carteiras |
+| [The Wall Street Journal · Markets](https:/) | EUA | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [MarketWatch · Top stories](https:/) | EUA | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [Seeking Alpha · Market Currents](https://seekingalpha.com/market_currents.xml) | EUA | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
+| [CNBC · Markets](https://www.cnbc.com/id/15839069/device) | EUA | ativa · a validar na 1ª rodada | só manchetes de economia, mercados ou ativos das carteiras |
+
+## Buscas por ativo, setor e tema (geradas de `robo/config.json`, não ficam em `fontes.json`)
+
+O Google Notícias veda a busca a robôs no `robots.txt` (`/rss/search`), e o robô respeita: as 8 buscas da v3 ficam desligadas. As buscas usam o RSS público do **Bing Notícias** (`/news/search?…&format=rss`), que o `robots.txt` do Bing permite. Testado em 08/11/2026 com Klabin, BB Seguridade, Copel e "China stocks MSCI": 10 a 11 manchetes recentes por busca, com veículo e data (amostra em `testes/amostras_reais/`). Cada busca roda a cada 2 horas, no máximo 14 por rodada (as demais na rodada seguinte); a execução manual roda todas. Se um dia o Bing vedar a busca, o robô para sozinho e registra "robots" em Fontes e coleta.
+
+| Busca | Consulta | Mercado | Liga a |
+|---|---|---|---|
+| Busca · Petrobras (PETR4) | `Petrobras` | pt-BR | PETR4 |
+| Busca · Klabin (KLBN4) | `Klabin` | pt-BR | KLBN4 |
+| Busca · BB Seguridade (BBSE3) | `BB Seguridade` | pt-BR | BBSE3 |
+| Busca · Bradesco (BBDC3) | `Bradesco` | pt-BR | BBDC3 |
+| Busca · Itaúsa (ITSA4) | `Itaúsa` | pt-BR | ITSA4 |
+| Busca · Copel (CPLE3) | `Copel` | pt-BR | CPLE3 |
+| Busca · Axia Energia (AXIA3) | `Axia Energia` | pt-BR | AXIA3 |
+| Busca · Eletrobras (AXIA3) | `Eletrobras` | pt-BR | AXIA3 |
+| Busca · Equatorial Energia (EQTL3) | `Equatorial Energia` | pt-BR | EQTL3 |
+| Busca · PRIO3 (PRIO3) | `PRIO3` | pt-BR | PRIO3 |
+| Busca · Prio petróleo (PRIO3) | `Prio petróleo` | pt-BR | PRIO3 |
+| Busca · Allos shopping (ALOS3) | `Allos shopping` | pt-BR | ALOS3 |
+| Busca · Banco Inter (INBR34) | `Banco Inter` | pt-BR | INBR34 |
+| Busca · 3tentos (TTEN3) | `3tentos` | pt-BR | TTEN3 |
+| Busca · VAMO3 (VAMO3) | `VAMO3` | pt-BR | VAMO3 |
+| Busca · BTLG11 (BTLG11) | `BTLG11` | pt-BR | BTLG11 |
+| Busca · XPML11 (XPML11) | `XPML11` | pt-BR | XPML11 |
+| Busca · TRXF11 (TRXF11) | `TRXF11` | pt-BR | TRXF11 |
+| Busca · KNHF11 (KNHF11) | `KNHF11` | pt-BR | KNHF11 |
+| Busca · HGCR11 (HGCR11) | `HGCR11` | pt-BR | HGCR11 |
+| Busca · KNCA11 (KNCA11) | `KNCA11` | pt-BR | KNCA11 |
+| Busca · CDII11 (CDII11) | `CDII11` | pt-BR | CDII11 |
+| Busca · JURO11 (JURO11) | `JURO11` | pt-BR | JURO11 |
+| Busca setorial · Celulose e papel | `celulose preço China` | pt-BR | KLBN4 |
+| Busca setorial · Pulp and paper (global) | `pulp prices China` | en-US | KLBN4 |
+| Busca setorial · Bancos e crédito | `bancos crédito inadimplência` | pt-BR | BBDC3, ITSA4, INBR34 |
+| Busca setorial · Seguros e previdência | `seguradoras Susep` | pt-BR | BBSE3 |
+| Busca setorial · Setor elétrico | `setor elétrico Aneel` | pt-BR | CPLE3, AXIA3, EQTL3 |
+| Busca setorial · Petróleo | `petróleo Brent` | pt-BR | PETR4, PRIO3 |
+| Busca setorial · Shoppings e varejo | `shoppings vendas varejo` | pt-BR | ALOS3, XPML11 |
+| Busca setorial · Agronegócio e biodiesel | `agronegócio soja biodiesel` | pt-BR | TTEN3, KNCA11 |
+| Busca setorial · Fundos imobiliários | `fundos imobiliários IFIX` | pt-BR | BTLG11, XPML11, TRXF11, KNHF11, HGCR11, KNCA11, CDII11, JURO11 |
+| Busca do tema · Juro real (IMA-B e NTN-B) | `NTN-B juro real` | pt-BR | IMAB11, B5P211, IB5M11 |
+| Busca do tema · Prefixados (IRF-M) | `DI futuro juros` | pt-BR | IRFM11, 5PRE11, IDKA11 |
+| Busca do tema · Tesouro Selic | `Tesouro Selic` | pt-BR | LFTB11 |
+| Busca do tema · Crédito privado no Brasil | `debêntures crédito privado` | pt-BR | DEBB11, GICP11, LFIN11 |
+| Busca do tema · Treasuries | `Treasury yields` | en-US | IB01, DTLA, IUAA |
+| Busca do tema · Inflação americana (TIPS) | `TIPS inflation-protected Treasury` | en-US | IDTP |
+| Busca do tema · High yield nos EUA | `high yield bonds` | en-US | IHYA, SDHA |
+| Busca do tema · Dívida emergente | `emerging market debt` | en-US | JPEA, EMCA |
+| Busca do tema · Ações globais e desenvolvidos | `global stocks MSCI World` | en-US | VWRA, VHVE, EXUS |
+| Busca do tema · Small caps e valor | `small caps Russell 2000` | en-US | USSC, WSML, IUVL |
+| Busca do tema · Ações emergentes | `emerging markets stocks` | en-US | EIMI, VFEA |
+| Busca do tema · Bitcoin | `bitcoin ETF` | en-US | IBIT |
+
+**Desambiguação**: a manchete só entra se citar a empresa pelos termos dela e não tiver termo de exclusão (ex.: "Chácara Klabin", "Ema Klabin", "Guiné Equatorial"). Nas buscas de setor e de tema, a manchete precisa ter um dos termos do setor. **Veículos**: o veículo que publicou vira a fonte; os que não estão em `noticias.veiculos_confiaveis` entram marcados "veículo pouco conhecido", aparecem na ficha do ativo e ficam fora da lista do Hoje. InfoMoney e canais da XP entram com o selo "Grupo XP — não citar em material de cliente" (`noticias.fontes_sinalizadas`); para voltar a bloquear, copie os nomes para `noticias.fontes_bloqueadas`.
+
+## Documentos das empresas (CVM)
+
+Fatos relevantes, comunicados ao mercado e avisos aos acionistas das empresas das carteiras, lidos da base aberta da CVM (`dados.cvm.gov.br`, IPE) a cada 3 horas, conferidos por CNPJ **e** nome da companhia. A CVM informa só a data de entrega (sem hora). FIIs e ativos sem CNPJ cadastrado ficam de fora.
 
 ## Limitações conhecidas
 
@@ -142,6 +217,8 @@ Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública
 - **Sitemap** (PIMCO): título provisório humanizado a partir da URL até o leitor abrir o original; o sitemap pode estar defasado em relação ao site.
 - **FMI**: sem RSS; o `index.json` do blog e as listagens de WEO/GFSR pareciam servidos de cache na validação (podem atrasar dias). Working papers só via JavaScript: desligado.
 - **Cache e JavaScript**: sites que só montam a lista com JavaScript (Schroders, GSAM, Verde, Constellation) ou que exigem cadastro/declaração de investidor (Bridgewater, Robeco) ficam desligados, com o motivo no cadastro. Não contornamos.
-- **Google Notícias**: o veículo de cada manchete vira a organização; veículos bloqueados são descartados antes de virar item; duas manchetes do mesmo fato viram um item com "também em".
-- **Dados macro** (BCB SGS, Focus, Tesouro Transparente, Tesouro dos EUA, agenda do IBGE): indicadores oficiais de referência, algumas vezes por dia, nunca cotação em tempo real. Falha de uma fonte mantém o último valor válido, marcado como reaproveitado; nunca vira zero.
+- **Google Notícias**: o `robots.txt` veda a busca (`/rss/search`) a robôs; o robô não lê. Na ficha de cada ativo há o link "Buscar agora no Google Notícias", que abre a busca no seu navegador.
+- **Bing Notícias**: RSS público de busca, sem chave e sem custo; não é uma API contratada, pode mudar sem aviso (vira erro visível em Fontes e coleta, nunca item inventado). A ordem é por data, mas o Bing devolve no máximo cerca de 10 manchetes por busca; guardamos só título, link, veículo e data. Portais com assinatura (Valor, Estadão, O Globo) aparecem pela manchete; a matéria abre no site do veículo.
+- **Opiniões de casas**: o sentido (a favor, contra, neutra) é lido do título público. O relatório da casa não é acessível e nada é inventado; sem opinião de sentido oposto, a ficha diz "Não há contraponto documentado".
+- **Dados macro**: os indicadores (Selic, IPCA, dólar, curvas, Treasuries) foram desligados (`intel.indicadores_macro: false`) e saíram do painel. Fica só a agenda oficial (IBGE, Copom, Fed, Focus). Para religar, troque para `true`.
 - **Resultados da CVM** (`resultados.json`): lidos dos dados abertos da CVM (ITR/DFP) na rodada da noite, a cada 3 dias (ou em execução manual), para as fichas das empresas na seção Oregon. FIIs e empresas sem CNPJ cadastrado ficam em `fora`. Um arquivo que falha não apaga o que já estava lido.

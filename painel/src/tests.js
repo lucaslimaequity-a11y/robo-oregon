@@ -187,6 +187,33 @@ var TESTS = (function () {
       ok(sujo.length === 2 && sujo[0].tipo === 'aprendizado' && sujo[0].link === null, 'importação aceitou tipo ou link inválido: ' + JSON.stringify(sujo));
       var erro = false; try { IN.lerImportacao('{"nada": 1}'); } catch (e) { erro = true; } ok(erro, 'arquivo sem lista deveria falhar');
     });
+    if (IN) t('Notícias: hora relativa, últimas com filtros, notícias por ativo e opiniões a favor e contra', function () {
+      var ag = new Date('2026-11-08T12:40:00Z');  // 09:40 em Brasília
+      ok(IN.quando({publicado_em: '2026-11-08T09:28-03:00'}, ag) === 'há 12 min', 'minutos: ' + IN.quando({publicado_em: '2026-11-08T09:28-03:00'}, ag));
+      ok(IN.quando({publicado_em: '2026-11-08T06:40-03:00'}, ag) === 'há 3 h', 'horas');
+      ok(IN.quando({publicado_em: '2026-11-07T18:40-03:00'}, ag) === 'ontem 18:40', 'ontem');
+      ok(IN.quando({publicado_em: '2026-11-06'}, ag) === '06/11', 'documento com data e sem hora não ganha hora: ' + IN.quando({publicado_em: '2026-11-06'}, ag));
+      ok(IN.quando({acervo: true, referencia: '2025-03'}, ag) === 'acervo · ref. mar/2025', 'acervo');
+      var n = function (id, h, extra) { return Object.assign({id: 'n' + id, titulo: 'N' + id, link: 'https://x.test/' + id, publicado_em: h, categoria: 'veiculo', pais: 'Brasil', regioes: ['brasil'], ativos: [], natureza: 'noticia'}, extra || {}); };
+      var L = [n(1, '2026-11-08T09:00-03:00', {ativos: ['KLBN4'], natureza: 'opiniao_casa', casas: ['Safra'], posicao: 'contraria'}),
+        n(2, '2026-11-08T08:00-03:00', {ativos: ['KLBN4'], natureza: 'opiniao_casa', casas: ['BTG Pactual'], posicao: 'favoravel'}),
+        n(3, '2026-11-07T20:00-03:00', {ativos: ['KLBN4'], via: 'Bing Notícias', confiavel: false, fonte: 'Agora Litoral'}),
+        n(4, '2026-11-06', {ativos: ['KLBN4'], categoria: 'oficial_empresa', tipo: 'fato_relevante'}),
+        n(5, '2026-11-08T07:00-03:00', {setor_de: ['KLBN4'], titulo: 'Celulose na China'}),
+        n(6, '2026-11-08T05:00-03:00', {pais: 'EUA', regioes: ['eua'], etfs_tema: ['IB01']}),
+        n(7, '2026-11-01T09:00-03:00', {ativos: ['KLBN4']}), n(8, '2026-11-08T09:10-03:00', {acervo: true}), n(9, '2026-11-08T09:20-03:00', {categoria: 'gestora_brasil', tipo: 'carta'})];
+      var u = IN.ultimas(L, {horas: 48, agora: ag}).map(function (x) { return x.id; });
+      ok(u.join() === 'n1,n2,n5,n6,n4', 'últimas: ordem, janela, sem acervo/carta e sem veículo pouco conhecido: ' + u.join());
+      ok(IN.ultimas(L, {horas: 48, agora: ag, todosVeiculos: true}).length === 6, 'na ficha entram os veículos pouco conhecidos');
+      ok(IN.ultimas(L, {horas: 48, agora: ag, filtro: 'casas'}).length === 2 && IN.ultimas(L, {horas: 48, agora: ag, filtro: 'oficial'})[0].id === 'n4' && IN.ultimas(L, {horas: 48, agora: ag, filtro: 'mundo'})[0].id === 'n6', 'filtros opiniões, oficiais e mundo');
+      var c = IN.doAtivo(L, 'KLBN4');
+      ok(c.direto.length === 5 && c.tema.length === 1 && c.tema[0].id === 'n5', 'diretas e setor: ' + c.direto.length + '/' + c.tema.length);
+      ok(c.oficiais.length === 1 && c.noticias.length === 4, 'documentos da CVM separados');
+      ok(c.opinioes.total === 2 && c.opinioes.favoravel[0].id === 'n2' && c.opinioes.contraria[0].id === 'n1', 'opiniões a favor e contra');
+      var ct = IN.contrapontos(L, L[0]); ok(ct.itens.length === 1 && ct.itens[0].id === 'n2', 'contraponto da opinião contrária é a favorável');
+      ok(IN.contrapontos(L, n(10, '2026-11-08T09:00-03:00', {ativos: ['ITSA4']})).itens.length === 0, 'sem fonte concreta não há contraponto');
+      var pa = IN.porAtivo(L, {horas: 72, agora: ag}); ok(pa[0].t === 'KLBN4' && pa[0].casas === 2, 'ativos com notícia: ' + JSON.stringify(pa.map(function (r) { return [r.t, r.n, r.casas]; })));
+    });
     t('ETFs: as 27 fichas têm fonte oficial e o cadastro divergente aparece, sem alterar o cadastro', function () {
       var E = DATA.etfs; if (!E) { ok(true); return; }
       var faltam = Object.keys(DATA.ativos).filter(function (t) { var a = DATA.ativos[t]; return /ETF/.test(a.tipo || '') && !E[t]; }); ok(!faltam.length, 'ETFs sem ficha: ' + faltam.join(','));

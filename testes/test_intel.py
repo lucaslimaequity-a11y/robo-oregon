@@ -48,13 +48,25 @@ JORNAL = [{'titulo': 'Petrobras anuncia dividendos extraordinários', 'link': 'h
 AGREG = [{'titulo': 'Copom mantém a Selic em 13,75% - Jornal Teste', 'link': 'https://jornal.teste/copom', 'dias': 0, 'veiculo': 'Jornal Teste'},
          {'titulo': 'Selic parada: o que fazer com a carteira - Expert XP', 'link': 'https://xp.teste/x', 'dias': 0, 'veiculo': 'Expert XP'},
          {'titulo': 'Copom mantém a Selic em 13,75% ao ano - Outro Diário', 'link': 'https://outro.teste/copom', 'dias': 0, 'veiculo': 'Outro Diário'}]
+PORTAL = [{'titulo': 'BTG eleva preço-alvo da Petrobras (PETR4) e mantém compra', 'link': 'https://portal.teste/btg-petr4', 'dias': 0},
+          {'titulo': 'XP tira bancos da carteira recomendada de novembro', 'link': 'https://portal.teste/xp-carteira', 'dias': 0},
+          {'titulo': 'Receita de bolo de fubá para o fim de semana', 'link': 'https://portal.teste/bolo', 'dias': 0},
+          {'titulo': 'Itaú BBA rebaixa Klabin (KLBN4) para neutro', 'link': 'https://portal.teste/bba-klbn', 'dias': 1}]
+WORLD = [{'titulo': 'Treasury yields climb as Fed signals a pause', 'link': 'https://world.teste/ust', 'dias': 0},
+         {'titulo': 'Emerging markets stocks rally on weaker dollar', 'link': 'https://world.teste/em', 'dias': 0},
+         {'titulo': 'How to choose a wedding venue', 'link': 'https://world.teste/wedding', 'dias': 0}]
+TOLERANTE = ('<?xml version="1.0"?><rss version="2.0"><channel><title>t</title>'
+             '<item><title>Ibovespa&nbsp;sobe 1% com Vale e bancos</title><link>https://tolerante.teste/1</link><pubDate>2026-11-06T10:15:00</pubDate></item>'
+             '<item><title>Juros futuros recuam ap&oacute;s IPCA</title><link>https://tolerante.teste/2</link><pubDate>2026-11-06T09:00:00</pubDate></item>'
+             '<item><title>Item cortado no meio do arq')
 SETORIAL = [{'titulo': 'Soja sobe em Chicago', 'link': 'https://setorial.teste/1', 'dias': 0}, {'titulo': 'Klabin anuncia nova fábrica de papel', 'link': 'https://setorial.teste/2', 'dias': 0}]
 
 
 def mundo(**kw):
-    base = dict(feeds={'https://gestora.teste/feed/': CARTAS, 'https://jornal.teste/feed/': JORNAL, 'https://agregador.teste/rss?q=juros': AGREG, 'https://setorial.teste/feed/': SETORIAL},
+    base = dict(feeds={'https://gestora.teste/feed/': CARTAS, 'https://jornal.teste/feed/': JORNAL, 'https://agregador.teste/rss?q=juros': AGREG, 'https://setorial.teste/feed/': SETORIAL,
+                       'https://portal.teste/feed/': PORTAL, 'https://im.teste/feed/': [{'titulo': 'XP recomenda Petrobras', 'link': 'https://im.teste/1', 'dias': 0}], 'https://world.teste/feed/': WORLD},
                 atom={'https://bc.teste/feed/notas?ano=%d' % ANO: NOTAS}, rdf={'https://global.teste/doclist/papers.rss': PAPERS},
-                paginas={'https://pdf.teste/cartas': PAGINA_1, 'https://sitemap.teste/sitemap.xml': SITEMAP, 'https://vedado.teste/research': '<a href="/a.pdf">a</a>'},
+                paginas={'https://pdf.teste/cartas': PAGINA_1, 'https://sitemap.teste/sitemap.xml': SITEMAP, 'https://vedado.teste/research': '<a href="/a.pdf">a</a>', 'https://tolerante.teste/feed/': TOLERANTE},
                 apis={'https://wp.teste/wp-json/wp/v2/posts?per_page=10': WP}, heads={'https://guia.teste/guia.pdf': {'etag': '"v1"', 'content-length': '100'}},
                 robots={'vedado.teste': 'User-agent: *\nDisallow: /research\n', 'www.youtube.com': 'User-agent: *\nDisallow: /feeds/videos.xml\n'})
     for k, v in kw.items():
@@ -90,6 +102,7 @@ class Base(unittest.TestCase):
         with mock.patch.object(urllib.request, 'urlopen', m), mock.patch('sys.stdout', buf):
             self.assertEqual(intel.main(), codigo)
         self.log = buf.getvalue()
+        self._chamadas = list(m.chamadas)
         return self.ler('recentes.json') if codigo == 0 else None
 
     def ler(self, nome):
@@ -119,7 +132,12 @@ class TestRodada(Base):
         self.assertIn('Carta 41 — Juros reais e o custo de esperar', tit)
         self.assertIn('Copom mantém a taxa Selic em 13,75% a.a.', tit)
         self.assertIn('Working Paper 1392: Gaining (and losing) currency', tit)      # RDF/RSS 1.0
-        self.assertIn('Carta Mensal Outubro 2026', tit)                               # PDF descoberto na página
+        self.assertNotIn('Carta Mensal Outubro 2026', tit)                            # primeira leitura da página: acervo, fora dos recentes
+        mes = self.ler('biblioteca/%d-11.json' % ANO)['itens']
+        acervo = next(x for x in mes if x['titulo'] == 'Carta Mensal Outubro 2026')  # mas guardado na Biblioteca
+        self.assertTrue(acervo['acervo'])
+        self.assertEqual(acervo['referencia'], '2026-10')                              # mês citado no nome do arquivo (não é data de publicação)
+        self.assertIsNone(acervo['publicado_em'])
         self.assertIn('Carta do Gestor – Lições de alocação', tit)                    # API WordPress, entidade HTML decodificada
         self.assertIn('Growth holds risks widen', tit)                                # sitemap, título provisório
         self.assertTrue(any(t.startswith('Guia Trimestral Teste') for t in tit))     # arquivo de URL fixa, primeira leitura
@@ -163,7 +181,7 @@ class TestRodada(Base):
         self.assertEqual(col['fontes']['setorial-so-oregon']['rejeitados'].get('sem_ativo_oregon'), 1)
         self.assertEqual(col['fontes']['gestora-rss']['ultima_ok'][:10], '%d-11-06' % ANO)
         u = col['ultima']
-        self.assertEqual(u['fontes_erro'], 1)                                         # só a página vedada por robots
+        self.assertEqual(u['fontes_erro'], 1)                                         # só a página vedada por robots (a fonte nova sem resposta fica "a validar")
         self.assertIn('robots', col['fontes']['pagina-robots']['ultimo_erro'])
         self.assertTrue(col['fontes']['youtube-teste']['aguardando'])                 # sem chave: aguardando, não falha
         self.assertEqual(self.saidas()['status'], 'parcial')
@@ -229,8 +247,11 @@ class TestRodada(Base):
         os.environ['ROBO_AGORA'] = '%d-11-07T09:00:00-03:00' % ANO
         rec = self.rodar(mundo(paginas={'https://pdf.teste/cartas': PAGINA_2}, heads={'https://guia.teste/guia.pdf': {'etag': '"v2"', 'content-length': '120', 'last-modified': 'Fri, 06 Nov %d 10:00:00 GMT' % ANO}}))
         tit = self.titulos(rec)
-        self.assertIn('Carta Mensal Novembro 2026', tit)
-        self.assertEqual(tit.count('Carta Mensal Outubro 2026'), 1)
+        self.assertIn('Carta Mensal Novembro 2026', tit)                              # link novo na segunda leitura: novidade, não acervo
+        self.assertNotIn('Carta Mensal Outubro 2026', tit)
+        nov = next(x for x in rec['itens'] if x['titulo'] == 'Carta Mensal Novembro 2026')
+        self.assertFalse(nov.get('acervo'))
+        self.assertEqual(nov['referencia'], '2026-11')
         guias = [x for x in rec['itens'] if x['titulo'].startswith('Guia Trimestral Teste')]
         self.assertEqual(len(guias), 2)
         self.assertTrue(all(x['link'] == 'https://guia.teste/guia.pdf' for x in guias))
@@ -238,7 +259,7 @@ class TestRodada(Base):
         self.assertEqual(col['fontes']['pagina-pdf']['ultima_rodada']['novos'], 1)
         self.assertEqual(col['fontes']['arquivo-fixo']['ultima_rodada']['novos'], 1)
         os.environ['ROBO_AGORA'] = '%d-11-07T12:00:00-03:00' % ANO
-        self.rodar(mundo(paginas={'https://pdf.teste/cartas': PAGINA_2}, heads={'https://guia.teste/guia.pdf': {'etag': '"v2"', 'content-length': '120'}}))
+        self.rodar(mundo(paginas={'https://pdf.teste/cartas': PAGINA_2}, heads={'https://guia.teste/guia.pdf': {'etag': '"v2"', 'content-length': '120'}}), ROBO_MANUAL='true')
         col = self.ler('coleta.json')
         self.assertEqual(col['fontes']['arquivo-fixo']['ultima_rodada']['novos'], 0)
 
@@ -256,13 +277,101 @@ class TestRodada(Base):
         self.assertEqual(self.ler('versao.json')['meses'], ['%d-09' % ANO, '%d-11' % ANO])
 
     def test_sem_data_no_feed_usa_deteccao_marcada(self):
-        m = mundo()
-        m.feeds['https://gestora.teste/feed/'] = CARTAS
-        rec = self.rodar(m)
-        pdf = next(x for x in rec['itens'] if x['titulo'] == 'Carta Mensal Outubro 2026')
+        self.rodar(mundo())
+        pdf = next(x for x in self.ler('biblioteca/%d-11.json' % ANO)['itens'] if x['titulo'] == 'Carta Mensal Outubro 2026')
         self.assertIsNone(pdf['publicado_em'])
         self.assertTrue(pdf['data_estimada'])
         self.assertIn('a página não informa a data', pdf['analise']['1_publicacao'][0]['t'])
+
+
+class TestImprensa(Base):
+    """v3.1: notícias dos portais por ativo, opinião de casas de análise, feeds imperfeitos, acervo e intervalos."""
+
+    def test_noticia_por_ativo_e_opiniao_de_casa(self):
+        rec = self.rodar(mundo())
+        por_link = {x['link']: x for x in rec['itens']}
+        btg = por_link['https://portal.teste/btg-petr4']
+        self.assertIn('PETR4', btg['ativos'])
+        self.assertEqual(btg['casas'], ['BTG Pactual'])
+        self.assertEqual(btg['natureza'], 'opiniao_casa')
+        self.assertEqual(btg['resumo'], '')                                            # imprensa: só título, link, data e veículo
+        self.assertTrue(btg['analise']['compacta'])                                     # pontos 4, 5 e 7 vêm do roteiro do tema no painel
+        self.assertNotIn('4_contrarios', btg['analise'])
+        self.assertTrue(any('BTG Pactual' in fr['t'] and fr['r'] == 'FONTE' for fr in btg['analise']['2_tese']))
+        xp = por_link['https://portal.teste/xp-carteira']                              # opinião da XP publicada por outro portal: entra
+        self.assertEqual(xp['casas'], ['XP'])
+        self.assertEqual(xp['organizacao'], 'Portal Teste')
+        self.assertIn('KLBN4', por_link['https://portal.teste/bba-klbn']['ativos'])
+        self.assertEqual(por_link['https://portal.teste/bba-klbn']['casas'], ['Itaú BBA'])
+        self.assertNotIn('https://portal.teste/bolo', por_link)                         # fora de economia e mercados: descartado e contado
+        col = self.ler('coleta.json')['fontes']
+        self.assertEqual(col['portal-br']['rejeitados'].get('fora_do_tema'), 1)
+        self.assertFalse(any(x.get('organizacao') == 'InfoMoney' for x in rec['itens']))  # canais da XP continuam fora
+        self.assertEqual(col['infomoney-teste']['rejeitados'].get('bloqueada'), 1)
+        self.assertFalse(any('im.teste' in u for u in self._chamadas))
+
+    def test_feed_tolerante_e_fuso_da_fonte(self):
+        rec = self.rodar(mundo())
+        tol = [x for x in rec['itens'] if x['fonte_id'] == 'portal-tolerante']
+        self.assertEqual(sorted(x['titulo'] for x in tol), ['Ibovespa sobe 1% com Vale e bancos', 'Juros futuros recuam após IPCA'])
+        self.assertEqual(next(x for x in tol if x['titulo'].startswith('Ibovespa'))['publicado_em'], '2026-11-06T10:15-03:00')  # data sem fuso = Brasília
+
+    def test_fonte_a_validar_nao_marca_parcial(self):
+        self.rodar(mundo())
+        u = self.ler('coleta.json')['ultima']
+        self.assertEqual(len(u['a_validar']), 1)
+        self.assertIn('Portal Novo Teste', u['a_validar'][0])
+        self.assertEqual(u['fontes_erro'], 1)                                           # só a página vedada por robots
+        self.assertIn('a validar', self.saidas()['motivos'])
+
+    def test_noticia_do_mundo_liga_ao_tema_do_etf(self):
+        rec = self.rodar(mundo())
+        por_link = {x['link']: x for x in rec['itens']}
+        ust = por_link['https://world.teste/ust']
+        self.assertTrue({'IB01', 'DTLA'} <= set(ust['etfs_tema']), ust['etfs_tema'])
+        self.assertIn('eua', ust['regioes'])
+        self.assertIn('EIMI', por_link['https://world.teste/em']['etfs_tema'])
+        self.assertNotIn('https://world.teste/wedding', por_link)
+
+    def test_intervalo_por_fonte_e_leitura_manual_completa(self):
+        self.rodar(mundo())
+        os.environ['ROBO_AGORA'] = '%d-11-06T16:00:00-03:00' % ANO                    # 30 minutos depois, rodada agendada
+        m = mundo()
+        self.rodar(m)
+        self.assertNotIn('https://pdf.teste/cartas', m.chamadas)                        # página de cartas: a cada 6 horas
+        self.assertIn('https://portal.teste/feed/', m.chamadas)                         # imprensa: toda rodada
+        self.assertGreaterEqual(self.ler('coleta.json')['ultima']['adiadas'], 1)
+        os.environ['ROBO_AGORA'] = '%d-11-06T16:30:00-03:00' % ANO
+        m2 = mundo()
+        self.rodar(m2, ROBO_MANUAL='true')                                              # execução manual lê tudo
+        self.assertIn('https://pdf.teste/cartas', m2.chamadas)
+
+    def test_migracao_acervo_e_hoje_sem_cartas_antigas(self):
+        self.rodar(mundo())
+        # simula a biblioteca da v3.0: itens sem data, sem a marca de acervo, e estado sem a migração
+        caminho = os.path.join(self.tmp, 'data', 'biblioteca', '%d-11.json' % ANO)
+        d = json.load(open(caminho, encoding='utf-8'))
+        for x in d['itens']:
+            x.pop('acervo', None)
+        json.dump(d, open(caminho, 'w', encoding='utf-8'))
+        est = self.ler('estado.json'); est.pop('migracao_acervo_v31', None)
+        json.dump(est, open(os.path.join(self.tmp, 'data', 'estado.json'), 'w', encoding='utf-8'))
+        os.environ['ROBO_AGORA'] = '%d-11-06T18:00:00-03:00' % ANO
+        rec = self.rodar(mundo())
+        self.assertNotIn('Carta Mensal Outubro 2026', self.titulos(rec))
+        itens = self.ler('biblioteca/%d-11.json' % ANO)['itens']
+        self.assertTrue(next(x for x in itens if x['titulo'] == 'Carta Mensal Outubro 2026')['acervo'])
+        hj = self.ler('hoje.json')
+        ids_rec = {x['id'] for x in rec['itens']}
+        self.assertTrue(all(p['id'] in ids_rec for p in hj['prioridades']))             # nenhuma prioridade é acervo
+        pri = [x for x in rec['itens'] if x['id'] in {p['id'] for p in hj['prioridades']}]
+        self.assertFalse(any(x['categoria'] == 'veiculo' for x in pri))                  # prioridades de leitura: cartas, research, documentos
+
+    def test_agenda_usa_janela_de_30_dias(self):
+        self.rodar(mundo())
+        ag = self.ler('macro.json')['agenda']
+        self.assertEqual(ag['dias'], 30)
+        self.assertTrue(all(a.get('evento') for a in ag['itens']))                      # o painel mostra o campo "evento"
 
 
 class TestIA(Base):
@@ -362,7 +471,7 @@ class TestSemanalEConfig(Base):
         s = sem['semanas'][0]
         self.assertEqual(s['semana'], '%d-S45' % ANO)
         self.assertTrue(s['n_itens'] >= 5)
-        self.assertEqual(s['temas'][0]['tema'], 'juros')
+        self.assertIn('juros', [t['tema'] for t in s['temas'][:3]])  # entre os temas mais presentes da semana de teste
         self.assertTrue(s['teses'])
         self.assertIsNone(s['mudancas_visao'])
         self.assertIn('IA', s['mudancas_visao_nota'])
@@ -392,7 +501,10 @@ class TestSemanalEConfig(Base):
             self.assertNotIn('xp investimentos', txt, f['id'])
             self.assertNotIn('infomoney', txt, f['id'])
             if f.get('ativo'):
-                self.assertIn(f.get('status_validacao'), ('ok', 'parcial'), f['id'])
+                if f.get('verificar_na_rodada'):  # endereço oficial que a ferramenta de validação não acessa: o robô confirma na 1ª rodada
+                    self.assertEqual(f.get('status_validacao'), 'a_validar', f['id'])
+                else:
+                    self.assertIn(f.get('status_validacao'), ('ok', 'parcial'), f['id'])
                 self.assertNotIn('motivo_desligada', f)
             else:
                 self.assertTrue(f.get('motivo_desligada'), f['id'])
@@ -447,6 +559,160 @@ class TestSemanalEConfig(Base):
         self.assertIn('python -m unittest discover -s testes', wf)
         self.assertNotIn('sk-', wf)
 
+
+
+# ------------------------------------------------------------------ v3.2: buscas por ativo (Bing Notícias), opiniões e CVM
+AMOSTRA = os.path.join(AQUI, 'amostras_reais', 'bing_2026-11-08.json')
+URL_BUSCA = 'https://busca.teste/news/search?q={q}&qft=sortbydate%3d%221%22&format=rss&mkt={mkt}'
+
+
+def rss_bing(itens, q):
+    """RSS no formato do Bing Notícias: link de redirecionamento com a matéria em ?url= e veículo em <News:Source>."""
+    import html as H
+    import urllib.parse as U
+    xs = []
+    for n, i in enumerate(itens):
+        alvo = i.get('link') or 'https://amostra.invalid/%s/%d' % (U.quote(q.lower().replace(' ', '-')), n)
+        link = 'http://www.bing.com/news/apiclick.aspx?ref=FexRss&aid=&tid=t%d&url=%s&c=1&mkt=pt-br' % (n, U.quote(alvo, safe=''))
+        xs.append('<item><title>%s</title><link>%s</link><description>trecho</description><pubDate>%s</pubDate><News:Source>%s</News:Source></item>'
+                  % (H.escape(i['titulo']), H.escape(link), i['pubDate'], H.escape(i['veiculo'])))
+    return ('<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" xmlns:News="https://www.bing.com:443/news/search?q=%s&amp;format=rss"><channel><title>%s - BingNews</title>%s</channel></rss>'
+            % (U.quote_plus(q), H.escape(q), ''.join(xs)))
+
+
+def url_busca(q, mkt='pt-BR'):
+    import urllib.parse as U
+    return URL_BUSCA.replace('{q}', U.quote_plus(q)).replace('{mkt}', mkt)
+
+
+class TestBuscasPorAtivo(Base):
+    """Busca de notícias por empresa, setor e tema no RSS do Bing Notícias, com manchetes REAIS de 08/11/2026 (testes/amostras_reais)."""
+    agora = '%d-11-08T09:40:00-03:00' % ANO
+
+    def setUp(self):
+        super().setUp()
+        with open(CONFIG_TESTE, encoding='utf-8') as f:
+            c = json.load(f)
+        n = c['noticias']
+        n['busca'] = {'ativo': True, 'provedor': 'Bing Notícias', 'url': URL_BUSCA, 'intervalo_min': 120, 'max_por_rodada': 4}
+        n['fontes_bloqueadas'] = []
+        n['fontes_sinalizadas'] = {'InfoMoney': 'Grupo XP — não citar em material de cliente'}
+        n['veiculos_confiaveis'] = n['veiculos_confiaveis'] + ['Money Times', 'Valor', 'Suno', 'UOL', 'InfoMoney', 'ISTOÉ Dinheiro', 'ADVFN', 'Yahoo Finance', "Barron's"]
+        n['buscas_setor'] = [{'nome': 'Celulose e papel', 'consulta': 'celulose preço China', 'mkt': 'pt-BR', 'ativos': ['KLBN4'], 'termos': ['celulose']}]
+        for te in n['etfs']:
+            if te['tema'] == 'Ações emergentes':
+                te['busca'], te['mkt'] = 'China stocks MSCI', 'en-US'
+        for a in c['ativos']:
+            if a['id'] == 'KLBN4':
+                a['noticias']['excluir'] = ['Chácara Klabin', 'Ema Klabin']
+        caminho = os.path.join(self.tmp, 'config_buscas.json')
+        with open(caminho, 'w', encoding='utf-8') as f:
+            json.dump(c, f, ensure_ascii=False)
+        os.environ['ROBO_CONFIG'] = caminho
+        with open(AMOSTRA, encoding='utf-8') as f:
+            self.amostra = json.load(f)['buscas']
+
+    def mundo_real(self, **kw):
+        a = self.amostra
+        pag = {url_busca('Klabin'): rss_bing(a['Klabin'], 'Klabin'), url_busca('BB Seguridade'): rss_bing(a['BB Seguridade'], 'BB Seguridade'),
+               url_busca('Copel'): rss_bing(a['Copel'], 'Copel'), url_busca('China stocks MSCI', 'en-US'): rss_bing(a['China stocks MSCI (en-US)'], 'China stocks MSCI'),
+               url_busca('celulose preço China'): rss_bing([{'titulo': 'Preço da celulose na China sobe pela terceira semana', 'pubDate': 'Fri, 06 Nov 2026 12:00:00 GMT', 'veiculo': 'Valor Econômico'},
+                                                             {'titulo': 'Exportações de soja batem recorde', 'pubDate': 'Fri, 06 Nov 2026 11:00:00 GMT', 'veiculo': 'Valor Econômico'}], 'celulose preço China')}
+        return mundo(hoje=dt.date(ANO, 11, 8), paginas=dict(pag, **kw.pop('paginas', {})), **kw)
+
+    def test_noticias_reais_por_empresa_com_desambiguacao(self):
+        rec = self.rodar(self.mundo_real(), ROBO_MANUAL='true')
+        klb = [x for x in rec['itens'] if x['fonte_id'] == 'busca-klbn4']
+        tit = [x['titulo'] for x in klb]
+        self.assertFalse(any('Chácara Klabin' in t or 'Ema Klabin' in t for t in tit), tit)   # homônimos: estação de metrô e museu
+        self.assertEqual(len(klb), 9, tit)
+        safra = next(x for x in klb if 'Safra' in x['titulo'])
+        self.assertEqual(safra['ativos'][0], 'KLBN4')
+        self.assertEqual(safra['casas'], ['Safra'])
+        self.assertEqual(safra['natureza'], 'opiniao_casa')
+        self.assertEqual(safra['posicao'], 'contraria')                                            # "corta preço-alvo e rebaixa recomendação"
+        self.assertEqual(safra['fonte'], 'Money Times')                                            # veículo que publicou, não o buscador
+        self.assertEqual(safra['via'], 'Bing Notícias')
+        self.assertEqual(safra['link'], 'https://www.moneytimes.com.br/klabin-klbn11-safra-corta-preco-alvo-e-rebaixa-recomendacao-diante-de-cenario-mais-desafiador/')  # link do veículo, sem o redirecionamento
+        self.assertEqual(safra['publicado_em'], '2026-11-06T05:12-03:00')                          # 08:12 GMT = 05:12 em Brasília
+        self.assertTrue(safra['confiavel'])
+        self.assertFalse(next(x for x in klb if x['fonte'] == 'Agora Litoral')['confiavel'])      # veículo pouco conhecido: entra marcado
+        col = self.ler('coleta.json')['fontes']
+        self.assertEqual(col['busca-klbn4']['rejeitados'].get('outro_assunto'), 2)
+        cpl = [x['titulo'] for x in rec['itens'] if x['fonte_id'] == 'busca-cple3']
+        self.assertNotIn('Pular para o conteúdo', cpl)                                             # lixo do agregador fica de fora
+        self.assertTrue(all('Copel' in t for t in cpl), cpl)
+
+    def test_opinioes_publicas_e_fonte_sinalizada(self):
+        rec = self.rodar(self.mundo_real(), ROBO_MANUAL='true')
+        bb = {x['titulo']: x for x in rec['itens'] if 'BBSE3' in (x.get('ativos') or [])}
+        venda = next(v for k, v in bb.items() if 'recomendam venda' in k)
+        self.assertEqual((venda['natureza'], venda['posicao']), ('opiniao_casa', 'contraria'))     # "bancos recomendam venda", sem casa nomeada
+        riscos = next(v for k, v in bb.items() if 'analistas veem riscos' in k)
+        self.assertEqual(riscos['posicao'], 'contraria')
+        im = [v for v in bb.values() if v['fonte'] == 'InfoMoney']
+        self.assertEqual(len(im), 2)                                                                # entra (pesquisa), com aviso
+        self.assertTrue(all(v['aviso_fonte'].startswith('Grupo XP') for v in im))
+        fato = next(v for k, v in bb.items() if 'R$ 6,8 bilhões' in k)
+        self.assertNotIn('posicao', fato)                                                           # notícia de resultado não é opinião
+
+    def test_setor_e_tema_global(self):
+        rec = self.rodar(self.mundo_real(), ROBO_MANUAL='true')
+        cel = [x for x in rec['itens'] if x['fonte_id'] == 'busca-setor-celulose-e-papel']
+        self.assertEqual([x['titulo'] for x in cel], ['Preço da celulose na China sobe pela terceira semana'])
+        self.assertEqual(cel[0]['setor_de'], ['KLBN4'])
+        mundo_ = [x for x in rec['itens'] if x['fonte_id'] == 'busca-etf-acoes-emergentes']
+        self.assertEqual(len(mundo_), 4)
+        self.assertTrue(all({'EIMI', 'VFEA'} <= set(x['etfs_tema']) for x in mundo_))
+        self.assertEqual(mundo_[0]['idioma'], 'en')
+
+    def test_rodada_agendada_respeita_teto_de_buscas(self):
+        m = self.mundo_real()
+        self.rodar(m)
+        self.assertEqual(sum(1 for u in m.chamadas if 'busca.teste/news' in u), 4)                # 4 por rodada; as outras na próxima
+        os.environ['ROBO_AGORA'] = '%d-11-08T10:10:00-03:00' % ANO
+        m2 = self.mundo_real()
+        self.rodar(m2)
+        lidas = [u for u in m2.chamadas if 'busca.teste/news' in u]
+        self.assertEqual(len(lidas), 4)
+        self.assertFalse(set(lidas) & {u for u in m.chamadas if 'busca.teste/news' in u})          # roda a fila, não repete
+
+    def test_buscador_vedado_por_robots_para_sozinho(self):
+        rec = self.rodar(self.mundo_real(robots={'busca.teste': 'User-agent: *\nDisallow: /news/search\n'}), ROBO_MANUAL='true')
+        self.assertFalse([x for x in rec['itens'] if x.get('via')])
+        u = self.ler('coleta.json')['ultima']
+        self.assertTrue(any('robots' in a for a in u['a_validar']), u['a_validar'])
+        self.assertFalse([u_ for u_ in self._chamadas if 'busca.teste/news' in u_])               # nenhuma busca feita
+
+    def test_sem_indicadores_macro_falha_do_bcb_nao_afeta_rodada(self):
+        with open(os.environ['ROBO_CONFIG'], encoding='utf-8') as f:
+            c = json.load(f)
+        c['intel']['indicadores_macro'] = False                                                     # como em produção: o painel não mostra indicadores
+        with open(os.environ['ROBO_CONFIG'], 'w', encoding='utf-8') as f:
+            json.dump(c, f, ensure_ascii=False)
+        m = self.mundo_real(fora={'bcb', 'focus', 'tesouro', 'treasury'})
+        self.rodar(m, ROBO_MANUAL='true')
+        mac = self.ler('macro.json')
+        self.assertEqual(mac['indicadores'], {})
+        self.assertIn('agenda', mac['fontes'])
+        self.assertFalse([u for u in m.chamadas if 'api.bcb.gov.br' in u or 'home.treasury.gov' in u])
+        self.assertNotIn('macro bcb', self.saidas()['motivos'])
+
+    def test_fatos_relevantes_da_cvm_por_cnpj_e_nome(self):
+        docs = [['89.637.490/0001-45', 'KLABIN S.A.', '12653', '2026-11-06', 'Fato Relevante', '', '', 'Parceria em ativos florestais no Paraná', '2026-11-06', 'AP', '1001', '1',
+                 'https://www.rad.cvm.gov.br/ENET/frmExibirArquivoIPEExterno.aspx?NumeroProtocoloEntrega=1001'],
+                ['89.637.490/0001-45', 'OUTRA EMPRESA S.A.', '1', '2026-11-06', 'Fato Relevante', '', '', 'Documento de outra companhia', '2026-11-06', 'AP', '1002', '1',
+                 'https://www.rad.cvm.gov.br/ENET/frmExibirArquivoIPEExterno.aspx?NumeroProtocoloEntrega=1002'],
+                ['17.344.597/0001-94', 'BB SEGURIDADE PARTICIPAÇÕES S.A.', '23159', '2026-11-04', 'Comunicado ao Mercado', '', '', 'Desempenho operacional de outubro', '2026-11-04', 'AP', '1003', '1',
+                 'https://www.rad.cvm.gov.br/ENET/frmExibirArquivoIPEExterno.aspx?NumeroProtocoloEntrega=1003'],
+                ['17.344.597/0001-94', 'BB SEGURIDADE PARTICIPAÇÕES S.A.', '23159', '2026-09-01', 'Comunicado ao Mercado', '', '', 'Antigo', '2026-09-01', 'AP', '1004', '1',
+                 'https://www.rad.cvm.gov.br/ENET/frmExibirArquivoIPEExterno.aspx?NumeroProtocoloEntrega=1004']]
+        rec = self.rodar(self.mundo_real(cvm_docs=docs), ROBO_MANUAL='true')
+        cvm = [x for x in rec['itens'] if x['fonte_id'] == 'cvm-ipe']
+        self.assertEqual(sorted(x['titulo'] for x in cvm), ['BBSE3 — Comunicado ao Mercado: Desempenho operacional de outubro', 'KLBN4 — Fato Relevante: Parceria em ativos florestais no Paraná'])
+        fr = next(x for x in cvm if 'KLBN4' in x['titulo'])
+        self.assertEqual((fr['ativos'][0], fr['tipo'], fr['publicado_em'], fr['categoria']), ('KLBN4', 'fato_relevante', '2026-11-06', 'oficial_empresa'))
+        self.assertTrue(fr['so_data'])
 
 if __name__ == '__main__':
     unittest.main()

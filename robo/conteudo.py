@@ -15,13 +15,16 @@ Regras (docs/FONTES.md):
   - de gestoras e instituições guardamos um resumo curto (até 300 caracteres) do próprio feed, quando houver;
   - nenhuma data é inventada: feed sem data confiável usa a data de detecção, marcada como tal.
 """
+import csv
 import datetime as dt
 import hashlib
 import html
+import io
 import re
 import urllib.parse
 import urllib.robotparser
 import xml.etree.ElementTree as ET
+import zipfile
 
 from util import BRT, UA, ErroFonte, sem_acento
 
@@ -63,21 +66,23 @@ def limpa_texto(s, maximo=RESUMO_MAX):
     return s
 
 
-def data_iso(txt):
-    """Datas de RSS/Atom/ISO para ISO em Brasília (minutos). None quando não reconhece: nunca inventa."""
+def data_iso(txt, fuso=None):
+    """Datas de RSS/Atom/ISO para ISO em Brasília (minutos). None quando não reconhece: nunca inventa.
+    Data sem fuso usa o fuso declarado pela fonte (`fuso` no cadastro: 'BRT' ou 'UTC'); sem declaração, UTC."""
     txt = (txt or '').strip()
     if not txt:
         return None
+    tz0 = BRT if fuso == 'BRT' else dt.timezone.utc
     try:
-        d = dt.datetime.fromisoformat(txt.replace('Z', '+00:00'))
-        return (d if d.tzinfo else d.replace(tzinfo=dt.timezone.utc)).astimezone(BRT).isoformat(timespec='minutes')
+        d = dt.datetime.fromisoformat(txt.replace('Z', '+00:00').replace(' ', 'T', 1) if re.match(r'^\d{4}-\d{2}-\d{2} \d', txt) else txt.replace('Z', '+00:00'))
+        return (d if d.tzinfo else d.replace(tzinfo=tz0)).astimezone(BRT).isoformat(timespec='minutes')
     except ValueError:
         pass
     for f in ('%a, %d %b %Y %H:%M:%S %z', '%a, %d %b %Y %H:%M:%S %Z', '%d %b %Y %H:%M:%S %z', '%a, %d %b %Y %H:%M %z', '%Y-%m-%d'):
         try:
             d = dt.datetime.strptime(txt, f)
             if d.tzinfo is None:
-                d = d.replace(tzinfo=dt.timezone.utc)
+                d = d.replace(tzinfo=tz0)
             return d.astimezone(BRT).isoformat(timespec='minutes')
         except ValueError:
             continue
@@ -91,6 +96,47 @@ def data_iso(txt):
     return None
 
 
+MESES = {'jan': 1, 'janeiro': 1, 'january': 1, 'fev': 2, 'fevereiro': 2, 'feb': 2, 'february': 2, 'mar': 3, 'marco': 3, 'march': 3, 'abr': 4, 'abril': 4, 'apr': 4, 'april': 4,
+         'mai': 5, 'maio': 5, 'may': 5, 'jun': 6, 'junho': 6, 'june': 6, 'jul': 7, 'julho': 7, 'july': 7, 'ago': 8, 'agosto': 8, 'aug': 8, 'august': 8,
+         'set': 9, 'setembro': 9, 'sep': 9, 'sept': 9, 'september': 9, 'out': 10, 'outubro': 10, 'oct': 10, 'october': 10, 'nov': 11, 'novembro': 11, 'november': 11,
+         'dez': 12, 'dezembro': 12, 'dec': 12, 'december': 12}
+
+
+def data_escrita(texto):
+    """Data completa escrita por extenso ou numérica (dia, mês e ano) no texto; None sem os três."""
+    t = sem_acento(texto or '').lower()
+    nomes = '|'.join(sorted(MESES, key=len, reverse=True))
+    for rx, ordem in ((r'(?<![a-z])(' + nomes + r')\.?\s+(\d{1,2}),?\s+((?:19|20)\d{2})', ('m', 'd', 'a')),
+                      (r'(?<!\d)(\d{1,2})\s+(?:de\s+)?(' + nomes + r')\.?\s+(?:de\s+)?((?:19|20)\d{2})', ('d', 'm', 'a')),
+                      (r'(?<!\d)(\d{1,2})/(\d{1,2})/((?:19|20)\d{2})', ('d', 'm', 'a'))):
+        g = re.search(rx, t)
+        if not g:
+            continue
+        v = dict(zip(ordem, g.groups()))
+        try:
+            mes = MESES[v['m']] if not v['m'].isdigit() else int(v['m'])
+            return dt.datetime(int(v['a']), mes, int(v['d']), 12, 0, tzinfo=BRT).isoformat(timespec='minutes')
+        except (ValueError, KeyError):
+            continue
+    return None
+
+
+def referencia(texto):
+    """Mês de referência citado no título ou no nome do arquivo ("Carta Outubro 2026", "_Out26.pdf", "202609_Carta",
+    "outubro26.pdf"). Devolve 'AAAA-MM' ou None. É o período do documento, nunca a data de publicação."""
+    t = sem_acento(urllib.parse.unquote(texto or '')).lower()
+    m = re.search(r'(?<![a-z])(' + '|'.join(sorted(MESES, key=len, reverse=True)) + r')[\s_\-/.]*(?:de\s+)?((?:19|20)\d{2}|\d{2})(?!\d)', t)
+    if m:
+        a = int(m.group(2))
+        a = a + 2000 if a < 100 else a
+        if 1990 <= a <= 2100:
+            return '%04d-%02d' % (a, MESES[m.group(1)])
+    m = re.search(r'(?<!\d)((?:19|20)\d{2})[-_/]?(0[1-9]|1[0-2])(?![\d])', t)
+    if m:
+        return '%s-%s' % (m.group(1), m.group(2))
+    return None
+
+
 def _novo_item(f, titulo, link, quando, agora_, resumo='', autor='', extra=None):
     titulo = limpa_texto(titulo, TITULO_MAX)
     link = link_seguro(link)
@@ -101,9 +147,51 @@ def _novo_item(f, titulo, link, quando, agora_, resumo='', autor='', extra=None)
          'categoria': f.get('categoria') or 'veiculo', 'pais': f.get('pais') or '', 'idioma': f.get('idioma') or 'pt', 'tipo': f.get('tipo') or 'noticia',
          'publicado_em': quando, 'detectado_em': agora_.isoformat(timespec='minutes'), 'data_estimada': quando is None,
          'resumo': limpa_texto(resumo) if (guarda_resumo and resumo) else '', 'autor': limpa_texto(autor, 80) if autor else ''}
+    if quando is None:
+        ref = referencia(titulo) or referencia(link.rsplit('/', 1)[-1])
+        if ref:
+            x['referencia'] = ref
     if extra:
         x.update(extra)
     return x
+
+
+# ------------------------------------------------------------------ XML tolerante
+_ENT_XML = {'amp', 'lt', 'gt', 'quot', 'apos'}
+
+
+def xml_tolerante(corpo):
+    """Lê RSS/Atom mesmo com entidades HTML (&nbsp;, &ccedil;) ou corte no fim do arquivo, comuns em feeds de portais.
+    Não inventa nada: só converte entidades para o caractere certo e fecha o documento no último item completo."""
+    try:
+        return ET.fromstring(corpo)
+    except ET.ParseError:
+        pass
+    txt = corpo.decode('utf-8', 'replace') if isinstance(corpo, bytes) else corpo
+    txt = re.sub(r'<\?xml[^>]*\?>', '', txt, count=1)
+    txt = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', txt)
+
+    def ent(m):
+        nome = m.group(1)
+        if nome in _ENT_XML:
+            return m.group(0)
+        ch = html.unescape('&%s;' % nome)
+        return ch if ch != '&%s;' % nome else ''
+    txt = re.sub(r'&([A-Za-z][A-Za-z0-9]*);', ent, txt)
+    txt = re.sub(r'&(?!(?:[A-Za-z][A-Za-z0-9]*|#\d+|#x[0-9A-Fa-f]+);)', '&amp;', txt)
+    try:
+        return ET.fromstring(txt.encode('utf-8'))
+    except ET.ParseError:
+        pass
+    # corte no meio: fica até o último </item> (ou </entry>) completo e fecha as tags abertas
+    for fim, fecho in (('</item>', '</channel></rss>'), ('</entry>', '</feed>')):
+        k = txt.rfind(fim)
+        if k > 0:
+            try:
+                return ET.fromstring((txt[:k + len(fim)] + fecho).encode('utf-8'))
+            except ET.ParseError:
+                continue
+    raise ET.ParseError('feed ilegível')
 
 
 # ------------------------------------------------------------------ robots.txt
@@ -141,7 +229,7 @@ def _local(tag):
 def _filho(el, *nomes):
     """Primeiro filho cujo nome local (sem namespace) esteja em `nomes`. RSS 2.0, RSS 1.0/RDF e Atom sem distinção."""
     for c in el:
-        if _local(c.tag) in nomes:
+        if _local(c.tag) in nomes or _local(c.tag).lower() in nomes:
             return c
     return None
 
@@ -151,13 +239,26 @@ def _texto_filho(el, *nomes):
     return (c.text or '').strip() if c is not None and c.text else ''
 
 
+def link_real(u):
+    """Buscadores de notícias (Bing) entregam um link de redirecionamento com a matéria em ?url=. Guarda o endereço do veículo."""
+    try:
+        sp = urllib.parse.urlsplit(u or '')
+        if sp.netloc.endswith('bing.com') and sp.path.lower().endswith('/apiclick.aspx'):
+            alvo = urllib.parse.parse_qs(sp.query).get('url', [''])[0]
+            if alvo.startswith('http'):
+                return alvo
+    except ValueError:
+        pass
+    return u
+
+
 def rss(rede, f, agora_, desde_iso, bloqueio=()):
     """RSS 2.0, RSS 1.0 (RDF, usado pelo BIS) ou Atom. Devolve (itens, recebidos).
     Em feeds agregadores (Google Notícias) o <source> vira a organização e veículos bloqueados são descartados."""
     nome = f.get('nome') or f['id']
     corpo = rede.get(nome, f['url_coleta'], timeout=25, tentativas=2)
     try:
-        raiz = ET.fromstring(corpo)
+        raiz = xml_tolerante(corpo)
     except ET.ParseError:
         raise rede.falha(nome, 'formato', 'feed inválido (não é XML)')
     brutos = []
@@ -178,8 +279,9 @@ def rss(rede, f, agora_, desde_iso, bloqueio=()):
             brutos.append({'titulo': _texto_filho(el, 'title'), 'link': lk, 'data': _texto_filho(el, 'published', 'updated'),
                            'resumo': _texto_filho(el, 'summary', 'content'), 'autor': _texto_filho(au, 'name') if au is not None else '', 'pdf': pdf, 'veiculo': ''})
     out = []
+    fuso = f.get('fuso')
     for b in brutos:
-        quando = data_iso(b['data'])
+        quando = data_iso(b['data'], fuso)
         if quando and quando[:10] < desde_iso:
             continue
         tit, extra = b['titulo'], {}
@@ -189,12 +291,16 @@ def rss(rede, f, agora_, desde_iso, bloqueio=()):
             if tit.endswith(' - ' + b['veiculo']):
                 tit = tit[: -len(' - ' + b['veiculo'])]
             extra['organizacao'] = b['veiculo']
+            if f.get('agregador'):  # busca em agregador: a fonte exibida é o veículo que publicou; o buscador fica registrado em "via"
+                extra['fonte'] = b['veiculo']
+                extra['via'] = f.get('via') or f.get('organizacao') or ''
+        b['link'] = link_real(b['link'])
         if b['pdf']:
             extra['pdf'] = link_seguro(b['pdf'])
         x = _novo_item(f, tit, b['link'], quando, agora_, b['resumo'], b['autor'], extra or None)
         if x:
             out.append(x)
-    if brutos and not out and not any(data_iso(b['data']) for b in brutos):
+    if brutos and not out and not any(data_iso(b['data'], fuso) for b in brutos):
         # feed sem nenhuma data reconhecível: entram como detectados hoje (data_estimada), para não perder conteúdo
         for b in brutos[: int(f.get('maximo', 30))]:
             x = _novo_item(f, b['titulo'], b['link'], None, agora_, b['resumo'], b['autor'])
@@ -280,6 +386,11 @@ def pagina(rede, f, agora_, vistos):
             md = re.search(f['padrao_data'], rotulo + ' ' + href)
             if md:
                 quando = data_iso(md.group(0))
+        if quando is None:  # data escrita ao lado do link na listagem ("September 22, 2026", "22/09/2026", "22 set 2026")
+            trecho = txt[m.end(): m.end() + 260]
+            k = trecho.lower().find('<a ')  # só até o próximo link: a data do item seguinte nunca é atribuída a este
+            perto = limpa_texto(trecho[:k] if k >= 0 else trecho, 260)
+            quando = data_escrita(perto)
         x = _novo_item(f, titulo, link, quando, agora_, '', '', {'pdf': link} if link.lower().split('?')[0].endswith('.pdf') else None)
         if x:
             out.append(x)
@@ -427,7 +538,7 @@ def bcb_copom(rede, f, agora_, desde_iso):
 def ibge_releases(rede, f, agora_, desde_iso):
     """Releases oficiais do IBGE pela API pública de notícias (reaproveita o formato já usado pelo robô)."""
     nome = f.get('nome') or 'IBGE'
-    js = rede.get_json(nome, 'https://servicodados.ibge.gov.br/api/v3/noticias/?tipo=release&qtd=%d' % int(f.get('maximo', 20)), timeout=20)
+    js = rede.get_json(nome, 'https://servicodados.ibge.gov.br/api/v3/noticias/?tipo=release&qtd=%d' % int(f.get('maximo', 20)), timeout=60, tentativas=3)
     out, n = [], 0
     for it in js.get('items') or []:
         n += 1
@@ -444,7 +555,43 @@ def ibge_releases(rede, f, agora_, desde_iso):
     return out, n
 
 
-APIS = {'ibge_releases': ibge_releases, 'wp_posts': wp_posts, 'imf_blog_json': imf_blog_json, 'bcb_copom': bcb_copom}
+def cvm_ipe(rede, f, agora_, desde_iso):
+    """Documentos oficiais das companhias entregues à CVM (fato relevante, comunicado ao mercado, aviso aos acionistas).
+    Base aberta dados.cvm.gov.br (IPE). Confere CNPJ E nome da companhia antes de ligar o documento ao ativo."""
+    nome = f.get('nome') or f['id']
+    alvo = {re.sub(r'\D', '', c): (t, sem_acento(n or '')) for c, (t, n) in (f.get('empresas') or {}).items()}
+    if not alvo:
+        return [], 0
+    corpo = rede.get(nome, f['url_coleta'], timeout=120, tentativas=2)
+    try:
+        z = zipfile.ZipFile(io.BytesIO(corpo))
+        txt = z.read([n for n in z.namelist() if n.endswith('.csv')][0]).decode('latin-1')
+    except Exception:
+        raise rede.falha(nome, 'formato', 'arquivo IPE da CVM em formato inesperado')
+    categorias = set(f.get('categorias') or ['Fato Relevante', 'Comunicado ao Mercado', 'Aviso aos Acionistas'])
+    out, n = [], 0
+    for r in csv.DictReader(io.StringIO(txt), delimiter=';'):
+        cnpj = re.sub(r'\D', '', r.get('CNPJ_Companhia') or '')
+        if cnpj not in alvo or (r.get('Categoria') or '') not in categorias:
+            continue
+        n += 1
+        t, nome_ok = alvo[cnpj]
+        if nome_ok and nome_ok not in sem_acento(r.get('Nome_Companhia') or ''):
+            continue
+        d = (r.get('Data_Entrega') or '')[:10]
+        if not re.match(r'^\d{4}-\d{2}-\d{2}$', d) or d < desde_iso:
+            continue
+        assunto = limpa_texto(r.get('Assunto') or r.get('Tipo') or r.get('Especie') or '', 160) or 'assunto não informado'
+        x = _novo_item(f, '%s — %s: %s' % (t, r.get('Categoria'), assunto), r.get('Link_Download'), d, agora_,
+                       extra={'organizacao': (r.get('Nome_Companhia') or '').strip() or t, 'ativos': [t], 'categoria_cvm': r.get('Categoria'),
+                              'tipo': 'fato_relevante' if r.get('Categoria') == 'Fato Relevante' else 'documento_oficial', 'so_data': True})
+        if x:
+            out.append(x)
+    out.sort(key=lambda x: x['publicado_em'], reverse=True)
+    return out[: int(f.get('maximo', 60))], n
+
+
+APIS = {'cvm_ipe': cvm_ipe, 'ibge_releases': ibge_releases, 'wp_posts': wp_posts, 'imf_blog_json': imf_blog_json, 'bcb_copom': bcb_copom}
 METODOS = ('rss', 'atom', 'youtube', 'youtube_rss', 'pagina', 'pagina_html', 'pagina_pdf', 'sitemap', 'arquivo_fixo', 'api')
 
 

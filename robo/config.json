@@ -482,7 +482,9 @@
     "etfs": [
      "IMAB11",
      "B5P211",
-     "IB5M11"
+     "IB5M11",
+     "JURO11",
+     "HGCR11"
     ],
     "ativo": true,
     "termos": [
@@ -519,7 +521,8 @@
     "tema": "Tesouro Selic",
     "consulta": "\"Tesouro Selic\" OR \"LFT\" Tesouro",
     "etfs": [
-     "LFTB11"
+     "LFTB11",
+     "CDII11"
     ],
     "ativo": true,
     "termos": [
@@ -537,7 +540,11 @@
     "etfs": [
      "DEBB11",
      "GICP11",
-     "LFIN11"
+     "LFIN11",
+     "JURO11",
+     "CDII11",
+     "HGCR11",
+     "KNCA11"
     ],
     "ativo": true,
     "termos": [
@@ -1025,6 +1032,102 @@
      "máquinas",
      "frota"
     ]
+   },
+   {
+    "nome": "FI-Infra e debêntures incentivadas",
+    "consulta": "\"FI-Infra\" OR \"fundos de infraestrutura\" OR \"debêntures incentivadas\"",
+    "mkt": "pt-BR",
+    "ativos": [
+     "JURO11",
+     "CDII11"
+    ],
+    "termos": [
+     "FI-Infra",
+     "FII-Infra",
+     "fundos de infraestrutura",
+     "fundo de infraestrutura",
+     "fundos de infra",
+     "debêntures incentivadas",
+     "debênture incentivada",
+     "debêntures de infraestrutura"
+    ]
+   },
+   {
+    "nome": "FIIs de papel e CRI",
+    "consulta": "\"fundos de papel\" OR \"FIIs de papel\" OR \"recebíveis imobiliários\"",
+    "mkt": "pt-BR",
+    "ativos": [
+     "HGCR11"
+    ],
+    "termos": [
+     "fundos de papel",
+     "FIIs de papel",
+     "FII de papel",
+     "fundo de papel",
+     "recebíveis imobiliários",
+     "certificados de recebíveis"
+    ]
+   },
+   {
+    "nome": "Fiagro e CRA",
+    "consulta": "Fiagro OR Fiagros OR \"recebíveis do agronegócio\"",
+    "mkt": "pt-BR",
+    "ativos": [
+     "KNCA11"
+    ],
+    "termos": [
+     "Fiagro",
+     "Fiagros",
+     "recebíveis do agronegócio",
+     "certificados de recebíveis do agronegócio"
+    ]
+   },
+   {
+    "nome": "Fundos de fundos e multiestratégia (FII)",
+    "consulta": "\"fundos de fundos\" imobiliários OR \"FII multiestratégia\" OR \"FoF\" FII",
+    "mkt": "pt-BR",
+    "ativos": [
+     "KNHF11"
+    ],
+    "termos": [
+     "fundos de fundos",
+     "fundo de fundos",
+     "FoF",
+     "FOFs",
+     "multiestratégia",
+     "multiestrategia"
+    ]
+   },
+   {
+    "nome": "FIIs de logística e galpões",
+    "consulta": "FII logística galpões OR \"galpões logísticos\"",
+    "mkt": "pt-BR",
+    "ativos": [
+     "BTLG11"
+    ],
+    "termos": [
+     "galpões",
+     "galpão",
+     "logístico",
+     "logísticos",
+     "condomínio logístico"
+    ]
+   },
+   {
+    "nome": "FIIs de renda urbana e varejo",
+    "consulta": "\"renda urbana\" FII OR \"FIIs de varejo\" OR \"built to suit\"",
+    "mkt": "pt-BR",
+    "ativos": [
+     "TRXF11"
+    ],
+    "termos": [
+     "renda urbana",
+     "FIIs de varejo",
+     "FII de varejo",
+     "built to suit",
+     "contratos atípicos",
+     "atípico"
+    ]
    }
   ],
   "cvm_ipe": {
@@ -1038,7 +1141,8 @@
    "XP Investimentos": "Grupo XP — não citar em material de cliente",
    "Expert XP": "Grupo XP — não citar em material de cliente",
    "Conteúdos XP": "Grupo XP — não citar em material de cliente"
-  }
+  },
+  "_nota_fundos": "v3.5: fundos que quase não aparecem pelo código recebem as notícias do segmento (FI-Infra, papel/CRI, Fiagro, fundos de fundos, logística, shoppings, renda urbana) em \"Setor e cadeia\" e as do fator que os move (juro real, crédito privado, CDI) como \"Tema geral\". Conteúdo didático genérico (\"o que são fundos imobiliários\") não é ligado aos fundos."
  },
  "ativos": [
   {
@@ -1890,6 +1994,685 @@
    "yahoo": "IBIT",
    "distribui": false,
    "inicio": "2024-01-11"
+  },
+  {
+   "id": "SBSP3",
+   "nome": "Sabesp",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "SBSP3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Sabesp\" OR \"SBSP3\"",
+    "termos": [
+     "Sabesp",
+     "SBSP3"
+    ],
+    "setor": [
+     "saneamento",
+     "água e esgoto",
+     "ARSESP"
+    ],
+    "buscas": [
+     "Sabesp"
+    ]
+   },
+   "cnpj": "43.776.517/0001-80",
+   "cvm_nome": "SANEAMENTO"
+  },
+  {
+   "id": "PSSA3",
+   "nome": "Porto Seguro",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "PSSA3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Porto Seguro\" seguradora OR \"PSSA3\"",
+    "termos": [
+     "Porto Seguro",
+     "PSSA3",
+     "Porto Bank"
+    ],
+    "setor": [
+     "seguros",
+     "SUSEP",
+     "seguro auto"
+    ],
+    "excluir": [
+     "Porto Seguro (BA)",
+     "Porto Seguro, na Bahia",
+     "em Porto Seguro",
+     "de Porto Seguro (BA)",
+     "Porto Seguro-BA",
+     "Porto Seguro/BA",
+     "Arraial d",
+     "Trancoso",
+     "sul da Bahia",
+     "litoral baiano",
+     "prefeitura de Porto Seguro",
+     "Prefeitura de Porto Seguro",
+     "aeroporto de Porto Seguro",
+     "Aeroporto de Porto Seguro"
+    ],
+    "buscas": [
+     "Porto Seguro"
+    ]
+   },
+   "cnpj": "02.149.205/0001-69",
+   "cvm_nome": "PORTO SEGURO"
+  },
+  {
+   "id": "ENGI11",
+   "nome": "Energisa",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "ENGI11.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Energisa\" OR \"ENGI11\"",
+    "termos": [
+     "Energisa",
+     "ENGI11",
+     "ENGI3",
+     "ENGI4"
+    ],
+    "setor": [
+     "energia elétrica",
+     "distribuidoras",
+     "ANEEL"
+    ],
+    "buscas": [
+     "Energisa"
+    ]
+   },
+   "cnpj": "00.864.214/0001-06",
+   "cvm_nome": "ENERGISA"
+  },
+  {
+   "id": "SMFT3",
+   "nome": "Smart Fit",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "SMFT3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Smart Fit\" OR \"SMFT3\"",
+    "termos": [
+     "Smart Fit",
+     "SmartFit",
+     "SMFT3"
+    ],
+    "setor": [
+     "academias",
+     "consumo"
+    ],
+    "buscas": [
+     "Smart Fit"
+    ]
+   },
+   "cnpj": "07.594.978/0001-78",
+   "cvm_nome": "SMARTFIT"
+  },
+  {
+   "id": "VIVA3",
+   "nome": "Vivara",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "VIVA3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Vivara\" OR \"VIVA3\"",
+    "termos": [
+     "Vivara",
+     "VIVA3"
+    ],
+    "setor": [
+     "joalherias",
+     "varejo"
+    ],
+    "buscas": [
+     "Vivara"
+    ]
+   },
+   "cnpj": "33.839.910/0001-11",
+   "cvm_nome": "VIVARA"
+  },
+  {
+   "id": "RDOR3",
+   "nome": "Rede D'Or",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "RDOR3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Rede D'Or\" OR \"RDOR3\"",
+    "termos": [
+     "Rede D'Or",
+     "Rede D’Or",
+     "Rede DOr",
+     "RDOR3"
+    ],
+    "setor": [
+     "hospitais",
+     "saúde suplementar",
+     "ANS"
+    ],
+    "buscas": [
+     "Rede D'Or"
+    ]
+   },
+   "cnpj": "06.047.087/0001-39",
+   "cvm_nome": "SAO LUIZ"
+  },
+  {
+   "id": "FLRY3",
+   "nome": "Fleury",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "FLRY3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Grupo Fleury\" OR \"FLRY3\"",
+    "termos": [
+     "Grupo Fleury",
+     "Fleury",
+     "FLRY3"
+    ],
+    "setor": [
+     "medicina diagnóstica",
+     "laboratórios",
+     "saúde suplementar"
+    ],
+    "excluir": [
+     "Luiz Antônio Fleury",
+     "Fleury Filho",
+     "Sérgio Fleury",
+     "Sergio Fleury",
+     "delegado Fleury",
+     "Fleury-Mérogis",
+     "Fleury Mérogis"
+    ],
+    "buscas": [
+     "Grupo Fleury"
+    ]
+   },
+   "cnpj": "60.840.055/0001-31",
+   "cvm_nome": "FLEURY"
+  },
+  {
+   "id": "MRVE3",
+   "nome": "MRV",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "MRVE3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"MRV\" construtora OR \"MRVE3\"",
+    "termos": [
+     "MRV",
+     "MRVE3",
+     "MRV&Co",
+     "MRV Engenharia"
+    ],
+    "setor": [
+     "construção civil",
+     "Minha Casa Minha Vida",
+     "incorporadoras"
+    ],
+    "buscas": [
+     "MRV"
+    ]
+   },
+   "cnpj": "08.343.492/0001-20",
+   "cvm_nome": "MRV"
+  },
+  {
+   "id": "LREN3",
+   "nome": "Lojas Renner",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "LREN3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Lojas Renner\" OR \"LREN3\"",
+    "termos": [
+     "Lojas Renner",
+     "LREN3",
+     "Renner"
+    ],
+    "setor": [
+     "varejo de moda",
+     "vestuário"
+    ],
+    "excluir": [
+     "Renner Sayerlack",
+     "Renner Herrmann",
+     "Jeremy Renner",
+     "Tintas Renner"
+    ],
+    "buscas": [
+     "Lojas Renner"
+    ]
+   },
+   "cnpj": "92.754.738/0001-62",
+   "cvm_nome": "RENNER"
+  },
+  {
+   "id": "VALE3",
+   "nome": "Vale S.A.",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "VALE3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Vale\" mineradora OR \"VALE3\"",
+    "termos": [
+     "=Vale",
+     "VALE3",
+     "mineradora Vale",
+     "Vale S.A.",
+     "Vale SA",
+     "Vale (VALE3)",
+     "Vale Base Metals",
+     "Vale anuncia",
+     "Vale divulga",
+     "Vale tem lucro",
+     "Vale registra",
+     "Vale reporta",
+     "lucro da Vale",
+     "ações da Vale",
+     "ação da Vale",
+     "dividendos da Vale",
+     "Vale aprova",
+     "Vale eleva",
+     "Vale reduz",
+     "Vale vende",
+     "Vale compra",
+     "CEO da Vale",
+     "presidente da Vale",
+     "produção da Vale",
+     "Vale e BHP",
+     "Samarco",
+     "Brumadinho",
+     "minério de ferro da Vale"
+    ],
+    "setor": [
+     "minério de ferro",
+     "mineração",
+     "China aço"
+    ],
+    "excluir": [
+     "Vale do Silício",
+     "Vale do Silicio",
+     "vale a pena",
+     "Vale a pena",
+     "Vale do Paraíba",
+     "Vale do Paraiba",
+     "vale-refeição",
+     "vale-alimentação",
+     "vale refeição",
+     "vale alimentação",
+     "vale-transporte",
+     "vale transporte",
+     "Vale-transporte",
+     "vale-gás",
+     "vale gás",
+     "Vale Gás",
+     "Vale do Jequitinhonha",
+     "Vale do Itajaí",
+     "Vale do Ribeira",
+     "Vale do São Francisco",
+     "Vale do Aço",
+     "Vale Tudo",
+     "vale-tudo",
+     "vale tudo",
+     "Vale dos Vinhedos",
+     "vale ressaltar",
+     "vale lembrar",
+     "vale destacar",
+     "vale dizer",
+     "vale notar",
+     "Vale lembrar",
+     "Vale ressaltar",
+     "Vale destacar",
+     "Vale do Anhangabaú",
+     "vale-pedágio",
+     "vale-cultura",
+     "Vale-cultura",
+     "Vale Refeição",
+     "Vale Alimentação",
+     "Quanto vale",
+     "quanto vale",
+     "Vale mais",
+     "Vale o quanto"
+    ],
+    "buscas": [
+     "Vale mineradora"
+    ]
+   },
+   "cnpj": "33.592.510/0001-54",
+   "cvm_nome": "VALE"
+  },
+  {
+   "id": "BBAS3",
+   "nome": "Banco do Brasil",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "BBAS3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Banco do Brasil\" OR \"BBAS3\"",
+    "termos": [
+     "Banco do Brasil",
+     "BBAS3"
+    ],
+    "setor": [
+     "bancos",
+     "crédito",
+     "agronegócio crédito rural"
+    ],
+    "excluir": [
+     "Centro Cultural Banco do Brasil",
+     "CCBB",
+     "Fundação Banco do Brasil",
+     "Circuito Banco do Brasil",
+     "Vôlei Banco do Brasil"
+    ],
+    "buscas": [
+     "Banco do Brasil"
+    ]
+   },
+   "cnpj": "00.000.000/0001-91",
+   "cvm_nome": "BRASIL"
+  },
+  {
+   "id": "ALUP11",
+   "nome": "Alupar",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "ALUP11.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Alupar\" OR \"ALUP11\"",
+    "termos": [
+     "Alupar",
+     "ALUP11",
+     "ALUP3",
+     "ALUP4"
+    ],
+    "setor": [
+     "transmissão de energia",
+     "ANEEL",
+     "leilão de transmissão"
+    ],
+    "buscas": [
+     "Alupar"
+    ]
+   },
+   "cnpj": "08.364.948/0001-38",
+   "cvm_nome": "ALUPAR"
+  },
+  {
+   "id": "RECV3",
+   "nome": "PetroReconcavo",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "RECV3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"PetroReconcavo\" OR \"RECV3\"",
+    "termos": [
+     "PetroReconcavo",
+     "PetroRecôncavo",
+     "Petro Reconcavo",
+     "Petrorecôncavo",
+     "RECV3"
+    ],
+    "setor": [
+     "petróleo",
+     "gás natural",
+     "campos maduros"
+    ],
+    "buscas": [
+     "PetroReconcavo"
+    ]
+   },
+   "cnpj": "03.342.704/0001-30",
+   "cvm_nome": "PETRORECONCAVO"
+  },
+  {
+   "id": "SAUD3",
+   "nome": "Bradsaúde",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "SAUD3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Bradsaúde\" OR \"SAUD3\" OR \"Bradesco Saúde\"",
+    "termos": [
+     "Bradsaúde",
+     "Bradsaude",
+     "SAUD3",
+     "Bradesco Saúde",
+     "Bradesco Saude"
+    ],
+    "setor": [
+     "planos de saúde",
+     "saúde suplementar",
+     "ANS"
+    ],
+    "buscas": [
+     "Bradsaúde"
+    ]
+   },
+   "cnpj": "58.119.199/0001-51"
+  },
+  {
+   "id": "CPFE3",
+   "nome": "CPFL Energia",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "CPFE3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"CPFL\" OR \"CPFE3\"",
+    "termos": [
+     "CPFL",
+     "CPFE3"
+    ],
+    "setor": [
+     "energia elétrica",
+     "distribuidoras",
+     "ANEEL"
+    ],
+    "excluir": [
+     "Instituto CPFL"
+    ],
+    "buscas": [
+     "CPFL"
+    ]
+   },
+   "cnpj": "02.429.144/0001-93",
+   "cvm_nome": "CPFL"
+  },
+  {
+   "id": "BMGB4",
+   "nome": "Banco BMG",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "BMGB4.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Banco BMG\" OR \"BMGB4\"",
+    "termos": [
+     "Banco BMG",
+     "BMGB4",
+     "BMG"
+    ],
+    "setor": [
+     "bancos médios",
+     "crédito consignado"
+    ],
+    "buscas": [
+     "Banco BMG"
+    ]
+   },
+   "cnpj": "61.186.680/0001-74",
+   "cvm_nome": "BMG"
+  },
+  {
+   "id": "VTRU3",
+   "nome": "Vitru",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "VTRU3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Vitru\" OR \"VTRU3\"",
+    "termos": [
+     "Vitru",
+     "VTRU3",
+     "Uniasselvi",
+     "UniCesumar"
+    ],
+    "setor": [
+     "educação superior",
+     "ensino a distância",
+     "MEC"
+    ],
+    "buscas": [
+     "Vitru"
+    ]
+   },
+   "cnpj": "20.512.706/0001-40",
+   "cvm_nome": "VITRU"
+  },
+  {
+   "id": "JHSF3",
+   "nome": "JHSF",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "JHSF3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"JHSF\" OR \"JHSF3\"",
+    "termos": [
+     "JHSF",
+     "JHSF3"
+    ],
+    "setor": [
+     "shoppings de alta renda",
+     "imóveis de alto padrão",
+     "incorporadoras"
+    ],
+    "buscas": [
+     "JHSF"
+    ]
+   },
+   "cnpj": "08.294.224/0001-65",
+   "cvm_nome": "JHSF"
+  },
+  {
+   "id": "FIQE3",
+   "nome": "Unifique",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "FIQE3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Unifique\" OR \"FIQE3\"",
+    "termos": [
+     "Unifique",
+     "FIQE3"
+    ],
+    "setor": [
+     "telecomunicações",
+     "banda larga",
+     "fibra óptica"
+    ],
+    "buscas": [
+     "Unifique"
+    ]
+   },
+   "cnpj": "02.255.187/0001-08",
+   "cvm_nome": "UNIFIQUE"
+  },
+  {
+   "id": "BRBI11",
+   "nome": "BR Partners",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "BRBI11.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"BR Partners\" OR \"BRBI11\"",
+    "termos": [
+     "BR Partners",
+     "BRBI11"
+    ],
+    "setor": [
+     "banco de investimento",
+     "fusões e aquisições",
+     "mercado de capitais"
+    ],
+    "buscas": [
+     "BR Partners"
+    ]
+   },
+   "cnpj": "10.739.356/0001-03",
+   "cvm_nome": "BR PARTNERS"
+  },
+  {
+   "id": "TRIS3",
+   "nome": "Trisul",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "TRIS3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Trisul\" OR \"TRIS3\"",
+    "termos": [
+     "Trisul",
+     "TRIS3"
+    ],
+    "setor": [
+     "construção civil",
+     "incorporadoras",
+     "imóveis em São Paulo"
+    ],
+    "buscas": [
+     "Trisul"
+    ]
+   },
+   "cnpj": "08.811.643/0001-27",
+   "cvm_nome": "TRISUL"
+  },
+  {
+   "id": "SBFG3",
+   "nome": "Grupo SBF",
+   "classe": "acao",
+   "mercado": "B3",
+   "yahoo": "SBFG3.SA",
+   "carteira": "vip",
+   "noticias": {
+    "busca": "\"Grupo SBF\" OR \"SBFG3\" OR \"Centauro\"",
+    "termos": [
+     "Grupo SBF",
+     "SBFG3",
+     "Centauro",
+     "Fisia"
+    ],
+    "setor": [
+     "varejo esportivo",
+     "Nike Brasil"
+    ],
+    "buscas": [
+     "Grupo SBF"
+    ]
+   },
+   "cnpj": "13.217.485/0001-11",
+   "cvm_nome": "SBF"
   }
  ],
  "feriados_b3": [
@@ -2060,6 +2843,215 @@
    "max_por_rodada": 4,
    "intervalo_horas": 24,
    "_nota": "Comentários de resultado do BB Investimentos no endereço do trimestre (investalk.bb.com.br/noticias/mercado/ALOS_3T26). As listas do site não trazem esses links; o robô consulta poucas grafias por rodada, uma vez por dia cada, respeitando o robots.txt, e para quando acha. \"trimestre\": \"3T26\" fixa o trimestre."
+  },
+  "telegram_alertas": true,
+  "telegram_alertas_max": 5,
+  "_nota_alertas": "v3.5: com TELEGRAM_TOKEN e TELEGRAM_CHAT_ID nos Secrets, o robô avisa na rodada em que chega um fato relevante de empresa das carteiras ou uma opinião de casa sobre um ativo (publicados nas últimas 48 h, no máximo 5 por rodada, nunca repetido). false desliga; o resumo diário continua.",
+  "genial": {
+   "ativo": true,
+   "max_paginas_por_rodada": 3,
+   "max_relatorios_por_rodada": 4,
+   "intervalo_horas": 12,
+   "tickers": {
+    "KLBN4": "KLBN11",
+    "BBDC3": "BBDC4",
+    "CPLE3": "CPLE6",
+    "INBR34": "INBR32"
+   },
+   "_nota": "v3.5: relatórios da Genial pela página de cada ação (/acoes/<TICKER>/), com o endereço do relatório montado pelo título quando o link não está no HTML. tickers: código que a Genial usa quando difere do da carteira."
   }
+ },
+ "_nota_vip": "v3.5 · ativos das carteiras VG VIP que não estão na Oregon (\"carteira\": \"vip\"). O robô liga as notícias deles em ativos_vip, separado de ativos, para a seção Oregon nunca misturar as duas carteiras. A lista e os números das carteiras ficam em painel/src/vip.json. CNPJs conferidos na B3 (lista de companhias listadas) e, em 12 deles, também no cadastro da CVM, em 08/11/2026; cvm_nome é só um trecho estável do nome (a CVM e a B3 escrevem o nome de formas diferentes). SAUD3 sem trecho de nome: o CNPJ é o da antiga Odontoprev, renomeada Bradsaúde.",
+ "estante": {
+  "ativo": true,
+  "_nota": "v3.5 · Estante: acervo permanente na Biblioteca (biblioteca/estante.json). Semente conferida à mão (robo/sementes/estante/<id>.json) + listagem pública da série (página, sitemap ou feed). A primeira carga vai aos poucos (max_paginas_por_rodada listagens e ler_item_total páginas de item por rodada); depois, só a primeira página de cada listagem a cada intervalo_horas. Nada é apagado; uma falha só marca a coleção.",
+  "intervalo_horas": 168,
+  "max_paginas_por_rodada": 8,
+  "ler_item_max": 6,
+  "ler_item_total": 30,
+  "prazo_min": 4,
+  "colecoes": [
+   {
+    "id": "mauboussin",
+    "nome": "Michael Mauboussin",
+    "autor": "Michael J. Mauboussin",
+    "organizacao": "Counterpoint Global · Morgan Stanley",
+    "descricao": "Todos os artigos de research do Mauboussin desde 1995 (CS First Boston, Legg Mason, Credit Suisse, BlueMountain e, desde 2020, Counterpoint Global no Morgan Stanley, com Dan Callahan), além de artigos e entrevistas em outros veículos.",
+    "site": "https://www.michaelmauboussin.com/#writing",
+    "indice_autor": "https://www.michaelmauboussin.com/#writing",
+    "nota_links": "Artigos anteriores a 2020 não têm mais endereço público da editora: o link abre o índice no site do próprio autor.",
+    "listagens": [
+     {
+      "url": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/series/consilient-observer.html",
+      "padrao": "/insights/consilient-observer/[a-z0-9-]+\\.html",
+      "instituicao": "Counterpoint Global · Morgan Stanley"
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 6,
+    "ler_item_padrao": "morganstanley\\.com/im/",
+    "anexos": "/content/dam/im/assets/publication/[^\"']+\\.pdf"
+   },
+   {
+    "id": "cfa-rf",
+    "nome": "CFA Research Foundation",
+    "autor": "CFA Institute Research Foundation",
+    "organizacao": "CFA Institute Research Foundation",
+    "descricao": "Livros, monografias e revisões de literatura da Research Foundation do CFA Institute desde 1975, com os resumos (briefs) para investidores, profissionais e acadêmicos quando existem. PDFs gratuitos na página de cada publicação.",
+    "site": "https://rpc.cfainstitute.org/research-foundation/publications",
+    "listagens": [
+     {
+      "url": "https://rpc.cfainstitute.org/sitemap.xml",
+      "metodo": "sitemap",
+      "paginas": "?page={n}",
+      "pagina1_com_parametro": true,
+      "primeira_pagina": 1,
+      "max_paginas": 7,
+      "padrao": "/research/foundation/(19|20)\\d{2}/[a-z0-9-]+/?$",
+      "excluir": "-(full-pdf|errata|corrected|summary-edition)/?$",
+      "ano_link": "/foundation/(\\d{4})/",
+      "maximo": 600,
+      "continuar_sem_itens": true,
+      "reler_todas": true
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 10,
+    "anexos": "/sites/default/files/docs/[^\"']+\\.pdf",
+    "sufixo_titulo": "\\s*\\|\\s*CFA Institute.*$"
+   },
+   {
+    "id": "howard-marks",
+    "nome": "Howard Marks · memos",
+    "autor": "Howard Marks",
+    "organizacao": "Oaktree Capital",
+    "descricao": "Os memos de Howard Marks aos clientes da Oaktree, do primeiro (1990) ao mais recente.",
+    "site": "https://www.oaktreecapital.com/insights/memos",
+    "indice_autor": "https://www.oaktreecapital.com/insights/memos",
+    "nota_links": "Os memos sem página própria abrem a lista da Oaktree; todos estão também na coleção completa em PDF da Oaktree.",
+    "listagens": [
+     {
+      "url": "https://www.oaktreecapital.com/insights/memos",
+      "padrao": "/insights/memo/[^\"#?]+",
+      "instituicao": "Oaktree Capital",
+      "tipo": "Memo"
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 4,
+    "anexos": "/docs/default-source/memos/[^\"']+\\.pdf",
+    "anexo_indice": {
+     "rotulo": "Coleção completa (PDF da Oaktree)",
+     "url": "https://www.oaktreecapital.com/docs/default-source/memos/the-complete-collection.pdf?sfvrsn=58102966_5"
+    }
+   },
+   {
+    "id": "damodaran",
+    "nome": "Aswath Damodaran",
+    "autor": "Aswath Damodaran",
+    "organizacao": "NYU Stern",
+    "descricao": "Papers de valuation e finanças corporativas (página do autor na NYU Stern, com PDFs e SSRN) e todos os posts do blog Musings on Markets desde 2008.",
+    "site": "https://pages.stern.nyu.edu/~adamodar/",
+    "listagens": [],
+    "feeds": [
+     {
+      "url": "https://aswathdamodaran.blogspot.com/feeds/posts/summary?max-results=150&start-index={i}",
+      "lote": 150,
+      "lotes_por_rodada": 2,
+      "instituicao": "Musings on Markets (blog)",
+      "tipo": "Post"
+     }
+    ],
+    "_nota": "Papers: semente conferida (a página é estática e os rótulos de link, como \"2011 Edition\", não servem de título). Blog: feed público em lotes de 150."
+   },
+   {
+    "id": "aqr",
+    "nome": "AQR · research",
+    "autor": "Cliff Asness e equipe da AQR",
+    "organizacao": "AQR Capital Management",
+    "descricao": "Artigos acadêmicos, white papers, working papers e textos de Alternative Thinking da biblioteca de research da AQR.",
+    "site": "https://www.aqr.com/Insights/Research",
+    "listagens": [
+     {
+      "url": "https://www.aqr.com/sitemap.xml",
+      "metodo": "sitemap",
+      "padrao": "/insights/research/(journal-article|white-papers|working-paper|alternative-thinking|tax-aware-investing|book|trade-publication)/[^/]+/?$",
+      "tipo_link": "/insights/research/([a-z-]+)/",
+      "tipos": {
+       "journal-article": "Artigo acadêmico",
+       "white-papers": "White paper",
+       "working-paper": "Working paper",
+       "alternative-thinking": "Alternative Thinking",
+       "tax-aware-investing": "Investimento e impostos",
+       "book": "Livro",
+       "trade-publication": "Artigo em revista"
+      },
+      "maximo": 2000
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 8,
+    "sufixo_titulo": "\\s*[|-]\\s*AQR.*$"
+   },
+   {
+    "id": "gmo",
+    "nome": "GMO · research",
+    "autor": "Jeremy Grantham e equipe da GMO",
+    "organizacao": "GMO",
+    "descricao": "Cartas trimestrais, white papers, Insights e Viewpoints da biblioteca de research da GMO, inclusive as previsões de 7 anos por classe de ativo.",
+    "site": "https://www.gmo.com/americas/research-library/",
+    "listagens": [
+     {
+      "url": "https://www.gmo.com/sitemap.xml",
+      "metodo": "sitemap",
+      "padrao": "/research-library/[^/]+_(insights|whitepaper|gmoquarterlyletter|viewpoints|marketcommentary|gmo7yearassetclassforecast|quarterlyemdebtupdate)/?$",
+      "tipo_link": "_(insights|whitepaper|gmoquarterlyletter|viewpoints|marketcommentary|gmo7yearassetclassforecast|quarterlyemdebtupdate)/?$",
+      "tipos": {
+       "insights": "Insights",
+       "whitepaper": "White paper",
+       "gmoquarterlyletter": "Carta trimestral",
+       "viewpoints": "Viewpoints",
+       "marketcommentary": "Comentário de mercado",
+       "gmo7yearassetclassforecast": "Previsão de 7 anos",
+       "quarterlyemdebtupdate": "Dívida emergente"
+      },
+      "maximo": 800
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 8,
+    "sufixo_titulo": "\\s*[|-]\\s*GMO.*$"
+   },
+   {
+    "id": "compounding-quality",
+    "nome": "Compounding Quality",
+    "autor": "Pieter Slegers",
+    "organizacao": "Compounding Quality (Substack)",
+    "descricao": "Newsletter de investimento em empresas de qualidade de Pieter Slegers (ex-gestor): análises de empresas, a carteira dele e lições de investimento, desde 2023. Parte dos posts é para assinantes pagos; aqui ficam só título, data e resumo público.",
+    "site": "https://www.compoundingquality.net/archive",
+    "listagens": [
+     {
+      "url": "https://www.compoundingquality.net/sitemap.xml",
+      "metodo": "sitemap",
+      "padrao": "/p/[a-z0-9-]+/?$",
+      "maximo": 3000,
+      "instituicao": "Compounding Quality",
+      "tipo": "Post"
+     }
+    ],
+    "feeds": [
+     {
+      "url": "https://www.compoundingquality.net/feed",
+      "lote": 500,
+      "lotes_por_rodada": 1,
+      "instituicao": "Compounding Quality",
+      "tipo": "Post"
+     }
+    ],
+    "ler_item": true,
+    "ler_item_max": 8,
+    "sufixo_titulo": "\\s*[-|]\\s*(by\\s+)?Compounding Quality.*$"
+   }
+  ]
  }
 }

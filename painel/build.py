@@ -32,8 +32,11 @@ for _te in (_cfg.get('noticias') or {}).get('etfs') or []:
             _buscas[_t] = _te['busca']
 taxon = {'temas': analise.TEMA_NOME, 'regioes': analise.REGIAO_NOME, 'fatores': analise.FATOR_NOME, 'tipos': analise.TIPO_NOME, 'roteiro': analise.ROTEIRO,
          'buscas': _buscas, 'cvm': _cvm, 'vinculo': analise.VINCULO}
-js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'main.js']
-parts = [js_const('DATA', data), js_const('TAXON', taxon)]
+js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'ui_vip.js', 'main.js']
+# v3.5 · carteiras VG VIP (aba separada): números do print enviado pelo Lucas; publicação autorizada por ele em 08/11/2026
+_vip_p = os.path.join(B, 'src', 'vip.json')
+vip = json.load(open(_vip_p, encoding='utf-8')) if os.path.exists(_vip_p) else {'carteiras': []}
+parts = [js_const('DATA', data), js_const('TAXON', taxon), js_const('VIP_DATA', vip)]
 for f in js_order:
     parts.append(rd(f))
 js = '\n;\n'.join(parts)

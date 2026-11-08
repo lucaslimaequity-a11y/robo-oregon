@@ -4574,28 +4574,34 @@
    "pais": "Brasil",
    "idioma": "pt",
    "tipo": "blog",
-   "metodo": "pagina",
+   "metodo": "sitemap",
    "url_fonte": "https://www.nordinvestimentos.com.br/blog/",
-   "url_coleta": "https://www.nordinvestimentos.com.br/blog/",
+   "url_coleta": "https://www.nordinvestimentos.com.br/blog/sitemap.xml",
    "ativo": true,
-   "status_validacao": "parcial",
+   "status_validacao": "a_validar",
    "validado_em": "2026-11-08",
    "robots": "permitido",
-   "termos_nota": "Blog aberto. robots.txt: Allow: / e sem vetos. O research completo da Nord é por assinatura (não lido).",
-   "observacoes": "Sem RSS. A página lista 10 posts com link e data/hora (\"07/11/2026 08:00\"). O padrão exige slug com 3+ palavras para não pegar categorias e paginação. O news-sitemap do blog (/blog/post/sitemap-news.xml) tinha 1 URL e não serve. Hoje o blog é mais macro e educação; textos sobre empresa aparecem em temporada de resultados (ex.: \"Ações da Allos (ALOS3) sobem forte após 3º tri\", 3T25). Parte dos textos relata a visão de outras casas: a opinião só deve ser atribuída à Nord quando o texto não citar outra casa.",
+   "verificar_na_rodada": true,
+   "termos_nota": "Blog aberto. robots.txt: Allow: / e sem vetos; lista o sitemap do blog. O research completo da Nord é por assinatura (não lido).",
+   "observacoes": "CORREÇÃO v35: a 1ª rodada no GitHub falhou com \"a página não tem links no padrão esperado\" no método página. Não deu para ver o HTML bruto e saber a causa exata, e o sitemap tira a coleta da dependência do layout. Não há feed (/blog/feed/ deu erro). O sitemap do blog (/blog/sitemap.xml, citado no robots.txt) é um urlset com centenas de URLs e lastmod em todas, fora de ordem; o robô ordena pela data. As páginas de tags, autores, /blog/, /blog/post/ e /blog/videos/ também ganham lastmod novo a cada post: o padrao exige slug de 3+ palavras direto em /blog/ ou /blog/videos/ e assim corta essas páginas e as web-stories. Nos posts, o lastmod bate com a publicação (ex.: Timing na Bolsa, 07/11/2026 08:00, igual à data do news-sitemap), mas os textos perenes que a Nord atualiza (\"taxa-selic-hoje\", \"relatorio-focus-projecoes-para-2026\", \"payroll-eua-hoje\", \"pnad-continua-hoje\") ganham lastmod novo a cada atualização. O robô descarta o link já visto. O título é provisório, montado a partir do slug (sem acento e sem pontuação). O news-sitemap (/blog/post/sitemap-news.xml) só tem 1 URL e não serve. Blog hoje mais macro e educação; a opinião só deve ser atribuída à Nord quando o texto não citar outra casa.",
    "evidencia": [
     {
-     "titulo": "Bolsa depois da eleição: o que 2014 ensina sobre a queda?",
-     "data": "2026-11-03",
-     "url": "https://www.nordinvestimentos.com.br/blog/bolsa-depois-da-eleicao-o-que-2014-ensina-sobre-a-queda/"
+     "titulo": "Timing na Bolsa: o que Kairos ensina sobre euforia e pânico?",
+     "data": "2026-11-07",
+     "url": "https://www.nordinvestimentos.com.br/blog/timing-na-bolsa-o-que-kairos-ensina-sobre-euforia-e-panico/"
     },
     {
      "titulo": "Selic em 13,75%: o que o Copom revelou sobre a credibilidade?",
      "data": "2026-11-05",
      "url": "https://www.nordinvestimentos.com.br/blog/selic-em-13-75-o-que-o-copom-revelou-sobre-a-credibilidade/"
+    },
+    {
+     "titulo": "Bolsa depois da eleição: o que 2014 ensina sobre a queda?",
+     "data": "2026-11-03",
+     "url": "https://www.nordinvestimentos.com.br/blog/bolsa-depois-da-eleicao-o-que-2014-ensina-sobre-a-queda/"
     }
    ],
-   "padrao": "(^|nordinvestimentos\\.com\\.br)/blog/(videos/)?[a-z0-9]+(-[a-z0-9]+){2,}/?$",
+   "padrao": "nordinvestimentos\\.com\\.br/blog/(videos/)?[a-z0-9]+(-[a-z0-9]+){2,}/?$",
    "maximo": 12
   },
   {
@@ -4615,7 +4621,7 @@
    "validado_em": "2026-11-08",
    "robots": "permitido",
    "termos_nota": "Artigos abertos; os relatórios das séries são pagos (não lidos). robots.txt veda /wp-json/, /app/ e a busca; /feed/ liberado.",
-   "observacoes": "RSS WordPress verificado (itens de 06–07/11/2026). Muito conteúdo promocional (chamadas para produtos e eventos) e resumos de mercado; opinião sobre empresa aparece em entrevistas de estrategistas e análises de FIIs. Vários textos relatam a visão de outras casas: a opinião só deve ser atribuída à Empiricus quando o texto não citar outra casa. O mesmo grupo publica Money Times e Seu Dinheiro, já cadastrados (a biblioteca deduplica por título).",
+   "observacoes": "RSS WordPress verificado (itens de 06–07/11/2026). Muito conteúdo promocional (chamadas para produtos e eventos) e resumos de mercado; opinião sobre empresa aparece em entrevistas de estrategistas e análises de FIIs. Vários textos relatam a visão de outras casas: a opinião só deve ser atribuída à Empiricus quando o texto não citar outra casa. O mesmo grupo publica Money Times e Seu Dinheiro, já cadastrados (a biblioteca deduplica por título). v3.5: ficam só textos sobre empresas, setores ou estratégia; os de venda (promocionais, sensacionalistas, \"Ibovespa hoje\", \"ganhar dinheiro\") são descartados e contados em Fontes e coleta.",
    "evidencia": [
     {
      "titulo": "Onde investir no governo Lula 4? Estrategista da Empiricus revela ativos para diversificar e proteger a carteira",
@@ -4623,7 +4629,10 @@
      "url": "https://www.empiricus.com.br/artigos/investimentos/onde-investir-no-governo-lula-4-estrategista-da-empiricus-revela-ativos-para-diversificar-e-proteger-a-carteira-lbrdml139/"
     }
    ],
-   "maximo": 20
+   "maximo": 20,
+   "descartar_promocional": true,
+   "exigir_assunto": true,
+   "filtro_titulo": "^(?!.*(voc[eê] (venderia|sabia|precisa)|ganhar dinheiro|ficar rico|renda extra|aposentar|milion[aá]ri|segredo|p[aâ]nico|imperd[ií]vel|n[aã]o perca|[uú]ltima chance|ibovespa hoje|agenda do dia|o que esperar (hoje|do dia)|resumo do dia|minuto a minuto|ao vivo))"
   },
   {
    "id": "ativa-research",
@@ -4792,6 +4801,1180 @@
    "evidencia": [],
    "casa": "Toro",
    "motivo_desligada": "blog só educativo (trading) e feed malformado; sem análise de empresa"
+  },
+  {
+   "id": "sbfin-rbfin",
+   "nome": "SBFin - Brazilian Review of Finance (RBFin)",
+   "organizacao": "Sociedade Brasileira de Finanças (SBFin)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://periodicos.fgv.br/rbfin",
+   "url_coleta": "https://periodicos.fgv.br/rbfin/gateway/plugin/WebFeedGatewayPlugin/rss2",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (OJS hospedado pela FGV). Guardamos título, link, data e resumo curto do feed e linkamos o artigo original. robots.txt de periodicos.fgv.br veda só /cache/, as buscas, citações CSL e a lista de artigos semelhantes (e bloqueia por inteiro só o Meta-ExternalAds); o gateway de feeds e as páginas de artigo ficam liberados.",
+   "observacoes": "Revista oficial da SBFin, a principal de finanças acadêmicas do Brasil (asset pricing, bancos, governança, mercado de capitais brasileiro). RSS 2.0 do OJS com 17 itens e pubDate em inglês (o robô lê a data sem ajuste). Publicação contínua: 1 a 3 artigos por mês. Mais recente na validação: 31/10/2026.",
+   "evidencia": [
+    {
+     "titulo": "Green rules, safer banks? ESG and bank risk in Brazil",
+     "data": "2026-10-31",
+     "url": "https://periodicos.fgv.br/rbfin/article/view/99073"
+    },
+    {
+     "titulo": "Internal pay dispersion and state ownership in Brazilian listed firms",
+     "data": "2026-10-13",
+     "url": "https://periodicos.fgv.br/rbfin/article/view/98994"
+    },
+    {
+     "titulo": "Dominated BDRs?",
+     "data": "2026-08-28",
+     "url": "https://periodicos.fgv.br/rbfin/article/view/98296"
+    }
+   ],
+   "maximo": 20
+  },
+  {
+   "id": "fgv-rbe",
+   "nome": "FGV EPGE - Revista Brasileira de Economia (RBE)",
+   "organizacao": "FGV EPGE (Escola Brasileira de Economia e Finanças)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://periodicos.fgv.br/rbe",
+   "url_coleta": "https://periodicos.fgv.br/rbe/gateway/plugin/WebFeedGatewayPlugin/rss2",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (OJS da FGV). Guardamos título, link, data e resumo curto. robots.txt de periodicos.fgv.br veda só /cache/, as buscas, citações CSL e a lista de artigos semelhantes (e bloqueia por inteiro só o Meta-ExternalAds); o gateway de feeds e as páginas de artigo ficam liberados.",
+   "observacoes": "RSS 2.0 do OJS com o número corrente (6 itens, todos de 23/10/2026), artigos em português e inglês. Trimestral: chegam lotes de 5 a 8 artigos por número. Inclui macro, fiscal, crédito e direito econômico (ex.: reforma da lei de falências).",
+   "evidencia": [
+    {
+     "titulo": "The 2020 bankruptcy law reform in Brazil: Evidence from the first five years of implementation",
+     "data": "2026-10-23",
+     "url": "https://periodicos.fgv.br/rbe/article/view/94049"
+    },
+    {
+     "titulo": "A Note on Long-Maturity Floating-Rate Debt in the Fiscal Theory of the Price Level",
+     "data": "2026-10-23",
+     "url": "https://periodicos.fgv.br/rbe/article/view/99325"
+    }
+   ],
+   "maximo": 15
+  },
+  {
+   "id": "usp-revista-contabilidade-financas",
+   "nome": "FEA-USP - Revista Contabilidade & Finanças",
+   "organizacao": "FEA-USP (Universidade de São Paulo)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.revistas.usp.br/rcf",
+   "url_coleta": "https://www.revistas.usp.br/rcf/gateway/plugin/WebFeedGatewayPlugin/atom",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (Portal de Revistas da USP, OJS 3.5). Guardamos título, link, data e resumo curto. robots.txt de www.revistas.usp.br veda só /cache/, sem Crawl-delay; /gateway/ e /article/ liberados.",
+   "observacoes": "Usamos o Atom e não o RSS 2.0: no RSS do portal da USP a data vem em português (\"seg, 26 out 2026\") e o robô não a reconheceria. No Atom do OJS o <updated> vem antes do <published>, então a data registrada é a da última atualização do artigo (na validação coincidiu com a publicação, 26/10/2026). Quadrimestral, com lote de cerca de 10 artigos por número: contabilidade societária, gerenciamento de resultados, bancos, fundos de pensão, tributação.",
+   "evidencia": [
+    {
+     "titulo": "O estado como sócio e fiscal: efeitos da propriedade estatal no tax avoidance corporativo",
+     "data": "2026-10-26",
+     "url": "https://revistas.usp.br/rcf/pt_BR/article/view/262747"
+    },
+    {
+     "titulo": "A menor estabilidade financeira influencia o gerenciamento de resultados dos bancos? O papel do enforcement",
+     "data": "2026-10-26",
+     "url": "https://revistas.usp.br/rcf/pt_BR/article/view/261079"
+    },
+    {
+     "titulo": "Proporcionalidade regulatória nos fundos de pensão no Brasil à luz do patrocínio predominante",
+     "data": "2026-10-26",
+     "url": "https://revistas.usp.br/rcf/pt_BR/article/view/262745"
+    }
+   ],
+   "maximo": 20
+  },
+  {
+   "id": "usp-estudos-economicos",
+   "nome": "FEA-USP - Estudos Econômicos",
+   "organizacao": "FEA-USP / IPE-USP (Universidade de São Paulo)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.revistas.usp.br/ee",
+   "url_coleta": "https://www.revistas.usp.br/ee/gateway/plugin/WebFeedGatewayPlugin/atom",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (Portal de Revistas da USP). Guardamos título, link, data e resumo curto. robots.txt de www.revistas.usp.br veda só /cache/, sem Crawl-delay; /gateway/ e /article/ liberados.",
+   "observacoes": "Atom do OJS com 30 entradas (o RSS 2.0 traz a data em português, que o robô não lê). A data registrada é a do <updated>, que vem antes do <published> no Atom: ex. artigo publicado em 29/09/2026 entra como 01/10/2026. Trimestral; o número de set/2026 é uma edição especial de economia monetária e bancária.",
+   "evidencia": [
+    {
+     "titulo": "Regras reais de taxa de Juros: uma análise empírica para o caso brasileiro",
+     "data": "2026-09-29",
+     "url": "https://revistas.usp.br/ee/pt_BR/article/view/246030"
+    },
+    {
+     "titulo": "Redes bancárias interestaduais e sincronização dos ciclos econômicos dos estados brasileiros",
+     "data": "2026-09-29",
+     "url": "https://revistas.usp.br/ee/pt_BR/article/view/245991"
+    }
+   ],
+   "maximo": 15
+  },
+  {
+   "id": "usp-economia-aplicada",
+   "nome": "FEA-RP/USP - Economia Aplicada",
+   "organizacao": "FEA-RP/USP (Universidade de São Paulo)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.revistas.usp.br/ecoa",
+   "url_coleta": "https://www.revistas.usp.br/ecoa/gateway/plugin/WebFeedGatewayPlugin/atom",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (Portal de Revistas da USP). Guardamos título, link, data e resumo curto. robots.txt de www.revistas.usp.br veda só /cache/, sem Crawl-delay; /gateway/ e /article/ liberados.",
+   "observacoes": "Atom do OJS 3.5.0.3 com 30 entradas, mas misturadas: artigos de 1999 (Plano Real) ao lado de 2026. A data registrada é a do <updated>, e artigos antigos reeditados podem aparecer como novos (ex.: artigo publicado em 01/03/2026 com atualização em 06/11/2026). Por isso parcial. Temas majoritariamente de economia aplicada (saúde, educação, regional): filtro_titulo deixa passar só macro, juros, crédito, fiscal e mercados.",
+   "evidencia": [
+    {
+     "titulo": "Mobilidade intergeracional de educação das famílias migrantes: um estudo a partir do censo de 2010",
+     "data": "2026-03-01",
+     "url": "https://revistas.usp.br/ecoa/pt_BR/article/view/225486"
+    },
+    {
+     "titulo": "Determinantes espaciais das internações por fratura de fêmur em idosos nas unidades federativas do Brasil",
+     "data": "2025-12-01",
+     "url": "https://revistas.usp.br/ecoa/pt_BR/article/view/216580"
+    }
+   ],
+   "filtro_titulo": "financ|finance|stock|a[cç][oõ]es|equit|bank|banc|credit|cr[eé]dit|invest|valuation|dividend|capital|IPO|ESG|risk|risco|governan|earnings|lucro|accounting|contab|audit|fund|bolsa|juros|interest rate|infla|monet|fiscal|tribut|tax|d[ií]vida|debt|c[aâ]mbi|exchange rate|commodit|M&A|merger|aquisi|PIB|crescimento|produtividade|com[eé]rcio|export|pre[cç]o|Plano Real",
+   "maximo": 15
+  },
+  {
+   "id": "fgv-rae",
+   "nome": "FGV EAESP - Revista de Administração de Empresas (RAE)",
+   "organizacao": "FGV EAESP",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://periodicos.fgv.br/rae",
+   "url_coleta": "https://www.scielo.br/journal/rae/feed/?ilang=pt_BR",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto. Coleta pelo feed do SciELO (o feed do OJS da FGV para a RAE deu erro na validação). robots.txt do SciELO veda só /admin (há também um grupo com Allow: /); /journal/ e /j/ liberados, sem Crawl-delay.",
+   "observacoes": "Atom do SciELO com o número corrente (8 entradas). Todas as entradas trazem a mesma data de atualização (06/10/2026, carga do número no SciELO), que é a data que o robô registra; não é a data de cada artigo. Bimestral. Revista de administração geral: filtro_titulo deixa só títulos de finanças, governança, ESG, risco e mercado de capitais.",
+   "evidencia": [
+    {
+     "titulo": "Non-predictive strategies for political risk management in international markets",
+     "data": "2026-10-06",
+     "url": "https://www.scielo.br/j/rae/a/b9WWRK875tzfdX9hyBcNkXP/?lang=en"
+    },
+    {
+     "titulo": "ESG, innovation, and financial performance: a systematic literature review (v. 66 n. 2, publicado em 08/10/2026 no site da RAE)",
+     "data": "2026-10-08",
+     "url": "https://periodicos.fgv.br/rae/article/view/99608"
+    }
+   ],
+   "filtro_titulo": "financ|finance|stock|a[cç][oõ]es|equit|bank|banc|credit|cr[eé]dit|invest|valuation|dividend|capital|IPO|ESG|risk|risco|governan|earnings|lucro|accounting|contab|audit|fund|bolsa|juros|interest rate|infla|monet|fiscal|tribut|tax|d[ií]vida|debt|c[aâ]mbi|exchange rate|commodit|M&A|merger|aquisi",
+   "maximo": 10
+  },
+  {
+   "id": "rep-revista-economia-politica",
+   "nome": "Brazilian Journal of Political Economy (Revista de Economia Política)",
+   "organizacao": "Centro de Economia Política (Revista de Economia Política)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.scielo.br/j/rep/",
+   "url_coleta": "https://www.scielo.br/journal/rep/feed/?ilang=pt_BR",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto no SciELO. Guardamos título, link, data e resumo curto. robots.txt do SciELO veda só /admin (há também um grupo com Allow: /); /journal/ e /j/ liberados, sem Crawl-delay.",
+   "observacoes": "Atom do SciELO com o número corrente (12 entradas, v. 46 n. 3). As entradas trazem <updated> 09/10/2026 (carga do número) antes de um <published> fixo de 2020: o robô registra 09/10/2026, não a data de cada artigo (no site, 21/09/2026). Trimestral, linha heterodoxa/desenvolvimentista: crescimento, câmbio, política fiscal e industrial. O OJS próprio da revista (centrodeeconomiapolitica.org.br) não respondeu na validação.",
+   "evidencia": [
+    {
+     "titulo": "Investment, income distribution, and growth regimes in Brazil: a post-Keynesian empirical analysis",
+     "data": "2026-09-21",
+     "url": "https://www.scielo.br/j/rep/a/3q56RYJ6hbPBCtFBxMw8Vnh/?lang=en"
+    },
+    {
+     "titulo": "Budget financialization and permanent austerity: brazil under the logic of constitutional amendment 95",
+     "data": "2026-09-21",
+     "url": "https://www.scielo.br/j/rep/a/vTYfBQ464ZjdykgVMCCK3tt/?ilang=pt_BR"
+    }
+   ],
+   "maximo": 12
+  },
+  {
+   "id": "ufmg-nova-economia",
+   "nome": "UFMG - Nova Economia",
+   "organizacao": "Faculdade de Ciências Econômicas da UFMG",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.scielo.br/j/neco/",
+   "url_coleta": "https://www.scielo.br/journal/neco/feed/?ilang=pt_BR",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto no SciELO. Guardamos título, link, data e resumo curto. robots.txt do SciELO veda só /admin (há também um grupo com Allow: /); /journal/ e /j/ liberados, sem Crawl-delay.",
+   "observacoes": "Atom do SciELO com só 2 entradas na validação (publicação contínua, poucos artigos por lote), com data de 25/09/2026 = carga no SciELO, não a data de cada artigo. Baixa frequência e temas mais regionais/desenvolvimento; entra pelo crédito e pela macro aplicada.",
+   "evidencia": [
+    {
+     "titulo": "Rural credit, productive frontiers, and spatial externalities: an analysis of the FNO in northern Brazil",
+     "data": "2026-09-25",
+     "url": "https://www.scielo.br/j/neco/a/mXdMqFNmjD4mR9rNzDkH5DQ/?lang=en"
+    }
+   ],
+   "maximo": 10
+  },
+  {
+   "id": "ufrj-revista-economia-contemporanea",
+   "nome": "IE-UFRJ - Revista de Economia Contemporânea",
+   "organizacao": "Instituto de Economia da UFRJ",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.scielo.br/j/rec/",
+   "url_coleta": "https://www.scielo.br/journal/rec/feed/?ilang=pt_BR",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto no SciELO. Guardamos título, link, data e resumo curto. robots.txt do SciELO veda só /admin (há também um grupo com Allow: /); /journal/ e /j/ liberados, sem Crawl-delay.",
+   "observacoes": "Atom do SciELO com 14 entradas, todas com 22/09/2026 (carga no SciELO), que é a data registrada pelo robô. Quadrimestral. Temas: instabilidade financeira (Minsky), endividamento dos estados, comércio exterior e agro.",
+   "evidencia": [
+    {
+     "titulo": "A pirâmide de Minsky: uma apresentação alternativa da hipótese da instabilidade financeira",
+     "data": "2026-09-22",
+     "url": "https://www.scielo.br/j/rec/a/brPpSqLNfW3n7nqBnpJYxCc/?lang=pt"
+    },
+    {
+     "titulo": "Determinantes do endividamento dos estados brasileiros no período posterior à Lei de Responsabilidade Fiscal",
+     "data": "2026-09-22",
+     "url": "https://www.scielo.br/j/rec/a/N3RSRkJMrQdVXbv3DNpYrvj/?lang=pt"
+    }
+   ],
+   "maximo": 15
+  },
+  {
+   "id": "fucape-brazilian-business-review",
+   "nome": "FUCAPE - Brazilian Business Review (BBR)",
+   "organizacao": "FUCAPE Business School",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://bbronline.com.br/index.php/bbr",
+   "url_coleta": "https://bbronline.com.br/index.php/bbr/gateway/plugin/WebFeedGatewayPlugin/rss2",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (OJS 3.3). Guardamos título, link, data e resumo curto. robots.txt de bbronline.com.br veda só /cache/.",
+   "observacoes": "RSS 2.0 do OJS com 27 itens e pubDate em inglês; mais recentes de 06/11/2026. A ordem do feed não é cronológica e há um item repetido (artigos 886 e 887 com o mesmo título). Revista de negócios em geral (muito marketing): filtro_titulo deixa só finanças, contabilidade, governança, ESG e risco.",
+   "evidencia": [
+    {
+     "titulo": "Understanding the Trust of Generations Y and Z on Attitudes Toward E-commerce Websites",
+     "data": "2026-11-06",
+     "url": "https://bbronline.com.br/index.php/bbr/article/view/891"
+    },
+    {
+     "titulo": "Circular Businesses: motivations, identity, and dynamic capabilities for circular entrepreneurship",
+     "data": "2026-11-06",
+     "url": "https://bbronline.com.br/index.php/bbr/article/view/894"
+    }
+   ],
+   "filtro_titulo": "financ|finance|stock|a[cç][oõ]es|equit|bank|banc|credit|cr[eé]dit|invest|valuation|dividend|capital|IPO|ESG|risk|risco|governan|earnings|lucro|accounting|contab|audit|fund|bolsa|juros|interest rate|infla|monet|fiscal|tribut|tax|d[ií]vida|debt|c[aâ]mbi|exchange rate|commodit|M&A|merger|aquisi",
+   "maximo": 15
+  },
+  {
+   "id": "tesouro-cadernos-financas-publicas",
+   "nome": "Tesouro Nacional - Cadernos de Finanças Públicas",
+   "organizacao": "Secretaria do Tesouro Nacional",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://publicacoes.tesouro.gov.br/index.php/cadernos",
+   "url_coleta": "https://publicacoes.tesouro.gov.br/index.php/cadernos/gateway/plugin/WebFeedGatewayPlugin/rss2",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista acadêmica pública do Tesouro (OJS 3.3). Guardamos título, link, data e resumo curto. robots.txt de publicacoes.tesouro.gov.br veda só /cache/.",
+   "observacoes": "RSS 2.0 do OJS com o número corrente (6 itens, 17/09/2026), pubDate em inglês. Baixa frequência (poucos números por ano). Finanças públicas: reforma tributária, previsão de arrecadação, transferências e gasto público — contexto fiscal para juros e para empresas reguladas.",
+   "evidencia": [
+    {
+     "titulo": "Reforma Tributária e split payment supressão do efeito Olivera-Tanzi nas finanças públicas?",
+     "data": "2026-09-17",
+     "url": "https://publicacoes.tesouro.gov.br/index.php/cadernos/article/view/311"
+    },
+    {
+     "titulo": "Previsão das Transferências do FPM em Municípios de Pequeno Porte: uma abordagem comparativa por séries temporais",
+     "data": "2026-09-17",
+     "url": "https://publicacoes.tesouro.gov.br/index.php/cadernos/article/view/320"
+    }
+   ],
+   "maximo": 10
+  },
+  {
+   "id": "bcb-working-papers",
+   "nome": "Banco Central do Brasil - Working Papers / Trabalhos para Discussão (via RePEc/IDEAS)",
+   "organizacao": "Banco Central do Brasil",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "pagina",
+   "url_fonte": "https://ideas.repec.org/s/bcb/wpaper.html",
+   "url_coleta": "https://ideas.repec.org/s/bcb/wpaper.html",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Papers públicos do BC indexados no RePEc; o link do item leva à página do IDEAS, que aponta para o PDF no site do BC. robots.txt do IDEAS/RePEc veda só /cgi-bin/ para robôs genéricos, sem Crawl-delay; /s/ (séries) e /p/ (papers) liberados.",
+   "observacoes": "O BC não oferece feed dos Trabalhos para Discussão (o feed sitefeeds/trabalhosdiscussao não existe; o site do BC é montado em JavaScript). A página da série no IDEAS lista do mais novo para o mais antigo (nº 651 no topo, 2026), só com o ano: os itens entram com a data de detecção e a 1ª leitura vai toda para o acervo. Depende do BC atualizar o RePEc (pode haver defasagem de dias). Série de pesquisa do Depep: crédito, bancos, política monetária, câmbio.",
+   "evidencia": [
+    {
+     "titulo": "A Millennium of UK Business Cycles: insights from a structural VAR analysis (WP 651, 2026)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/bcb/wpaper/651.html"
+    },
+    {
+     "titulo": "Labor Market Shocks and Consumer Finance: evidence from Brazil (WP 649, 2026)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/bcb/wpaper/649.html"
+    },
+    {
+     "titulo": "Credit Supply Shocks and the Moderating Effects of Leverage on Employment and Wages in Brazil (WP 648, 2026)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/bcb/wpaper/648.html"
+    }
+   ],
+   "padrao": "/p/bcb/wpaper/\\d+\\.html$",
+   "maximo": 15
+  },
+  {
+   "id": "fgv-epge-working-papers",
+   "nome": "FGV EPGE - Ensaios Econômicos / Working Papers (via RePEc/IDEAS)",
+   "organizacao": "FGV EPGE (Escola Brasileira de Economia e Finanças)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "pagina",
+   "url_fonte": "https://ideas.repec.org/s/fgv/epgewp.html",
+   "url_coleta": "https://ideas.repec.org/s/fgv/epgewp.html",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Working papers públicos indexados no RePEc; o link leva à página do IDEAS, que aponta para o texto no repositório da FGV. robots.txt do IDEAS/RePEc veda só /cgi-bin/ para robôs genéricos, sem Crawl-delay; /s/ (séries) e /p/ (papers) liberados.",
+   "observacoes": "Página da série no IDEAS, do mais novo para o mais antigo (nº 854 no topo, 2026), só com o ano: itens entram com a data de detecção; a 1ª leitura vai para o acervo. Baixa frequência (poucos papers por ano). Teoria econômica e finanças (ex.: equilíbrio do modelo de Kyle), seguridade e política monetária.",
+   "evidencia": [
+    {
+     "titulo": "Monocity and rigidity in gaussian inverse regression: the one-period kyle model has an unique equilibrium (854, 2026)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/fgv/epgewp/854.html"
+    },
+    {
+     "titulo": "Optimal risk sharing and incentive provision in social security systems (851, 2026)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/fgv/epgewp/851.html"
+    }
+   ],
+   "padrao": "/p/fgv/epgewp/\\d+\\.html$",
+   "maximo": 15
+  },
+  {
+   "id": "fgv-eesp-textos-discussao",
+   "nome": "FGV EESP - Textos para Discussão (via RePEc/IDEAS)",
+   "organizacao": "FGV EESP (Escola de Economia de São Paulo)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "pagina",
+   "url_fonte": "https://ideas.repec.org/s/fgv/eesptd.html",
+   "url_coleta": "https://ideas.repec.org/s/fgv/eesptd.html",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Textos para discussão públicos indexados no RePEc. robots.txt do IDEAS/RePEc veda só /cgi-bin/ para robôs genéricos, sem Crawl-delay; /s/ (séries) e /p/ (papers) liberados.",
+   "observacoes": "Página da série no IDEAS, do mais novo para o mais antigo (nº 579 no topo, 2026), só com o ano: itens entram com a data de detecção; a 1ª leitura vai para o acervo. Baixa frequência (nº 575 a 579 entre 2025 e 2026). Regra fiscal, geoeconomia e finanças empíricas no Brasil.",
+   "evidencia": [
+    {
+     "titulo": "Regra fiscal de despesa: experiências recentes e lições para o Brasil (579, 2026)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/fgv/eesptd/579.html"
+    },
+    {
+     "titulo": "Satisfação dos funcionários e retorno das ações no Brasil (574, 2025)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/fgv/eesptd/574.html"
+    }
+   ],
+   "padrao": "/p/fgv/eesptd/\\d+\\.html$",
+   "maximo": 10
+  },
+  {
+   "id": "usp-fea-working-papers",
+   "nome": "FEA-USP - Working Papers do Departamento de Economia (via RePEc/IDEAS)",
+   "organizacao": "FEA-USP (Universidade de São Paulo)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "pagina",
+   "url_fonte": "https://ideas.repec.org/s/spa/wpaper.html",
+   "url_coleta": "https://ideas.repec.org/s/spa/wpaper.html",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Working papers públicos indexados no RePEc. robots.txt do IDEAS/RePEc veda só /cgi-bin/ para robôs genéricos, sem Crawl-delay; /s/ (séries) e /p/ (papers) liberados.",
+   "observacoes": "Série mais ativa entre as brasileiras no RePEc (26 papers em 2026 até a validação). Página do IDEAS do mais novo para o mais antigo, só com o ano: itens entram com a data de detecção; a 1ª leitura vai para o acervo. Econometria financeira (volatilidade implícita, combinação de previsões), organização industrial e macro. É o departamento do NEFIN.",
+   "evidencia": [
+    {
+     "titulo": "NEWS IV: A model with news and implied volatility for enhanced volatility prediction (2026_25)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/spa/wpaper/2026wpecon25.html"
+    },
+    {
+     "titulo": "Combining Combined Forecasts: a Network Approach (2026_23)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/spa/wpaper/2026wpecon23.html"
+    }
+   ],
+   "padrao": "/p/spa/wpaper/[0-9a-z_]+\\.html$",
+   "maximo": 15
+  },
+  {
+   "id": "ipea-textos-para-discussao",
+   "nome": "IPEA - Textos para Discussão (TD)",
+   "organizacao": "Instituto de Pesquisa Econômica Aplicada (IPEA)",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://repositorio.ipea.gov.br/handle/11058/17462",
+   "url_coleta": "https://repositorio.ipea.gov.br/server/opensearch/search?format=rss&scope=869e6292-9b50-4001-937d-28a96293d50b&sort_by=dc.date.accessioned_dt&order=desc&rpp=20",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Publicação pública do governo federal (Repositório do Conhecimento do IPEA, DSpace). robots.txt veda /search, /admin, /processes, /submit, /workspaceitems, /profile, /workflowitems e filtros de /entities; /server/opensearch e /handle liberados.",
+   "observacoes": "RSS 2.0 da busca OpenSearch do DSpace restrita à coleção \"Texto para Discussão\" (3.224 itens), do mais recente para o mais antigo. O feed geral /feed/rss_2.0/site recusou e a série do IPEA no RePEc parou em 2018. Datas no nível do mês (dia 01: \"Sun, 01 Nov 2026\"). A série é muito ampla (políticas sociais, cultura, população de rua): filtro_titulo deixa só fiscal, juros, crédito, mercados, investimento, setores e empresas.",
+   "evidencia": [
+    {
+     "titulo": "Relação entre diversidade de gênero no quadro societário e sobrevivência das empresas brasileiras",
+     "data": "2026-11-01",
+     "url": "https://repositorio.ipea.gov.br/handle/11058/21388"
+    },
+    {
+     "titulo": "Econofísica da desigualdade: simulação de um sistema de mercado sob intervenção estatal redistributiva",
+     "data": "2026-11-01",
+     "url": "https://repositorio.ipea.gov.br/handle/11058/21348"
+    },
+    {
+     "titulo": "Painel longitudinal da população em situação de rua inscrita no Cadastro Único (2011-2024)",
+     "data": "2026-10-01",
+     "url": "https://repositorio.ipea.gov.br/handle/11058/21344"
+    }
+   ],
+   "filtro_titulo": "fiscal|tribut|juros|infla|monet|cr[eé]dit|banc|c[aâ]mbi|mercado de capitais|a[cç][oõ]es|investiment|financ|d[ií]vida|previd|produtividade|PIB|crescimento|com[eé]rcio|export|import|energia|petr[oó]le|commodit|agro|ind[uú]stri|infraestrutura|concess|empresa|setor|pre[cç]o|deprecia",
+   "maximo": 20
+  },
+  {
+   "id": "bndes-textos-para-discussao",
+   "nome": "BNDES - Textos para Discussão",
+   "organizacao": "Banco Nacional de Desenvolvimento Econômico e Social (BNDES)",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://web.bndes.gov.br/bib/jspui/handle/1408/9777",
+   "url_coleta": "https://web.bndes.gov.br/bib/jspui/feed/rss_2.0/1408/9777",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "nao_verificado",
+   "termos_nota": "Publicação pública do BNDES (Biblioteca Digital, DSpace JSPUI). O robots.txt de web.bndes.gov.br não pôde ser lido na validação (erro do cliente, provavelmente inexistente); o robô confere a cada rodada.",
+   "observacoes": "RSS 2.0 da coleção \"Produção BNDES - Textos para Discussão BNDES\" com só 4 itens; o mais recente é de jan/2026 (datas no nível do mês). Baixíssima frequência, por isso parcial. Os links do feed vêm em http://. Temas de funding, BNDESPAR e previdência — úteis para crédito direcionado e participações do BNDES em empresas listadas.",
+   "evidencia": [
+    {
+     "titulo": "O papel do funding sustentável para o desenvolvimento: o caso do Novo BNDES",
+     "data": "2026-01-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/29167"
+    },
+    {
+     "titulo": "Entendendo a BNDESPAR",
+     "data": "2025-09-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/28367"
+    }
+   ],
+   "maximo": 10
+  },
+  {
+   "id": "puc-rio-textos-discussao",
+   "nome": "PUC-Rio Economia - Textos para Discussão",
+   "organizacao": "Departamento de Economia da PUC-Rio",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "pagina",
+   "url_fonte": "https://www.econ.puc-rio.br/pesquisa/textos-para-discussao",
+   "url_coleta": "https://www.econ.puc-rio.br/pesquisa/textos-para-discussao",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Textos públicos no site do departamento (WordPress). robots.txt veda só /wp-admin/ (com exceção para admin-ajax.php).",
+   "observacoes": "Sem RSS; a série no RePEc parou em 2018, então a coleta é pela página do próprio departamento. O texto do link já traz título, ano, autor e nº do TD (ex.: \"... 2025 Marcelo de Paiva Abreu. TD n. 711.\"); só o ano, sem dia: itens entram com a data de detecção e a 1ª leitura vai para o acervo. Baixa frequência (TD 707 a 711 entre 2024 e 2025).",
+   "evidencia": [
+    {
+     "titulo": "A política comercial dos EUA e o Brasil, 1870s-2025 (TD n. 711, 2025)",
+     "data": null,
+     "url": "https://www.econ.puc-rio.br/texto-para-discussao/?id=101520&tipo=5"
+    },
+    {
+     "titulo": "O Brasil em meio ao aquecimento global (TD n. 710, 2025)",
+     "data": null,
+     "url": "https://www.econ.puc-rio.br/texto-para-discussao/?id=101494&tipo=5"
+    }
+   ],
+   "padrao": "/texto-para-discussao/\\?id=\\d+",
+   "maximo": 10
+  },
+  {
+   "id": "repec-nep-lam",
+   "nome": "RePEc NEP - Central and South America (NEP-LAM)",
+   "organizacao": "RePEc - New Economics Papers",
+   "categoria": "academia",
+   "pais": "América Latina",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://ideas.repec.org/n/nep-lam/",
+   "url_coleta": "https://nep.repec.org/rss/nep-lam.rss.xml",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Boletim público do RePEc. robots.txt de nep.repec.org não tem regra ativa (as linhas estão comentadas).",
+   "observacoes": "RSS 1.0 (RDF) com a última edição do boletim de working papers sobre América Central e do Sul (2 itens na validação). O dc:date traz só o ano (\"2026\"): os itens entram com a data de detecção. Os links passam pelo redirecionador d.repec.org. Edições semanais irregulares (últimas no arquivo: ago/2026). filtro_titulo deixa só títulos que citam Brasil ou América Latina.",
+   "evidencia": [
+    {
+     "titulo": "Single large or several small? Willingness to pay for conservation in the Río de la Plata grasslands",
+     "data": null,
+     "url": "https://d.repec.org/n?u=RePEc:mnt:wpaper:2601&r=&r=lam"
+    },
+    {
+     "titulo": "Edição NEP-LAM de 24/08/2026 (3 papers)",
+     "data": "2026-08-24",
+     "url": "https://ideas.repec.org/n/nep-lam/2026-08-24.html"
+    }
+   ],
+   "filtro_titulo": "Brazil|Brasil|brasileir|Latin Americ|Am[eé]rica Latina|emerging",
+   "maximo": 20
+  },
+  {
+   "id": "nefin-usp-insights",
+   "nome": "NEFIN-USP - Insights (pesquisa em economia financeira)",
+   "organizacao": "NEFIN - Núcleo de Pesquisa em Economia Financeira (FEA-USP)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "research",
+   "metodo": "rss",
+   "url_fonte": "https://nefin.com.br/",
+   "url_coleta": "https://nefin.com.br/insights/index.xml",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "nao_verificado",
+   "termos_nota": "Conteúdo aberto. O robots.txt de nefin.com.br não pôde ser lido na validação (erro do cliente, provavelmente inexistente); o robô confere a cada rodada.",
+   "observacoes": "RSS 2.0 (Hugo) da seção Insights (ensaios de pesquisadores convidados, EN/PT): 2 itens, 14/09 e 24/09/2026. Baixa frequência. O NEFIN é a referência de fatores de risco do mercado brasileiro (Fama-French, momentum, custo de capital, dividend yield, iliquidez, short interest), atualizados mensalmente nas páginas /data/; o feed geral do site (/index.xml) mistura essas páginas de dados com data 01/01/0001, por isso usamos só o de Insights.",
+   "evidencia": [
+    {
+     "titulo": "When the Manager Changes Jobs, the Fund Moves Too",
+     "data": "2026-09-24",
+     "url": "https://nefin.com.br/insights/troca-de-gestor/"
+    },
+    {
+     "titulo": "CAPM in Python: Estimating Small-Cap Beta with NEFIN Data",
+     "data": "2026-09-14",
+     "url": "https://nefin.com.br/insights/biblioteca-python-nefin/"
+    }
+   ],
+   "maximo": 10
+  },
+  {
+   "id": "cvm-boletim-economico",
+   "nome": "CVM - Boletim Econômico (Assessoria de Análise Econômica)",
+   "organizacao": "Comissão de Valores Mobiliários (CVM)",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "relatorio",
+   "metodo": "pagina",
+   "url_fonte": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/boletins/boletim-economico",
+   "url_coleta": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/boletins/boletim-economico",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Publicação pública do governo federal. robots.txt de www.gov.br: as regras restritivas valem para /economia/pt-br/internet/, /ebserh/ e /mre/ e para formulários do Plone; nada veda /cvm/.",
+   "observacoes": "Sem RSS. A listagem do Plone traz as edições do mais novo para o mais antigo, com link para o PDF (\".pdf/view\") e a data de publicação ao lado (\"31/07/2026 09h43\"), que o robô lê no texto depois do link; não deu para conferir no HTML bruto se a data fica antes do próximo link — se não ficar, o item entra com a data de detecção. Trimestral (edição 21 em jul/2026; a próxima deve sair por volta do fim de out/início de nov).",
+   "evidencia": [
+    {
+     "titulo": "Boletim Econômico - Edição 21",
+     "data": "2026-07-31",
+     "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/boletins/boletim-economico/2206_cvm_boletim_economico_110.pdf/view"
+    },
+    {
+     "titulo": "Boletim Econômico - Edição 20",
+     "data": "2026-04-29",
+     "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/boletins/boletim-economico/cvm_boletim_economico_109.pdf/view"
+    }
+   ],
+   "padrao": "/publicacoes/boletins/boletim-economico/[^/?#]+\\.pdf(/view)?$",
+   "maximo": 10
+  },
+  {
+   "id": "cvm-estudos",
+   "nome": "CVM - Estudos (AIR, ARR e estudos da Assessoria de Análise Econômica)",
+   "organizacao": "Comissão de Valores Mobiliários (CVM)",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "research",
+   "metodo": "pagina",
+   "url_fonte": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/estudos",
+   "url_coleta": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/estudos",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Publicação pública do governo federal. robots.txt de www.gov.br: as regras restritivas valem para /economia/pt-br/internet/, /ebserh/ e /mre/ e para formulários do Plone; nada veda /cvm/.",
+   "observacoes": "Sem RSS. A página lista estudos da CVM e de parceiros acadêmicos ordenados pela data de MODIFICAÇÃO (não de publicação) — análises de impacto regulatório (AIR), avaliações de resultado (ARR), estudos exploratórios e editais de pesquisa. O padrao pega só os PDFs; estudo publicado como página (sem .pdf) não entra. A data lida ao lado do link é a de modificação. Poucos itens por ano.",
+   "evidencia": [
+    {
+     "titulo": "Análise de Impacto Regulatório (AIR) sobre internalização de ordens",
+     "data": "2026-02-11",
+     "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/estudos/internalizacao-de-ordens_air_2026-02-11_asa.pdf/view"
+    },
+    {
+     "titulo": "Avaliação de Resultado Regulatório (ARR) sobre informações ASG no Formulário de Referência",
+     "data": "2026-05-11",
+     "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/estudos/arr_rcvm59_informacoes_asg_no_fre.pdf/view"
+    },
+    {
+     "titulo": "Estudo exploratório sobre o modelo Twin Peaks no Brasil",
+     "data": "2026-01-29",
+     "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/estudos/twin-peaks_2026-01_asa.pdf/view"
+    }
+   ],
+   "padrao": "/publicacoes/estudos/[^/?#]+\\.pdf(/view)?$",
+   "maximo": 10
+  },
+  {
+   "id": "tesouro-textos-para-discussao",
+   "nome": "Tesouro Nacional - Textos para Discussão",
+   "organizacao": "Secretaria do Tesouro Nacional",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://publicacoes.tesouro.gov.br/index.php/textos",
+   "url_coleta": "https://publicacoes.tesouro.gov.br/index.php/textos/gateway/plugin/WebFeedGatewayPlugin/rss2",
+   "ativo": false,
+   "status_validacao": "falhou",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "robots.txt de publicacoes.tesouro.gov.br veda só /cache/.",
+   "observacoes": "O feed do OJS responde, mas sem nenhum item. No arquivo, o número mais recente é o 35, de 2022 (regras fiscais); antes, 34 (2021, ETF de renda fixa do Tesouro). Religar se a série voltar a publicar.",
+   "evidencia": [
+    {
+     "titulo": "TD n. 35 (2022): Reforma do Arcabouço de Regras Fiscais Brasileiro: Reforçando o Limite de Despesa e o Planejamento Fiscal",
+     "data": null,
+     "url": "https://publicacoes.tesouro.gov.br/index.php/textos/issue/view/texto35"
+    }
+   ],
+   "motivo_desligada": "série parada: último Texto para Discussão é de 2022 e o feed veio sem itens"
+  },
+  {
+   "id": "insper-working-papers",
+   "nome": "Insper - Business and Economics Working Papers (via RePEc/IDEAS)",
+   "organizacao": "Insper",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "pagina",
+   "url_fonte": "https://ideas.repec.org/s/aap/wpaper.html",
+   "url_coleta": "https://ideas.repec.org/s/aap/wpaper.html",
+   "ativo": false,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "robots.txt do IDEAS/RePEc veda só /cgi-bin/ para robôs genéricos, sem Crawl-delay; /s/ (séries) e /p/ (papers) liberados.",
+   "observacoes": "Página da série no IDEAS acessível (nº 245 no topo), mas o último paper é de 2025 e os temas recentes são de setor público, educação e previdência rural. O site próprio do Insper não foi avaliado nesta rodada. Se religar: metodo pagina com padrao /p/aap/wpaper/\\d+\\.html$.",
+   "evidencia": [
+    {
+     "titulo": "Public Services under Private Management (245, 2025)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/aap/wpaper/245.html"
+    },
+    {
+     "titulo": "Gender and Top Lifetime Earnings Inequality: Ten New Facts from Brazil (242, 2024)",
+     "data": null,
+     "url": "https://ideas.repec.org/p/aap/wpaper/242.html"
+    }
+   ],
+   "motivo_desligada": "série com última publicação em 2025 e sem foco em finanças ou mercado de capitais"
+  },
+  {
+   "id": "cemec-fipe-estudos",
+   "nome": "CEMEC-FIPE - Centro de Estudos de Mercado de Capitais",
+   "organizacao": "CEMEC-FIPE (Fundação Instituto de Pesquisas Econômicas)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "research",
+   "metodo": "indisponivel",
+   "url_fonte": "https://cemecfipe.org.br/",
+   "url_coleta": null,
+   "ativo": false,
+   "status_validacao": "falhou",
+   "validado_em": "2026-11-08",
+   "robots": "vetado",
+   "termos_nota": null,
+   "observacoes": "Tanto a home quanto o próprio robots.txt foram recusados à ferramenta de validação por regra de robots (\"robots_disallowed\"); não deu para ler a regra que vale para outros robôs, nem ver a listagem de notas e relatórios. Conteúdo valioso (financiamento de empresas, mercado de capitais); reavaliar manualmente.",
+   "evidencia": [],
+   "motivo_desligada": "robots.txt do site barrou a leitura automatizada na validação; listagem não verificada"
+  },
+  {
+   "id": "anpad-rac",
+   "nome": "ANPAD - Revista de Administração Contemporânea (RAC)",
+   "organizacao": "ANPAD (Associação Nacional de Pós-Graduação e Pesquisa em Administração)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.scielo.br/j/rac/",
+   "url_coleta": "https://www.scielo.br/journal/rac/feed/?ilang=pt_BR",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto da ANPAD. Coleta pelo feed do SciELO. robots.txt do SciELO veda só /admin (há também um grupo com Allow: /); /journal/ e /j/ liberados, sem Crawl-delay.",
+   "observacoes": "O site próprio da revista (rac.anpad.org.br, OJS) parou no número de nov-dez/2024 e o RSS dele só traz artigos de 2024; o robots.txt desse site também barrou a ferramenta de validação. Por isso a coleta vai pelo SciELO, onde a RAC segue publicando em 2026. Atom com só 2 entradas (o número corrente). A data registrada é a do <updated> (09/10/2026, carga do número no SciELO), que vem antes do <published> (2020, data de cadastro) dentro de cada entrada. Bimestral e de administração geral: filtro_titulo deixa só finanças, contabilidade, tributação, governança, risco e mercado de capitais. O filtro deixa passar \"governance\" de qualquer tipo, não só corporativa.",
+   "evidencia": [
+    {
+     "titulo": "Tax Litigation Exposure and Corporate Performance: Insights from Brazilian Listed Companies",
+     "data": "2026-10-09",
+     "url": "https://www.scielo.br/j/rac/a/NGtV4KkpkVjmdBpGtdPqBQj/?lang=en"
+    },
+    {
+     "titulo": "Mapping Criteria for Assessing the Maturity Index of Citizens in the Use of Digital Public Services (fica fora do filtro)",
+     "data": "2026-10-09",
+     "url": "https://www.scielo.br/j/rac/a/ngPkbXtYnzh8TCgwrWktTJH/?lang=en"
+    }
+   ],
+   "filtro_titulo": "financ|finance|stock|a[cç][oõ]es|equit|bank|banc[oáa]s?\\b|credit|cr[eé]dit|invest|valuation|firm value|valor da (firma|empresa)|dividend|capital market|capital structure|cost of capital|working capital|venture capital|private equity|mercado de capitais|estrutura de capital|custo de capital|capital de giro|\\bIPO\\b|\\bESG\\b|risk|risco|governan|earnings|lucro|profit|accounting|contab|audit|\\bfund|asset|bolsa|securities|juros|interest rate|infla|monet|fiscal|tribut|\\btax|d[ií]vida|debt|leverage|alavanc|c[aâ]mbi|exchange rate|commodit|M&A|merger|aquisi|ownership|disclosure|portfolio|carteira",
+   "maximo": 10
+  },
+  {
+   "id": "anpad-bar",
+   "nome": "ANPAD - Brazilian Administration Review (BAR)",
+   "organizacao": "ANPAD (Associação Nacional de Pós-Graduação e Pesquisa em Administração)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://bar.anpad.org.br/index.php/bar",
+   "url_coleta": "https://bar.anpad.org.br/index.php/bar/gateway/plugin/WebFeedGatewayPlugin/rss2",
+   "ativo": false,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (OJS da ANPAD). robots.txt de bar.anpad.org.br veda só /cache/.",
+   "observacoes": "O feed funciona: RSS 2.0 do OJS, data em inglês, 1 item no número em andamento (23/10/2026); o SciELO tem outro feed com 7 entradas (carga de 21/08/2026). Trimestral, 4 números em 2026. Ficou desligada pelo conteúdo: nos 10 artigos do v. 23 n. 3 (jun/2026) e no item novo não há nenhum de finanças ou contabilidade (IA na pesquisa, empreendedorismo, inovação, gênero, modelagem). Um filtro de finanças deixaria passar quase nada. Se religar: usar o mesmo filtro_titulo da anpad-rac.",
+   "evidencia": [
+    {
+     "titulo": "Moving Beyond Linear Cause-and-Effect Logics: Reflections on Rigor and Relevance of Qualitative Research in OSCM",
+     "data": "2026-10-23",
+     "url": "https://bar.anpad.org.br/index.php/bar/article/view/776"
+    },
+    {
+     "titulo": "BAR v. 23 n. 3 (2026): 10 artigos, nenhum de finanças ou contabilidade",
+     "data": "2026-06-23",
+     "url": "https://bar.anpad.org.br/index.php/bar/issue/view/90"
+    }
+   ],
+   "maximo": 10,
+   "motivo_desligada": "revista de administração geral sem artigos de finanças nos números recentes; o filtro de finanças deixaria passar quase nada"
+  },
+  {
+   "id": "bndes-revista",
+   "nome": "BNDES - Revista do BNDES",
+   "organizacao": "Banco Nacional de Desenvolvimento Econômico e Social (BNDES)",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://web.bndes.gov.br/bib/jspui/handle/1408/692",
+   "url_coleta": "https://web.bndes.gov.br/bib/jspui/feed/rss_2.0/1408/692",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "nao_verificado",
+   "termos_nota": "Publicação pública do BNDES (Biblioteca Digital, DSpace JSPUI). O robots.txt de web.bndes.gov.br não pôde ser lido na validação (erro do cliente, provavelmente inexistente); o robô confere a cada rodada.",
+   "observacoes": "RSS 2.0 da coleção da Revista do BNDES. O canal vem sem nome (\"DSpace Collection:\"), mas os 4 itens são números da revista. Cada item é o número inteiro (um PDF com vários artigos), não o artigo. Semestral e atrasada: o número mais recente no repositório é o v. 31 n. 61, edição especial de jun/2025. Datas no nível do mês (dia 01) e links em http://. Desenvolvimento, infraestrutura, crédito e mercado de capitais. A comunidade Produção BNDES (bndes-producao) também traz estes números; o robô descarta o repetido pelo link.",
+   "evidencia": [
+    {
+     "titulo": "Revista do BNDES, v. 31, n. 61, ed. esp., jun. 2025",
+     "data": "2025-06-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/28931"
+    },
+    {
+     "titulo": "Revista do BNDES, v. 30, n. 60, dez. 2024",
+     "data": "2024-12-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/27747"
+    }
+   ],
+   "maximo": 10
+  },
+  {
+   "id": "bndes-setorial",
+   "nome": "BNDES - BNDES Setorial",
+   "organizacao": "Banco Nacional de Desenvolvimento Econômico e Social (BNDES)",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "research",
+   "metodo": "rss",
+   "url_fonte": "https://web.bndes.gov.br/bib/jspui/handle/1408/821",
+   "url_coleta": "https://web.bndes.gov.br/bib/jspui/feed/rss_2.0/1408/821",
+   "ativo": true,
+   "status_validacao": "parcial",
+   "validado_em": "2026-11-08",
+   "robots": "nao_verificado",
+   "termos_nota": "Publicação pública do BNDES (Biblioteca Digital, DSpace JSPUI). O robots.txt de web.bndes.gov.br não pôde ser lido na validação (erro do cliente, provavelmente inexistente); o robô confere a cada rodada.",
+   "observacoes": "RSS 2.0 da coleção BNDES Setorial (canal sem nome, \"DSpace Collection:\"). 4 itens, cada um é um número inteiro. Semestral (mar e set); o mais recente no repositório é o v. 31 n. 60, edição especial de set/2025, e o de mar/2026 ainda não aparece. Datas no nível do mês e links em http://. Estudos de setor (energia, saneamento, agro, indústria, logística) úteis para as teses de empresas. Também entra pela bndes-producao; o robô descarta o repetido pelo link.",
+   "evidencia": [
+    {
+     "titulo": "BNDES Setorial, v. 31, n. 60, ed. esp. set. 2025",
+     "data": "2025-09-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/28987"
+    },
+    {
+     "titulo": "BNDES Setorial, v. 31, n. 59, mar. 2025",
+     "data": "2025-03-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/28127"
+    }
+   ],
+   "maximo": 10
+  },
+  {
+   "id": "bndes-producao",
+   "nome": "BNDES - Produção BNDES (estudos, notas e periódicos)",
+   "organizacao": "Banco Nacional de Desenvolvimento Econômico e Social (BNDES)",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "research",
+   "metodo": "rss",
+   "url_fonte": "https://web.bndes.gov.br/bib/jspui/handle/1408/680",
+   "url_coleta": "https://web.bndes.gov.br/bib/jspui/feed/rss_2.0/1408/680",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "nao_verificado",
+   "termos_nota": "Publicação pública do BNDES (Biblioteca Digital, DSpace JSPUI). O robots.txt de web.bndes.gov.br não pôde ser lido na validação (erro do cliente, provavelmente inexistente); o robô confere a cada rodada.",
+   "observacoes": "RSS 2.0 da comunidade \"Produção BNDES\", que junta tudo o que o banco e seu corpo técnico publicam: livros, periódicos (Revista do BNDES, BNDES Setorial, Textos para Discussão), estudos, notas e relatórios. Na validação: 4 itens, todos de out/2026 (custo fiscal dos programas emergenciais, inflação de serviços por faixa de renda, desembolsos por fonte de recursos). O DSpace só entrega 4 itens por leitura: se o banco subir mais de 4 documentos entre duas rodadas, os excedentes se perdem. Datas no nível do mês (dia 01) e links em http://. Repete itens de bndes-revista, bndes-setorial e bndes-textos-para-discussao; o robô descarta o repetido pelo link.",
+   "evidencia": [
+    {
+     "titulo": "Custo fiscal implícito dos programas emergenciais do BNDES",
+     "data": "2026-10-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/30748"
+    },
+    {
+     "titulo": "Consumo e inflação de serviços por faixa de renda",
+     "data": "2026-10-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/30747"
+    },
+    {
+     "titulo": "Desembolsos do BNDES por fonte de recursos: onde está o custo fiscal?",
+     "data": "2026-10-01",
+     "url": "https://web.bndes.gov.br/bib/jspui/handle/1408/30727"
+    }
+   ],
+   "maximo": 10
+  },
+  {
+   "id": "anpec-economia",
+   "nome": "ANPEC - EconomiA",
+   "organizacao": "ANPEC (Associação Nacional dos Centros de Pós-Graduação em Economia), publicada pela Emerald",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://www.emerald.com/econ",
+   "url_coleta": "https://www.emerald.com/rss/site_1000137/advanceAccess_1000072.xml",
+   "ativo": true,
+   "status_validacao": "a_validar",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "verificar_na_rodada": true,
+   "termos_nota": "Revista de acesso aberto diamante (sem taxa para autor nem leitor), publicada pela Emerald para a ANPEC. O robots.txt de www.emerald.com veda busca, login, /api/, /Citation/, /DocumentViewer/ e parâmetros de rastreio; /rss/ e /econ/article/ ficam liberados, sem Crawl-delay.",
+   "observacoes": "Feed RSS 2.0 de publicação antecipada (\"advanceAccess\"), com data em inglês (o robô lê sem ajuste): 2 itens, de 09/10 e 18/09/2026. Usamos só este feed porque, quando o artigo entra num número, ganha outro endereço (/econ/article/27/2/273/...) e apareceria de novo pelo feed do número corrente (site_1000137/1000072.xml, não usado). A plataforma da Emerald (Silverchair) pode barrar robôs de data center, por isso verificar_na_rodada. Revista geral de economia (muito regional, ambiental e trabalho): filtro_titulo deixa macro, preços, juros, crédito, mercados e finanças, e corta capital humano e temas regionais.",
+   "evidencia": [
+    {
+     "titulo": "Chip price shocks and CO2 emissions in Brazil",
+     "data": "2026-10-09",
+     "url": "https://www.emerald.com/econ/article/doi/10.1108/ECON-02-2025-0031/1400744/Chip-price-shocks-and-CO2-emissions-in-Brazil"
+    },
+    {
+     "titulo": "Human capital quality and regional growth in Brazil (fica fora do filtro)",
+     "data": "2026-09-18",
+     "url": "https://www.emerald.com/econ/article/doi/10.1108/ECON-07-2023-0116/1397548/Human-capital-quality-and-regional-growth-in"
+    }
+   ],
+   "filtro_titulo": "financ|stock|equit|bank|credit|invest|valuation|dividend|capital market|capital structure|cost of capital|capital flow|asset|risk|governan|earnings|accounting|\\bfund|securit|efficient market|market efficien|monetar|inflation|interest rate|yield|fiscal|\\btax|debt|exchange rate|currenc|commodit|\\boil\\b|price|shock|crypto|macroeconom|business cycle|recession|\\bGDP\\b|trade|export|uncertaint",
+   "maximo": 10
+  },
+  {
+   "id": "fecap-rbgn",
+   "nome": "FECAP - Revista Brasileira de Gestão de Negócios (RBGN)",
+   "organizacao": "FECAP (Fundação Escola de Comércio Álvares Penteado)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "en",
+   "tipo": "paper",
+   "metodo": "rss",
+   "url_fonte": "https://rbgn.fecap.br/RBGN",
+   "url_coleta": "https://rbgn.fecap.br/RBGN/gateway/plugin/WebFeedGatewayPlugin/rss2",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Revista de acesso aberto (OJS). Guardamos título, link, data e resumo curto. O robots.txt de rbgn.fecap.br veda /cache/, as buscas, citações CSL e a lista de artigos semelhantes; /gateway/ e /article/ liberados.",
+   "observacoes": "RSS 2.0 do OJS com 6 itens e pubDate em inglês (com fuso -0300); mais recentes de 28 e 29/09/2026. A ordem do feed não é cronológica. Revista de negócios com seção de finanças e contabilidade, que publica estudos com dados do mercado brasileiro (ex.: sentimento do investidor e Ibovespa). Muitos artigos são de gestão de pessoas e estratégia, por isso o filtro_titulo de finanças (o mesmo da anpad-rac).",
+   "evidencia": [
+    {
+     "titulo": "Investor Sentiment Analysis in the Brazilian Market: Empirical Evidence through Technical News",
+     "data": "2026-09-16",
+     "url": "https://rbgn.fecap.br/RBGN/article/view/4357"
+    },
+    {
+     "titulo": "The Moderating Role of Macroeconomic Factors in the Relationship between Asset Structure and Firm Value: A Case Study of the Nairobi Securities Exchange in Kenya",
+     "data": "2026-06-10",
+     "url": "https://rbgn.fecap.br/RBGN/article/view/4350"
+    },
+    {
+     "titulo": "Entrepreneurial Leadership and Work Performance: When Creativity Becomes the Key (fica fora do filtro)",
+     "data": "2026-09-29",
+     "url": "https://rbgn.fecap.br/RBGN/article/view/4361"
+    }
+   ],
+   "filtro_titulo": "financ|finance|stock|a[cç][oõ]es|equit|bank|banc[oáa]s?\\b|credit|cr[eé]dit|invest|valuation|firm value|valor da (firma|empresa)|dividend|capital market|capital structure|cost of capital|working capital|venture capital|private equity|mercado de capitais|estrutura de capital|custo de capital|capital de giro|\\bIPO\\b|\\bESG\\b|risk|risco|governan|earnings|lucro|profit|accounting|contab|audit|\\bfund|asset|bolsa|securities|juros|interest rate|infla|monet|fiscal|tribut|\\btax|d[ií]vida|debt|leverage|alavanc|c[aâ]mbi|exchange rate|commodit|M&A|merger|aquisi|ownership|disclosure|portfolio|carteira",
+   "maximo": 10
+  },
+  {
+   "id": "b3-noticias",
+   "nome": "B3 - Notícias da bolsa (operações, índices, opções, leilões)",
+   "organizacao": "B3 S.A. - Brasil, Bolsa, Balcão",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "noticia",
+   "metodo": "pagina",
+   "url_fonte": "https://www.b3.com.br/pt_br/noticias/",
+   "url_coleta": "https://www.b3.com.br/pt_br/noticias/",
+   "ativo": true,
+   "status_validacao": "a_validar",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "verificar_na_rodada": true,
+   "termos_nota": "Conteúdo público da B3. O robots.txt de www.b3.com.br só tem \"User-agent: *\", sem nenhum Disallow.",
+   "observacoes": "A B3 não tem listagem pública de estudos: os boletins mensais de produtos passaram a ser só por e-mail desde ago/2025 (ver b3-boletins-mensais). Esta é a página de notícias da própria bolsa, sem RSS: 9 itens na 1ª página, com link .htm comum. A data e a categoria ficam DENTRO do texto do link (\"29/10/2026 Opções A uma semana do Copom...\"), por isso padrao_data lê a data do próprio título, e o título fica com esse prefixo. Traz probabilidade do Copom pelas opções, mudanças em índices e horários, circuit breaker, leilões de energia e saneamento e o mercado de títulos do agro e imobiliário. filtro_titulo corta feriados e eventos institucionais.",
+   "evidencia": [
+    {
+     "titulo": "29/10/2026 Opções A uma semana do Copom, Opções da B3 indicam 63,1% de chance de manutenção da Selic",
+     "data": "2026-10-29",
+     "url": "https://www.b3.com.br/pt_br/noticias/opcoes-8AA8D0CDA188B88A01A188D561DB4E15.htm"
+    },
+    {
+     "titulo": "30/10/2026 Leilões Leilão da Aneel, realizado na B3, tem cinco vencedores e investimentos contratados de R$ 8,9 bilhões",
+     "data": "2026-10-30",
+     "url": "https://www.b3.com.br/pt_br/noticias/leilao-da-aneel-realizado-na-b3-tem-cinco-vencedores-e-investimentos-contratados-de-r-8-9-bilhoes.htm"
+    },
+    {
+     "titulo": "29/10/2026 Operações B3 altera calendário de vigência das carteiras de índices de renda variável a partir de 2027",
+     "data": "2026-10-29",
+     "url": "https://www.b3.com.br/pt_br/noticias/b3-altera-calendario-de-vigencia-das-carteiras-de-indices-de-renda-variavel-a-partir-de-janeiro-de-2027.htm"
+    }
+   ],
+   "padrao": "/pt_br/noticias/[^/?#]+\\.htm$",
+   "padrao_data": "\\d{2}/\\d{2}/\\d{4}",
+   "filtro_titulo": "Copom|Selic|op[cç][oõ]es|[ií]ndice|Ibovespa|investidor|pessoas f[ií]sicas|estudo|pesquisa|levantamento|boletim|\\bIPO\\b|oferta|circuit breaker|negocia[cç][aã]o|dividend|deb[eê]nture|\\bCRI\\b|\\bCRA\\b|renda fixa|renda vari[aá]vel|\\bETF|\\bBDR|juros|d[oó]lar|derivativ|futuro|calend[aá]rio|carteira|listagem|listad|governan|\\bASG\\b|\\bESG\\b|mercado de capitais|t[ií]tulos|leil[aã]o",
+   "maximo": 10
+  },
+  {
+   "id": "b3-boletins-mensais",
+   "nome": "B3 - Boletins mensais de produtos",
+   "organizacao": "B3 S.A. - Brasil, Bolsa, Balcão",
+   "categoria": "instituicao",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "relatorio",
+   "metodo": "indisponivel",
+   "url_fonte": "https://content.b3.com.br/boletim-de-produtos/",
+   "url_coleta": null,
+   "ativo": false,
+   "status_validacao": "falhou",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "termos_nota": "Distribuição por e-mail, mediante cadastro gratuito; não há arquivo público para o robô ler.",
+   "observacoes": "Desde 15/08/2025 os boletins mensais dos produtos listados (ações, renda fixa, derivativos) são enviados \"exclusivamente por e-mail\", até o 10º dia útil do mês. A notícia da B3 que anuncia a mudança não aponta listagem nem PDFs públicos. A página de notícias da bolsa entrou como b3-noticias.",
+   "evidencia": [
+    {
+     "titulo": "B3 lança newsletter com boletins mensais dos principais produtos listados",
+     "data": "2025-07-24",
+     "url": "https://www.b3.com.br/pt_br/noticias/b3-lanca-newsletter-com-boletins-mensais-dos-principais-produtos-listados.htm"
+    }
+   ],
+   "motivo_desligada": "boletins só por e-mail, com cadastro, desde ago/2025; sem listagem pública"
+  },
+  {
+   "id": "fipe-informacoes-fipe",
+   "nome": "FIPE - Boletim Informações FIPE (BIF)",
+   "organizacao": "Fundação Instituto de Pesquisas Econômicas (FIPE)",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "macro",
+   "metodo": "indisponivel",
+   "url_fonte": "https://www.fipe.org.br/pt-br/publicacoes/bif/",
+   "url_coleta": null,
+   "ativo": false,
+   "status_validacao": "falhou",
+   "validado_em": "2026-11-08",
+   "robots": "nao_verificado",
+   "termos_nota": "Boletim público e gratuito. O robots.txt de www.fipe.org.br não pôde ser lido na validação (erro do cliente).",
+   "observacoes": "A lista de edições é montada por JavaScript: no HTML entregue só aparece o modelo vazio \"{edicao} - {mes}\", sem link nem data, e o ícone \"Baixar em PDF\" não tem endereço. O mesmo acontece na versão em inglês. Não há RSS. Religar só se aparecer um feed, um sitemap com os PDFs ou a API que a página usa.",
+   "evidencia": [
+    {
+     "titulo": "Página do BIF com a lista de edições vazia (modelo \"{edicao} - {mes}\")",
+     "data": null,
+     "url": "https://www.fipe.org.br/pt-br/publicacoes/bif/"
+    }
+   ],
+   "motivo_desligada": "lista de edições montada por JavaScript, sem links nem datas no HTML e sem feed"
+  },
+  {
+   "id": "fgv-eaesp-gvcef",
+   "nome": "FGV EAESP - GVcef, Centro de Estudos em Finanças",
+   "organizacao": "FGV EAESP",
+   "categoria": "academia",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "research",
+   "metodo": "indisponivel",
+   "url_fonte": "https://eaesp.fgv.br/centros/centro-estudos-financas",
+   "url_coleta": null,
+   "ativo": false,
+   "status_validacao": "falhou",
+   "validado_em": "2026-11-08",
+   "robots": "vetado",
+   "termos_nota": "O robots.txt de cef.fgv.br barrou a ferramenta de validação, e o repositório da FGV (repositorio.fgv.br) responde com a página de bloqueio anti-robô Anubis.",
+   "observacoes": "Três caminhos testados, nenhum serve. (1) A página de publicações do centro no site da EAESP só traz menu e descrição; a lista não está no HTML. (2) O site cef.fgv.br foi barrado por robots.txt. (3) A busca OpenSearch em RSS do repositório da FGV, restrita à comunidade GVcef, devolveu \"Access Denied\" do Anubis no lugar do feed. Os papers de finanças da FGV já entram por fgv-rbe, fgv-epge-working-papers, fgv-eesp-textos-discussao e sbfin-rbfin.",
+   "evidencia": [
+    {
+     "titulo": "Página de publicações do GVcef sem a lista de publicações no HTML",
+     "data": null,
+     "url": "https://eaesp.fgv.br/centros/centro-estudos-financas/publicacoes"
+    },
+    {
+     "titulo": "Comunidade GVcef no Repositório FGV (OpenSearch bloqueado pelo Anubis)",
+     "data": null,
+     "url": "https://repositorio.fgv.br/communities/7c6055a2-aae3-43b1-a100-fad0c5a25498"
+    }
+   ],
+   "motivo_desligada": "listagem fora do HTML, site do centro vetado por robots.txt e repositório protegido por bloqueio anti-robô"
+  },
+  {
+   "id": "compounding-quality",
+   "nome": "Compounding Quality (Pieter Slegers) · newsletter",
+   "organizacao": "Compounding Quality",
+   "categoria": "gestora_internacional",
+   "pais": "Global",
+   "idioma": "en",
+   "tipo": "blog",
+   "metodo": "rss",
+   "url_fonte": "https://www.compoundingquality.net/",
+   "url_coleta": "https://www.compoundingquality.net/feed",
+   "ativo": true,
+   "status_validacao": "a_validar",
+   "validado_em": "2026-11-08",
+   "robots": "permitido",
+   "verificar_na_rodada": true,
+   "debate": "colaboradores",
+   "descartar_promocional": true,
+   "termos_nota": "Newsletter no Substack (ex-gestor, investimento em empresas de qualidade). Parte dos posts é para assinantes pagos: guardamos só título, link, data e o resumo público do feed. robots.txt: /feed, /sitemap.xml e /p/ liberados (vetos só em /feed/private e comentários).",
+   "observacoes": "Pedido do Lucas em 08/11/2026. Feed RSS 2.0 conferido por leitura direta (item de 05/11/2026, 'Best Buys: November 2026'); a 1ª rodada no GitHub confirma. O acervo completo (cerca de 550 posts desde 2023, pelo sitemap) fica na Estante da Biblioteca.",
+   "evidencia": [
+    {
+     "titulo": "Best Buys: November 2026",
+     "data": "2026-11-05",
+     "url": "https://www.compoundingquality.net/p/best-buys-november-2026"
+    }
+   ]
   }
  ]
 }

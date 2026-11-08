@@ -75,6 +75,20 @@ def ler_dre(conteudo_zip, alvo, doc):
     nomes = [n for n in z.namelist() if re.search(r'_DRE_con_\d{4}\.csv$', n, re.I)]
     if not nomes:
         raise ErroFonte('CVM resultados', 'formato', '%s: sem DRE consolidada no arquivo' % doc)
+    # data de entrega de cada formulário (arquivo índice do zip, coluna DT_RECEB): a primeira versão entregue é a data em que
+    # o resultado chegou ao mercado; serve de referência na Agenda (v3.5). Sem o índice, segue sem a data.
+    receb = {}
+    for n in z.namelist():
+        if re.search(r'(itr|dfp)_cia_aberta_\d{4}\.csv$', n, re.I):
+            bi = z.read(n)
+            try:
+                ti = bi.decode('utf-8')
+            except UnicodeDecodeError:
+                ti = bi.decode('latin-1')
+            for r in csv.DictReader(io.StringIO(ti), delimiter=';'):
+                cj, ref, d = re.sub(r'\D', '', r.get('CNPJ_CIA') or ''), r.get('DT_REFER') or '', _data(r.get('DT_RECEB'))
+                if cj in alvo and ref and d and (ref not in receb.get(cj, {}) or d < receb[cj][ref]):
+                    receb.setdefault(cj, {})[ref] = d
     bruto = z.read(nomes[0])
     try:
         txt = bruto.decode('utf-8')
@@ -114,6 +128,9 @@ def ler_dre(conteudo_zip, alvo, doc):
         versao = int(_num(r.get('VERSAO')) or 1)
         chave = (r.get('DT_REFER') or fim.isoformat(), versao)
         reg = out.setdefault(t, {}).setdefault(chave, {'ini': ini.isoformat(), 'fim': fim.isoformat(), 'versao': versao, 'doc': doc, 'contas': {}})
+        d_receb = (receb.get(cnpj) or {}).get(r.get('DT_REFER') or '')
+        if d_receb:
+            reg['entregue_em'] = d_receb.isoformat()
         cd = (r.get('CD_CONTA') or '').strip()
         # se houver mais de uma linha de lucro no primeiro nível, vale a última (o lucro do período, depois das operações descontinuadas)
         if k not in reg['contas'] or (k == 'lucro' and _ordem(cd) > _ordem(reg['contas'][k]['cd'])):
@@ -142,6 +159,8 @@ def consolidar(lidos):
         for (doc, fim), reg in sorted(regs.items(), key=lambda kv: kv[0][1]):
             c = reg['contas']
             linha = {'periodo': _periodo(fim, doc), 'inicio': reg['ini'], 'fim': fim, 'documento': doc, 'versao': reg['versao']}
+            if reg.get('entregue_em'):
+                linha['entregue_em'] = reg['entregue_em']
             for k in ('receita', 'ebit', 'lucro', 'lucro_controladores'):
                 if k in c:
                     linha[k] = round(c[k]['v'], 2)
@@ -159,7 +178,11 @@ def mesclar(anterior, novo):
         reg = {}
         for k in ('trimestres', 'anuais'):
             por = {x['periodo']: x for x in a.get(k) or []}
-            por.update({x['periodo']: x for x in n.get(k) or []})
+            for x in n.get(k) or []:
+                velho = por.get(x['periodo']) or {}
+                if velho.get('entregue_em') and not x.get('entregue_em'):
+                    x = dict(x, entregue_em=velho['entregue_em'])
+                por[x['periodo']] = x
             reg[k] = sorted(por.values(), key=lambda x: x['fim'])[-8 if k == 'trimestres' else -3:]
         out[t] = reg
     return out

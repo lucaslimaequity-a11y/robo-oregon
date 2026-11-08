@@ -264,6 +264,30 @@ var TESTS = (function () {
       ok(R.test('lucro dos bancoes cresce no 3t26') && R.test('klabin tem lucro 20% maior'), 'resultado não reconhecido');
       ok(!R.test('homem tem a conta do bradesco invadida e sofre prejuizo de r$ 5 mil') && !R.test('copel divulga novo balanco sobre imoveis sem energia'), 'falso resultado');
     });
+    t('v3.5: preço-alvo por casa só quando escrito em reais (outra classe da ação e ADR ficam de fora)', function () {
+      var IN = typeof INTEL !== 'undefined' ? INTEL : null; if (!IN) { ok(true); return; }
+      var a = IN.alvosDe({preco_alvo: 'R$ 21,00 (Itaú BBA); R$ 19,00 (J.P. Morgan); R$ 18,50 (Goldman Sachs)', casas: ['Itaú BBA', 'J.P. Morgan', 'Goldman Sachs']}, 'KLBN4');
+      ok(a.length === 3 && a[0].casa === 'Itaú BBA' && a[0].v === 21 && a[2].v === 18.5, JSON.stringify(a));
+      var p = IN.alvosDe({preco_alvo: 'R$ 33,20 (PETR4); R$ 35,50 (PETR3)', casas: ['Goldman Sachs']}, 'PETR4');
+      ok(p.length === 1 && p[0].v === 33.2, 'PETR3 entrou no alvo de PETR4: ' + JSON.stringify(p));
+      ok(IN.alvosDe({preco_alvo: 'US$ 4,75 (ADR BBD)', casas: ['Morgan Stanley']}, 'BBDC3').length === 0, 'alvo em dólar entrou');
+      ok(IN.alvosDe({preco_alvo: '', casas: ['Safra']}, 'KLBN4').length === 0 && IN.alvosDe({recomendacao: 'Compra', casas: ['Safra']}, 'KLBN4').length === 0, 'alvo inventado');
+    });
+    t('v3.5: o mesmo fato em vários veículos vira um item (+N); veículo pouco conhecido sem fato da empresa fica recolhido', function () {
+      var IN = typeof INTEL !== 'undefined' ? INTEL : null; if (!IN || !IN.agruparFatos) { ok(true); return; }
+      var d = {PRIO3: {tipo: 'direto', motivo: 'x', evento: 'resultado'}}, n = {PRIO3: {tipo: 'direto', motivo: 'x', evento: null}};
+      var a = {id: 'a', titulo: 'PRIO tem lucro de R$ 1,2 bilhão no 3T26, alta de 468%', ativos: ['PRIO3'], vinculos: d, publicado_em: '2026-11-06T19:10:00-03:00', categoria: 'veiculo', via: 'Bing', confiavel: false, fonte: 'Portal X'};
+      var b = {id: 'b', titulo: 'PRIO lucra R$ 1,2 bilhão no terceiro trimestre; alta de 468%', ativos: ['PRIO3'], vinculos: d, publicado_em: '2026-11-06T20:00:00-03:00', categoria: 'veiculo', organizacao: 'Valor Econômico'};
+      var c = {id: 'c', titulo: 'PRIO anuncia nova campanha de perfuração em Peregrino', ativos: ['PRIO3'], vinculos: n, publicado_em: '2026-11-06T21:00:00-03:00', categoria: 'veiculo', organizacao: 'Brazil Journal'};
+      var g = IN.agruparFatos([a, b, c]);
+      ok(g.length === 2, 'grupos: ' + g.length);
+      var g1 = g.filter(function (x) { return x.outros.length; })[0];
+      ok(g1 && g1.x.id === 'b' && g1.outros[0].id === 'a', 'o principal deveria ser o veículo conhecido: ' + JSON.stringify(g1 && {x: g1.x.id, o: g1.outros.map(function (y) { return y.id; })}));
+      var z = {id: 'z', titulo: 'PRIO3: veja como está a ação hoje', ativos: ['PRIO3'], vinculos: n, publicado_em: '2026-11-06T22:00:00-03:00', categoria: 'veiculo', via: 'Bing', confiavel: false};
+      ok(IN.baixaRelevancia(z) && !IN.baixaRelevancia(a) && !IN.baixaRelevancia(c), 'baixa relevância errada');
+      ok(!IN.baixaRelevancia({id: 'o', titulo: 'BTG eleva PRIO para compra', ativos: ['PRIO3'], natureza: 'opiniao_casa', categoria: 'veiculo', via: 'Bing', confiavel: false}), 'opinião de casa foi recolhida');
+      var o = IN.ordenarConfiaveis([z, c]); ok(o[0].id === 'c', 'veículo conhecido deveria vir antes no mesmo dia');
+    });
     if (APP && APP.salaTestes) t('Sala local: lê Selic a 16% e propaga sem tratar placeholder como risco', function () {
       var L = APP.salaTestes.lerLocal('Copom eleva a Selic para 16% e a curva abre'); ok(L.base.selic > 2 && L.base.pre > 0, JSON.stringify(L.base));
       var e1 = APP.salaTestes.analiseLocal('Dólar dispara 5% com ruído fiscal', 'cresc-cons'); var I = APP.salaTestes.impactos(e1, 'cresc-cons');

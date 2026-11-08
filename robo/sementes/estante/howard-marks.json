@@ -1,0 +1,1244 @@
+{
+ "_nota": "Semente da coleção Howard Marks na Estante: os 166 memos listados na página de memos da Oaktree (out/1990 a set/2026), conferidos em 08/11/2026. 36 têm página própria; os demais abrem a lista da Oaktree. Coleção completa em PDF (Oaktree): https://www.oaktreecapital.com/docs/default-source/memos/the-complete-collection.pdf?sfvrsn=58102966_5",
+ "fontes": [
+  "https://www.oaktreecapital.com/insights/memos"
+ ],
+ "colecao_completa_pdf": "https://www.oaktreecapital.com/docs/default-source/memos/the-complete-collection.pdf?sfvrsn=58102966_5",
+ "best_of_pdf": "https://www.oaktreecapital.com/docs/default-source/memos/the-best-of.pdf?sfvrsn=e40a2966_4",
+ "itens": [
+  {
+   "titulo": "Shall We Repeal the Laws of Economics – Part III",
+   "data": "2026-09-22",
+   "ano": 2026,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/shall-we-repeal-the-laws-of-economics---part-iii",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "What’s Going on in Private Credit?",
+   "data": "2026-04-09",
+   "ano": 2026,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/whats-going-on-in-private-credit",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "AI Hurtles Ahead",
+   "data": "2026-02-26",
+   "ano": 2026,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/ai-hurtles-ahead",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Is It a Bubble?",
+   "data": "2025-12-09",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/is-it-a-bubble",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Cockroaches in the Coal Mine",
+   "data": "2025-11-06",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/cockroaches-in-the-coal-mine",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "A Look Under the Hood",
+   "data": "2025-10-28",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/a-look-under-the-hood",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Best of . . .",
+   "data": "2025-10-12",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-best-of",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Calculus of Value",
+   "data": "2025-08-14",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-calculus-of-value",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "More on Repealing the Laws of Economics",
+   "data": "2025-06-18",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/more-on-repealing-the-laws-of-economics",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Nobody Knows (Yet Again)",
+   "data": "2025-04-09",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/nobody-knows-yet-again",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Gimme Credit",
+   "data": "2025-03-06",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/gimme-credit",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "On Bubble Watch",
+   "data": "2025-01-07",
+   "ano": 2025,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/on-bubble-watch",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Ruminating on Asset Allocation",
+   "data": "2024-10-22",
+   "ano": 2024,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/ruminating-on-asset-allocation",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Shall We Repeal the Laws of Economics?",
+   "data": "2024-09-19",
+   "ano": 2024,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/shall-we-repeal-the-laws-of-economics",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Mr. Market Miscalculates",
+   "data": "2024-08-22",
+   "ano": 2024,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/mr-market-miscalculates",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Folly of Certainty",
+   "data": "2024-07-17",
+   "ano": 2024,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-folly-of-certainty",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Impact of Debt",
+   "data": "2024-05-08",
+   "ano": 2024,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-impact-of-debt",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Indispensability of Risk",
+   "data": "2024-04-17",
+   "ano": 2024,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-indispensability-of-risk",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Easy Money",
+   "data": "2024-01-09",
+   "ano": 2024,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/easy-money",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Further Thoughts on Sea Change",
+   "data": "2023-10-11",
+   "ano": 2023,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/further-thoughts-on-sea-change",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Fewer Losers, or More Winners?",
+   "data": "2023-09-12",
+   "ano": 2023,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/fewer-losers-or-more-winners",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Taking the Temperature",
+   "data": "2023-07-10",
+   "ano": 2023,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/taking-the-temperature",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Lessons from Silicon Valley Bank",
+   "data": "2023-04-17",
+   "ano": 2023,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/lessons-from-silicon-valley-bank",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Sea Change",
+   "data": "2022-12-13",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/sea-change",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "What Really Matters?",
+   "data": "2022-11-22",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/what-really-matters",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Illusion of Knowledge",
+   "data": "2022-09-08",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-illusion-of-knowledge",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "I Beg to Differ",
+   "data": "2022-07-26",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/i-beg-to-differ",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Conversation at Panmure House",
+   "data": "2022-06-23",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/conversation-at-panmure-house",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Bull Market Rhymes",
+   "data": "2022-05-26",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/bull-market-rhymes",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Pendulum in International Affairs",
+   "data": "2022-03-23",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-pendulum-in-international-affairs",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Selling Out",
+   "data": "2022-01-13",
+   "ano": 2022,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/selling-out",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Winds of Change",
+   "data": "2021-11-23",
+   "ano": 2021,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/the-winds-of-change",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Thinking About Macro",
+   "data": "2021-07-29",
+   "ano": 2021,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/thinking-about-macro",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "2020 in Review",
+   "data": "2021-03-04",
+   "ano": 2021,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/2020-in-review",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Something of Value",
+   "data": "2021-01-11",
+   "ano": 2021,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/something-of-value",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Coming into Focus",
+   "data": "2020-10-13",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo",
+   "link": "https://www.oaktreecapital.com/insights/memo/coming-into-focus",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Time for Thinking",
+   "data": "2020-08-05",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Anatomy of a Rally",
+   "data": "2020-06-18",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Not Enough",
+   "data": "2020-06-11",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Uncertainty II",
+   "data": "2020-05-28",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Uncertainty",
+   "data": "2020-05-11",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Knowledge of the Future",
+   "data": "2020-04-14",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Calibrating",
+   "data": "2020-04-06",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Which Way Now?",
+   "data": "2020-03-31",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Latest Update",
+   "data": "2020-03-19",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Nobody Knows II",
+   "data": "2020-03-03",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "You Bet!",
+   "data": "2020-01-13",
+   "ano": 2020,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Mysterious",
+   "data": "2019-10-17",
+   "ano": 2019,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "On the Other Hand",
+   "data": "2019-07-26",
+   "ano": 2019,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "This Time It's Different",
+   "data": "2019-06-12",
+   "ano": 2019,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Growing the Pie",
+   "data": "2019-04-01",
+   "ano": 2019,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Political Reality Meets Economic Reality",
+   "data": "2019-01-30",
+   "ano": 2019,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Seven Worst Words in the World",
+   "data": "2018-09-26",
+   "ano": 2018,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Investing Without People",
+   "data": "2018-06-18",
+   "ano": 2018,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Latest Thinking",
+   "data": "2018-01-23",
+   "ano": 2018,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Yet Again?",
+   "data": "2017-09-07",
+   "ano": 2017,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "There They Go Again... Again",
+   "data": "2017-07-26",
+   "ano": 2017,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Lines in the Sand",
+   "data": "2017-04-18",
+   "ano": 2017,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Expert Opinion",
+   "data": "2017-01-10",
+   "ano": 2017,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Go Figure!",
+   "data": "2016-11-14",
+   "ano": 2016,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Implications of the Election",
+   "data": "2016-11-07",
+   "ano": 2016,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Political Reality",
+   "data": "2016-08-17",
+   "ano": 2016,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Economic Reality",
+   "data": "2016-05-26",
+   "ano": 2016,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What Does the Market Know?",
+   "data": "2016-01-19",
+   "ano": 2016,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "On the Couch",
+   "data": "2016-01-14",
+   "ano": 2016,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Inspiration from the World of Sports",
+   "data": "2015-10-22",
+   "ano": 2015,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "It’s not Easy",
+   "data": "2015-09-09",
+   "ano": 2015,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Risk Revisited Again",
+   "data": "2015-06-08",
+   "ano": 2015,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Liquidity",
+   "data": "2015-03-25",
+   "ano": 2015,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Lessons of Oil",
+   "data": "2014-12-18",
+   "ano": 2014,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Risk Revisited",
+   "data": "2014-09-03",
+   "ano": 2014,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Dare to Be Great II",
+   "data": "2014-04-08",
+   "ano": 2014,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Getting Lucky",
+   "data": "2014-01-16",
+   "ano": 2014,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Race Is On",
+   "data": "2013-11-26",
+   "ano": 2013,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Role of Confidence",
+   "data": "2013-08-05",
+   "ano": 2013,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Outlook For Equities",
+   "data": "2013-03-13",
+   "ano": 2013,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "High Yield Bonds Today",
+   "data": "2013-02-21",
+   "ano": 2013,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Ditto",
+   "data": "2013-01-07",
+   "ano": 2013,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "A Fresh Start (Hopefully)",
+   "data": "2012-11-19",
+   "ano": 2012,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "On Uncertain Ground",
+   "data": "2012-09-11",
+   "ano": 2012,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "It's All A Big Mistake",
+   "data": "2012-06-20",
+   "ano": 2012,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Déjà Vu All Over Again",
+   "data": "2012-03-19",
+   "ano": 2012,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Assessing Performance Records A Case Study",
+   "data": "2012-02-15",
+   "ano": 2012,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What Can We Do For You?",
+   "data": "2012-01-10",
+   "ano": 2012,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "It's All Very Taxing",
+   "data": "2011-11-16",
+   "ano": 2011,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What's Behind the Downturn?",
+   "data": "2011-09-07",
+   "ano": 2011,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Down to the Wire",
+   "data": "2011-07-21",
+   "ano": 2011,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "How Quickly They Forget",
+   "data": "2011-05-25",
+   "ano": 2011,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "On Regulation",
+   "data": "2011-03-02",
+   "ano": 2011,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "All That Glitters",
+   "data": "2010-12-17",
+   "ano": 2010,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Open and Shut",
+   "data": "2010-12-01",
+   "ano": 2010,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Hemlines",
+   "data": "2010-09-10",
+   "ano": 2010,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "It’s Greek to Me",
+   "data": "2010-07-19",
+   "ano": 2010,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Warning Flags",
+   "data": "2010-05-12",
+   "ano": 2010,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "I’d Rather Be Wrong",
+   "data": "2010-03-17",
+   "ano": 2010,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Tell Me I’m Wrong",
+   "data": "2010-01-22",
+   "ano": 2010,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Touchstones",
+   "data": "2009-11-10",
+   "ano": 2009,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "So Much That’s False and Nutty",
+   "data": "2009-07-08",
+   "ano": 2009,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Will It Work?",
+   "data": "2009-03-05",
+   "ano": 2009,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Long View",
+   "data": "2009-01-09",
+   "ano": 2009,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Volatility + Leverage = Dynamite",
+   "data": "2008-12-17",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Limits to Negativism",
+   "data": "2008-10-15",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Plan B",
+   "data": "2008-09-24",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Nobody Knows",
+   "data": "2008-09-19",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What Worries Me",
+   "data": "2008-08-28",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Doesn’t Make Sense",
+   "data": "2008-07-31",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Aviary",
+   "data": "2008-05-16",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Tide Goes Out",
+   "data": "2008-03-18",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Whodunit",
+   "data": "2008-02-20",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Now What?",
+   "data": "2008-01-10",
+   "ano": 2008,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "No Different This Time – The Lessons of ‘07",
+   "data": "2007-12-17",
+   "ano": 2007,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Now It’s All Bad?",
+   "data": "2007-09-10",
+   "ano": 2007,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "It’s All Good . . . Really?",
+   "data": "2007-07-30",
+   "ano": 2007,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "It’s All Good",
+   "data": "2007-07-16",
+   "ano": 2007,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Everyone Knows",
+   "data": "2007-04-26",
+   "ano": 2007,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Race to the Bottom",
+   "data": "2007-02-14",
+   "ano": 2007,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Pigweed",
+   "data": "2006-12-07",
+   "ano": 2006,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The New Paradigm",
+   "data": "2006-10-19",
+   "ano": 2006,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Dare to Be Great",
+   "data": "2006-09-07",
+   "ano": 2006,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "You Can’t Eat IRR",
+   "data": "2006-07-12",
+   "ano": 2006,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Returns, Absolute Returns and Risk",
+   "data": "2006-06-13",
+   "ano": 2006,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "It Is What It Is",
+   "data": "2006-03-27",
+   "ano": 2006,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Risk",
+   "data": "2006-01-19",
+   "ano": 2006,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Hindsight First, Please (or, What Were They Thinking?)",
+   "data": "2005-10-17",
+   "ano": 2005,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "A Case in Point",
+   "data": "2005-06-06",
+   "ano": 2005,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "There They Go Again",
+   "data": "2005-05-06",
+   "ano": 2005,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Oaktree at Ten",
+   "data": "2005-04-11",
+   "ano": 2005,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Risk and Return Today",
+   "data": "2004-10-27",
+   "ano": 2004,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Hedge Funds: A Case for Caution",
+   "data": "2004-10-06",
+   "ano": 2004,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Happy Medium",
+   "data": "2004-07-20",
+   "ano": 2004,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Us and Them",
+   "data": "2004-05-07",
+   "ano": 2004,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Hey, Steward!!",
+   "data": "2004-03-16",
+   "ano": 2004,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Feeling’s Mutual",
+   "data": "2003-10-02",
+   "ano": 2003,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What’s Your Game Plan?",
+   "data": "2003-09-05",
+   "ano": 2003,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Most Important Thing",
+   "data": "2003-07-01",
+   "ano": 2003,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What’s Going On?",
+   "data": "2003-05-06",
+   "ano": 2003,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Whad’Ya Know?",
+   "data": "2003-03-11",
+   "ano": 2003,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Returns and How They Get That Way",
+   "data": "2002-11-11",
+   "ano": 2002,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Etorre’s Wisdom",
+   "data": "2002-09-04",
+   "ano": 2002,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Quo Vadis?",
+   "data": "2002-07-26",
+   "ano": 2002,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Realist's Creed",
+   "data": "2002-05-31",
+   "ano": 2002,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Learning From Enron",
+   "data": "2002-03-14",
+   "ano": 2002,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "You Can't Predict. You Can Prepare.",
+   "data": "2001-11-20",
+   "ano": 2001,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What Lies Ahead?",
+   "data": "2001-10-04",
+   "ano": 2001,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Notes from New York",
+   "data": "2001-09-16",
+   "ano": 2001,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "What's It All About, Alpha?",
+   "data": "2001-07-11",
+   "ano": 2001,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Safety First . . . But Where?",
+   "data": "2001-04-10",
+   "ano": 2001,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "We're Not In 1999 Anymore, Toto",
+   "data": "2000-12-31",
+   "ano": 2000,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Investment Miscellany",
+   "data": "2000-11-16",
+   "ano": 2000,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Irrational Exuberance",
+   "data": "2000-05-01",
+   "ano": 2000,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "bubble.com",
+   "data": "2000-01-02",
+   "ano": 2000,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "How's the Market?",
+   "data": "1999-04-15",
+   "ano": 1999,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Genius Isn't Enough (and Other Lessons from Long-Term Capital Management)",
+   "data": "1998-10-09",
+   "ano": 1998,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Who Knew?",
+   "data": "1998-01-08",
+   "ano": 1998,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Are You An Investor or a Speculator?",
+   "data": "1997-09-03",
+   "ano": 1997,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Will It Be Different This Time?",
+   "data": "1996-11-25",
+   "ano": 1996,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Value of Predictions II (or \"Give That Man a Cigar\")",
+   "data": "1996-07-22",
+   "ano": 1996,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "How the Game Should Be Played",
+   "data": "1995-05-26",
+   "ano": 1995,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "\"How Does an Inefficient Market Get That Way?\"",
+   "data": "1994-07-15",
+   "ano": 1994,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "\"Risk in Today's Markets\" Revisited",
+   "data": "1994-04-11",
+   "ano": 1994,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Risk in Today's Markets",
+   "data": "1994-02-17",
+   "ano": 1994,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Random Thoughts on the Identification of Investment Opportunities",
+   "data": "1994-01-24",
+   "ano": 1994,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Value of Predictions, or Where'd All This Rain Come From?",
+   "data": "1993-02-15",
+   "ano": 1993,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "Microeconomics 101: Supply, Demand and Convertibles",
+   "data": "1992-10-08",
+   "ano": 1992,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "First Quarter Performance",
+   "data": "1991-04-11",
+   "ano": 1991,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  },
+  {
+   "titulo": "The Route to Performance",
+   "data": "1990-10-12",
+   "ano": 1990,
+   "instituicao": "Oaktree Capital",
+   "tipo": "Memo"
+  }
+ ]
+}

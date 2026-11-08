@@ -84,13 +84,34 @@
       return {t: t, ok: ok, doc: cvmDoc, itr: tri0 && tri0.periodo === tri, sem: !r && !cvmDoc};
     });
     var feitos = linhas.filter(function (l) { return l.ok; }).length;
+    // v3.5 · quem falta: a data em que entregou o mesmo trimestre do ano passado (dados abertos da CVM), como referência
+    var triAnt = tri.slice(0, 2) + String(+tri.slice(2) - 1).padStart(2, '0');
+    var refs = linhas.filter(function (l) { return !l.ok; }).map(function (l) {
+      var r = res && res[l.t], q = r && (r.trimestres || []).filter(function (x) { return x.periodo === triAnt && x.entregue_em; })[0];
+      return q ? {t: l.t, d: q.entregue_em} : null;
+    }).filter(Boolean).sort(function (a, b) { return a.d.slice(5).localeCompare(b.d.slice(5)); });
+    var anunc = itens.filter(function (x) { return x.categoria === 'oficial_empresa' && /resultad|divulga|teleconfer|webcast|videoconfer/i.test(x.titulo) && /\b\d{1,2}\/\d{1,2}(\/\d{2,4})?\b/.test(x.titulo) && dentro(x, 60 * 24); });
     return h('div', {class: 'tmp'}, h('p', {class: 'tmp-h'}, h('b', null, feitos + ' de ' + linhas.length), ' ações da carteira já entregaram o ' + tri + ' à CVM'),
       h('div', {class: 'tmp-l'}, linhas.sort(function (a, b) { return (a.ok - b.ok) || a.t.localeCompare(b.t); }).map(function (l) {
         return h('button', {class: 'tmp-t' + (l.ok ? ' ok' : ''), title: l.ok ? (l.itr ? 'ITR do ' + tri + ' nos dados abertos da CVM' : 'Documento de resultado no IPE da CVM: ' + l.doc.titulo) : 'Ainda sem o ' + tri + ' nos dados da CVM lidos pelo robô', onclick: function () { if (l.doc) A.abrirItem(l.doc); else A.abrirFicha(l.t); }},
           h('i', {'aria-hidden': 'true'}), l.t);
-      })), h('p', {class: 'tmp-n'}, 'Dados abertos da CVM (atualizados semanalmente) e documentos de resultado das companhias. Datas futuras de divulgação ainda não são coletadas.'));
+      })),
+      anunc.length ? h('div', null, h('p', {class: 'ar-k'}, 'Datas anunciadas pelas companhias'), h('ul', {class: 'ag-ref'}, anunc.slice(0, 6).map(function (x) { return h('li', null, h('button', {class: 'btn link', onclick: function () { A.abrirItem(x); }}, x.titulo)); }))) : null,
+      refs.length ? h('div', null, h('p', {class: 'ar-k'}, 'Quem falta · quando entregou o ' + triAnt + ' (referência, não é data anunciada)'), h('ul', {class: 'ag-ref'}, refs.map(function (r) { var d = r.d; return h('li', null, h('b', null, r.t), ' ', d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4)); }))) : null,
+      h('p', {class: 'tmp-n'}, 'Dados abertos da CVM (atualizados semanalmente) e documentos de resultado das companhias. Data anunciada só aparece quando o documento a traz no título; a referência é a data de entrega do mesmo trimestre do ano anterior.'));
   }
 
+  // v3.5 · paper da semana: semana par, um paper brasileiro; ímpar, internacional (se faltar, o outro). Publicado nos últimos 21 dias.
+  function semanaISO(d) { var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), dia = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - dia); var a = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return Math.ceil(((t - a) / 864e5 + 1) / 7); }
+  function paperDaSemana() {
+    var L = (A.itensResearch ? A.itensResearch() : A.itens()).filter(function (x) { return (x.tipo === 'paper' || x.categoria === 'academia') && x.tipo !== 'video' && !x.acervo && !x.agrupado_em && dentro(x, 21 * 24); })
+      .sort(function (a, b) { return ((b.prioridade || {}).pontos || 0) - ((a.prioridade || {}).pontos || 0) || ts(b) - ts(a); });
+    if (!L.length) return null;
+    var br = semanaISO(new Date()) % 2 === 0, esc = L.filter(function (x) { return (x.pais === 'Brasil') === br; })[0] || L[0];
+    return h('div', {class: 'paper-sem'}, h('p', {class: 'ar-k'}, 'Paper da semana · ' + (esc.pais === 'Brasil' ? 'Brasil' : 'internacional')),
+      h('button', {class: 'nwl', onclick: function () { A.abrirItem(esc); }}, esc.titulo),
+      h('p', {class: 'muted'}, (esc.organizacao || esc.fonte) + ' · ' + I.quando(esc) + ' · ', h('button', {class: 'btn link', onclick: function () { A.drawer('Paper da semana', h('div', null, h('p', {class: 'tv-lead'}, esc.titulo), A.formAprendizado(esc))); }}, 'anotar o que aprendi')));
+  }
   function area(id, cls, titulo, conta, corpo, mais) {
     return h('section', {class: 'ar ' + cls, id: id, 'aria-labelledby': id + '-t'}, h('header', null, h('h2', {id: id + '-t'}, titulo), conta != null ? h('span', {class: 'ar-n'}, conta) : null, mais || null), h('div', {class: 'ar-b'}, corpo));
   }
@@ -124,7 +145,8 @@
         novos.length ? [h('b', null, String(novos.length)), ' itens novos', nn.carteira ? [' · ', h('a', {href: '#radar'}, nn.carteira + ' na carteira')] : null, nn.op ? [' · ', h('a', {href: '#debate'}, nn.op + (nn.op > 1 ? ' opiniões' : ' opinião'))] : null,
           nn.cvm ? [' · ', h('a', {href: '#agenda-decisiva'}, nn.cvm + (nn.cvm > 1 ? ' documentos à CVM' : ' documento à CVM'))] : null, nn.res ? [' · ', h('a', {href: '#research'}, nn.res + ' de research')] : null, '. Os novos têm um ponto azul.'] : 'nada novo.')
         : h('p', {class: 'muted'}, 'Primeira visita neste navegador: a partir da próxima, aqui aparece só o que chegou desde então.'),
-      rec.length ? h('p', {class: 'rec'}, h('span', {class: 'muted'}, 'Vistos por último: '), rec.slice(0, 6).map(function (t) { return h('button', {class: 'tag tk', onclick: function () { A.abrirFicha(t); }}, t); })) : null);
+      rec.length ? h('p', {class: 'rec'}, h('span', {class: 'muted'}, 'Vistos por último: '), rec.slice(0, 6).map(function (t) { return h('button', {class: 'tag tk', onclick: function () { A.abrirFicha(t); }}, t); })) : null,
+      (function () { var bs = A.buscasSalvas ? A.buscasSalvas() : []; if (!bs.length) return null; return h('p', {class: 'rec'}, h('span', {class: 'muted'}, 'Buscas salvas: '), bs.slice(0, 6).map(function (o) { return h('button', {class: 'tag', title: o.total + ' itens', onclick: function () { A.abrirBusca(o.b); }}, o.b.nome + (o.novos ? ' · ' + o.novos + (o.novos > 1 ? ' novos' : ' novo') : '')); })); })());
     wrap.appendChild(faixa);
     var sum = [['radar', 'Radar das teses'], ['agenda-decisiva', 'Agenda decisiva'], ['research', 'Research global'], ['debate', 'Debate de mercado']];
     if (M.ult) sum.push(['ultimas', 'Todas as notícias']);
@@ -141,12 +163,16 @@
     // ---- 1. Radar das teses (72 h)
     // peso por tipo de acontecimento; veículo pouco conhecido achado pela busca pesa menos (continua em "Todas as notícias")
     function peso(o) { return PESO[o.k] - (o.x.via && o.x.confiavel === false ? 1.5 : 0); }
-    var ev = eventos(todos, 72).sort(function (a, b) { return (peso(b) - peso(a)) || (ts(b.x) - ts(a.x)); }).slice(0, M.radar).sort(function (a, b) { return ts(b.x) - ts(a.x); });
-    var porId = {}; ev.forEach(function (o) { porId[o.x.id] = o; });
+    var ev72 = eventos(todos, 72), evBaixa = ev72.filter(function (o) { return I.baixaRelevancia(o.x); });
+    var ev = ev72.filter(function (o) { return !I.baixaRelevancia(o.x); }).sort(function (a, b) { return (peso(b) - peso(a)) || (ts(b.x) - ts(a.x)); }).slice(0, M.radar).sort(function (a, b) { return ts(b.x) - ts(a.x); });
+    var porId = {}; ev.concat(evBaixa).forEach(function (o) { porId[o.x.id] = o; });
+    var extraRadar = function (x) { return porId[x.id] ? mecanismo(porId[x.id]) : null; };
     mesa.appendChild(area('radar', 'a-radar', 'Radar das teses', ev.length ? ev.length + ' acontecimentos · 72 h' : '72 h',
-      ev.length ? A.listaRows(ev.map(function (o) { return o.x; }), {extra: function (x) { return porId[x.id] ? mecanismo(porId[x.id]) : null; }})
-        : vazio(semDados ? 'Sem dados do robô.' : 'Nenhuma empresa acompanhada foi assunto de notícia, documento ou opinião nas últimas 72 h.'),
-      h('button', {class: 'btn link ar-mais', onclick: function () { A.go('brasil', 'ativos'); }}, 'Ativos ↗')));
+      h('div', null, ev.length ? A.listaRows(ev.map(function (o) { return o.x; }), {extra: extraRadar})
+        : vazio(semDados ? 'Sem dados do robô.' : evBaixa.length ? 'Nenhum acontecimento de fonte conhecida nas últimas 72 h.' : 'Nenhuma empresa acompanhada foi assunto de notícia, documento ou opinião nas últimas 72 h.'),
+        evBaixa.length ? A.more('Mostrar ' + evBaixa.length + ' de baixa relevância', h('div', null, h('p', {class: 'hint', style: 'margin:0 0 4px'}, 'Veículos pouco conhecidos achados pela busca, sem resultado, documento ou opinião de casa. Nada é apagado.'),
+          A.listaRows(evBaixa.sort(function (a, b) { return ts(b.x) - ts(a.x); }).map(function (o) { return o.x; }), {extra: extraRadar, max: 20}))) : null),
+      [h('button', {class: 'btn link ar-mais', title: 'Notícias da semana por empresa da Carteira Oregon, por pilar, para a reunião', onclick: function () { A.go('brasil', 'pauta'); }}, 'Pauta da semana ↗'), h('button', {class: 'btn link', onclick: function () { A.go('brasil', 'ativos'); }}, 'Ativos ↗')]));
 
     // ---- 2. Agenda decisiva: temporada de resultados, documentos das companhias (7 dias), agenda macro oficial
     var vistosDoc = {}, docs = todos.filter(function (x) { return x.categoria === 'oficial_empresa' && dentro(x, 168); }).sort(function (a, b) { return ts(b) - ts(a); })
@@ -163,7 +189,8 @@
     if (prior.length < M.research) prior = prior.concat(todos.filter(function (x) { return /^gestora_|^instituicao$|^academia$/.test(x.categoria || '') && dentro(x, 168) && prior.indexOf(x) < 0; }).sort(function (a, b) { return ts(b) - ts(a); }));
     if (!prior.length) prior = todos.filter(function (x) { return /^gestora_|^instituicao$|^academia$/.test(x.categoria || '') && dentro(x, 168); }).sort(function (a, b) { return ts(b) - ts(a); }).slice(0, M.research);
     var leit = hj && hj.leitura ? resolver([hj.leitura])[0] : null;
-    var resBody = h('div', null,
+    var pap = prof !== 'rapida' ? paperDaSemana() : null;
+    var resBody = h('div', null, pap,
       leit && prof !== 'rapida' ? h('div', {id: 'leitura', class: 'destaque-leit'}, h('p', {class: 'ar-k'}, 'Leitura recomendada'), A.itemCard(leit)) : null,
       prior.length ? h('div', {id: 'prioridades'}, A.listaRows(prior.slice(0, M.research), {abrir: true, dias: false})) : vazio(semDados ? 'Sem dados do robô.' : 'Nada novo de gestoras, bancos e instituições nos últimos 7 dias.'));
     if (hj && (hj.estudo || []).length && prof !== 'rapida') resBody.appendChild(h('details', {class: 'estudo-d', id: 'estudo-dia', open: prof === 'aprofundada' ? true : null}, h('summary', null, 'Estudo do dia · ' + hj.estudo.length + ' perguntas'),

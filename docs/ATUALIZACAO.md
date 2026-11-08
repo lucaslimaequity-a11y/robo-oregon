@@ -1,8 +1,119 @@
-# Atualizar para o Oregon Intelligence v3.4 e como voltar atrás
+# Atualizar para o Oregon Intelligence v3.5 e como voltar atrás
+
+O pacote `robo-oregon-v3.5-alterados.zip` atualiza a v3.4 que está no seu GitHub (commit "Add files via upload" de
+08/11, 14:02). Tudo pelo site do GitHub, sem instalar nada. Nenhuma chave vai para arquivo e o workflow (`robo.yml`)
+**não muda**. Nada do que já existia foi retirado: a v3.5 só acrescenta. O acréscimo da academia brasileira (fontes
+novas da tarde de 08/11) já está dentro deste pacote.
+
+## O que entra na v3.5
+
+**Ajustes**
+- Pesquisas do robô sem páginas de cotação; ETFs de índice (IMA-B, IRF-M, Tesouro) pesquisados também pelo índice.
+- Genial lida pela página de cada ação (o sitemap de relatórios não respondia ao GitHub).
+- Nord pelo sitemap do blog; Empiricus sem texto de venda.
+- Artigo com data no futuro (ex.: CFA de 18/11) entra com a data em que foi detectado e o aviso da data da edição.
+
+**Painéis**
+- Ficha da ação: aba "Casas de análise", com o que cada casa diz hoje e o preço-alvo de cada uma ao longo de 12 meses.
+- Brasil › Pauta da semana: notícias de cada empresa da Carteira Oregon por pilar, com "Copiar pauta".
+- Research: filtro Brasil e mundo / Brasil / Mundo e "Temas em alta" (7 dias contra a média das 4 semanas).
+- Biblioteca: buscas salvas, "Resumo do mês" por tema e a **Estante** (abaixo).
+- Hoje: paper da semana; datas de resultado (anunciadas pelas companhias e, como referência, quando cada uma entregou o
+  mesmo trimestre do ano passado).
+- Telegram: alerta imediato de fato relevante ou opinião nova sobre empresa da carteira (até 5 por rodada).
+
+**Fundos e relevância**
+- Fundos (JURO11, CDII11, HGCR11, KNCA11, KNHF11, BTLG11, TRXF11, XPML11): notícias do segmento (FI-Infra, FII de papel,
+  Fiagro, fundos de fundos, logística, renda urbana) e do macro que move o fundo (crédito privado, juro real, Selic).
+  Textos didáticos genéricos ("O que são fundos imobiliários") não ficam mais ligados aos fundos.
+- Patrocínio cultural e esportivo não liga mais à empresa ("Orquestra Petrobras Sinfônica", jogo Sub-20 Petrobras).
+- O mesmo fato em vários veículos vira uma linha só, com "+N veículos" para abrir os outros.
+- Veículo pouco conhecido, sem fato da empresa, fica recolhido em "baixa relevância" no Radar, na ficha e na pauta.
+  Nada é apagado. No mesmo dia, veículo conhecido vem antes.
+
+**Estante (Biblioteca › Estante)** — acervo permanente, que não sai da tela depois de 90 dias:
+- Michael Mauboussin: os 235 textos de 1995 a set/2026 (índice público do Kevin Gee + série Consilient Observer do Morgan
+  Stanley). Os anteriores a 2020 abrem o índice no site do próprio autor, porque a editora não os publica mais.
+- CFA Institute Research Foundation: livros e monografias desde 1975 (como o "Exponential Wealth" do Ibbotson), com os
+  resumos para investidores, profissionais e acadêmicos.
+- Howard Marks: os 166 memos, de 1990 a set/2026.
+- Damodaran: 58 papers e os posts do blog desde 2008.
+- AQR e GMO: as bibliotecas de research completas.
+- Compounding Quality (Pieter Slegers): o arquivo da newsletter desde 2023 (os posts novos também entram no Research).
+- Busca por título, tema e década; "anotar o que aprendi" em cada item. Só título, data, link e o resumo que a página
+  declara; o texto fica na fonte.
+
+**VG VIP (aba nova, separada da Oregon)**
+- Hoje VIP (mapa de atenção dos 35 ativos, radar, agenda das companhias e debate), Ativos (todas as colunas do print,
+  por carteira, e a ficha de cada ativo com notícias, opiniões e casas de análise) e Pauta da semana por carteira.
+- Os números são os do print de 08/11/2026; preço e variação do dia ficam congelados nessa data. Para atualizar, mande
+  o print novo: eu refaço o `painel/src/vip.json` e mando o pacote.
+- O robô guarda as notícias dos 22 ativos que só existem na VIP num campo à parte (`ativos_vip`). As telas da Oregon não
+  leem esse campo, então as carteiras não se misturam. Os CNPJs desses 22 foram conferidos na B3 (e 12 também na CVM)
+  para os documentos à CVM e os resultados.
+
+## 1. Suba os arquivos (um só envio)
+
+1. Descompacte o `robo-oregon-v3.5-alterados.zip`. Ele tem só os 32 arquivos que mudaram, nas pastas certas.
+2. No GitHub, repositório `robo-oregon` → **Add file** → **Upload files**.
+3. Arraste **as pastas** de dentro do ZIP (`docs`, `painel`, `robo`, `site`, `testes`) e o `README.md` de uma vez.
+4. Escreva "Oregon Intelligence v3.5" e **Commit changes**.
+
+Arquivos do pacote (novos marcados com ★):
+
+```
+README.md
+docs/ARQUITETURA.md  docs/ATUALIZACAO.md  docs/FONTES.md  docs/RESULTADOS_TESTES.md
+painel/build.py  painel/dist/Oregon_Intelligence.html  painel/dist/painel_artifact.html
+painel/src/app.css  painel/src/intel.js  painel/src/tests.js  painel/src/ui_bib.js  painel/src/ui_hoje.js
+painel/src/ui_oregon.js  painel/src/ui_vip.js ★  painel/src/vip.json ★
+painel/test/areas.js  painel/test/gera_dados_teste.py
+robo/analise.py  robo/biblioteca.py  robo/casas.py  robo/config.json  robo/estante.py ★  robo/fontes.json
+robo/intel.py  robo/pesquisas.py  robo/resultados.py
+robo/sementes/estante/mauboussin.json ★  robo/sementes/estante/howard-marks.json ★  robo/sementes/estante/damodaran.json ★
+site/index.html
+testes/test_v35.py ★
+```
+
+O pacote completo (`robo-oregon-v3.5.zip`) tem o repositório inteiro, para guardar ou para começar do zero.
+
+## 2. Primeira rodada
+
+**Actions** → **Oregon Intelligence** → **Run workflow** → modo `normal` → **Run workflow**. Nessa rodada o robô:
+reclassifica o histórico com as regras novas (versão 36: ativos VIP, patrocínio, didático); publica a Estante com as
+sementes (Mauboussin, Howard Marks, Damodaran) e começa a ler as listagens (CFA, AQR, GMO, Compounding Quality e o blog
+do Damodaran), algumas páginas por rodada; e passa a buscar notícias dos 22 ativos novos da VIP. A Estante se completa
+em um a três dias de rodadas normais; enquanto isso, a lombada mostra "completando".
+
+## 3. Conferência (5 minutos)
+
+1. **VG VIP** aparece como sexta seção no topo. Hoje VIP mostra os 35 ativos no mapa; Ativos mostra as três carteiras.
+2. **Hoje** da Oregon não mostra VALE3, LREN3 nem outro ativo que só está na VIP.
+3. **Biblioteca › Estante**: sete lombadas; Mauboussin com cerca de 235 itens e Howard Marks com 166.
+4. Uma ficha de ação da Oregon tem a aba **Casas de análise**.
+5. **Biblioteca › Fontes e coleta**: `compounding-quality`, `genial-paginas-acoes` e `nord-blog` com a primeira leitura.
+
+## 4. Voltar atrás
+
+No GitHub, abra o commit "Oregon Intelligence v3.5" → **Revert**. O histórico publicado no ramo `dados` não é apagado;
+a Estante e as notícias VIP só deixam de ser atualizadas.
+
+---
+
+# Guia da v3.4 (histórico)
+
 
 O pacote `robo-oregon-v3.4-alterados.zip` atualiza a v3.3 que está no seu GitHub (commit "Add files via upload" de
 08/11, 11:47). Tudo é feito pelo site do GitHub, sem instalar nada. Nenhuma chave vai para arquivo. O workflow
 (`robo.yml`) **não muda**.
+
+## Acréscimo de 08/11 à tarde: academia brasileira (só fontes novas)
+
+Nada foi alterado nem retirado: só entraram 25 fontes acadêmicas brasileiras em `robo/fontes.json` (revistas da SBFin,
+FGV, USP, FUCAPE e Tesouro; working papers do Banco Central, FGV, FEA-USP, IPEA, BNDES e PUC-Rio; NEFIN-USP e estudos da
+CVM). Para subir: descompacte `robo-oregon-v3.4.1-academia-br.zip` e envie as pastas `robo` e `docs` em **Add file →
+Upload files** → **Commit changes**. Na rodada seguinte elas aparecem em Mundo e Estratégia › Research e na Biblioteca.
+Detalhes em `docs/FONTES.md`.
 
 ## O que muda na v3.4 (Research Command Center)
 

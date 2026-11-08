@@ -33,6 +33,35 @@ for agora, kw in (('2026-11-06T15:30:00-03:00', dict(feeds={'https://gestora.tes
     buf = io.StringIO()
     with mock.patch.object(urllib.request, 'urlopen', m), mock.patch.object(util.time, 'sleep', lambda s: None), mock.patch('sys.stdout', buf):
         assert intel.main() == 0, buf.getvalue()
+# v3.5 · Estante: só as sementes conferidas (rede de teste sem acesso às listagens) e itens com ativos da VG VIP
+import json  # noqa: E402
+import conteudo  # noqa: E402
+import estante  # noqa: E402
+with open(os.path.join(RAIZ, 'robo', 'config.json'), encoding='utf-8') as f:
+    cfg_real = json.load(f)
+class _SemRede:
+    def get(self, fonte, url, timeout=20, tentativas=1, **kw):
+        raise util.ErroFonte(fonte, 'nao_encontrado', 'rede de teste')
+_r = _SemRede()
+with mock.patch('sys.stdout', io.StringIO()):
+    est = estante.atualizar(cfg_real, _r, conteudo.Robots(_r), util.agora().date(), util.agora(), {}, {}, log_=lambda *a: None)
+with open(os.path.join(dados, 'biblioteca', 'estante.json'), 'w', encoding='utf-8') as f:
+    json.dump(est, f, ensure_ascii=False)
+with open(os.path.join(dados, 'recentes.json'), encoding='utf-8') as f:
+    rec = json.load(f)
+vip_itens = [
+    {'id': 'vip1', 'titulo': 'Vale tem lucro de US$ 2,4 bilhões no 3º trimestre e eleva dividendos', 'link': 'https://veiculo.teste/vale-3t26', 'fonte': 'Valor Econômico', 'organizacao': 'Valor Econômico', 'categoria': 'veiculo', 'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'noticia',
+     'publicado_em': '2026-11-06T19:10-03:00', 'detectado_em': '2026-11-06T19:30-03:00', 'ativos': [], 'ativos_vip': ['VALE3'], 'vinculos_vip': {'VALE3': {'tipo': 'direto', 'motivo': 'a manchete trata do resultado da empresa', 'evento': 'resultado'}}, 'natureza': 'noticia', 'temas': [], 'regras': 36},
+    {'id': 'vip2', 'titulo': 'BTG eleva recomendação de Lojas Renner para compra; preço-alvo de R$ 18', 'link': 'https://veiculo.teste/renner-btg', 'fonte': 'Money Times', 'organizacao': 'Money Times', 'categoria': 'veiculo', 'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'noticia',
+     'publicado_em': '2026-11-07T10:05-03:00', 'detectado_em': '2026-11-07T10:20-03:00', 'ativos': [], 'ativos_vip': ['LREN3'], 'vinculos_vip': {'LREN3': {'tipo': 'direto', 'motivo': 'opinião de casa de análise sobre o ativo', 'evento': 'recomendacao'}},
+     'natureza': 'opiniao_casa', 'casas': ['BTG Pactual'], 'posicao': 'favoravel', 'recomendacao': 'Compra', 'preco_alvo': 'R$ 18,00', 'temas': [], 'regras': 36},
+    {'id': 'vip3', 'titulo': 'Sabesp conclui emissão de debêntures de R$ 3 bilhões', 'link': 'https://veiculo.teste/sabesp-deb', 'fonte': 'Brazil Journal', 'organizacao': 'Brazil Journal', 'categoria': 'veiculo', 'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'noticia',
+     'publicado_em': '2026-11-07T16:40-03:00', 'detectado_em': '2026-11-07T17:00-03:00', 'ativos': [], 'ativos_vip': ['SBSP3'], 'vinculos_vip': {'SBSP3': {'tipo': 'direto', 'motivo': 'a manchete trata do ativo', 'evento': None}}, 'natureza': 'noticia', 'temas': [], 'regras': 36},
+]
+rec['itens'] = vip_itens + rec['itens']
+rec['n'] = len(rec['itens'])
+with open(os.path.join(dados, 'recentes.json'), 'w', encoding='utf-8') as f:
+    json.dump(rec, f, ensure_ascii=False)
 os.remove(os.path.join(dados, 'estado.json'))  # o site nunca recebe o estado interno
 shutil.copy(os.path.join(RAIZ, 'site', 'index.html'), os.path.join(saida, 'index.html'))
 shutil.copy(T.FONTES_TESTE, os.path.join(dados, 'fontes.json'))

@@ -3,7 +3,7 @@
 // montam e rolagem horizontal. Uso: python painel/test/gera_dados_teste.py <pasta> && (cd <pasta> && python -m http.server 8777) && node painel/test/areas.js http://localhost:8777/index.html
 const { chromium } = require('playwright');
 const url = process.argv[2];
-const ROTAS = ['hoje', 'brasil/ativos', 'mundo/agora', 'mundo/cartas', 'mundo/debate', 'mundo/etfs', 'cart/ref', 'cart/mapa', 'cart/carteira', 'cart/perfis', 'bib/busca', 'bib/semanal', 'bib/aprendizados', 'bib/fontes',
+const ROTAS = ['hoje', 'brasil/ativos', 'brasil/pauta', 'bib/mes', 'bib/estante', 'vip/hoje', 'vip/ativos', 'vip/pauta', 'mundo/agora', 'mundo/cartas', 'mundo/debate', 'mundo/etfs', 'cart/ref', 'cart/mapa', 'cart/carteira', 'cart/perfis', 'bib/busca', 'bib/semanal', 'bib/aprendizados', 'bib/fontes',
   // endereços antigos continuam funcionando
   'oregon/ativos', 'oregon/carteiras', 'oregon/setores', 'res/empresas', 'res/etfs', 'res/eventos', 'cart/risco', 'cart/construcao', 'global', 'sala/reuniao', 'mesa/mercado', 'cons/editor'];
 const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 'oregon/setores': 'brasil/ativos', 'res/empresas': 'brasil/ativos', 'res/etfs': 'brasil/ativos', 'res/eventos': 'hoje/',
@@ -103,11 +103,11 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     const ref = await p.evaluate(() => { const b = Array.from(document.querySelectorAll('.seg button')).find(x => /Arrojado/.test(x.textContent)); b.click(); const t = document.getElementById('main').innerText; return APP.S.cart + '|' + (/inválida/.test(t) ? 'mostra inválida' : 'NÃO mostra inválida') + '|' + (/Cenários|Risco estatístico/.test(t) ? 'tem simulador' : 'sem simulador'); });
     rep(ref === 'cresc-arr|mostra inválida|sem simulador', vw + ' carteiras de referência (' + ref + ')');
     const menu = await p.evaluate(() => { const bs = Array.from(document.querySelectorAll('#nav button')); return bs.length + '|' + (bs.find(b => b.getAttribute('aria-selected') === 'true') || {}).dataset.a; });
-    rep(menu === '5|cart', vw + ' menu com cinco seções (' + menu + ')');
+    rep(menu === '6|cart', vw + ' menu com seis seções, a sexta é a VG VIP (' + menu + ')');
     // as cinco seções e a busca ficam visíveis sem rolagem escondida, inclusive no celular; a hora da coleta não some
     const topo = await p.evaluate(() => { const bs = Array.from(document.querySelectorAll('#nav button')), q = document.querySelector('.qbox'), ds = document.querySelector('.dstat b');
       return {nav: bs.every(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= window.innerWidth + 1 && r.width > 30; }), busca: !!q && q.getBoundingClientRect().width > 80, hora: !!ds && /\d{2}:\d{2}/.test(ds.textContent) && ds.getBoundingClientRect().width > 0}; });
-    rep(topo.nav && topo.busca && topo.hora, vw + ' topo: cinco seções, busca e hora da coleta à vista (' + JSON.stringify(topo) + ')');
+    rep(topo.nav && topo.busca && topo.hora, vw + ' topo: seis seções, busca e hora da coleta à vista (' + JSON.stringify(topo) + ')');
     // ---- v3.4: mesa em quatro áreas, profundidade de leitura, sumário, desde a última visita
     await p.evaluate(() => APP.go('hoje')); await p.waitForTimeout(300);
     const mesa = await p.evaluate(() => ({areas: ['radar', 'agenda-decisiva', 'research', 'debate'].filter(id => document.getElementById(id)).length, sumario: document.querySelectorAll('nav.sumario a[href^="#"]').length,
@@ -134,10 +134,48 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     await p.evaluate(() => { APP.abrirEmpresa('PRIO3'); APP.go('hoje'); APP.busca(); }); await p.waitForTimeout(200);
     const bv = await p.evaluate(() => { const li = document.querySelector('.cmdk li'); const t = li ? li.innerText : ''; document.querySelector('.cmdk-bg').remove(); return t; });
     rep(/PRIO3/.test(bv) && /visto por último/.test(bv), vw + ' busca vazia começa pelos ativos vistos por último (' + bv.replace(/\n/g, ' ') + ')');
+    // ---- v3.5: casas de análise na ficha, pauta da semana, origem no Research, buscas salvas, resumo do mês
+    await p.evaluate(() => { APP.abrirEmpresa('PETR4'); APP.fichaVista('casas'); }); await p.waitForTimeout(400);
+    const cs = await p.evaluate(() => ({aba: (document.querySelector('.fv button[aria-selected="true"]') || {}).textContent || '', quadro: !!document.getElementById('casas-hoje'), grafico: !!document.getElementById('alvos-tempo'), tese: !!Array.from(document.querySelectorAll('.fv button')).find(b => /Mudanças na tese/.test(b.textContent))}));
+    rep(/Casas de análise/.test(cs.aba) && cs.quadro && cs.grafico && cs.tese, vw + ' ficha: aba Casas de análise com o quadro e o gráfico, sem tirar as outras abas (' + JSON.stringify(cs) + ')');
+    await p.evaluate(() => APP.go('brasil', 'pauta')); await p.waitForTimeout(300);
+    const pt = await p.evaluate(() => { const t = document.getElementById('main').innerText; return {div: /Pilar Dividendos/.test(t), val: /Pilar Valor/.test(t), copiar: !!Array.from(document.querySelectorAll('button')).find(b => /Copiar pauta/.test(b.textContent))}; });
+    rep(pt.div && pt.val && pt.copiar, vw + ' pauta da semana por pilar, com "Copiar pauta" (' + JSON.stringify(pt) + ')');
+    await p.evaluate(() => APP.go('mundo', 'cartas')); await p.waitForTimeout(300);
+    const og = await p.evaluate(() => Array.from(document.querySelectorAll('.rs-orig button')).map(b => b.firstChild.textContent).join('|'));
+    rep(og === 'Brasil e mundo|Brasil|Mundo', vw + ' Research com origem Brasil e mundo (' + og + ')');
+    const sb = await p.evaluate(async () => { try { localStorage.removeItem('oregon-intel-v3:buscas'); } catch (e) {} APP.go('bib', 'busca'); APP.bibFiltro({q: 'copom'}); await new Promise(z => setTimeout(z, 300)); const b = Array.from(document.querySelectorAll('button')).find(x => x.textContent === 'Salvar busca'); if (!b) return 'sem botão'; b.click(); await new Promise(z => setTimeout(z, 300)); APP.bibFiltro({}); await new Promise(z => setTimeout(z, 200)); const c = document.querySelector('.bs .bs-c'); return c ? c.innerText.replace(/\s+/g, ' ') : 'sem busca salva'; });
+    rep(/copom/.test(sb), vw + ' busca salva aparece na Biblioteca (' + sb + ')');
+    await p.evaluate(() => APP.go('bib', 'mes')); await p.waitForTimeout(300);
+    const rm = await p.evaluate(() => { const t = document.getElementById('main').innerText; return /Resumo do mês/.test(t) && (/publicações em/.test(t) || /Nenhuma publicação/.test(t)); });
+    rep(rm, vw + ' resumo do mês por tema');
     // Biblioteca: filtros avançados recolhidos
     await p.evaluate(() => { APP.go('bib', 'busca'); APP.bibFiltro({}); }); await p.waitForTimeout(300);
     const bf = await p.evaluate(() => { const d = document.querySelector('details.mais-f'); return !!d && !d.open && document.querySelectorAll('.busca-box .busca-l select').length <= 2; });
     rep(bf, vw + ' Biblioteca com filtros avançados recolhidos');
+    // ---- v3.5 · Estante, VG VIP separada da Oregon, mesmo fato agrupado
+    await p.evaluate(() => APP.go('bib', 'estante')); await p.waitForTimeout(1200);
+    const est = await p.evaluate(() => ({lomb: document.querySelectorAll('.est-spine').length, itens: document.querySelectorAll('.est-it').length, maub: /Mauboussin/.test(document.getElementById('main').innerText), indice: !!document.querySelector('.est-idx')}));
+    rep(est.lomb >= 6 && est.itens > 20 && est.maub && est.indice, vw + ' Estante com coleções e acervo (' + JSON.stringify(est) + ')');
+    await p.evaluate(() => { const b = Array.from(document.querySelectorAll('.est-spine')).find(x => /Howard/.test(x.textContent)); b.click(); }); await p.waitForTimeout(300);
+    const hm = await p.evaluate(() => { const l = Array.from(document.querySelectorAll('.est-it')); return l.length && l.every(x => !/Mauboussin/.test(x.querySelector('.est-m').textContent)) ? l.length : 0; });
+    rep(hm > 20, vw + ' Estante filtra pela coleção (' + hm + ' memos)');
+    await p.evaluate(() => APP.go('vip', 'hoje')); await p.waitForTimeout(600);
+    const vh = await p.evaluate(() => ({mapa: document.querySelectorAll('.vip-mapa .atn-t').length, radar: !!document.getElementById('vip-radar'), debate: !!document.getElementById('vip-debate'), vale: /VALE3/.test(document.getElementById('vip-radar').innerText)}));
+    rep(vh.mapa === 35 && vh.radar && vh.debate && vh.vale, vw + ' Hoje VIP: mapa com os 35 ativos, radar e debate (' + JSON.stringify(vh) + ')');
+    await p.evaluate(() => APP.go('vip', 'ativos')); await p.waitForTimeout(400);
+    const va = await p.evaluate(() => ({tabelas: document.querySelectorAll('.vip-tw table').length, linhas: document.querySelectorAll('.vip-tw tbody tr').length, dy26: /DY PAGO 2026/i.test(document.getElementById('main').innerText), sw: document.documentElement.scrollWidth <= innerWidth + 1}));
+    rep(va.tabelas === 3 && va.linhas === 35 && va.dy26 && va.sw, vw + ' Ativos VIP: três carteiras, 35 linhas, todas as colunas, sem rolagem lateral da página (' + JSON.stringify(va) + ')');
+    await p.evaluate(() => APP.abrirFichaVip('LREN3')); await p.waitForTimeout(500);
+    const vf = await p.evaluate(() => { const t = document.getElementById('main').innerText; return /Números do print/.test(t) && /O que cada casa diz hoje/.test(t) && /BTG Pactual/.test(t) && /Notícias de LREN3/.test(t); });
+    rep(vf, vw + ' ficha VIP com números do print, casas de análise e notícias');
+    // não misturar: o que é só da VIP não aparece nas telas da Oregon
+    await p.evaluate(() => APP.go('hoje')); await p.waitForTimeout(500);
+    const mist = await p.evaluate(() => { const t = document.getElementById('radar') ? document.getElementById('radar').innerText : ''; const a = document.getElementById('atencao') ? document.getElementById('atencao').innerText : ''; return /VALE3|LREN3|SBSP3/.test(t + a); });
+    rep(!mist, vw + ' Hoje da Oregon sem os ativos só da VIP');
+    await p.evaluate(() => APP.go('vip', 'pauta')); await p.waitForTimeout(400);
+    const vp = await p.evaluate(() => ({secs: document.querySelectorAll('#main .sec').length, copiar: !!Array.from(document.querySelectorAll('button')).find(b => b.textContent === 'Copiar pauta')}));
+    rep(vp.secs === 3 && vp.copiar, vw + ' Pauta VIP por carteira (' + JSON.stringify(vp) + ')');
     if (errs.length) rep(false, 'erros de JavaScript: ' + errs.join(' | '));
     await p.close();
   }

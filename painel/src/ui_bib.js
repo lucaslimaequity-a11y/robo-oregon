@@ -13,6 +13,45 @@
   function salvos() { return A.salvos().map(function (s0) { return A.itemPorId(s0.id) || s0.item; }).filter(Boolean); }
   var AVANC = ['tema', 'org', 'regiao', 'tipo', 'categoria', 'ativo', 'nivel', 'de', 'ate'];
   function E() { return A.intel; }
+  /* v3.5 · buscas salvas: filtros guardados neste navegador, com quantos itens chegaram desde a sua última visita */
+  var CHAVES_BUSCA = ['q', 'tema', 'regiao', 'tipo', 'categoria', 'org', 'ativo', 'nivel', 'grupo'];
+  function buscas() { var l = A.lsGet ? A.lsGet('buscas', []) : []; return Array.isArray(l) ? l : []; }
+  function nomeBusca(f) {
+    var p = [];
+    if (f.q) p.push('"' + f.q + '"');
+    if (f.ativo) p.push(f.ativo);
+    if (f.tema) p.push(I.temaNome(f.tema));
+    if (f.org) p.push(f.org);
+    if (f.regiao) p.push(I.regiaoNome(f.regiao));
+    if (f.tipo) p.push(I.tipoNome(f.tipo));
+    if (f.grupo) p.push(({noticias: 'Notícias', opinioes: 'Opiniões', cartas: 'Cartas e research', oficiais: 'CVM e instituições', salvos: 'Salvos'})[f.grupo] || f.grupo);
+    return p.join(' · ') || 'Tudo';
+  }
+  function aplicaBusca(itens, f) {
+    var l = I.filtrar(itens, Object.assign({q: '', tema: '', regiao: '', tipo: '', categoria: '', org: '', ativo: '', nivel: '', de: '', ate: '', lidos: 'todos'}, f));
+    var gr = GRUPOS.filter(function (g) { return g[0] === f.grupo; })[0];
+    return gr && gr[2] ? l.filter(gr[2]) : l;
+  }
+  // Para o Hoje e para a Biblioteca: cada busca salva com quantos itens novos (detectados depois da sua visita anterior)
+  A.buscasSalvas = function () {
+    var itens = A.itensAtivo ? A.itensAtivo() : A.itens();
+    return buscas().map(function (b) { var l = aplicaBusca(itens, b.f); return {b: b, total: l.length, novos: A.visitaAnterior && A.visitaAnterior() ? l.filter(function (x) { return A.novoParaVoce(x); }).length : 0}; });
+  };
+  A.abrirBusca = function (b) { A.go('bib', 'busca'); A.bibFiltro(Object.assign({}, b.f)); };
+  function salvarBusca() {
+    var f = {}; CHAVES_BUSCA.forEach(function (k) { if (F[k]) f[k] = F[k]; });
+    if (!Object.keys(f).length) { A.toast('Escreva um assunto ou escolha um filtro antes de salvar.'); return; }
+    var l = buscas(), nome = nomeBusca(f);
+    if (l.some(function (b) { return b.nome === nome; })) { A.toast('Essa busca já está salva.'); return; }
+    l.push({nome: nome, f: f, criada: new Date().toISOString()}); A.lsSet('buscas', l.slice(-20)); A.toast('Busca salva: ' + nome); A.rerender();
+  }
+  function buscasView() {
+    var L = A.buscasSalvas(); if (!L.length) return null;
+    return h('div', {class: 'bs', 'aria-label': 'Buscas salvas'}, h('span', {class: 'muted'}, 'Buscas salvas:'), L.map(function (o, i) {
+      return h('span', {class: 'bs-c'}, h('button', {title: o.total + ' itens nos meses carregados' + (o.novos ? '; ' + o.novos + ' desde a sua última visita' : ''), onclick: function () { A.bibFiltro(Object.assign({}, o.b.f)); }}, o.b.nome, o.novos ? h('b', null, ' · ' + o.novos + (o.novos > 1 ? ' novos' : ' novo')) : h('span', {class: 'muted'}, ' · ' + o.total)),
+        h('button', {class: 'bs-x', title: 'Apagar esta busca salva', 'aria-label': 'Apagar a busca ' + o.b.nome, onclick: function () { var l = buscas(); l.splice(i, 1); A.lsSet('buscas', l); A.rerender(); }}, '×'));
+    }));
+  }
   function mesesPedidos() {
     // os N meses mais recentes disponíveis; o período escolhido força os meses que ele cobre
     var disp = A.mesesDisponiveis().slice().sort().reverse(), n = Math.max(1, F.meses | 0), out = disp.slice(0, n);
@@ -47,7 +86,8 @@
     var filtros = h('div', {class: 'filtros'},
       h('select', {class: 'inp', 'aria-label': 'Meses carregados', onchange: function (ev) { F.meses = +ev.target.value; A.rerender(); }}, [1, 3, 6, 12, 36].map(function (n) { return h('option', {value: n, selected: F.meses === n || null}, 'últimos ' + n + ' mês' + (n > 1 ? 'es' : '')); })),
       h('select', {class: 'inp', 'aria-label': 'Ordem', onchange: function (ev) { F.ordem = ev.target.value; A.rerender(); }}, [['data', 'mais recentes'], ['prioridade', 'maior prioridade']].map(function (o) { return h('option', {value: o[0], selected: ordem === o[0] || null}, o[1]); })),
-      nAv || F.q || F.grupo ? h('button', {class: 'btn sm', onclick: function () { F.de = F.ate = ''; F.lidos = 'todos'; A.bibFiltro({}); }}, 'Limpar') : null);
+      nAv || F.q || F.grupo ? h('button', {class: 'btn sm', onclick: function () { F.de = F.ate = ''; F.lidos = 'todos'; A.bibFiltro({}); }}, 'Limpar') : null,
+      (F.q || F.grupo || CHAVES_BUSCA.some(function (k) { return F[k]; })) && F.grupo !== 'salvos' ? h('button', {class: 'btn sm', title: 'Guarda esta busca neste navegador e mostra quantos itens novos chegaram desde a sua última visita', onclick: salvarBusca}, 'Salvar busca') : null);
     var avanc = h('details', {class: 'mais-f', open: nAv ? true : null}, h('summary', null, 'Mais filtros' + (nAv ? ' · ' + nAv + ' ativo' + (nAv > 1 ? 's' : '') : '')), h('div', {class: 'filtros'},
       sel('Assunto', 'tema', ordenado(I.contagens(base, 'temas'), I.temaNome), I.temaNome),
       sel('Autor ou gestora', 'org', ordenado(I.contagens(base, 'organizacao'))),
@@ -61,11 +101,45 @@
     wrap.appendChild(A.pageHead('Biblioteca', 'Pesquisa', 'Tudo o que o robô coletou, mês a mês, sem apagar nada.' + (e.versao ? ' ' + A.mesesDisponiveis().length + ' meses disponíveis.' : '')));
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
     wrap.appendChild(h('div', {class: 'busca-box'}, q, h('div', {class: 'busca-l'}, grupos, filtros), avanc));
+    var bv = buscasView(); if (bv) wrap.appendChild(bv);
     if (F.grupo === 'salvos') wrap.appendChild(h('p', {class: 'hint'}, 'Itens marcados com “Ler depois” na janela de leitura ou na linha da notícia. Para tirar da lista, abra o item e toque em “Salvo para ler”.'));
     wrap.appendChild(h('p', {class: 'muted', style: 'font-size:.88rem'}, lista.length + ' de ' + (F.grupo === 'salvos' ? A.salvos().length : base.length) + ' itens' + (pend ? ' · carregando meses…' : '') + (F.tema ? ' · assunto: ' + I.temaNome(F.tema) : '') + (F.ativo ? ' · ativo: ' + F.ativo : '')));
     var MAX = F.max || 60;
     wrap.appendChild(A.listaItens(lista, {max: MAX, vazio: F.grupo === 'salvos' ? 'Nada salvo para ler. Use “Ler depois” em qualquer notícia.' : base.length ? 'Nenhum item com estes filtros.' : (pend ? 'Carregando…' : 'A biblioteca ainda não tem itens publicados.')}));
     if (lista.length > MAX) wrap.appendChild(h('p', {style: 'text-align:center'}, h('button', {class: 'btn', onclick: function () { F.max = MAX + 60; A.rerender(); }}, 'Mostrar mais ' + Math.min(60, lista.length - MAX))));
+    return wrap;
+  }
+
+  /* ---------- v3.5 · resumo do mês por tema de gestão: o que foi coletado, sem resumo inventado ---------- */
+  var RM = {mes: null};
+  var MESES_PT = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  function resumoMes() {
+    var wrap = h('div'), itens = (A.itensResearch ? A.itensResearch() : A.itens()).filter(function (x) { return x.publicado_em && !x.acervo && !x.agrupado_em && /^gestora_|^instituicao$|^academia$|^youtube$/.test(x.categoria || ''); });
+    var meses = []; itens.forEach(function (x) { var m = x.publicado_em.slice(0, 7); if (meses.indexOf(m) < 0 && m <= I.hojeBRT().slice(0, 7)) meses.push(m); }); meses.sort().reverse(); meses = meses.slice(0, 3);
+    if (!RM.mes || meses.indexOf(RM.mes) < 0) RM.mes = meses[0] || I.hojeBRT().slice(0, 7);
+    var doMes = itens.filter(function (x) { return x.publicado_em.slice(0, 7) === RM.mes; });
+    var nomeMes = MESES_PT[+RM.mes.slice(5, 7) - 1] + ' de ' + RM.mes.slice(0, 4), parcial = RM.mes === I.hojeBRT().slice(0, 7);
+    wrap.appendChild(A.pageHead('Biblioteca', 'Resumo do mês', 'Cartas, research e publicações acadêmicas e de instituições do mês, por tema de gestão: quantas foram, quem publicou e os documentos mais repercutidos. Só o que o robô coletou; nenhum texto é resumido por máquina.'));
+    wrap.appendChild(h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Mês'}, meses.map(function (m) { return h('button', {'aria-pressed': RM.mes === m ? 'true' : 'false', onclick: function () { RM.mes = m; A.rerender(); }}, MESES_PT[+m.slice(5, 7) - 1] + '/' + m.slice(2, 4)); })));
+    if (!doMes.length) { wrap.appendChild(h('p', {class: 'empty'}, E().versao ? 'Nenhuma publicação com data neste mês nos arquivos carregados.' : 'Sem dados do robô nesta visualização.')); return wrap; }
+    var orgs = {}; doMes.forEach(function (x) { var o = x.organizacao || x.fonte; orgs[o] = (orgs[o] || 0) + 1; });
+    var br = doMes.filter(function (x) { return x.pais === 'Brasil'; }).length;
+    wrap.appendChild(h('p', {class: 'lead'}, h('b', null, doMes.length + ' publicações'), ' em ' + nomeMes + (parcial ? ' (mês em andamento)' : '') + ', de ' + Object.keys(orgs).length + ' organizações · ' + br + ' do Brasil e ' + (doMes.length - br) + ' de fora.'));
+    function rank(x) { return ((x.tambem_em || []).length * 100) + ((x.prioridade || {}).pontos || 0); }
+    var cards = (A.TEMAS_GESTAO ? A.TEMAS_GESTAO() : []).map(function (t) {
+      var l = doMes.filter(function (x) { return A.temaGestao(x, t); });
+      return {t: t, l: l};
+    }).filter(function (o) { return o.l.length; }).sort(function (a, b) { return b.l.length - a.l.length; });
+    wrap.appendChild(h('div', {class: 'mes-t'}, cards.map(function (o) {
+      var top = o.l.slice().sort(function (a, b) { return rank(b) - rank(a) || I.pub(b).localeCompare(I.pub(a)); }).slice(0, 3);
+      var og = {}; o.l.forEach(function (x) { var k = x.organizacao || x.fonte; og[k] = (og[k] || 0) + 1; });
+      var topo = Object.keys(og).sort(function (a, b) { return og[b] - og[a]; }).slice(0, 3);
+      return h('div', {class: 'mes-c'}, h('h3', null, o.t[1], h('small', null, o.l.length + (o.l.length > 1 ? ' publicações' : ' publicação'))),
+        h('ul', null, top.map(function (x) { return h('li', null, h('button', {class: 'nwl', onclick: function () { A.abrirItem(x); }}, x.titulo), h('span', {class: 'org'}, ' · ' + (x.organizacao || x.fonte) + ' · ' + I.quando(x) + ((x.tambem_em || []).length ? ' · em mais ' + x.tambem_em.length + (x.tambem_em.length > 1 ? ' fontes' : ' fonte') : ''))); })),
+        h('p', {class: 'org'}, 'Quem mais publicou: ' + topo.map(function (k) { return k + ' (' + og[k] + ')'; }).join(', ')),
+        h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({grupo: 'cartas', tema: (o.t[2] || [])[0] || '', de: RM.mes + '-01', ate: RM.mes + '-31'}); }}, 'Abrir o tema na Biblioteca'));
+    })));
+    wrap.appendChild(h('p', {class: 'hint'}, 'Ordem dentro do tema: documentos que saíram em mais de uma fonte primeiro, depois a prioridade do robô. A Biblioteca guarda os meses anteriores.'));
     return wrap;
   }
 
@@ -158,12 +232,80 @@
     return wrap;
   }
 
-  A.SUBS.bib = [['busca', 'Pesquisa'], ['semanal', 'Resumos semanais'], ['aprendizados', 'Meus aprendizados'], ['fontes', 'Fontes e coleta']];
+  /* ---------- v3.5 · Estante: acervo permanente (Mauboussin, CFA Research Foundation, Howard Marks, Damodaran, AQR, GMO) ---------- */
+  var ES = {col: '', q: '', tema: '', dec: '', ordem: 'rec', max: 60};
+  var COR_EST = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#6250d6'];  // ordem fixa das coleções (identidade, não valor)
+  function corCol(cols, id) { var i = cols.map(function (c) { return c.id; }).indexOf(id); return COR_EST[i] || 'var(--muted)'; }  // da 7ª coleção em diante: cinza (não repete cor)
+  function nrm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  function dataEst(x) { var d = x.data || ''; return d.length === 10 ? d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4) : d.length === 7 ? d.slice(5, 7) + '/' + d.slice(0, 4) : String(x.ano || d || 's/ data'); }
+  function estante() {
+    var wrap = h('div'), e = E(), est = e.estante;
+    wrap.appendChild(A.pageHead('Biblioteca', 'Estante', 'Acervo permanente de autores e séries clássicas, do primeiro texto ao mais recente. O robô acrescenta o que sai de novo; nada sai daqui. Cada título abre a fonte original.'));
+    if (!est) { A.carregarEstante(); wrap.appendChild(h('p', {class: 'empty'}, 'Abrindo a estante…')); return wrap; }
+    var cols = est.colecoes || [], todos = est.itens || [], temas = est.temas || [];
+    if (!todos.length) { wrap.appendChild(h('p', {class: 'empty'}, est.erro && /ainda não publicado/.test(est.erro) ? 'A Estante aparece depois da próxima rodada do robô (ela monta o acervo aos poucos, algumas páginas por rodada).' : est.erro ? 'Não consegui abrir a Estante: ' + est.erro + '.' : 'A Estante ainda está vazia.')); return wrap; }
+    var nomeTema = {}; temas.forEach(function (t) { nomeTema[t[0]] = t[1]; });
+    // prateleira: uma lombada por coleção, na ordem fixa do cadastro
+    wrap.appendChild(h('div', {class: 'est-shelf', role: 'toolbar', 'aria-label': 'Coleções'}, cols.map(function (c) {
+      var on = ES.col === c.id;
+      return h('button', {class: 'est-spine' + (on ? ' on' : ''), 'aria-pressed': on ? 'true' : 'false', style: '--sp:' + corCol(cols, c.id), title: c.nome + (c.autor ? ' · ' + c.autor : '') + '. ' + (c.descricao || '') + (c.status === 'enchendo' ? ' · o robô ainda está completando o acervo' : c.status === 'erro' ? ' · última leitura falhou: ' + (c.erro || '') : ''),
+        onclick: function () { ES.col = on ? '' : c.id; ES.max = 60; A.rerender(); }},
+        h('span', {class: 'est-sp-n'}, c.nome),
+        h('span', {class: 'est-sp-c'}, h('b', null, String(c.total || 0)), c.de ? h('small', null, c.de + (c.ate && c.ate !== c.de ? '–' + String(c.ate).slice(2) : '')) : null),
+        c.status === 'enchendo' ? h('span', {class: 'est-sp-s'}, 'completando') : c.status === 'erro' ? h('span', {class: 'est-sp-s err', title: 'A última leitura da listagem falhou; o acervo já publicado continua aqui'}, 'falhou') : null);
+    })));
+    var col = cols.filter(function (c) { return c.id === ES.col; })[0];
+    if (col) wrap.appendChild(h('p', {class: 'est-desc'}, col.descricao || '', col.site ? [' ', h('a', {href: col.site, target: '_blank', rel: 'noopener'}, 'Site do autor ↗')] : null, col.nota_links ? h('span', {class: 'muted'}, ' ' + col.nota_links) : null));
+    // filtros: texto, tema, década, ordem
+    var base0 = todos.filter(function (x) { return !ES.col || x.col === ES.col; });
+    var qn = nrm(ES.q).trim();
+    var l = base0.filter(function (x) {
+      if (ES.tema && (x.temas || []).indexOf(ES.tema) < 0) return false;
+      if (ES.dec && String(x.ano || '').slice(0, 3) !== ES.dec) return false;
+      if (qn) { var t = nrm(x.titulo + ' ' + (x.resumo || '') + ' ' + (x.instituicao || '') + ' ' + (x.autor || '')); if (qn.split(/\s+/).some(function (w) { return w && t.indexOf(w) < 0; })) return false; }
+      return true;
+    });
+    var chave = function (x) { return x.data || String(x.ano || ''); };
+    l.sort(function (a, b) { return ES.ordem === 'ant' ? chave(a).localeCompare(chave(b)) : chave(b).localeCompare(chave(a)); });
+    var contT = {}; base0.forEach(function (x) { (x.temas || []).forEach(function (t) { contT[t] = (contT[t] || 0) + 1; }); });
+    var decs = {}; base0.forEach(function (x) { if (x.ano) decs[String(x.ano).slice(0, 3)] = 1; });
+    var inp = h('input', {class: 'inp est-q', type: 'search', placeholder: 'Buscar no título, autor ou resumo', value: ES.q, 'aria-label': 'Buscar na estante', onkeydown: function (ev) { if (ev.key === 'Enter') { ES.q = ev.target.value; ES.max = 60; A.rerender(); } }, onchange: function (ev) { ES.q = ev.target.value; ES.max = 60; A.rerender(); }});
+    wrap.appendChild(h('div', {class: 'est-tools'}, inp,
+      h('select', {class: 'inp', 'aria-label': 'Década', onchange: function (ev) { ES.dec = ev.target.value; ES.max = 60; A.rerender(); }}, [h('option', {value: ''}, 'Todas as décadas')].concat(Object.keys(decs).sort().reverse().map(function (d) { return h('option', {value: d, selected: ES.dec === d ? true : null}, 'Anos ' + d + '0'); }))),
+      h('select', {class: 'inp', 'aria-label': 'Ordem', onchange: function (ev) { ES.ordem = ev.target.value; A.rerender(); }}, h('option', {value: 'rec', selected: ES.ordem === 'rec' ? true : null}, 'Mais recentes primeiro'), h('option', {value: 'ant', selected: ES.ordem === 'ant' ? true : null}, 'Mais antigos primeiro'))));
+    wrap.appendChild(h('div', {class: 'est-temas', role: 'toolbar', 'aria-label': 'Temas'}, temas.filter(function (t) { return contT[t[0]]; }).map(function (t) {
+      var on = ES.tema === t[0];
+      return h('button', {class: 'tag' + (on ? ' on' : ''), 'aria-pressed': on ? 'true' : 'false', onclick: function () { ES.tema = on ? '' : t[0]; ES.max = 60; A.rerender(); }}, t[1] + ' · ' + contT[t[0]]);
+    })));
+    wrap.appendChild(h('p', {class: 'muted est-n'}, l.length === base0.length ? l.length + ' itens' : l.length + ' de ' + base0.length + ' itens', ES.q || ES.tema || ES.dec ? [' · ', h('button', {class: 'btn link', onclick: function () { ES.q = ''; ES.tema = ''; ES.dec = ''; A.rerender(); }}, 'limpar filtros')] : null));
+    if (!l.length) { wrap.appendChild(h('p', {class: 'empty'}, 'Nada na estante com esses filtros.')); return wrap; }
+    var lista = h('div', {class: 'est-list'}), anoAtual = null;
+    l.slice(0, ES.max).forEach(function (x) {
+      if (x.ano !== anoAtual) { anoAtual = x.ano; lista.appendChild(h('div', {class: 'est-ano'}, anoAtual ? String(anoAtual) : 'Sem data')); }
+      var c0 = cols.filter(function (c) { return c.id === x.col; })[0] || {}, lk = A.link(x.link), indice = x.link_tipo === 'indice_autor';
+      lista.appendChild(h('article', {class: 'est-it'}, h('span', {class: 'est-dot', style: 'background:' + corCol(cols, x.col), title: c0.nome || ''}),
+        h('div', {class: 'est-b'},
+          h('h3', {class: 'est-t'}, lk ? h('a', {href: lk, target: '_blank', rel: 'noopener', title: indice ? (x.link_nota || 'Abre o índice do próprio autor') : 'Abrir na fonte original'}, x.titulo) : x.titulo),
+          h('p', {class: 'est-m'}, [c0.nome && !ES.col ? c0.nome : null, x.instituicao && x.instituicao !== c0.nome ? x.instituicao : null, x.autor && x.autor !== c0.autor ? x.autor : null, dataEst(x)].filter(Boolean).join(' · '),
+            indice ? h('span', {class: 'est-idx', title: x.link_nota || ''}, ' · índice do autor ↗') : lk ? h('span', {class: 'muted'}, ' ↗') : null),
+          x.resumo ? h('p', {class: 'est-r'}, x.resumo.length > 260 ? x.resumo.slice(0, 257) + '…' : x.resumo) : null,
+          h('div', {class: 'est-f'}, (x.anexos || []).map(function (a) { return h('a', {class: 'chip', href: A.link(a.url), target: '_blank', rel: 'noopener'}, a.rotulo + ' ↗'); }),
+            (x.temas || []).slice(0, 3).map(function (t) { return h('button', {class: 'tag sm', onclick: function () { ES.tema = t; ES.max = 60; A.rerender(); }}, nomeTema[t] || t); }),
+            h('button', {class: 'btn link sm', onclick: function () { A.drawer('Anotar o que aprendi', A.formAprendizado(null, {tipo: 'aprendizado', titulo: x.titulo, fonte: (c0.nome || '') + (x.ano ? ' · ' + x.ano : ''), link: x.link, temas: []})); }}, 'anotar o que aprendi')))));
+    });
+    wrap.appendChild(lista);
+    if (l.length > ES.max) wrap.appendChild(h('p', {class: 'mais'}, h('button', {class: 'btn sm', onclick: function () { ES.max += 120; A.rerender(); }}, 'Mostrar mais ' + Math.min(120, l.length - ES.max))));
+    wrap.appendChild(h('p', {class: 'hint'}, 'Temas por palavra-chave do título (a lista de palavras está em robo/estante.py). Só título, data, link e o resumo que a própria página declara; o texto fica na fonte. ' +
+      'Os artigos do Mauboussin anteriores a 2020 (CS First Boston, Legg Mason, Credit Suisse, BlueMountain) não têm mais endereço da editora: o link abre o índice do próprio autor.'));
+    return wrap;
+  }
+
+  A.SUBS.bib = [['busca', 'Pesquisa'], ['estante', 'Estante'], ['mes', 'Resumo do mês'], ['semanal', 'Resumos semanais'], ['aprendizados', 'Meus aprendizados'], ['fontes', 'Fontes e coleta']];
   A.areas.bib = function () {
     var wrap = h('div'), s = S.sub.bib;
     if (!A.SUBS.bib.some(function (x) { return x[0] === s; })) s = S.sub.bib = 'busca';
     wrap.appendChild(A.subnav('bib', A.SUBS.bib));
-    wrap.appendChild(s === 'semanal' ? semanal() : s === 'aprendizados' ? aprendizados() : s === 'fontes' ? fontes() : busca());
+    wrap.appendChild(s === 'semanal' ? semanal() : s === 'aprendizados' ? aprendizados() : s === 'fontes' ? fontes() : s === 'mes' ? resumoMes() : s === 'estante' ? estante() : busca());
     return wrap;
   };
 })(APP, CORE, INTEL);

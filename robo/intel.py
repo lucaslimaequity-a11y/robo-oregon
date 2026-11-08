@@ -39,10 +39,11 @@ import conteudo  # noqa: E402
 import fontes_macro  # noqa: E402
 import noticias  # noqa: E402  (desambiguação por empresa, reaproveitada da v2)
 import casas  # noqa: E402
+import estante  # noqa: E402  (v3.5 · acervo permanente)
 import pesquisas  # noqa: E402
 import resultados  # noqa: E402
 import semanal  # noqa: E402
-from util import ErroFonte, Rede, agora, gravar, ler, log, sem_acento  # noqa: E402
+from util import ErroFonte, Rede, agora, dados_dir, gravar, ler, log, sem_acento  # noqa: E402
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 # minutos entre leituras de uma mesma fonte (0 = toda rodada). Imprensa e instituições mudam ao longo do dia;
@@ -181,6 +182,30 @@ def carregar_oregon(cfg, caminho=None):
             termos.append(c['nome'])  # empresas e FIIs: o nome também identifica; ETFs só pelo código (não confundir índice com fundo)
         ativos[t] = {'nome': nome, 'termos': termos, 'excluir': list((c.get('noticias') or {}).get('excluir') or []), 'setor': a.get('setor'), 'pilar': a.get('pilar'), 'classe': a.get('classe'), 'tipo': a.get('tipo'), 'pais': a.get('pais'), 'emissor': a.get('emissor'),
                      'fator': ((d.get('sens') or {}).get(t) or {}).get('f')}  # fator da premissa interna de sensibilidade (pesquisas ativo × fator)
+    # v3.5 · carteiras VG VIP (painel/src/vip.json). Ativo que já é da Oregon só ganha a marca das carteiras VIP; o que é só
+    # da VIP entra com `so_vip` e o item guarda esse vínculo à parte (ativos_vip), para a seção Oregon nunca misturar as duas.
+    try:
+        with open(os.path.join(os.path.dirname(caminho), 'vip.json'), encoding='utf-8') as f:
+            vip = json.load(f)
+    except Exception:
+        vip = {}
+    for cart in vip.get('carteiras') or []:
+        for a in cart.get('ativos') or []:
+            t = a.get('noticias_de') or a.get('ticker')
+            if not t:
+                continue
+            if t in ativos:
+                if cart['id'] not in ativos[t].setdefault('carteiras_vip', []):
+                    ativos[t]['carteiras_vip'].append(cart['id'])
+                continue
+            c = termos_cfg.get(t) or {}
+            termos = list((c.get('noticias') or {}).get('termos') or [])
+            if len(t) >= 3 and t not in termos:
+                termos.append(t)
+            if c.get('classe') in ('acao', 'fii') and c.get('nome') and c['nome'] not in termos:
+                termos.append(c['nome'])
+            ativos[t] = {'nome': a.get('empresa') or c.get('nome') or t, 'termos': termos, 'excluir': list((c.get('noticias') or {}).get('excluir') or []), 'setor': a.get('setor'),
+                         'pilar': None, 'classe': 'Ações', 'tipo': 'Ação', 'pais': 'Brasil', 'emissor': a.get('empresa'), 'fator': None, 'so_vip': True, 'carteiras_vip': [cart['id']]}
     setores = []
     for g in d.get('grupos') or []:
         termos = []
@@ -197,7 +222,7 @@ def carregar_oregon(cfg, caminho=None):
         etfs = [t for t in e.get('etfs') or [] if t in ativos]
         if termos and etfs:
             temas_etf.append({'tema': e.get('tema'), 'termos': termos, 'etfs': etfs})
-    return {'ativos': ativos, 'setores': setores, 'carteiras': carteiras, 'temas_etf': temas_etf, 'fonte': 'painel/src/data.json (ativos das 15 carteiras) + robo/config.json (termos de busca)'}
+    return {'ativos': ativos, 'setores': setores, 'carteiras': carteiras, 'temas_etf': temas_etf, 'fonte': 'painel/src/data.json (ativos das 15 carteiras) + painel/src/vip.json (carteiras VG VIP) + robo/config.json (termos de busca)'}
 
 
 # ------------------------------------------------------------------ macro
@@ -417,10 +442,20 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
                 if rede.sem_tempo():
                     break
                 conteudo.ler_pagina_item(rede, robots, x, f, agora_)
+        for x in ineditos:
+            biblioteca.corrigir_data_futura(x, hoje)
         sem_data = [x for x in ineditos if not x.get('publicado_em')]
         lote_arquivo = not primeira_leitura and len(sem_data) > 3  # muitos itens sem data de uma vez numa fonte já lida: é o arquivo da página
         for x in list(ineditos):
             analise.classificar(x, oregon, hoje)
+            if f.get('descartar_promocional') and x.get('natureza') in ('promocional', 'sensacionalista'):
+                rej['promocional'] = rej.get('promocional', 0) + 1  # casa com muito texto de venda (Empiricus): fica só empresa e estratégia
+                ineditos.remove(x)
+                continue
+            if f.get('exigir_assunto') and not (x.get('ativos') or x.get('temas') or x.get('etfs_tema')):
+                rej['fora_do_tema'] = rej.get('fora_do_tema', 0) + 1
+                ineditos.remove(x)
+                continue
             if f.get('so_oregon') and not x.get('ativos'):  # feed setorial: só manchetes que citem ativo das carteiras
                 rej['sem_ativo_oregon'] = rej.get('sem_ativo_oregon', 0) + 1
                 ineditos.remove(x)
@@ -449,6 +484,16 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
         novos += achados
     except Exception as e:
         log_('  InvesTalk não consultado: %s' % type(e).__name__)
+    try:  # v3.5 · relatórios da Genial pela página de cada ação (o sitemap de relatórios não respondeu a partir do GitHub)
+        gen = casas.genial_paginas(cfg, oregon, rede, robots, hoje, agora_, estado, log_=log_)
+        fg = casas.FONTE_GENIAL
+        biblioteca.registrar(cont, fg['id'], fg['nome'], recebidos=len(gen), novos=len(gen), classificados=len(gen), marca=marca)
+        datas_g = [x['publicado_em'] for x in gen if x.get('publicado_em')]
+        if datas_g:
+            cont[fg['id']]['ultimo_publicado'] = max(datas_g)
+        novos += gen
+    except Exception as e:
+        log_('  Genial (página da ação) não consultada: %s' % type(e).__name__)
     res, gravados = biblioteca.incorporar(novos, hoje, agora_)
     for x in gravados:
         c = cont.get(x['fonte_id'])
@@ -571,6 +616,42 @@ def migrar_acervo_v34(estado, hoje):
     if n:
         log('  acervo: %d cartas antigas sem data deixaram as novidades (mês de referência antigo ou lote do arquivo da página)' % n)
     return n
+
+
+def alertas_imediatos(novos, estado, agora_, maximo=5):
+    """Itens novos desta rodada que merecem aviso na hora: fato relevante de empresa das carteiras ou opinião de casa
+    em que o ativo é o assunto. Só o que foi publicado nas últimas 48 h, nunca o mesmo item duas vezes, no máximo `maximo`."""
+    ja = set(estado.get('alertados') or [])
+    lim = (agora_ - dt.timedelta(hours=48)).isoformat(timespec='minutes')
+    out = []
+    for x in novos or []:
+        if x['id'] in ja or x.get('acervo') or x.get('agrupado_em') or not x.get('publicado_em') or x['publicado_em'] < lim:
+            continue
+        diretos = [t for t, v in (x.get('vinculos') or {}).items() if (v or {}).get('tipo') == 'direto']
+        fato = x.get('categoria') == 'oficial_empresa' and x.get('tipo') == 'fato_relevante'
+        opiniao = x.get('natureza') == 'opiniao_casa' and diretos
+        if fato or opiniao:
+            out.append(x)
+    out.sort(key=lambda y: (0 if y.get('tipo') == 'fato_relevante' else 1, y.get('publicado_em') or ''))
+    return out[:maximo]
+
+
+def texto_alertas(itens, agora_):
+    seta = {'favoravel': ' ▲', 'contraria': ' ▼'}
+    linhas = ['<b>Oregon Intelligence · agora</b> (%s)' % agora_.strftime('%d/%m %H:%M')]
+    for x in itens:
+        tk = ', '.join(t for t, v in (x.get('vinculos') or {}).items() if (v or {}).get('tipo') == 'direto') or ', '.join(x.get('ativos') or [])
+        if x.get('tipo') == 'fato_relevante':
+            cab = '‼️ %s · fato relevante' % tk
+        else:
+            cab = '%s · opinião de %s%s' % (tk, ', '.join(x.get('casas') or []) or 'casa de análise', seta.get(x.get('posicao'), ''))
+            extra = ' · '.join(v for v in (x.get('recomendacao'), ('alvo ' + x['preco_alvo']) if x.get('preco_alvo') else None) if v)
+            if extra:
+                cab += ' · ' + extra
+        quando = (x.get('publicado_em') or '')[11:16]
+        linhas.append('\n<b>%s</b>\n<a href="%s">%s</a> — %s%s' % (html.escape(cab), html.escape(x.get('link') or '', quote=True), html.escape(x.get('titulo') or ''),
+                                                                 html.escape(x.get('organizacao') or x.get('fonte') or ''), (' · ' + quando) if quando else ''))
+    return '\n'.join(linhas)
 
 
 SEMENTES = os.path.join(AQUI, 'sementes')
@@ -728,6 +809,7 @@ def main():
     try:
         # 4. índice, recentes, briefing
         biblioteca.FONTES_BLOQUEADAS = list((cfg.get('noticias') or {}).get('fontes_bloqueadas') or [])
+        biblioteca.FILTROS_TITULO = {f['id']: f['filtro_titulo'] for f in fontes_cfg if f.get('filtro_titulo')}
         idx = biblioteca.reindexar(agora_)
         recentes = biblioteca.publicar_recentes(hoje, agora_, dias=int((cfg.get('intel') or {}).get('recentes_dias', 10)), oregon=oregon)
         try:
@@ -787,6 +869,17 @@ def main():
             res_msg = 'resultados não lidos: %s' % (e if isinstance(e, ErroFonte) else type(e).__name__)
         log('  resultados CVM: ' + res_msg)
 
+    # 5c. Estante (v3.5): acervo permanente de autores e séries clássicas. Algumas páginas por rodada; uma falha mantém o
+    # acervo publicado (nada é apagado) e só marca a coleção com o erro.
+    try:
+        rede_e = Rede(prazo_seg=int((cfg.get('estante') or {}).get('prazo_min', 4)) * 60)
+        est = estante.atualizar(cfg, rede_e, conteudo.Robots(rede_e), hoje, agora_, estado, ler('biblioteca/estante.json') or {}, log_=log)
+        if est and est.get('itens'):
+            os.makedirs(os.path.join(dados_dir(), 'biblioteca'), exist_ok=True)
+            gravar('biblioteca/estante.json', est)
+    except Exception as e:  # pragma: no cover - proteção
+        log('  estante não atualizada: %s' % type(e).__name__)
+
     # 6. Telegram (opcional): digesto diário com as prioridades, uma vez por dia
     tem_tg = bool(os.environ.get('TELEGRAM_TOKEN'))
     tg = {'ok': None, 'msg': 'TELEGRAM_TOKEN não configurado'}
@@ -804,6 +897,15 @@ def main():
         tg = {'ok': okk, 'msg': m or 'briefing enviado'}
         if okk and modo != 'teste_telegram':
             estado['digesto'] = hoje.isoformat()
+
+    # 6b. Alerta imediato (v3.5, opcional): fato relevante ou opinião nova de empresa das carteiras, na rodada em que chega
+    if tem_tg and ic.get('telegram_alertas', True) and modo != 'teste_telegram':
+        al = alertas_imediatos(novos, estado, agora_, int(ic.get('telegram_alertas_max', 5)))
+        if al:
+            okk, m = avisos.enviar(texto_alertas(al, agora_))
+            if okk:
+                estado['alertados'] = ((estado.get('alertados') or []) + [x['id'] for x in al])[-400:]
+            log('  alerta imediato: %d item(ns) %s' % (len(al), 'enviados' if okk else 'não enviados: ' + (m or '')))
 
     # 7. avaliação e gravação
     motivos, nivel = list(motivos_extra), 'parcial' if motivos_extra else 'completo'

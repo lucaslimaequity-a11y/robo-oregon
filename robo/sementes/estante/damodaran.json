@@ -1,0 +1,425 @@
+{
+ "_nota": "Semente dos papers do Damodaran na Estante: 58 papers distintos da página de papers na NYU Stern (PDF no site do autor ou SSRN), conferidos em 08/11/2026. Títulos como estão na página (inclusive erros de digitação, ex.: \"Marktets\"); as edições listadas só como \"2011 Edition\" ganharam o nome da série. Ano só quando está no título.",
+ "fontes": [
+  "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/papers.html"
+ ],
+ "itens": [
+  {
+   "titulo": "Equity Risk Premiums: The 2011 Edition",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/ERP2011.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)",
+   "ano": 2011
+  },
+  {
+   "titulo": "Equity Risk Premiums: The 2012 Edition",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/ERP2012.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)",
+   "ano": 2012
+  },
+  {
+   "titulo": "Equity Risk Premiums: The 2013 Edition",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2238064",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)",
+   "ano": 2013
+  },
+  {
+   "titulo": "Equity Risk Premiums: The 2014 Edition",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2409198",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)",
+   "ano": 2014
+  },
+  {
+   "titulo": "Equity Risk Premiums: The 2015 Edition",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2581517",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)",
+   "ano": 2015
+  },
+  {
+   "titulo": "Country Risk: The 2015 Edition",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2630871",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)",
+   "ano": 2015
+  },
+  {
+   "titulo": "A COVID Diary: Searching for Investment Serenity",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3799691",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)"
+  },
+  {
+   "titulo": "Into the Abyss: What if nothing is riskfree?",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/nothingisriskfree.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "A New Risky World Order: Unstable Risk Premiums and implications for practice",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/unstableriskpremiums.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Comatose Marktets: What if liquidity is not the norm?",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/liquiditynotnorm.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Tesla: Anatomy of a Run Up",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2429778",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)"
+  },
+  {
+   "titulo": "The Big Market Delusion: Valuation and Investment Implications",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3501688",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)"
+  },
+  {
+   "titulo": "The Value of ESG: Doing good or sounding good?",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3557432",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)"
+  },
+  {
+   "titulo": "Value Investing: Requiem, Rebirth or Reincarnation",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3779481",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)"
+  },
+  {
+   "titulo": "Country Risk: The 2020 Edition",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3653512",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)",
+   "ano": 2020
+  },
+  {
+   "titulo": "Equity Risk Premiums: The 2020 Edition",
+   "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3550293",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (SSRN)",
+   "ano": 2020
+  },
+  {
+   "titulo": "Equity Risk Premiums: Post-Crisis Edition",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/ERP2009.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing commodity and cyclical companies",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/commodity.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing financial service firms (2009 version)",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/finfirm09.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)",
+   "ano": 2009
+  },
+  {
+   "titulo": "Valuing young and start-up companies",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/younggrowth.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing Declining and Distressed Companies (The 2009 edition)",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/NewDistress.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)",
+   "ano": 2009
+  },
+  {
+   "titulo": "Valuing emerging market companies",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/emergmkts.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing companies with intangible assets",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/intangibles.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing the Octopus: The multinational, multibusiness company",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/octopus.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Leases, Debt and Value",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/newlease.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Estimating Riskfree Rates",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/riskfreerate.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "The Equity Risk Premium (2008 Edition)",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/ERPfull.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)",
+   "ano": 2008
+  },
+  {
+   "titulo": "Valuing Multiple Claims on Equity",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/equityclaims.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "The Origins of Growth",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/growthorigins.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Measuring Returns: ROE, ROC and ROIC",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/returnmeasures.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "A Survey Paper on Valuation",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/valuesurvey.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Simulations, Decision Trees and Scenario Analysis: Probabilistic Approaches to Risk",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/probabilistic.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Value at Risk (VaR)",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/VAR.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "To Hedge or Not to Hedge? That is the question..",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/hedging.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Exploiting Risk: A Strategic View of Risk Management",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/strategicrisk.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Marketability and Value: The Illiquidity Discount",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/liquidity.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "The Value of Cash, Cross Holdings and Other Non-operating Assets",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/cashvaluation.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "The Value of Control",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/controlvalue.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Employee Stock Options, Restricted Stock and Value",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/esops.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "The Value of Synergy",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/synergy.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "25 Questions on DCF valuation",
+   "link": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/valquestions/valquestions.htm",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper"
+  },
+  {
+   "titulo": "Value and Risk",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/riskvalue.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Measuring Company Risk Exposure to Country Risk",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/CountryRisk.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Dividends and Taxes",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/divtaxes.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Information Transparency and Value: Can you value what you can’t see?",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/Transparency.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing Distressed Firms",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/distresspaper.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "The Dark Side of Valuation",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/HighGrow.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Real Option Applications in Corporate Finance and Valuation",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/realopt.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing Private firms",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/pvtfirmval.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing Financial Service Firms",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/finfirm.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuing Acquisitions",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/acquisitions.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Valuation Multiples: First Principles",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/multiples.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Estimating Risk Parameters",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/beta.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Dealing with Operating Leases",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/oplev.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Dealing with R& D Expenses",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/R&D.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Financing Innovations",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/fininnov.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Beyond Dividends",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/beydiv.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  },
+  {
+   "titulo": "Value Enhancement: Back to Basics",
+   "link": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/valcre.pdf",
+   "link_tipo": "original",
+   "instituicao": "NYU Stern · paper",
+   "tipo": "Paper (PDF)"
+  }
+ ]
+}

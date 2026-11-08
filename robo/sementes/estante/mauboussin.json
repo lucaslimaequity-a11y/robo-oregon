@@ -1,0 +1,1971 @@
+{
+ "_nota": "Semente da coleção Mauboussin na Estante. Research de 1995 a fev/2026: índice público \"Michael Mauboussin Index\" (Kevin Gee, Google Sheets, aba Research; 177 linhas) e aba \"Other Media (Written)\" (52). Links da editora: série Consilient Observer / Counterpoint Global Insights na página do Morgan Stanley (45 itens de mar/2020 a set/2026), casados pelo título; os 6 artigos de abr a set/2026 vêm só da página do Morgan Stanley. Erros de digitação da planilha corrigidos: Valuatoin, Adjsutments; sufixos _v1/_v2 viraram (v1)/(v2). Conferido em 08/11/2026.",
+ "fontes": [
+  "https://docs.google.com/spreadsheets/d/17tcOlky-vwtpSWKrSevQwGTEzpg74vZPFPWfNYTMLqI/edit",
+  "https://www.morganstanley.com/im/en-us/financial-advisor/insights/series/consilient-observer.html"
+ ],
+ "itens": [
+  {
+   "titulo": "Plus Ça Change, Plus C’est Pareil: The More Things Change, the More They Stay the Same",
+   "ano": 1995,
+   "md": "12/13",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1995-12-13"
+  },
+  {
+   "titulo": "Competitive Advantage Period “CAP” - The Neglected Value Driver",
+   "ano": 1997,
+   "md": "1/14",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1997-01-14"
+  },
+  {
+   "titulo": "What Have You Learned in the Past 2 Seconds?",
+   "ano": 1997,
+   "md": "3/12",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1997-03-12"
+  },
+  {
+   "titulo": "Thoughts on Valuation",
+   "ano": 1997,
+   "md": "10/21",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1997-10-21"
+  },
+  {
+   "titulo": "Shift Happens: On a New Paradigm of the Markets as a Complex Adaptive System",
+   "ano": 1997,
+   "md": "10/21",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1997-10-21"
+  },
+  {
+   "titulo": "Let’s Make a Deal: A Practical Framework for Assessing M&A Activity",
+   "ano": 1998,
+   "md": "4/27",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1998-04-27"
+  },
+  {
+   "titulo": "To Buy or Not to Buy: Issues and Considerations Surrounding Share Repurchase",
+   "ano": 1998,
+   "md": "8/7",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1998-08-07"
+  },
+  {
+   "titulo": "Why Strategy Matters: Exploring the link between strategy, competitive advantage and the stock market",
+   "ano": 1998,
+   "md": "9/29",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1998-09-29"
+  },
+  {
+   "titulo": "A Piece of the Action: Employee Stock Options in the New Economy",
+   "ano": 1998,
+   "md": "11/2",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1998-11-02"
+  },
+  {
+   "titulo": "On The Shoulders of Giants: Mental Models for the New Millenium",
+   "ano": 1998,
+   "md": "11/16",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1998-11-16"
+  },
+  {
+   "titulo": "The Invisible Lead Steer: New Answers to Old Questions About the Stock Market",
+   "ano": 1998,
+   "md": "12/10",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1998-12-10"
+  },
+  {
+   "titulo": "Rational Exuberance? Is There Method behind the Madness in Internet Stock Valuations?",
+   "ano": 1999,
+   "md": "1/26",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-01-26"
+  },
+  {
+   "titulo": "The (Fat) Tail that Wags the Dog: Demystifying the Stock Market’s Performance",
+   "ano": 1999,
+   "md": "2/4",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-02-04"
+  },
+  {
+   "titulo": "Cash Flow.com: Cash Economics in the New Economy",
+   "ano": 1999,
+   "md": "2/26",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-02-26"
+  },
+  {
+   "titulo": "Value Explosion: Exploring Barriers to Entry for Internet Companies",
+   "ano": 1999,
+   "md": "3/11",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-03-11"
+  },
+  {
+   "titulo": "Get Real: Using Real Options in Security Analysis",
+   "ano": 1999,
+   "md": "6/23",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-06-23"
+  },
+  {
+   "titulo": "The Retailer's Dilemma: Revenge of the Nerds: How the New Value Network Challenges Incumbents",
+   "ano": 1999,
+   "md": "10/25",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-10-25"
+  },
+  {
+   "titulo": "Atoms, Bits, and Cash: The ABCs of Investing in the New Economy",
+   "ano": 1999,
+   "md": "11/22",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-11-22"
+  },
+  {
+   "titulo": "The Triumph of Bits: Mental Models for Successful Investment",
+   "ano": 1999,
+   "md": "12/10",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-12-10"
+  },
+  {
+   "titulo": "Absolute Power: The Internet’s Hidden Order",
+   "ano": 1999,
+   "md": "12/21",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "1999-12-21"
+  },
+  {
+   "titulo": "Counting What Counts: Cash Flow as a Universal Language",
+   "ano": 2000,
+   "md": "2/4",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2000-02-04"
+  },
+  {
+   "titulo": "Network to Net Worth: Exploring Network Dynamics",
+   "ano": 2000,
+   "md": "5/11",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2000-05-11"
+  },
+  {
+   "titulo": "Still Powerful: The Internet’s Hidden Order",
+   "ano": 2000,
+   "md": "7/7",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2000-07-07"
+  },
+  {
+   "titulo": "It's the Ecology, Stupid: How Breakdowns in Market Diversity Can Lead to Volatility",
+   "ano": 2000,
+   "md": "9/11",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2000-09-11"
+  },
+  {
+   "titulo": "Nasdaq Blues and Clues: Expectations Analysis for the Nasdaq 100",
+   "ano": 2000,
+   "md": "12/1",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2000-12-01"
+  },
+  {
+   "titulo": "Innovation and Markets: How Innovation Affects the Investing Process",
+   "ano": 2000,
+   "md": "12/12",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2000-12-12"
+  },
+  {
+   "titulo": "Wanna Be GE: Creating Value Through Business Category Evolution",
+   "ano": 2001,
+   "md": "2/14",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2001-02-14"
+  },
+  {
+   "titulo": "Nasdaq Blues and Clues - Part II: Expectations Analysis for the Nasdaq 100",
+   "ano": 2001,
+   "md": "3/5",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2001-03-05"
+  },
+  {
+   "titulo": "Fill and Kill: Succeeding with Survivors is Nothing New",
+   "ano": 2001,
+   "md": "4/5",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2001-04-05"
+  },
+  {
+   "titulo": "Thoughts On Valuation II: An Epistemological View",
+   "ano": 2001,
+   "md": "5/31",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2001-05-31"
+  },
+  {
+   "titulo": "Where’s the Bar? Introducing Market-Expected Return on Investment (MEROI)",
+   "ano": 2001,
+   "md": "6/12",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2001-06-12"
+  },
+  {
+   "titulo": "Diffusion Confusion: The Rising Role of the Replacement Cycle",
+   "ano": 2001,
+   "md": "8/1",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2001-08-01"
+  },
+  {
+   "titulo": "Ruminations on Risk: Beta Versus Margin of Safety",
+   "ano": 2001,
+   "md": "8/3",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2001-08-03"
+  },
+  {
+   "titulo": "The Babe Ruth Effect: Frequency versus Magnitude",
+   "ano": 2002,
+   "md": "1/29",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2002-01-29"
+  },
+  {
+   "titulo": "A Process for Outperformance: Thoughts on Organizing for Investing Success",
+   "ano": 2002,
+   "md": "3/26",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2002-03-26"
+  },
+  {
+   "titulo": "A Tail of Two Worlds: Fat Tails and Investing",
+   "ano": 2002,
+   "md": "4/9",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2002-04-09"
+  },
+  {
+   "titulo": "Great (Growth) Expectations: On the Limits of Corporate Growth",
+   "ano": 2002,
+   "md": "4/23",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2002-04-23"
+  },
+  {
+   "titulo": "The Janitor’s Dream: Why Listening to Individuals Can be Hazardous to Your Wealth",
+   "ano": 2002,
+   "md": "6/18",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2002-06-18"
+  },
+  {
+   "titulo": "Measuring the Moat: Assessing the Magnitude and Sustainability of Value Creation",
+   "ano": 2002,
+   "md": "12/16",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2002-12-16"
+  },
+  {
+   "titulo": "Integrating the Outliers: Two Lessons from the St. Petersburg Paradox",
+   "ano": 2003,
+   "md": "1/28",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2003-01-28"
+  },
+  {
+   "titulo": "All I Really Need to Know I Learned at a Tupperware Party: What Tupperware Parties Teach You about Investing and Life",
+   "ano": 2003,
+   "md": "2/25",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2003-02-25"
+  },
+  {
+   "titulo": "The Pyramid of Numbers: Firm Size, Growth Rates, and Valuation",
+   "ano": 2003,
+   "md": "9/23",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2003-09-23"
+  },
+  {
+   "titulo": "Mine Your Mind: Neuroscience and Investing",
+   "ano": 2003,
+   "md": "11/4",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2003-11-04"
+  },
+  {
+   "titulo": "I’ve Fallen and I Can’t Get Up: Mean Reversion and Turnarounds",
+   "ano": 2004,
+   "md": "2/10",
+   "instituicao": "CS First Boston",
+   "serie": "Research",
+   "data": "2004-02-10"
+  },
+  {
+   "titulo": "Decision-Making for Investors: Theory, Practice, and Pitfalls",
+   "ano": 2004,
+   "md": "5/24",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2004-05-24"
+  },
+  {
+   "titulo": "The Life of Game: Sports, Stats, and the Lessons they Teach Us",
+   "ano": 2004,
+   "md": "8/5",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2004-08-05"
+  },
+  {
+   "titulo": "Employee Stock Options: Theory and Practice",
+   "ano": 2004,
+   "md": "9/7",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2004-09-07"
+  },
+  {
+   "titulo": "Exploring Network Economics",
+   "ano": 2004,
+   "md": "10/11",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2004-10-11"
+  },
+  {
+   "titulo": "The Economics of Customer Businesses",
+   "ano": 2004,
+   "md": "12/9",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2004-12-09"
+  },
+  {
+   "titulo": "M&M on Valuation",
+   "ano": 2005,
+   "md": "1/14",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2005-01-14"
+  },
+  {
+   "titulo": "Contrarian Investing: The Psychology of Going Against the Crowd",
+   "ano": 2005,
+   "md": "3/8",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2005-03-08"
+  },
+  {
+   "titulo": "Capital Ideas Revisited: The Prime Directive, Sharks, and The Wisdom of Crowds",
+   "ano": 2005,
+   "md": "3/30",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2005-03-30"
+  },
+  {
+   "titulo": "Capital Ideas Revisited - Part 2: Thoughts on Beating a Mostly-Efficient Stock Market",
+   "ano": 2005,
+   "md": "5/20",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2005-05-20"
+  },
+  {
+   "titulo": "The Ecosystem Edge",
+   "ano": 2005,
+   "md": "7/27",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2005-07-27"
+  },
+  {
+   "titulo": "Aver and Aversion: What Two Recent Experiments Mean for Investors",
+   "ano": 2005,
+   "md": "8/9",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2005-08-09"
+  },
+  {
+   "titulo": "Are You an Expert? Experts and Markets",
+   "ano": 2005,
+   "md": "10/28",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2005-10-28"
+  },
+  {
+   "titulo": "Clear Thinking about Share Repurchase: Capital Allocation, Dividends & Share Repurchase",
+   "ano": 2006,
+   "md": "1/10",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2006-01-10"
+  },
+  {
+   "titulo": "Size Matters: The Kelly Criterion and the Importance of Money Management",
+   "ano": 2006,
+   "md": "2/1",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2006-02-01"
+  },
+  {
+   "titulo": "Common Errors in DCF Models: Do You Use Economically Sound & Transparent Models?",
+   "ano": 2006,
+   "md": "3/16",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2006-03-16"
+  },
+  {
+   "titulo": "Long-Term Investing in a Short-Term World: How Psychology and Incentives Shape the Investment Industry",
+   "ano": 2006,
+   "md": "5/18",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2006-05-18"
+  },
+  {
+   "titulo": "Interdisciplinary Perspectives on Risk",
+   "ano": 2006,
+   "md": "8/15",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2006-08-15"
+  },
+  {
+   "titulo": "Importance of Diverse Thinking: Why the Santa Fe Institute Can Make You a Better Investor",
+   "ano": 2007,
+   "md": "1/16",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2007-01-16"
+  },
+  {
+   "titulo": "Explaining the Wisdom of Crowds: Applying the Logic of Diversity",
+   "ano": 2007,
+   "md": "3/20",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2007-03-20"
+  },
+  {
+   "titulo": "Turtles in Omaha: The Mindset of Great Investors",
+   "ano": 2007,
+   "md": "5/23",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2007-05-23"
+  },
+  {
+   "titulo": "Was Harry Potter Inevitable? Cumulative Advantage, Counterfactuals, and the Halo Effect",
+   "ano": 2007,
+   "md": "9/7",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2007-09-07"
+  },
+  {
+   "titulo": "Death, Taxes, and Reversion to the Mean: ROIC Patterns: Luck, Persistence, and What to Do About It",
+   "ano": 2007,
+   "md": "12/14",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2007-12-14"
+  },
+  {
+   "titulo": "Fat Tails and Nonlinearity: Diversity Breakdowns and Invisible Vulnerability",
+   "ano": 2007,
+   "md": "12/20",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2007-12-20"
+  },
+  {
+   "titulo": "ROIC Patterns and Shareholder Returns: Sorting Fundamentals and Expectations",
+   "ano": 2008,
+   "md": "1/18",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2008-01-18"
+  },
+  {
+   "titulo": "Long-Term Investing: How I Learned to Stop Worrying and Ignore Volatility",
+   "ano": 2008,
+   "md": "12/15",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2008-12-15"
+  },
+  {
+   "titulo": "Surge in the Urge to Merge: M&A: Trends and Analysis",
+   "ano": 2010,
+   "md": "1/12",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2010-01-12"
+  },
+  {
+   "titulo": "The Colonel Blotto Game: Transitivity and How to Win When You’re an Underdog",
+   "ano": 2010,
+   "md": "5/5",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2010-05-05"
+  },
+  {
+   "titulo": "It's All about Managing for Value",
+   "ano": 2010,
+   "md": "6/11",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2010-06-11"
+  },
+  {
+   "titulo": "Untangling Skill and Luck: How to Think About Outcomes - Past, Present, and Future",
+   "ano": 2010,
+   "md": "7/15",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2010-07-15"
+  },
+  {
+   "titulo": "Blaming the Rat: Incentives, Motivation, and How They Interact",
+   "ano": 2011,
+   "md": "1/12",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2011-01-12"
+  },
+  {
+   "titulo": "The Coffee Can Approach: Why Doing Less Can Leave You with More",
+   "ano": 2011,
+   "md": "3/25",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2011-03-25"
+  },
+  {
+   "titulo": "Seeking Portfolio Manager Skill: Active Share and Tracking Error as a Means to Anticipate Alpha",
+   "ano": 2012,
+   "md": "2/24",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2012-02-24"
+  },
+  {
+   "titulo": "Share Repurchase from All Angles: Assessing Buybacks, No Matter Where You Sit",
+   "ano": 2012,
+   "md": "6/11",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2012-06-11"
+  },
+  {
+   "titulo": "The Importance of Expectations: The Question that Bears Repeating: What’s Priced in?",
+   "ano": 2012,
+   "md": "8/21",
+   "instituicao": "Legg Mason",
+   "serie": "Research",
+   "data": "2012-08-21"
+  },
+  {
+   "titulo": "Cultivating Your Judgment Skills: A Framework for Improving the Quality of Decisions",
+   "ano": 2013,
+   "md": "5/7",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2013-05-07"
+  },
+  {
+   "titulo": "Alpha and the Paradox of Skill: Results Reflect Your Skill and the Game You Are Playing",
+   "ano": 2013,
+   "md": "7/15",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2013-07-15"
+  },
+  {
+   "titulo": "Measuring the Moat: Assessing the Magnitude and Sustainability of Value Creation",
+   "ano": 2013,
+   "md": "7/22",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2013-07-22"
+  },
+  {
+   "titulo": "How to Model Reversion to the Mean: Determining How Fast, and to What Mean, Results Revert",
+   "ano": 2013,
+   "md": "9/17",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2013-09-17"
+  },
+  {
+   "titulo": "Estimating the Cost of Capital: A Practical Guide to Assessing Opportunity Cost",
+   "ano": 2013,
+   "md": "10/8",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2013-10-08"
+  },
+  {
+   "titulo": "Outcome Bias and the Interpreter: How Our Minds Confuse Skill and Luck",
+   "ano": 2013,
+   "md": "10/15",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2013-10-15"
+  },
+  {
+   "titulo": "Economic Returns, Reversion to the Mean, and Total Shareholder Returns: Anticipating Change Is Hard but Profitable",
+   "ano": 2013,
+   "md": "12/6",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2013-12-06"
+  },
+  {
+   "titulo": "Building an Effective Team: How to Manage a Team to Make Good Decisions",
+   "ano": 2014,
+   "md": "1/8",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-01-08"
+  },
+  {
+   "titulo": "What Does a Price-Earnings Multiple Mean? An Analytical Bridge between P/Es and Solid Economics",
+   "ano": 2014,
+   "md": "1/29",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-01-29"
+  },
+  {
+   "titulo": "Methods to Improve Decisions: Five Common Mistakes and How to Address Them",
+   "ano": 2014,
+   "md": "2/24",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-02-24"
+  },
+  {
+   "titulo": "Why Corporate Longevity Matters: What Index Turnover Tells Us about Corporate Results",
+   "ano": 2014,
+   "md": "4/16",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-04-16"
+  },
+  {
+   "titulo": "Disbursing Cash to Shareholders: FAQ's about Buybacks and Dividends",
+   "ano": 2014,
+   "md": "5/6",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-05-06"
+  },
+  {
+   "titulo": "Calculating Return on Invested Capital: How to Determine ROIC and Address Common Issues",
+   "ano": 2014,
+   "md": "6/4",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-06-04"
+  },
+  {
+   "titulo": "Capital Allocation: Evidence, Analytical Methods, and Assessment Guidance",
+   "ano": 2014,
+   "md": "8/5",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-08-05"
+  },
+  {
+   "titulo": "Lessons from Freestyle Chess: Merging Fundamental and Quantitative Analysis",
+   "ano": 2014,
+   "md": "9/10",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-09-10"
+  },
+  {
+   "titulo": "A Long Look at Short-Termism: Questioning the Premise",
+   "ano": 2014,
+   "md": "11/18",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2014-11-18"
+  },
+  {
+   "titulo": "Capital Allocation Outside the US: Evidence, Analytical Methods, & Assessment Guidance",
+   "ano": 2015,
+   "md": "1/6",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-01-06"
+  },
+  {
+   "titulo": "Managing the Man Overboard Moment: Making an Informed Decision After a Large Price Drop",
+   "ano": 2015,
+   "md": "1/15",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-01-15"
+  },
+  {
+   "titulo": "Animating Mr. Market: Adopting a Proper Psychological Attitude",
+   "ano": 2015,
+   "md": "2/10",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-02-10"
+  },
+  {
+   "titulo": "Min(d)ing the Opportunity: Excess Returns Require the Chance to Apply Skill",
+   "ano": 2015,
+   "md": "3/17",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-03-17"
+  },
+  {
+   "titulo": "The Base Rate Book - Sales Growth: Integrating the Past to Better Anticipate the Future (v1)",
+   "ano": 2015,
+   "md": "5/4",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-05-04"
+  },
+  {
+   "titulo": "IQ versus RQ: Differentiating Smarts from Decision-Making Skills",
+   "ano": 2015,
+   "md": "5/12",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-05-12"
+  },
+  {
+   "titulo": "Capital Allocation - Updated: Evidence, Analytical Methods, and Assessment Guidance",
+   "ano": 2015,
+   "md": "6/2",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-06-02"
+  },
+  {
+   "titulo": "Triple Crown Teachings: Three Takeaways from the Quest for the Elusive Feat",
+   "ano": 2015,
+   "md": "6/4",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-06-04"
+  },
+  {
+   "titulo": "Understanding Skill: A Paradox Plus Qualitative and Quantitative Approaches",
+   "ano": 2015,
+   "md": "7/22",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-07-22"
+  },
+  {
+   "titulo": "Total Addressable Market: Methods to Estimate a Company's Potential Sales",
+   "ano": 2015,
+   "md": "9/1",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-09-01"
+  },
+  {
+   "titulo": "Sharpening Your Forecasting Skills: Foresight Is a Measurable Skill That You Can Cultivate",
+   "ano": 2015,
+   "md": "9/28",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-09-28"
+  },
+  {
+   "titulo": "What's Going On in Your Brain? Common Investor Biases and Where They Come From",
+   "ano": 2015,
+   "md": "10/20",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-10-20"
+  },
+  {
+   "titulo": "The Base Rate Book - Earnings Growth: Integrating the Past to Better Anticipate the Future",
+   "ano": 2015,
+   "md": "12/16",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2015-12-16"
+  },
+  {
+   "titulo": "Corporate Governance and Capital Allocation: The Governing Objective, Corporate Governance and the Two Camps",
+   "ano": 2016,
+   "md": "1/1",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-01-01"
+  },
+  {
+   "titulo": "Celebrating the Summit: Making an Informed Decision After a Large Price Gain",
+   "ano": 2016,
+   "md": "1/11",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-01-11"
+  },
+  {
+   "titulo": "The Base Rate Book - Sales Growth: Integrating the Past to Better Anticipate the Future (v2)",
+   "ano": 2016,
+   "md": "2/23",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-02-23"
+  },
+  {
+   "titulo": "What Makes for a Useful Statistic: Not All Numbers Are Created Equal",
+   "ano": 2016,
+   "md": "4/5",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-04-05"
+  },
+  {
+   "titulo": "The Base Rate Book - Gross Profitability: Integrating the Past to Better Anticipate the Future",
+   "ano": 2016,
+   "md": "4/25",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-04-25"
+  },
+  {
+   "titulo": "Thoughts on Dividends and Buybacks: Clearing Up Some Common Misconceptions",
+   "ano": 2016,
+   "md": "5/3",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-05-03"
+  },
+  {
+   "titulo": "Operating Leverage: A Framework for Anticipating Changes in Earnings",
+   "ano": 2016,
+   "md": "6/14",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-06-14"
+  },
+  {
+   "titulo": "Form Follows Function: Organizational Structure and Investment Results",
+   "ano": 2016,
+   "md": "7/8",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-07-08"
+  },
+  {
+   "titulo": "Global Industry Profit Pools: Visualizing Value Creation for an Industry",
+   "ano": 2016,
+   "md": "7/9",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-07-09"
+  },
+  {
+   "titulo": "Thirty Years: Reflections on the Ten Attributes of Great Investors",
+   "ano": 2016,
+   "md": "8/4",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-08-04"
+  },
+  {
+   "titulo": "The Base Rate Book: Integrating the Past to Better Anticipate the Future",
+   "ano": 2016,
+   "md": "9/26",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-09-26"
+  },
+  {
+   "titulo": "Capital Allocation: Evidence, Analytical Methods, and Assessment Guidance",
+   "ano": 2016,
+   "md": "10/19",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-10-19"
+  },
+  {
+   "titulo": "Measuring the Moat: Assessing the Magnitude and Sustainability of Value Creation",
+   "ano": 2016,
+   "md": "11/1",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-11-01"
+  },
+  {
+   "titulo": "Capital Allocation Outside the US: Evidence, Analytical Methods & Assessment Guidance",
+   "ano": 2016,
+   "md": "11/15",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2016-11-15"
+  },
+  {
+   "titulo": "Looking for Easy Games: How Passive Investing Shapes Active Management",
+   "ano": 2017,
+   "md": "1/4",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2017-01-04"
+  },
+  {
+   "titulo": "Coming Clean with Energy Cost Curves: An Interview with MIT's Jessika Trancik",
+   "ano": 2017,
+   "md": "1/19",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2017-01-19"
+  },
+  {
+   "titulo": "Corporate Longevity: Index Turnover and Corporate Performance",
+   "ano": 2017,
+   "md": "2/7",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2017-02-07"
+  },
+  {
+   "titulo": "To Buy or Not To Buy: A Checklist for Assessing Mergers & Acquisitions",
+   "ano": 2017,
+   "md": "2/27",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2017-02-27"
+  },
+  {
+   "titulo": "Incredible Shrinking Universe of Stocks: Causes & Consequences of Fewer U.S. Equities",
+   "ano": 2017,
+   "md": "3/22",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2017-03-22"
+  },
+  {
+   "titulo": "Assembling a Dream Team: How Gender Diversity Can Strengthen Your Team",
+   "ano": 2017,
+   "md": "5/11",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2017-05-11"
+  },
+  {
+   "titulo": "Winning the Easy Game: Skill and the Ability to Extract Value",
+   "ano": 2017,
+   "md": "6/11",
+   "instituicao": "Credit Suisse",
+   "serie": "Research",
+   "data": "2017-06-11"
+  },
+  {
+   "titulo": "How Well Do You Compare?",
+   "ano": 2017,
+   "md": "12/20",
+   "instituicao": "BlueMountain Capital",
+   "serie": "Research",
+   "data": "2017-12-20"
+  },
+  {
+   "titulo": "Procyclicality and Its Extremes",
+   "ano": 2018,
+   "md": "6/26",
+   "instituicao": "BlueMountain Capital",
+   "serie": "Research",
+   "data": "2018-06-26"
+  },
+  {
+   "titulo": "What Does an EV/EBITDA Multiple Mean?",
+   "ano": 2018,
+   "md": "9/13",
+   "instituicao": "BlueMountain Capital",
+   "serie": "Research",
+   "data": "2018-09-13"
+  },
+  {
+   "titulo": "Who Is On the Other Side? You Need Good BAIT to Land a Winner",
+   "ano": 2019,
+   "md": "2/12",
+   "instituicao": "BlueMountain Capital",
+   "serie": "Research",
+   "data": "2019-02-12"
+  },
+  {
+   "titulo": "Looking for Easy Games in Bonds",
+   "ano": 2019,
+   "md": "4/16",
+   "instituicao": "BlueMountain Capital",
+   "serie": "Research",
+   "data": "2019-04-16"
+  },
+  {
+   "titulo": "BIN There, Done That: How to Reduce the Sources of Forecasting Error",
+   "ano": 2020,
+   "md": "3/19",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2020-03-19",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/bin-there-done-that-us.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Dispersion & Alpha Conversion: How Dispersion Creates the Opportunity to Express Skill",
+   "ano": 2020,
+   "md": "4/14",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2020-04-14",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/dispersion-and-alpha-conversion.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Myth Busting, Popular Delusions, and the Variant Perception",
+   "ano": 2020,
+   "md": "5/20",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2020-05-20",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/myth-busting-popular-delusions-and-the-variant-perception.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Math of Value and Growth: Growth, Return on Capital, and the Discount Rate",
+   "ano": 2020,
+   "md": "6/9",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2020-06-09",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/the-math-of-value-and-growth.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Public to Private Equity in the United States: A Long-Term Look",
+   "ano": 2020,
+   "md": "8/4",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2020-08-04"
+  },
+  {
+   "titulo": "One Job: Expectations and the Role of Intangible Investments",
+   "ano": 2020,
+   "md": "9/1",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2020-09-01"
+  },
+  {
+   "titulo": "WACC and Vol: Valuation for Companies with Real Options",
+   "ano": 2020,
+   "md": "12/21",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2020-12-21",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/wacc-and-vol.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Market-Expected Return on Investment: Bridging Accounting and Valuation",
+   "ano": 2021,
+   "md": "4/14",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2021-04-14",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/market-expected-return-on-investment.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Economics of Customer Businesses: Calculating Customer-Based Corporate Valuation",
+   "ano": 2021,
+   "md": "5/19",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2021-05-19",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/the-economics-of-customer-businesses.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Impact of Intangibles on Base Rates",
+   "ano": 2021,
+   "md": "6/23",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2021-06-23",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/the-impact-of-intangibles-on-base-rates.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Everything Is a DCF Model: A Mantra for Valuing Cash-Generating Assets",
+   "ano": 2021,
+   "md": "8/3",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2021-08-03",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/everything-is-a-dcf-model.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Turn and Face the Strange: Overcoming Barriers to Change in Sports and Investing",
+   "ano": 2021,
+   "md": "9/8",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2021-09-08"
+  },
+  {
+   "titulo": "Categorizing for Clarity: Cash Flow Statement Adjustments to Improve Insight",
+   "ano": 2021,
+   "md": "10/6",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2021-10-06",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/categorizing-for-clarity.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Underestimating the Red Queen: Measuring Growth and Maintenance Investments",
+   "ano": 2022,
+   "md": "1/27",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-01-27",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/underestimating-the-red-queen.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Feedback: Information as a Basis for Improvement",
+   "ano": 2022,
+   "md": "3/16",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-03-16",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/feedback.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Intangibles and Earnings: Improving the Usefulness of Financial Statements",
+   "ano": 2022,
+   "md": "4/12",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-04-12",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/intangibles-and-earnings.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Wealth Transfers: Redistribution of Value via Capital Allocation",
+   "ano": 2022,
+   "md": "5/10",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-05-10",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/wealth-transfers.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "New Business Boom and Bust: How Capitalism Experiments",
+   "ano": 2022,
+   "md": "6/15",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-06-15",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/new-business-boom-and-bust.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Good Losses, Bad Losses: All Losses Are Not Created Equal",
+   "ano": 2022,
+   "md": "7/20",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-07-20",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/good-losses-bad-losses.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Market Share: Understanding Competitive Advantage Through Market Power",
+   "ano": 2022,
+   "md": "9/15",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-09-15"
+  },
+  {
+   "titulo": "Return on Invested Capital: How to Calculate ROIC and Handle Common Issues",
+   "ano": 2022,
+   "md": "10/6",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-10-06",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/return-on-invested-capital.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "ROIC and Intangible Assets: A Look at How Adjustments for Intangibles Affect ROIC",
+   "ano": 2022,
+   "md": "11/9",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-11-09",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/roic-and-intangible-assets.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Capital Allocation: Results, Analysis, and Assessment",
+   "ano": 2022,
+   "md": "12/14",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2022-12-14"
+  },
+  {
+   "titulo": "Cost of Capital: A Practical Guide to Measuring Opportunity Cost",
+   "ano": 2023,
+   "md": "2/15",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-02-15",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/cost-of-capital.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Confidence: Methods to Assess Confidence Under Uncertainty",
+   "ano": 2023,
+   "md": "3/22",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-03-22",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/confidence.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Stock-Based Compensation: Unpacking the Issues",
+   "ano": 2023,
+   "md": "4/18",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-04-18",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/stock-based-compensation.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "ROIC and the Investment Process: ROICs, How They Change, and Shareholder Returns",
+   "ano": 2023,
+   "md": "6/6",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-06-06",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/roic-and-the-investment-process.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Birth, Death, and Wealth Creation: Why Investors Need to Understand Corporate Demographics",
+   "ano": 2023,
+   "md": "7/25",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-07-25",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/birth-death-and-wealth-creation.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Trading Stages in the Company Life Cycle",
+   "ano": 2023,
+   "md": "9/26",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-09-26"
+  },
+  {
+   "titulo": "Total Shareholder Return: Linking The Drivers of Total Returns to Fundamentals",
+   "ano": 2023,
+   "md": "10/24",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-10-24",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/total-shareholder-returns.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Pattern Recognition: Opportunities and Limits",
+   "ano": 2023,
+   "md": "12/13",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2023-12-13",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/pattern-recognition.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Increasing Returns: Identifying Forms of Increasing Returns and What Drives Them",
+   "ano": 2024,
+   "md": "1/30",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2024-01-30",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/increasing-returns.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Cost of Capital and Capital Allocation: Investment in the Era of \"Easy Money\"",
+   "ano": 2024,
+   "md": "2/28",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2024-02-28",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/cost-of-capital-and-capital-allocation.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Valuation Multiples: What They Miss, Why They Differ, and the Link to Fundamentals",
+   "ano": 2024,
+   "md": "4/23",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2024-04-23",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/valuation-multiples.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Stock Market Concentration: How Much Is Too Much?",
+   "ano": 2024,
+   "md": "6/4",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2024-06-04",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/stock-market-concentration.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Which One Is It?: Equity Issuance and Retirement",
+   "ano": 2024,
+   "md": "7/24",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2024-07-24",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/which-one-is-it-equity-issuance-retirement.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Measuring the Moat: Assessing the Magnitude and Sustainability of Value Creation",
+   "ano": 2024,
+   "md": "10/15",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2024-10-15",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/measuring-the-moat.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Charts From the Vault: Pictures to Ponder",
+   "ano": 2024,
+   "md": "12/5",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2024-12-05",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/charts-from-the-vault-pictures-to-ponder.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Probabilities and Payoffs: The Practicalities and Psychology of Expected Value",
+   "ano": 2025,
+   "md": "2/19",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2025-02-19",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/probabilities-and-payoffs.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Drawdowns and Recoveries: Base Rates for Bottoms and Bounces",
+   "ano": 2025,
+   "md": "5/21",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2025-05-21",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/drawdowns-and-recoveries.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Cash Holdings: Data, Theory, and Alternatives",
+   "ano": 2025,
+   "md": "8/5",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2025-08-05",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/cash-holdings-data-theory-and-alternatives.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Capital Allocation: Results, Analysis, and Assessment (Updated)",
+   "ano": 2025,
+   "md": "11/5",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2025-11-05",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/capital-allocation.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Who Is On the Other Side? A Framework for Understanding Market (In)Efficiency",
+   "ano": 2026,
+   "md": "1/21",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2026-01-21",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/who-is-on-the-other-side.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Bayes and Base Rates: How History Can Guide Our Assessment of the Future",
+   "ano": 2026,
+   "md": "2/10",
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "data": "2026-02-10",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/bayes-and-base-rates.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "To Free or Not to Free (Cash Flow)",
+   "data": "2026-09-17",
+   "ano": 2026,
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/to-free-or-not-to-free.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Public to Private Equity in the United States: A Long-Term Look",
+   "data": "2026-09-01",
+   "ano": 2026,
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/public-to-private-equity-in-the-us-a-long-term-look.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "The Wisdom of Crowds in Markets: Crowd Behavior in Prediction, Betting, and Stock Markets",
+   "data": "2026-08-05",
+   "ano": 2026,
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/the-wisdom-of-crowds.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Opportunities and Expectations: The Present Value of Growth Opportunities in Valuation",
+   "data": "2026-06-18",
+   "ano": 2026,
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/opportunities-and-expectations.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Bayes and Base Rates 2.0: How History Can Guide Our Assessment of the Future",
+   "data": "2026-05-13",
+   "ano": 2026,
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/bayes-and-base-rates-2.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Competitive Advantage Period: The Neglected Value Driver",
+   "data": "2026-04-14",
+   "ano": 2026,
+   "instituicao": "Counterpoint Global · Morgan Stanley",
+   "serie": "Research",
+   "link": "https://www.morganstanley.com/im/en-us/financial-advisor/insights/consilient-observer/the-neglected-value-driver.html",
+   "link_tipo": "original"
+  },
+  {
+   "titulo": "Anatomy Of A Market Crash",
+   "ano": 2007,
+   "md": "10/25",
+   "serie": "Outros escritos",
+   "tipo": "Article",
+   "data": "2007-10-25"
+  },
+  {
+   "titulo": "The Facts of Luck",
+   "ano": 2012,
+   "md": "6/11",
+   "serie": "Outros escritos",
+   "tipo": "Article",
+   "data": "2012-06-11"
+  },
+  {
+   "titulo": "When Investing - What Matters More Skills or Luck?",
+   "ano": 2012,
+   "md": "11/12",
+   "serie": "Outros escritos",
+   "tipo": "Article",
+   "data": "2012-11-12"
+  },
+  {
+   "titulo": "Understanding the Role of Luck in Our Lives",
+   "ano": 2013,
+   "md": "1/31",
+   "serie": "Outros escritos",
+   "tipo": "Article",
+   "data": "2013-01-31"
+  },
+  {
+   "titulo": "Valuation: An Epistemological View",
+   "ano": 2002,
+   "md": "5/1",
+   "serie": "Outros escritos",
+   "tipo": "Journal",
+   "data": "2002-05-01"
+  },
+  {
+   "titulo": "Revisiting Market Efficiency: The Stock Market as a Complex Adaptive System",
+   "ano": 2005,
+   "md": "4/11",
+   "serie": "Outros escritos",
+   "tipo": "Journal",
+   "data": "2005-04-11"
+  },
+  {
+   "titulo": "A Discussion of Corporate Investment and Payout Policy",
+   "ano": 2014,
+   "md": "5/28",
+   "serie": "Outros escritos",
+   "tipo": "Journal",
+   "data": "2014-05-28"
+  },
+  {
+   "titulo": "The Wisdom and Whims of the Collective",
+   "ano": 2007,
+   "md": "12/7",
+   "serie": "Outros escritos",
+   "tipo": "Magazine",
+   "data": "2007-12-07"
+  },
+  {
+   "titulo": "Embracing Complexity",
+   "ano": 2011,
+   "md": "9/15",
+   "serie": "Outros escritos",
+   "tipo": "Magazine",
+   "data": "2011-09-15"
+  },
+  {
+   "titulo": "The True Measures Of Success: Most companies use the wrong performance metrics. Don’t be one of them.",
+   "ano": 2012,
+   "md": "9/27",
+   "serie": "Outros escritos",
+   "tipo": "Magazine",
+   "data": "2012-09-27"
+  },
+  {
+   "titulo": "The Trouble with Earnings and Price/Earnings Multiples",
+   "ano": 2001,
+   "md": "1/1",
+   "serie": "Outros escritos",
+   "tipo": "Bonus Chapter",
+   "data": "2001-01-01"
+  },
+  {
+   "titulo": "Pitfalls to Avoid",
+   "ano": 2001,
+   "md": "2/1",
+   "serie": "Outros escritos",
+   "tipo": "Bonus Chapter",
+   "data": "2001-02-01"
+  },
+  {
+   "titulo": "Does It Pay to Be an Active Investor",
+   "ano": 2001,
+   "md": "3/1",
+   "serie": "Outros escritos",
+   "tipo": "Bonus Chapter",
+   "data": "2001-03-01"
+  },
+  {
+   "titulo": "The Sociology of Markets",
+   "ano": 2008,
+   "md": "6/12",
+   "serie": "Outros escritos",
+   "tipo": "Book Excerpt",
+   "data": "2008-06-12"
+  },
+  {
+   "titulo": "The Success Equation - Introduction (The Sources of Success)",
+   "ano": 2012,
+   "md": "10/16",
+   "serie": "Outros escritos",
+   "tipo": "Book Excerpt",
+   "data": "2012-10-16"
+  },
+  {
+   "titulo": "More Than You Know - Ch. 1 (Be the House: Process and Outcome in Investing)",
+   "ano": 2006,
+   "md": "4/21",
+   "serie": "Outros escritos",
+   "tipo": "Preview Chapter",
+   "data": "2006-04-21"
+  },
+  {
+   "titulo": "Think Twice - Ch. 1 (The Outside View: Why Big Brown Was a Bad Bet)",
+   "ano": 2009,
+   "md": "3/11",
+   "serie": "Outros escritos",
+   "tipo": "Preview Chapter",
+   "data": "2009-03-11"
+  },
+  {
+   "titulo": "Columbia Business School: Security Analysis - Student Lecture Notes",
+   "ano": 2000,
+   "md": "8/1",
+   "serie": "Outros escritos",
+   "tipo": "Class Notes",
+   "data": "2000-08-01"
+  },
+  {
+   "titulo": "The New Economy: Mental Models for Market Outperformance",
+   "ano": 2001,
+   "md": "3/3",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2001-03-03"
+  },
+  {
+   "titulo": "How The Market “Gets It”: Why It’s So Hard to Beat the Market",
+   "ano": 2003,
+   "md": "3/5",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2003-03-05"
+  },
+  {
+   "titulo": "Attributes of a Good Investment Process: The Critical Role of Decision Making",
+   "ano": 2005,
+   "md": "9/28",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2005-09-28"
+  },
+  {
+   "titulo": "Expectations Investing: Reading Stock Prices for Better Returns",
+   "ano": 2005,
+   "md": "12/1",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2005-12-01"
+  },
+  {
+   "titulo": "Expectations Investing: Taking Advantage of a Short-Term World",
+   "ano": 2006,
+   "md": "6/6",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2006-06-06"
+  },
+  {
+   "titulo": "Getting Out of Embed: The Role of Social Context in Decision Making",
+   "ano": 2006,
+   "md": "8/3",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2006-08-03"
+  },
+  {
+   "titulo": "Decision Making for Investors",
+   "ano": 2008,
+   "md": "10/15",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2008-10-15"
+  },
+  {
+   "titulo": "The Paradox of Skill: Why Greater Skill Leads to More Luck",
+   "ano": 2012,
+   "md": "11/14",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2012-11-14"
+  },
+  {
+   "titulo": "The Rise of Business Networks",
+   "ano": 2014,
+   "md": "6/1",
+   "serie": "Outros escritos",
+   "tipo": "Powerpoint",
+   "data": "2014-06-01"
+  },
+  {
+   "titulo": "2014 Thought Leader Forum: Art and Science of Prediction",
+   "ano": 2014,
+   "md": "6/10",
+   "serie": "Outros escritos",
+   "tipo": "Forum Talk",
+   "data": "2014-06-10"
+  },
+  {
+   "titulo": "2015 Thought Leader Forum: Attention - Pay Now or Pay Later",
+   "ano": 2015,
+   "md": "6/25",
+   "serie": "Outros escritos",
+   "tipo": "Forum Talk",
+   "data": "2015-06-25"
+  },
+  {
+   "titulo": "2016 Thought Leader Forum: What Being Wrong Can Teach You About Being Right",
+   "ano": 2016,
+   "md": "5/19",
+   "serie": "Outros escritos",
+   "tipo": "Forum Talk",
+   "data": "2016-05-19"
+  },
+  {
+   "titulo": "Columbia University Press Interview",
+   "ano": 2006,
+   "md": "8/1",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2006-08-01"
+  },
+  {
+   "titulo": "Graham & Doddsville Interview (Issue 5)",
+   "ano": 2009,
+   "md": "2/14",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2009-02-14"
+  },
+  {
+   "titulo": "SimoleonSense.com Interview",
+   "ano": 2009,
+   "md": "9/28",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2009-09-28"
+  },
+  {
+   "titulo": "Time Interview",
+   "ano": 2009,
+   "md": "9/29",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2009-09-29"
+  },
+  {
+   "titulo": "Research 2.0 Interview",
+   "ano": 2009,
+   "md": "11/9",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2009-11-09"
+  },
+  {
+   "titulo": "Asian Investor Interview",
+   "ano": 2009,
+   "md": "11/23",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2009-11-23"
+  },
+  {
+   "titulo": "PBS Interview",
+   "ano": 2010,
+   "md": "2/15",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2010-02-15"
+  },
+  {
+   "titulo": "Emerald Group Interview",
+   "ano": 2010,
+   "md": "3/1",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2010-03-01"
+  },
+  {
+   "titulo": "Martin Kronicle Interview",
+   "ano": 2010,
+   "md": "5/4",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2010-05-04"
+  },
+  {
+   "titulo": "Steve Forbes Interview",
+   "ano": 2011,
+   "md": "7/11",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2011-07-11"
+  },
+  {
+   "titulo": "DNA Interview",
+   "ano": 2012,
+   "md": "6/4",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2012-06-04"
+  },
+  {
+   "titulo": "Is Asset Management Just a Glorified Lottery?",
+   "ano": 2012,
+   "md": "11/1",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2012-11-01"
+  },
+  {
+   "titulo": "Luck and Skill Untangled: The Science of Success",
+   "ano": 2012,
+   "md": "11/16",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2012-11-16"
+  },
+  {
+   "titulo": "Farnam Street Interview No. 4",
+   "ano": 2013,
+   "md": "8/1",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2013-08-01"
+  },
+  {
+   "titulo": "First Post Interview",
+   "ano": 2014,
+   "md": "12/20",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2014-12-20"
+  },
+  {
+   "titulo": "Intuition Is Vastly Overrated",
+   "ano": 2015,
+   "md": "6/11",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2015-06-11"
+  },
+  {
+   "titulo": "Motley Fool Interview",
+   "ano": 2016,
+   "md": "10/18",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2016-10-18"
+  },
+  {
+   "titulo": "Graham & Doddsville Interview (Issue 33)",
+   "ano": 2018,
+   "md": "10/12",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2018-10-12"
+  },
+  {
+   "titulo": "Capital Allocators Podcast Interview",
+   "ano": 2019,
+   "md": "5/13",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2019-05-13"
+  },
+  {
+   "titulo": "MOI Global Interview",
+   "ano": 2019,
+   "md": "9/19",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2019-09-19"
+  },
+  {
+   "titulo": "Sean Delaney Interview",
+   "ano": 2020,
+   "md": "7/21",
+   "serie": "Outros escritos",
+   "tipo": "Interview",
+   "data": "2020-07-21"
+  },
+  {
+   "titulo": "Farnam Street: In Conversation with Daniel Kahneman",
+   "ano": 2015,
+   "md": "1/30",
+   "serie": "Outros escritos",
+   "tipo": "Interviewer",
+   "data": "2015-01-30"
+  }
+ ]
+}

@@ -1,3 +1,105 @@
+# Resultados dos testes · v3.5 · 08/11/2026 (Brasília)
+
+O contêiner onde os testes rodaram não alcança a maior parte da internet. Três tipos de prova, sempre ditos pelo nome:
+
+- **Dados reais já capturados**: o que o robô publicou às 14:03 de 08/11 (ramo `dados`, primeira rodada da v3.4),
+  reprocessado com as regras da v3.5. Nada foi coletado de novo.
+- **Conteúdo real conferido**: listas lidas nas páginas públicas em 08/11 (índice do Mauboussin, série do Morgan Stanley,
+  memos da Oaktree, papers do Damodaran, CNPJs na B3 e na CVM, feed do Compounding Quality) e os três prints da VG VIP.
+- **Simulado**: rede de mentira dentro do teste. Prova a lógica, não a internet. A leitura das listagens da Estante (CFA,
+  AQR, GMO, Compounding Quality, blog do Damodaran) só se confirma na primeira rodada no GitHub.
+
+## 1. Regras v3.5 sobre os dados REAIS já capturados (1.113 itens: 935 recentes + 178 opiniões de 12 meses)
+
+```
+itens com ativo só da VIP: 17 vínculos; 9 ativos
+  BBAS3       5  ex.: Banco do Brasil (BBAS3) sobe quase 4%, mas dividendos de 2027 ainda geram dúvidas
+  BRBI11      2  ex.: BR Partners (BRBI11) perde selo de compra no Itaú BBA: o que fez o banco ficar mais cautel
+  VALE3       2  ex.: Ibovespa vira o jogo na sexta, sobe 1,39% e encerra três semanas de perdas; Vale (VALE3) a
+  SMFT3       2  ex.: Brasil — Axia (AXIA3), Prio (PRIO3), SmartFit (SMFT3) e outros destaques desta quinta-feir
+  RECV3       2  ex.: Goldman vê forte crescimento e eleva PRIO3 para compra; RECV3 e BRAV3 ficam em venda
+  JHSF3       1  ex.: JHSF (JHSF3) e Copasa (CSMG3): Veja quem paga dividendos na semana
+  VIVA3       1  ex.: Vivara retoma compra de ouro e prevê margem estável e caixa sólido em 2027, diz CFO
+  RDOR3       1  ex.: Ibovespa a 246 mil? Itaú BBA cita EQTL3 e RDOR3 entre ações que ainda podem correr atrás d
+  SBSP3       1  ex.: Dona da Sabesp, Equatorial supera estimativas
+fora do negócio (não liga à empresa):
+  - Orquestra Petrobras Sinfônica apresenta cine concerto de 'Cidade de Deus' no Rio de Janeiro
+  - TV Brasil transmite jogo entre Ferroviária e Paulista Sub-20 Petrobras
+  - Escola de Severiano Melo ganha 43 medalhas e põe cidade à frente de Mossoró em olimpíada do Tesouro
+didático (não liga aos fundos nem aos temas dos ETFs):
+  - O que são fundos imobiliários e como funcionam os investimentos
+  - Entenda o que é a Margem Equatorial e por que o Amapá está no centro das buscas por petróleo
+```
+
+Esses 17 vínculos vieram de buscas que existiam antes; a partir da rodada da v3.5 o robô passa a buscar os 22 ativos
+novos da VIP pelo nome. "Shoppings do Grande Recife apostam em experiências para ampliar vendas no Natal" chegou a ser
+marcada como fora do negócio por causa de "Natal"; corrigido ("vendas" conta como negócio) antes de fechar o pacote.
+
+## 2. Estante: sementes conferidas (sem rede)
+
+```
+mauboussin 235 itens, 1995–2026 · howard-marks 166, 1990–2026 · damodaran 58 papers, 2008–2020
+cfa-rf, aqr, gmo, compounding-quality: 0 até a primeira rodada no GitHub (listagens)
+```
+
+Mauboussin: 44 itens com o endereço do Morgan Stanley, os demais com o índice do autor. "Dispersion & Alpha Conversion" e
+"Dispersion and Alpha Conversion" viraram uma peça só; edições anuais com o mesmo título (ex.: "Capital Allocation Outside
+the US", 2015 e 2016) continuam separadas.
+
+## 3. Robô (Python)
+
+```
+python -m unittest discover -s testes -p "test_*.py"
+Ran 114 tests in 9.440s
+OK
+```
+
+Novos da v3.5 (`testes/test_v35.py`, simulados): data futura, filtro do Empiricus, pesquisa de ETF pelo índice e sem
+cotação, Genial pela página da ação, alerta imediato, data de entrega da CVM, Estante (semente + listagem + página do
+item; errata fora; data da página prevalece; segunda rodada sem rede não apaga nada; link da editora não volta a ser o do
+índice), temas por palavra-chave, VG VIP (universo, separação `ativos_vip`, nomes ambíguos: "Quanto vale a Petrobras",
+"Vale do Silício", "Vale a pena", "Porto Seguro (BA)", "Jeremy Renner" não ligam).
+
+## 4. Painel
+
+```
+node testes/painel.test.js
+32 de 32 testes do painel passaram; modelos quantitativos ok
+```
+
+Novos: mesmo fato em vários veículos vira um item com o veículo conhecido como principal; baixa relevância (veículo pouco
+conhecido sem fato da empresa) e opinião de casa nunca recolhida; veículo conhecido antes no mesmo dia.
+
+## 5. Navegador (Chromium, 1440 px e 390 px, site de teste)
+
+```
+node painel/test/areas.js http://localhost:8777/index.html
+154 PASS · tudo ok
+PASS 1440 menu com seis seções, a sexta é a VG VIP (6|cart)
+PASS 1440 Estante com coleções e acervo ({"lomb":7,"itens":60,"maub":true,"indice":true})
+PASS 1440 Hoje VIP: mapa com os 35 ativos, radar e debate ({"mapa":35,"radar":true,"debate":true,"vale":true})
+PASS 1440 Ativos VIP: três carteiras, 35 linhas, todas as colunas, sem rolagem lateral da página ({"tabelas":3,"linhas":35,"dy26":true,"sw":true})
+PASS 1440 ficha VIP com números do print, casas de análise e notícias
+PASS 1440 Hoje da Oregon sem os ativos só da VIP
+PASS 1440 Pauta VIP por carteira ({"secs":3,"copiar":true})
+PASS 390 (as mesmas verificações no celular)
+```
+
+Com a sexta aba, o topo passava da largura da tela entre 1280 e 1440 px; o status da coleta agora encolhe com
+reticências (medido: largura da página igual à da tela em 1280, 1360, 1440 e 1600 px).
+
+## 6. O que funciona, o que depende de autorização e o que não está disponível
+
+- **Funciona (conferido aqui):** regras novas sobre os dados reais; sementes da Estante; aba VG VIP com os números do
+  print; separação Oregon × VIP.
+- **Confirma na primeira rodada no GitHub:** listagens da Estante (CFA, AQR, GMO, Compounding Quality, blog do
+  Damodaran), páginas de item, notícias dos 22 ativos novos da VIP, documentos à CVM pelos CNPJs novos.
+- **Depende de autorização:** posts do X (API paga); hoje cada conta entra só como link.
+- **Não disponível:** endereço da editora para os artigos do Mauboussin de 1995 a 2019 (o link abre o índice do autor);
+  texto dos posts pagos do Compounding Quality (só título, data e resumo público).
+
+---
+
 # Resultados dos testes · v3.4 · 08/11/2026 (Brasília)
 
 Saída literal das execuções desta versão. O contêiner onde os testes rodaram não tem saída para a internet. Por isso há

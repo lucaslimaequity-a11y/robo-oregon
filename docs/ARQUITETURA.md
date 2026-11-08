@@ -23,6 +23,10 @@
    endereço do trimestre (até 4 por rodada, uma vez por dia cada); `pesquisas.atualizar` refaz a pesquisa ativo × fator
    (Bing Notícias, até 6 por rodada, a cada 3 dias). Uma vez por versão: `migrar_acervo_v34` (cartas antigas sem data
    já guardadas) e `importar_sementes` (opiniões conferidas de 12 meses em `robo/sementes/`, por marca do arquivo).
+   v3.5: itens com data futura na fonte (edição de revista) entram com a data de detecção e guardam `data_edicao`;
+   fontes com `descartar_promocional`/`exigir_assunto` (Empiricus) só deixam passar empresa, setor ou estratégia;
+   `casas.genial_paginas` lê a página de cada ação na Genial e abre os relatórios novos; `pesquisas` procura os ETFs pelo
+   índice que acompanham e descarta páginas de cotação.
 5. **IA opcional** (`ler_com_ia`) — só com `ANTHROPIC_API_KEY` e `intel.ia.ativo = true`; itens de prioridade alta/média
    sem análise profunda, até `max_itens_dia` e `max_tokens_dia`; a resposta é validada (rótulos FATO/FONTE/INFERÊNCIA) e
    combinada com as regras (`analise.combinar`); uso registrado em `estado.json` (`ia_uso`, `ia_historico`).
@@ -34,8 +38,20 @@
    recomendada rotativa, perguntas de estudo, agenda).
 8. **Semanal** — sábado (ou modo `semanal`) → `semanal.json` (temas, teses, repetidos, assuntos para estudar;
    "mudanças de visão" só com IA).
-9. **Resultados CVM** — na rodada da noite, a cada 3 dias, `resultados.coletar` (ITR/DFP) → `resultados.json`.
-10. **Telegram** (opcional) — briefing uma vez por dia. **Saídas** — `status.json`, `versao.json`, `estado.json`, Summary.
+9. **Resultados CVM** — na rodada da noite, a cada 3 dias, `resultados.coletar` (ITR/DFP) → `resultados.json`; desde a
+   v3.5 com `entregue_em` (data de entrega da primeira versão, do arquivo índice do zip), usada como referência na Agenda.
+10. **Alerta imediato** (v3.5, opcional) — `alertas_imediatos`: fato relevante de empresa das carteiras ou opinião de casa
+   com vínculo direto, publicados nas últimas 48 h, até 5 por rodada, nunca repetidos (`estado.alertados`).
+11. **Estante** (v3.5) — `estante.atualizar`: por coleção, semente conferida (`robo/sementes/estante/<id>.json`) +
+   listagem pública (página, sitemap paginado ou feed em lotes), lida aos poucos (`max_paginas_por_rodada`, `ler_item_total`)
+   e depois só a cada `intervalo_horas`. A página de cada item (`ler_item`) dá título real, data declarada, resumo e PDFs
+   de resumo (briefs). A mesma peça em duas origens vira um item (título normalizado e data até 3 dias). Nada é apagado;
+   falha marca a coleção. Saída: `biblioteca/estante.json`, carregado pelo painel só ao abrir Biblioteca › Estante.
+12. **VG VIP** (v3.5) — `carregar_oregon` lê também `painel/src/vip.json`. Ativo que só está na VIP entra com `so_vip`;
+   `analise.separar_vip` move o vínculo para `ativos_vip` / `vinculos_vip` / `ativos_porque_vip`. A seção Oregon lê só
+   `ativos` e `vinculos` (prioridade, radar, pauta, temporada), então nada da VIP aparece lá. CNPJ dos ativos VIP em
+   `robo/config.json` (documentos à CVM e resultados).
+13. **Telegram** (opcional) — briefing uma vez por dia. **Saídas** — `status.json`, `versao.json`, `estado.json`, Summary.
 
 Reaproveitados da v2 sem mudança de função: `fontes_macro.py`, `agenda.py`, `resultados.py`, `avisos.py`, `util.py`
 (`Rede` com backoff, disjuntor e prazo; agora com HEAD e cabeçalhos), `calendario.py`, `config.py`. `coletar.py`,

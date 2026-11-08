@@ -79,6 +79,14 @@ PROMOCIONAL = ['webinar', 'inscreva', 'inscricoes', 'cadastre-se', 'cadastre', '
 SENSACIONAL = ['dispara', 'despenca', 'derrete', 'desaba', 'explode', 'imperdivel', 'voce precisa', 'chocante', 'bomba', 'alerta vermelho', 'colapso', 'caos', 'segredo', 'ninguem te contou',
                'o que ninguem', 'incrivel', 'urgente', 'a verdade sobre', 'vai quebrar', 'fim do', 'entenda por que voce']
 MOVIMENTO = ['sobe', 'cai ', 'caem', 'sobem', 'salta', 'recua', 'avanca', 'tomba', 'lidera altas', 'lidera quedas', 'fecha em alta', 'fecha em queda', 'abre em alta', 'abre em queda', 'rallies', 'slumps', 'tumbles', 'surges', 'jumps', 'falls', 'rises']
+FORA_NEGOCIO = (r'\b(orquestra|sinfonic\w*|concerto|cine[- ]?concerto|festival|teatro|espetaculo|museu|cinema|filme|musical|danca|bale|futebol|campeonato|'
+                r'jogo entre|partida|sub-?\d{2}|copa (do|da|paulista|sul|libertadores)|volei|basquete|maratona|corrida de rua|olimpiad\w*|atleta|torcida|'
+                r'premio de jornalismo|edital cultural|patrocinio cultural|natal|reveillon|carnaval)\b')
+NEGOCIO = (r'\b(acoes|acao|acionist\w*|lucro|receita|dividend\w*|jcp|producao|contrato|investiment\w*|investe|leilao|concess\w*|preco|combustive\w*|petroleo|refin\w*|gasolina|'
+           r'diesel|resultado|balanco|mercado|bolsa|tarifa|governanca|conselho|ceo|diretor\w*|divida|debentur\w*|emissao|aquisicao|venda\w*|faturament\w*|varejo|fusao|regulac\w*|aneel|anp|cvm|'
+           r'guidance|capex|ebitda|margem|demiss\w*|greve|multa|processo|justica)\b')
+DIDATICO = (r'^(o que (e|sao)|como (funciona|funcionam|investir|declarar|escolher|comecar)|entenda (o que|como)|guia (completo|para|do|de)|aprenda|passo a passo|'
+            r'tudo (o que|sobre)|vale a pena investir em (fii|fundos|fiagro|etf))|\bo que (e|sao) (os |as |um |uma )?(fiis?|fundos? (imobiliarios?|de infraestrutura)|fiagros?|etfs?)\b')
 RECOMENDACAO = ['acoes para comprar', 'comprar ou vender', 'vale a pena investir', 'melhores acoes', 'carteira recomendada', 'preco-alvo', 'preco alvo', 'recomendacao de compra', 'top picks', 'buy rating', 'stocks to buy', 'o que fazer com']
 
 # Casas de análise: só valem quando o título traz também um verbo de opinião (recomenda, eleva, rebaixa, preço-alvo...).
@@ -342,7 +350,7 @@ def classificar(item, oregon, hoje):
     texto_casa = item.pop('_texto_casa', '') or ''  # texto visível da página da casa: só para ler recomendação; nunca guardado
     casas = casas_citadas(item)
     casa_fonte = item.get('casa_fonte')  # fonte de research da própria casa (InvesTalk, Genial Analisa…): o texto é a opinião dela
-    for t in item.get('ativos') or []:  # ativo já ligado pelo coletor (busca específica, documento da CVM): fica
+    for t in (item.get('ativos') or []) + (item.get('ativos_vip') or []):  # ativo já ligado pelo coletor (busca específica, documento da CVM): fica
         a0 = (oregon.get('ativos') or {}).get(t) or {}
         if t not in ativos and a0.get('excluir') and _casa(txt, a0['excluir']) and not _casa(sem_excluidos(a0), a0.get('termos') or []):
             continue  # a busca trouxe o nome dentro de outra expressão ("Margem Equatorial" na busca por Equatorial)
@@ -360,6 +368,19 @@ def classificar(item, oregon, hoje):
         # documento à CVM, carta de gestora ou publicação de instituição: citar uma casa ou agência ("Fitch eleva o rating")
         # não faz do documento a opinião dela; opinião de casa vem da imprensa ou da página de research da própria casa
         casas, analistas = [], False
+    # v3.5 · relevância: patrocínio cultural ou esportivo cita a empresa, mas não é notícia dela ("Orquestra Petrobras
+    # Sinfônica", "jogo Ferroviária x Paulista Sub-20 Petrobras"); conteúdo didático genérico ("O que são fundos
+    # imobiliários") não é ligado aos fundos nem aos temas dos ETFs. O item continua na Biblioteca.
+    tit_n = sem_acento(item.get('titulo') or '').lower()
+    if re.search(FORA_NEGOCIO, tit_n) and not re.search(NEGOCIO, tit_n) and item.get('categoria') != 'oficial_empresa':
+        ativos, porque_at, setores = [], {}, []
+        item['fora_do_negocio'] = True
+    else:
+        item.pop('fora_do_negocio', None)
+    if re.search(DIDATICO, tit_n):
+        etfs_tema = []
+        item.pop('setor_de', None)
+        item['didatico'] = True
     verif = item.get('opiniao_verificada')  # opinião conferida na página (pesquisa de 12 meses): casas e sentido lidos ali
     if verif:
         casas = list(dict.fromkeys(list(verif.get('casas') or []) + casas))
@@ -379,7 +400,7 @@ def classificar(item, oregon, hoje):
         natureza = 'movimento'
     elif item.get('categoria') == 'veiculo':
         natureza = 'noticia'
-    item.update({'temas': temas[:6], 'regioes': regioes[:4], 'ativos': ativos[:8], 'setores': setores[:4], 'fatores': fatores[:4], 'natureza': natureza, 'ativos_porque': porque_at,
+    item.update({'temas': temas[:6], 'regioes': regioes[:4], 'ativos': ativos[:14], 'setores': setores[:4], 'fatores': fatores[:4], 'natureza': natureza, 'ativos_porque': porque_at,
                  'casas': casas[:4], 'temas_etf': temas_etf[:3], 'etfs_tema': etfs_tema[:8]})
     if natureza == 'opiniao_casa':
         # página da própria casa: a opinião é dela, salvo quando o texto relata outra casa (Nord e Empiricus fazem isso)
@@ -397,7 +418,26 @@ def classificar(item, oregon, hoje):
         item.pop('posicao', None)
     item['regras'] = REGRAS_VERSAO
     item['vinculos'] = vinculos(item, oregon)
+    separar_vip(item, oregon)
+    item['ativos'] = item['ativos'][:8]
     item['prioridade'] = prioridade(item, hoje)
+    return item
+
+
+def separar_vip(item, oregon):
+    """v3.5 · ativos que só existem nas carteiras VG VIP vão para ativos_vip / vinculos_vip / ativos_porque_vip. O que a seção
+    Oregon lê (ativos, vinculos, prioridade) fica só com a Oregon; a aba VG VIP lê os dois conjuntos."""
+    at = (oregon or {}).get('ativos') or {}
+    vip = [t for t in item.get('ativos') or [] if (at.get(t) or {}).get('so_vip')]
+    for k in ('ativos_vip', 'vinculos_vip', 'ativos_porque_vip'):
+        item.pop(k, None)
+    if not vip:
+        return item
+    vin, por = item.get('vinculos') or {}, item.get('ativos_porque') or {}
+    item['ativos_vip'] = vip[:8]
+    item['vinculos_vip'] = {t: vin.pop(t) for t in vip if t in vin}
+    item['ativos_porque_vip'] = {t: por.pop(t) for t in vip if t in por}
+    item['ativos'] = [t for t in item['ativos'] if t not in vip]
     return item
 
 
@@ -469,7 +509,7 @@ def prioridade(item, hoje):
     return {'pontos': p, 'nivel': nivel, 'porque': porque}
 
 
-REGRAS_VERSAO = 34  # itens classificados por regras anteriores são reclassificados na publicação (biblioteca.atualizar_leitura)
+REGRAS_VERSAO = 36  # itens classificados por regras anteriores são reclassificados na publicação (biblioteca.atualizar_leitura)
 
 
 # ------------------------------------------------------------------ vínculo do item com cada ativo citado

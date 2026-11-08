@@ -7,15 +7,16 @@ arquivados (`painel/arquivo/`) e saíram da navegação.
 
 Site público (GitHub Pages): `https://lucaslimaequity-a11y.github.io/robo-oregon/`
 
-## As cinco seções
+## As seis seções
 
 | Seção | O que tem |
 |---|---|
 | **Hoje** | Data, última coleta e o que chegou desde a sua última visita. Mapa de atenção da carteira (acontecimentos por ativo em 7 dias). Quatro áreas: **Radar das teses** (empresas acompanhadas, separando fato da empresa, opinião publicada, notícia e hipótese de setor), **Agenda decisiva** (temporada de resultados na CVM, documentos das companhias, agenda oficial), **Research global** e **Debate de mercado**. Profundidade rápida, briefing ou aprofundada. Sem cotações, Tesouro, dólar ou IPCA. |
-| **Brasil** | Ativos das 15 carteiras pela notícia direta mais recente. Na ficha, ao lado: notícias em que o ativo é o assunto, opiniões publicadas (12 meses, com recomendação e preço-alvo quando escritos), documentos à CVM, setor e cadeia e menções incidentais. No centro, em abas: Mudanças na tese, Eventos e RI, Fundamentos, Setor e pares. |
-| **Mundo e Estratégia** | Notícias (imprensa internacional e bancos centrais); Research (últimos 7 dias, 8 a 30, ainda relevante 31 a 90, mapa de temas de gestão); Debate de mercado (opiniões publicadas, análises de colaboradores e consultas externas a Reddit e X, sem coleta); ETFs globais. |
+| **Brasil** | Ativos das 15 carteiras pela notícia direta mais recente. Na ficha, ao lado: notícias em que o ativo é o assunto, opiniões publicadas (12 meses, com recomendação e preço-alvo quando escritos), documentos à CVM, setor e cadeia e menções incidentais. No centro, em abas: Mudanças na tese, Eventos e RI, Fundamentos, Setor e pares e (v3.5) **Casas de análise**: o que cada casa diz hoje e o preço-alvo de cada uma ao longo de 12 meses, sem média nem consenso calculado. **Pauta da semana** (v3.5): notícias de cada empresa da Carteira Oregon por pilar (Dividendos e Valor), com "Copiar pauta" para o deck. |
+| **Mundo e Estratégia** | Notícias (imprensa internacional e bancos centrais); Research (últimos 7 dias, 8 a 30, ainda relevante 31 a 90, mapa de temas de gestão, temas em alta na semana e origem Brasil ou mundo, com a academia brasileira de finanças); Debate de mercado (opiniões publicadas, análises de colaboradores e consultas externas a Reddit e X, sem coleta); ETFs globais. |
 | **Carteiras** | As 15 carteiras com pesos aprovados e validação (sem normalizar), mapa e Decidido × base. |
-| **Biblioteca** | Pesquisa em tudo o que já foi coletado, mês a mês; resumos semanais; meus aprendizados; fontes e coleta (por fonte e por busca). |
+| **Biblioteca** | Pesquisa em tudo o que já foi coletado, mês a mês; resumos semanais; meus aprendizados; fontes e coleta (por fonte e por busca). v3.5: Resumo do mês por tema de gestão, buscas salvas com contador do que chegou desde a última visita e a **Estante**: acervo permanente de Mauboussin (1995 em diante), CFA Research Foundation, memos de Howard Marks, Damodaran, AQR, GMO e Compounding Quality, com busca por tema e década. |
+| **VG VIP** (v3.5) | Aba separada para as carteiras VG VIP (Dividendos, Valor e Smallcaps, 35 ativos). Hoje VIP (mapa de atenção, radar, agenda das companhias e debate), Ativos (todas as colunas do print e a ficha de cada ativo com notícias, opiniões e casas de análise) e Pauta da semana por carteira. Números do print enviado pelo Lucas (`painel/src/vip.json`); as notícias dos ativos que só estão na VIP ficam em `ativos_vip`, fora das telas da Oregon. |
 
 ## Como funciona
 
@@ -29,6 +30,9 @@ robo/fontes.json + buscas de robo/config.json ──► robo/intel.py (GitHub Ac
                       │    → IA opcional (teto diário) → biblioteca mensal + recentes.json + opiniões de 12 meses + research de 90 dias + coleta.json
                       ├─ opiniões conferidas de 12 meses (robo/sementes) · comentários de resultado do InvesTalk no endereço do trimestre
                       ├─ pesquisa ativo × fator para a janela de leitura (Bing Notícias) → biblioteca/pesquisas.json
+                      ├─ v3.5: relatórios da Genial pela página de cada ação · alerta imediato no Telegram (fato relevante, opinião nova)
+                      ├─ v3.5: Estante (sementes conferidas + listagens, sitemaps e feeds das séries) → biblioteca/estante.json
+                      ├─ v3.5: ativos das carteiras VG VIP (painel/src/vip.json) → vínculos à parte (ativos_vip)
                       ├─ briefing do dia → data/hoje.json · resumo da semana → data/semanal.json
                       └─ ramo "dados" (histórico completo) e site (arquivos públicos) ──► painel (painel/src → site/index.html)
 ```

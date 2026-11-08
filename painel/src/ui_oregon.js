@@ -35,9 +35,14 @@
       (I.TX.cvm || {})[t] ? [' · ', h('a', {href: 'https://www.rad.cvm.gov.br/ENET/frmConsultaExternaCVM.aspx', target: '_blank', rel: 'noopener', title: 'Consulta de documentos das companhias na CVM'}, 'CVM ↗')] : null);
   }
   function lista(t, chave, l, max) {
-    var k = t + ':' + chave, n = NP[k] || max;
-    return h('div', null, h('ul', {class: 'nls'}, l.slice(0, n).map(function (x) { return A.itemLinha(x, t); })),
-      l.length > n ? h('button', {class: 'btn link', onclick: function () { NP[k] = n + 12; A.rerender(); }}, 'Mostrar mais ' + Math.min(12, l.length - n)) : null);
+    var k = t + ':' + chave, n = NP[k] || max, g = A.linhasAgrupadas(l, t, n);
+    return h('div', null, g.ul,
+      g.n > n ? h('button', {class: 'btn link', onclick: function () { NP[k] = n + 12; A.rerender(); }}, 'Mostrar mais ' + Math.min(12, g.n - n)) : null);
+  }
+  // Veículo pouco conhecido, achado pela busca, sem fato da empresa: fica recolhido (nada é apagado)
+  function recolhidos(t, chave, l) {
+    if (!l.length) return null;
+    return A.more('Baixa relevância (' + l.length + ')', h('div', null, h('p', {class: 'hint', style: 'margin:0 0 4px'}, 'Veículos pouco conhecidos achados pela busca, sem resultado, documento ou opinião de casa. Ficam aqui para consulta.'), lista(t, chave, l, 6)));
   }
   function opinioesBox(t, c) {
     var o = c.opinioes, box = h('div', {class: 'np-op'});
@@ -60,17 +65,21 @@
   // setor e cadeia (ou índice e tema do ETF) e, recolhidas, as menções de passagem. Hora, veículo e ↗ em todas as linhas.
   function noticiasPainel(t) {
     var c = conteudoDe(t), a = C.ATV[t] || {}, etf = A.ehETF(t), box = h('div', {class: 'np'});
-    var noticias = c.noticias.filter(function (x) { return x.natureza !== 'opiniao_casa'; });
+    var todasN = c.noticias.filter(function (x) { return x.natureza !== 'opiniao_casa'; });
+    var noticias = todasN.filter(function (x) { return !I.baixaRelevancia(x); }), baixas = todasN.filter(I.baixaRelevancia);
     var v = A.intel.versao, n7 = c.direto.filter(nos7).length;
     box.appendChild(h('div', {class: 'np-h'}, h('h3', null, 'Notícias de ' + t), h('span', {class: 'muted', title: 'Última coleta do robô'}, v ? 'coleta ' + I.horaAbs(v.gerado_em) : '')));
     box.appendChild(h('p', {class: 'np-cont', title: 'Empresa diretamente afetada: o ativo é o assunto. Setor e cadeia: não cita o ativo. Menção incidental: citado numa lista ou só no resumo.'}, h('b', null, String(n7)), (n7 === 1 ? ' diretamente sobre o ativo' : ' diretamente sobre o ativo') + ' em 7 dias', c.tema.length ? ' · ' + c.tema.length + (etf ? ' do tema geral' : ' de setor e cadeia') : '', c.mencoes.length ? ' · ' + c.mencoes.length + (c.mencoes.length > 1 ? ' menções incidentais' : ' menção incidental') : ''));
     box.appendChild(linksBusca(t));
     if (noticias.length) box.appendChild(lista(t, 'n', noticias, 8));
-    else box.appendChild(h('p', {class: 'empty'}, A.intel.carregando ? 'Buscando as notícias…' : semDados() ? SEM_DADOS : 'Nenhuma notícia tem ' + (etf ? 'o fundo' : (a.nome || t)) + ' como assunto nos portais e na busca dos últimos dias. Use os links acima para buscar agora.'));
+    else box.appendChild(h('p', {class: 'empty'}, A.intel.carregando ? 'Buscando as notícias…' : semDados() ? SEM_DADOS : baixas.length ? 'Nenhuma notícia de veículo conhecido nos últimos dias; as de baixa relevância estão logo abaixo.' : 'Nenhuma notícia tem ' + (etf ? 'o fundo' : (a.nome || t)) + ' como assunto nos portais e na busca dos últimos dias. Use os links acima para buscar agora.'));
+    var rb = recolhidos(t, 'nb', baixas); if (rb) box.appendChild(rb);
     box.appendChild(opinioesBox(t, c));
     if (c.oficiais.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, 'Documentos à CVM · ' + c.oficiais.length), lista(t, 'cvm', c.oficiais, 4)));
     if (c.tema.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, etf ? 'Índice e tema do ETF' : 'Setor e cadeia'),
-      h('p', {class: 'hint', style: 'margin:0 0 4px'}, etf ? 'Sobre o mercado que o ETF acompanha, não sobre o fundo.' : 'Notícias do setor e da cadeia que movem a empresa; não citam a empresa.'), lista(t, 'tema', c.tema, 6)));
+      h('p', {class: 'hint', style: 'margin:0 0 4px'}, etf ? 'Sobre o mercado que o ETF acompanha, não sobre o fundo.' : 'Notícias do setor e da cadeia que movem a empresa; não citam a empresa.'),
+      c.tema.filter(function (x) { return !I.desconhecido(x); }).length ? lista(t, 'tema', c.tema.filter(function (x) { return !I.desconhecido(x); }), 6) : h('p', {class: 'muted np-vz'}, 'Só veículos pouco conhecidos no período.'),
+      recolhidos(t, 'temab', c.tema.filter(I.desconhecido))));
     if (c.mencoes.length) box.appendChild(A.more('Menções incidentais (' + c.mencoes.length + ')', h('div', null, h('p', {class: 'hint', style: 'margin:0 0 4px'}, 'Manchetes que citam ' + t + ' numa lista (dividendos da semana, destaques do dia) ou só no resumo. Não entram nos contadores.'), lista(t, 'men', c.mencoes, 8))));
     box.appendChild(h('p', {class: 'hint np-pe'}, 'Portais, busca por ativo e CVM. ', h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({ativo: t}); }}, 'Histórico na Biblioteca')));
     return box;
@@ -193,7 +202,9 @@
       return h('div', null, A.sec('A tese', null, fund), A.sec('Exposição a juros, câmbio, regulação e commodities', null, exposicaoBox(t, a, sen)));
     }
     function setor() { return A.sec('Setor e pares', {hint: 'Mesmo setor, grupo econômico ou canal macro nas Teses, com as notícias diretas de cada um.'}, setorBox(t, a)); }
-    return fichaLayout(t, cab, [['tese', 'Mudanças na tese', null, mudancas], ['eventos', 'Eventos e RI', c.oficiais.length || null, eventos], ['fundamentos', 'Fundamentos', null, fundamentos], ['setor', 'Setor e pares', null, setor]], 'tese', kpi);
+    var nCasas = (a.classe === 'Ações') ? casasDoAtivo(t).length : 0;
+    return fichaLayout(t, cab, [['tese', 'Mudanças na tese', null, mudancas], ['eventos', 'Eventos e RI', c.oficiais.length || null, eventos], ['fundamentos', 'Fundamentos', null, fundamentos], ['setor', 'Setor e pares', null, setor],
+      ['casas', 'Casas de análise', nCasas || null, function () { return casasTab(t); }]], 'tese', kpi);
   }
   function etfInfo(t) { return (C.D && C.D.etfs && C.D.etfs[t]) || null; }
   function partes(s) {
@@ -322,11 +333,14 @@
 
   /* ---------- Brasil ---------- */
   var GRUPOS_BR = [['Todos', null], ['Ações', function (a) { return a.classe === 'Ações'; }], ['FIIs', function (a) { return a.classe === 'FIIs'; }], ['ETFs renda fixa', function (a, t) { return A.ehETF(t); }]];
-  A.SUBS.brasil = [['ativos', 'Ativos brasileiros']];
+  A.SUBS.brasil = [['ativos', 'Ativos brasileiros'], ['pauta', 'Pauta da semana']];
   A.areas.brasil = function () {
+    if (S.sub.brasil === 'pauta') { var w0 = h('div'); w0.appendChild(A.subnav('brasil', A.SUBS.brasil)); w0.appendChild(pautaSemana()); return w0; }
     var base = ativosDasCarteiras().filter(function (t) { return !ehGlobal(t); });
-    return listaComFicha(EMP, GRUPOS_BR, base, A.pageHead('Ativos das 15 carteiras', 'Brasil', 'Notícias em que o ativo é o assunto, opiniões e o que pode mudar a tese.',
+    var pg = listaComFicha(EMP, GRUPOS_BR, base, A.pageHead('Ativos das 15 carteiras', 'Brasil', 'Notícias em que o ativo é o assunto, opiniões e o que pode mudar a tese.',
       h('button', {class: 'btn', onclick: function () { var d = A.drawer('Teses da Carteira Oregon · visão geral', A.tesesOregon()); d.classList.add('wide'); }}, 'Visão geral das teses')));
+    pg.insertBefore(A.subnav('brasil', A.SUBS.brasil, 'ativos'), pg.firstChild);
+    return pg;
   };
 
   /* ---------- Mundo e Estratégia ---------- */
@@ -367,7 +381,9 @@
     ['alocacao', 'Alocação global', ['alocacao', 'emergentes', 'europa', 'china']], ['fatores', 'Fatores', ['fatores']], ['commodities', 'Commodities e energia', ['commodities', 'energia_utilities']],
     ['cambio', 'Câmbio', ['cambio']], ['portfolio', 'Construção de portfólios', ['metodo']], ['geopolitica', 'Geopolítica', ['geopolitica']], ['tecnologia', 'Tecnologia e IA', ['tecnologia_ia']], ['etfs', 'ETFs', []]];
   function temaGestao(x, g) { return g[0] === 'etfs' ? (x.etfs_tema || []).length > 0 : (x.temas || []).some(function (t) { return g[2].indexOf(t) >= 0; }); }
-  var RS = {cat: 'todas', tema: null, max: 8, mx: {}};
+  var RS = {cat: 'todas', tema: null, max: 8, mx: {}, orig: 'todas'};
+  var ORIGENS = [['todas', 'Brasil e mundo'], ['brasil', 'Brasil'], ['mundo', 'Mundo']];
+  function daOrigem(x, o) { return o === 'todas' || (o === 'brasil' ? x.pais === 'Brasil' : x.pais !== 'Brasil'); }
   function idadeDias(x) { var p = x.publicado_em; if (!p) return null; return (Date.now() - Date.parse(p.length <= 10 ? p + 'T12:00:00-03:00' : p)) / 864e5; }
   function mundoCartas() {
     var wrap = h('div'), itens = A.itensResearch ? A.itensResearch() : A.itens();
@@ -375,7 +391,7 @@
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
     var cat = CATS.filter(function (c) { return c[0] === RS.cat; })[0] || CATS[0];
     var dup = {}, base = itens.filter(function (x) {  // o mesmo documento em vários arquivos (ex.: relatório mensal de cada fundo) aparece uma vez
-      if (x.acervo || x.agrupado_em || cat[2].indexOf(x.categoria) < 0) return false;
+      if (x.acervo || x.agrupado_em || cat[2].indexOf(x.categoria) < 0 || !daOrigem(x, RS.orig)) return false;
       var k = (x.organizacao || x.fonte) + '|' + x.titulo + '|' + I.pub(x).slice(0, 10); if (dup[k]) return false; dup[k] = 1; return true;
     });
     var datados = base.filter(function (x) { var d = idadeDias(x); return d != null && d <= 90 && d > -1; });
@@ -386,7 +402,10 @@
     // sumário da página e filtros
     wrap.appendChild(h('nav', {class: 'sumario', 'aria-label': 'Nesta página'}, h('span', {class: 'muted'}, 'Nesta página:'), h('a', {href: '#rs-7'}, 'Últimos 7 dias (' + f7.length + ')'), h('a', {href: '#rs-30'}, '8 a 30 dias (' + f30.length + ')'),
       h('a', {href: '#rs-90'}, 'Ainda relevante, 31 a 90 dias (' + f90.length + ')'), semData.length ? h('a', {href: '#rs-sem'}, 'Sem data na fonte (' + semData.length + ')') : null, h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({grupo: 'cartas'}); }}, 'Biblioteca histórica ↗')));
-    var cont = {}; CATS.forEach(function (c) { cont[c[0]] = itens.filter(function (x) { var d = idadeDias(x); return !x.acervo && !x.agrupado_em && c[2].indexOf(x.categoria) >= 0 && d != null && d <= 90; }).length; });
+    var cont = {}; CATS.forEach(function (c) { cont[c[0]] = itens.filter(function (x) { var d = idadeDias(x); return !x.acervo && !x.agrupado_em && c[2].indexOf(x.categoria) >= 0 && daOrigem(x, RS.orig) && d != null && d <= 90; }).length; });
+    // v3.5: origem das publicações (Brasil, com a academia brasileira, ou internacionais)
+    var contO = {}; ORIGENS.forEach(function (o) { contO[o[0]] = itens.filter(function (x) { var d = idadeDias(x); return !x.acervo && !x.agrupado_em && cat[2].indexOf(x.categoria) >= 0 && daOrigem(x, o[0]) && d != null && d <= 90; }).length; });
+    wrap.appendChild(h('div', {class: 'sub filt rs-orig', role: 'toolbar', 'aria-label': 'Origem'}, ORIGENS.map(function (o) { return h('button', {'aria-pressed': RS.orig === o[0] ? 'true' : 'false', onclick: function () { RS.orig = o[0]; RS.max = 8; RS.mx = {}; A.rerender(); }}, o[1], h('small', null, String(contO[o[0]]))); })));
     wrap.appendChild(h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Tipo de fonte'}, CATS.map(function (c) { return h('button', {'aria-pressed': RS.cat === c[0] ? 'true' : 'false', disabled: !cont[c[0]] && c[0] !== 'todas' ? true : null, onclick: function () { RS.cat = c[0]; RS.max = 8; RS.mx = {}; A.rerender(); }}, c[1], cont[c[0]] ? h('small', null, String(cont[c[0]])) : null); })));
     // mapa de temas: assuntos dominantes nos últimos 90 dias, com os documentos que justificam cada um (toque filtra)
     var tm = TEMAS_GESTAO.map(function (t) { return {t: t, n: datados.filter(function (x) { return temaGestao(x, t); }).length}; }).filter(function (o) { return o.n; }).sort(function (a, b) { return b.n - a.n; });
@@ -397,6 +416,22 @@
         return h('button', {class: 'tbar-r' + (on ? ' on' : ''), role: 'listitem', 'aria-pressed': on ? 'true' : 'false', title: o.n + ' publicações sobre ' + o.t[1].toLowerCase() + ' nos últimos 90 dias', onclick: function () { RS.tema = on ? null : o.t[0]; A.rerender(); }},
           h('span', {class: 'tbar-l'}, o.t[1]), h('span', {class: 'tbar-b'}, h('i', {style: 'width:' + Math.max(4, Math.round(100 * o.n / mx)) + '%'})), h('span', {class: 'tbar-n'}, String(o.n)));
       }), RS.tema ? h('p', {class: 'tbar-f'}, 'Filtrando: ' + g[1] + ' · ', h('button', {class: 'btn link', onclick: function () { RS.tema = null; A.rerender(); }}, 'mostrar todos os temas')) : null)));
+      // v3.5 · temas em alta: publicações por tema nos últimos 7 dias × média semanal das 4 semanas anteriores
+      var alta = TEMAS_GESTAO.map(function (t) {
+        var n7 = 0, ant = 0;
+        datados.forEach(function (x) { if (!temaGestao(x, t)) return; var d = idadeDias(x); if (d <= 7) n7++; else if (d <= 35) ant++; });
+        return {t: t, n7: n7, med: ant / 4};
+      }).filter(function (o) { return o.n7 > 0 && o.n7 > o.med; }).sort(function (a, b) { return (b.n7 - b.med) - (a.n7 - a.med); }).slice(0, 6);
+      if (alta.length) {
+        var mx2 = Math.max.apply(null, alta.map(function (o) { return Math.max(o.n7, o.med); }));
+        wrap.appendChild(A.sec('Temas em alta', {id: 'rs-alta', cls: 'sec-temas', badge: h('span', {class: 'sec-n'}, 'esta semana × média das 4 anteriores'), hint: 'Quantas publicações trataram de cada tema nos últimos 7 dias, comparadas à média semanal das quatro semanas anteriores. Mais publicações não quer dizer mais risco nem oportunidade.'},
+          h('div', null, h('div', {class: 'tbar', role: 'list'}, alta.map(function (o) {
+            var on = RS.tema === o.t[0];
+            return h('button', {class: 'tbar-r alta' + (on ? ' on' : ''), role: 'listitem', 'aria-pressed': on ? 'true' : 'false', title: o.n7 + ' nesta semana; média de ' + A.num(o.med, 1) + ' por semana nas quatro anteriores', onclick: function () { RS.tema = on ? null : o.t[0]; A.rerender(); }},
+              h('span', {class: 'tbar-l'}, o.t[1]), h('span', {class: 'tbar-bb'}, h('span', {class: 'tbar-b'}, h('i', {style: 'width:' + Math.max(4, Math.round(100 * o.n7 / mx2)) + '%'})), h('span', {class: 'tbar-b ant'}, h('i', {style: 'width:' + Math.max(o.med ? 3 : 0, Math.round(100 * o.med / mx2)) + '%'}))),
+              h('span', {class: 'tbar-n'}, o.n7 + ' · ' + A.num(o.med, 1)));
+          })), h('p', {class: 'legend'}, h('span', null, h('i', {style: 'background:var(--c-research)'}), 'últimos 7 dias'), h('span', null, h('i', {style: 'background:var(--line2)'}), 'média semanal das 4 semanas anteriores')))));
+      }
     }
     function bloco(id, tit, l, cards) {
       return A.sec(tit, {id: id, cls: 'sec-rs', badge: h('span', {class: 'sec-n'}, l.length + (l.length === 1 ? ' publicação' : ' publicações'))},
@@ -469,4 +504,164 @@
     wrap.appendChild(s === 'cartas' ? mundoCartas() : s === 'debate' ? mundoDebate() : s === 'etfs' ? mundoEtfs() : mundoAgora());
     return wrap;
   };
+
+  /* ---------- v3.5 · Casas de análise na ficha: preço-alvo de cada casa no tempo e o que cada uma diz hoje ----------
+     Só alvos e recomendações escritos nas opiniões publicadas (12 meses). Sem média, sem consenso calculado. */
+  var COR_CASA = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#6250d6'];  // validados (dataviz): sem verde e vermelho, reservados a favor/contra
+  function opinioesDoAtivo(t, vip) {  // vip: a aba VG VIP também lê os vínculos guardados à parte (ativos_vip)
+    return todosItens().filter(function (x) { return x.natureza === 'opiniao_casa' && (I.diretos(x).indexOf(t) >= 0 || (vip && I.temVip(x, t) && I.vinculoVip(x, t).tipo === 'direto')); }).sort(function (a, b) { return I.pub(a).localeCompare(I.pub(b)); });
+  }
+  function alvosDe(x, t) { return I.alvosDe(x, t).map(function (o) { o.txt = 'R$ ' + A.num(o.v, 2); return o; }); }
+  function casasDoAtivo(t, vip) {
+    var por = {};
+    opinioesDoAtivo(t, vip).forEach(function (x) {
+      var alv = alvosDe(x, t);
+      (x.casas || []).forEach(function (c) {
+        var o = por[c] = por[c] || {casa: c, itens: [], pontos: []};
+        o.itens.push(x);
+        alv.filter(function (a) { return a.casa === c; }).forEach(function (a) { o.pontos.push({x: x, v: a.v, txt: a.txt}); });
+      });
+    });
+    return Object.keys(por).map(function (k) { var o = por[k]; o.ult = o.itens[o.itens.length - 1]; return o; }).sort(function (a, b) { return I.pub(b.ult).localeCompare(I.pub(a.ult)); });
+  }
+  function graficoAlvos(t, casas) {
+    var com = casas.filter(function (c) { return c.pontos.length; }).sort(function (a, b) { return b.pontos.length - a.pontos.length || I.pub(b.ult).localeCompare(I.pub(a.ult)); });
+    if (!com.length) return h('p', {class: 'empty sm'}, 'Nenhuma opinião dos últimos 12 meses traz preço-alvo em reais escrito para ' + t + '.');
+    var mostradas = com.slice(0, COR_CASA.length), resto = com.length - mostradas.length;
+    var W = 720, H = 260, ml = 54, mr = 112, mt = 14, mb = 30, fim = Date.now(), ini = fim - 365 * 864e5;
+    var vs = []; mostradas.forEach(function (c) { c.pontos.forEach(function (p) { vs.push(p.v); }); });
+    var lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs), pad = Math.max(1, (hi - lo) * 0.15); lo = Math.max(0, lo - pad); hi = hi + pad;
+    var passo = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100].filter(function (p0) { return (hi - lo) / p0 <= 5; })[0] || 100;
+    lo = Math.floor(lo / passo) * passo; hi = Math.ceil(hi / passo) * passo;
+    function X(d) { return ml + (W - ml - mr) * (d - ini) / (fim - ini); }
+    function Y(v) { return mt + (H - mt - mb) * (1 - (v - lo) / (hi - lo)); }
+    function ts(x) { var p = I.pub(x); return Date.parse(p.length <= 10 ? p + 'T12:00:00-03:00' : p); }
+    var host = h('div', {class: 'chart alv'}), s = A.svg, svg = s('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Preço-alvo publicado por casa de análise para ' + t + ', últimos 12 meses'}), dica = h('div', {class: 'tip'});
+    host.append(svg, dica);
+    for (var v = lo; v <= hi + 1e-9; v += passo) { var y = Y(v); s('line', {x1: ml, x2: W - mr, y1: y, y2: y, class: 'grid'}, svg); var tx = s('text', {x: ml - 6, y: y + 4, 'text-anchor': 'end'}, svg); tx.textContent = 'R$ ' + A.num(v, passo < 1 ? 1 : 0); }
+    for (var mth = 0; mth <= 12; mth += 3) { var d = new Date(ini + mth * 30.4 * 864e5), xx = X(d.getTime()), tl = s('text', {x: xx, y: H - 8, 'text-anchor': 'middle'}, svg); tl.textContent = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][d.getMonth()] + '/' + String(d.getFullYear()).slice(2); }
+    mostradas.forEach(function (c, i) {
+      var cor = COR_CASA[i], pts = c.pontos.map(function (p) { return {p: p, x: X(ts(p.x)), y: Y(p.v)}; }).filter(function (q) { return isFinite(q.x) && q.x >= ml - 1; });
+      if (pts.length > 1) { var ln = s('path', {d: pts.map(function (q, j) { return j ? 'H' + q.x.toFixed(1) + 'V' + q.y.toFixed(1) : 'M' + q.x.toFixed(1) + ',' + q.y.toFixed(1); }).join(''), fill: 'none', 'stroke-width': 2}, svg); ln.style.stroke = cor; }  // degrau: o alvo vale até a casa publicar outro
+      pts.forEach(function (q) {
+        var hit = s('circle', {cx: q.x, cy: q.y, r: 11, fill: 'transparent', style: 'cursor:pointer'}, svg), dot = s('circle', {cx: q.x, cy: q.y, r: 4.5, 'stroke-width': 2}, svg);
+        dot.style.fill = cor; dot.style.stroke = 'var(--panel)';
+        var linhas = [c.casa + ' · ' + I.quando(q.p.x), 'Preço-alvo ' + q.p.txt + (q.p.x.horizonte ? ' (' + q.p.x.horizonte + ')' : ''), q.p.x.recomendacao ? 'Recomendação: ' + q.p.x.recomendacao : null, 'Toque para abrir a matéria'];
+        hit.addEventListener('pointerenter', function (ev) { dica.replaceChildren.apply(dica, linhas.filter(Boolean).map(function (l, j) { return h(j ? 'div' : 'b', null, l); })); dica.style.opacity = 1; var b = host.getBoundingClientRect(); dica.style.left = Math.min(host.clientWidth - 220, Math.max(0, ev.clientX - b.left + 10)) + 'px'; dica.style.top = (ev.clientY - b.top + 12) + 'px'; });
+        hit.addEventListener('pointerleave', function () { dica.style.opacity = 0; });
+        hit.addEventListener('click', function () { A.abrirItem(q.p.x); });
+      });
+      var u = pts[pts.length - 1];
+      if (u && mostradas.length <= 4) { var lb = s('text', {x: W - mr + 8, y: u.y + 4, class: 'lab'}, svg); lb.textContent = c.casa.length > 16 ? c.casa.slice(0, 15) + '…' : c.casa; }
+    });
+    var leg = h('div', {class: 'legend'}, mostradas.map(function (c, i) { return h('span', null, h('i', {style: 'background:' + COR_CASA[i]}), c.casa + ' · ' + c.pontos.length + (c.pontos.length > 1 ? ' alvos' : ' alvo')); }), resto > 0 ? h('span', {class: 'muted'}, '+ ' + resto + (resto > 1 ? ' casas' : ' casa') + ' no quadro abaixo') : null);
+    return h('div', null, host, leg, h('p', {class: 'hint'}, 'Cada ponto é um preço-alvo em reais escrito numa opinião publicada; a linha em degrau mostra o alvo valendo até a casa publicar outro. Toque no ponto para abrir a matéria. Alvos em dólar (ADR) e de outra classe da ação ficam de fora. Não há média nem consenso calculado.'));
+  }
+  function quadroCasas(t, casas) {
+    if (!casas.length) return h('p', {class: 'empty sm'}, semDados() ? SEM_DADOS : 'Nenhuma opinião de casa de análise sobre ' + t + ' nos últimos 12 meses.');
+    var rows = casas.map(function (c) {
+      var x = c.ult, alv = alvosDe(x, t).filter(function (a) { return a.casa === c.casa; })[0];
+      var comAlvo = c.pontos.length ? c.pontos[c.pontos.length - 1] : null;
+      return {casa: c.casa, x: x, data: I.pub(x), rec: (c.itens.slice().reverse().filter(function (y) { return y.recomendacao; })[0] || {}).recomendacao || null, recX: c.itens.slice().reverse().filter(function (y) { return y.recomendacao; })[0] || null,
+        alvo: alv ? alv.txt : null, alvoAnt: !alv && comAlvo ? comAlvo : null, pos: x.posicao, n: c.itens.length};
+    });
+    return A.table([
+      {k: 'casa', t: 'Casa', f: function (r) { return h('span', null, h('b', null, r.casa), h('div', {class: 'muted', style: 'font-size:.76rem'}, r.n + (r.n > 1 ? ' opiniões' : ' opinião') + ' em 12 meses')); }},
+      {k: 'data', t: 'Última', f: function (r) { return h('span', {class: 'nw-when'}, I.quando(r.x)); }},
+      {k: 'rec', t: 'Recomendação', f: function (r) { return r.rec ? h('span', null, r.rec, r.recX !== r.x ? h('div', {class: 'muted', style: 'font-size:.74rem'}, 'escrita em ' + I.quando(r.recX)) : null) : h('span', {class: 'muted'}, '—'); }, s: false},
+      {k: 'alvo', t: 'Preço-alvo', f: function (r) { return r.alvo ? h('b', null, r.alvo) : r.alvoAnt ? h('span', null, r.alvoAnt.txt, h('div', {class: 'muted', style: 'font-size:.74rem'}, 'escrito em ' + I.quando(r.alvoAnt.x))) : h('span', {class: 'muted'}, '—'); }, s: false},
+      {k: 'pos', t: 'Sentido', f: function (r) { return r.pos ? h('span', {class: 'pol p-' + r.pos}, I.POSICAO[r.pos]) : h('span', {class: 'muted'}, 'sem sentido explícito'); }, s: false},
+      {k: 'x', t: 'Fonte', f: function (r) { return h('button', {class: 'btn link', onclick: function () { A.abrirItem(r.x); }}, (r.x.organizacao || r.x.fonte || 'abrir').slice(0, 28)); }, s: false}
+    ], rows, {sort: null});
+  }
+  function casasTab(t, vip) {
+    var casas = casasDoAtivo(t, vip);
+    return h('div', null,
+      A.sec('O que cada casa diz hoje', {id: 'casas-hoje', badge: h('span', {class: 'sec-n'}, casas.length + (casas.length === 1 ? ' casa' : ' casas') + ' · 12 meses'), hint: 'A opinião mais recente de cada casa sobre ' + t + ', como publicada. Recomendação e preço-alvo só quando escritos; quando a última opinião não traz o número, aparece o último escrito, com a data.', flush: true}, quadroCasas(t, casas)),
+      A.sec('Preço-alvo por casa ao longo de 12 meses', {id: 'alvos-tempo'}, graficoAlvos(t, casas)));
+  }
+  A.casasDoAtivo = casasDoAtivo;
+  A.casasTab = casasTab;
+  A.todosItensAtivo = todosItens;
+  A.alvosDe = alvosDe;
+
+  /* ---------- v3.5 · Pauta da semana: notícias de cada empresa da Carteira Oregon, por pilar, para a reunião ---------- */
+  var PT = {dias: 7};
+  var PILARES_OREGON = [['P5', 'Dividendos'], ['P6', 'Valor']];
+  function tipoPauta(x, t) {
+    if (x.categoria === 'oficial_empresa') return 'cvm';
+    if (x.natureza === 'opiniao_casa') return 'opiniao';
+    if (A.ehDebate && A.ehDebate(x)) return 'colab';
+    return I.vinculo(x, t).evento === 'resultado' ? 'resultado' : 'noticia';
+  }
+  var ROT_PAUTA = {resultado: 'Resultado', cvm: 'CVM', opiniao: 'Opinião', colab: 'Análise de colaborador', noticia: 'Notícia'};
+  // Seleção para a pauta: variedade de tipos (o mesmo resultado sai em dez veículos) e veículos conhecidos primeiro
+  var TETO_PAUTA = {resultado: 2, cvm: 2, opiniao: 3, colab: 1, noticia: 2};
+  function selecionarPauta(its, t) {
+    var cont = {}, sel = [], resto = [];
+    its.slice().sort(function (a, b) { return ((a.via && a.confiavel === false) ? 1 : 0) - ((b.via && b.confiavel === false) ? 1 : 0); }).forEach(function (x) {
+      var k = tipoPauta(x, t); cont[k] = (cont[k] || 0) + 1; (cont[k] <= TETO_PAUTA[k] ? sel : resto).push(x);
+    });
+    var ordem = {resultado: 0, cvm: 1, opiniao: 2, colab: 3, noticia: 4};
+    sel.sort(function (a, b) { return (ordem[tipoPauta(a, t)] - ordem[tipoPauta(b, t)]) || I.pub(b).localeCompare(I.pub(a)); });
+    return sel.concat(resto);
+  }
+  function pautaDados() {
+    var lim = Date.now() - PT.dias * 864e5, out = [];
+    PILARES_OREGON.forEach(function (p) {
+      var emp = Object.keys(C.ATV).filter(function (t) { var a = C.ATV[t]; return a.pilar === p[0] && a.classe === 'Ações' && a.status !== 'placeholder'; }).sort();
+      var linhas = emp.map(function (t) {
+        var c = conteudoDe(t), vis = {}, its = c.direto.filter(function (x) { var p0 = I.pub(x), q = Date.parse(p0.length <= 10 ? p0 + 'T12:00:00-03:00' : p0); if (!isFinite(q) || q < lim || q > Date.now() + 6 * 3600e3 || x.acervo) return false; var k = x.titulo.toLowerCase().slice(0, 60); if (vis[k]) return false; vis[k] = 1; return true; });
+        var rel = its.filter(function (x) { return !I.baixaRelevancia(x); });
+        return {t: t, nome: (C.ATV[t] || {}).nome || t, itens: selecionarPauta(I.agruparFatos(rel).map(function (g) { return g.x; }), t), baixas: its.filter(I.baixaRelevancia)};
+      });
+      out.push({pilar: p, com: linhas.filter(function (l) { return l.itens.length; }), sem: linhas.filter(function (l) { return !l.itens.length; })});
+    });
+    return out;
+  }
+  function dataCurta(x) { var p = I.pub(x); return p ? p.slice(8, 10) + '/' + p.slice(5, 7) : ''; }
+  function textoPauta(P) {
+    var fim = new Date(), ini = new Date(Date.now() - (PT.dias - 1) * 864e5), f = function (d) { return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2); };
+    var L = ['Carteira Oregon · notícias de ' + f(ini) + ' a ' + f(fim)];
+    P.forEach(function (g) {
+      L.push('', 'Pilar ' + g.pilar[1]);
+      g.com.forEach(function (l) { L.push('• ' + l.t + ' (' + l.nome + ')'); l.itens.slice(0, 5).forEach(function (x) { L.push('   – [' + ROT_PAUTA[tipoPauta(x, l.t)] + '] ' + x.titulo + ' (' + (x.organizacao || x.fonte || '') + ', ' + dataCurta(x) + ')' + (A.link(x.link) ? ' ' + A.link(x.link) : '')); }); });
+      if (g.sem.length) L.push('Sem notícias no período: ' + g.sem.map(function (l) { return l.t; }).join(', '));
+    });
+    return L.join('\n');
+  }
+  // pauta: o que é de veículo pouco conhecido, sem fato da empresa, fica recolhido e fora do texto copiado
+  function baixasPauta(l) {
+    if (!l.baixas.length) return null;
+    return A.more(l.baixas.length + ' de baixa relevância', h('ul', {class: 'pt-l'}, l.baixas.slice(0, 8).map(function (x) {
+      return h('li', null, h('button', {class: 'nwl', onclick: function () { A.abrirItem(x); }}, x.titulo), h('span', {class: 'muted'}, ' · ' + (x.fonte || x.organizacao || '') + ' · ' + dataCurta(x)));
+    })));
+  }
+  function pautaSemana() {
+    var wrap = h('div'), P = pautaDados();
+    wrap.appendChild(A.pageHead('Brasil', 'Pauta da semana · Carteira Oregon', 'Notícias de cada empresa dos pilares Dividendos e Valor no período, separadas por pilar: resultados, documentos à CVM, opiniões publicadas e notícias em que a empresa é o assunto.',
+      h('div', {class: 'row', style: 'gap:6px'}, h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Período', style: 'margin:0'}, [[7, '7 dias'], [14, '14 dias']].map(function (o) { return h('button', {'aria-pressed': PT.dias === o[0] ? 'true' : 'false', onclick: function () { PT.dias = o[0]; A.rerender(); }}, o[1]); })),
+        h('button', {class: 'btn pri', onclick: function () { var txt = textoPauta(P); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { A.toast('Pauta copiada: cole no deck ou nas notas.'); }, function () { A.drawer('Pauta da semana (texto)', h('textarea', {class: 'inp', style: 'min-height:60vh;width:100%', readonly: true}, txt)); }); }}, 'Copiar pauta'))));
+    var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
+    var g = h('div', {class: 'grid2 pauta'}); wrap.appendChild(g);
+    P.forEach(function (gp) {
+      var corpo = h('div');
+      if (!gp.com.length) corpo.appendChild(h('p', {class: 'empty sm'}, semDados() ? SEM_DADOS : 'Nenhuma empresa do pilar foi assunto de notícia no período.'));
+      gp.com.forEach(function (l) {
+        corpo.appendChild(h('div', {class: 'pt-emp'}, h('div', {class: 'pt-h'}, h('button', {class: 'tag tk', onclick: function () { A.abrirFicha(l.t); }}, l.t), h('b', null, l.nome), h('span', {class: 'muted'}, l.itens.length + (l.itens.length > 1 ? ' itens' : ' item'))),
+          h('ul', {class: 'pt-l'}, l.itens.slice(0, 5).map(function (x) {
+            var k = tipoPauta(x, l.t);
+            return h('li', null, h('span', {class: 'pt-k k-' + k}, ROT_PAUTA[k]), ' ', h('button', {class: 'nwl', onclick: function () { A.abrirItem(x); }}, x.titulo), h('span', {class: 'muted'}, ' · ' + (x.organizacao || x.fonte || '') + ' · ' + dataCurta(x)),
+              x.natureza === 'opiniao_casa' && (x.recomendacao || x.preco_alvo) ? h('span', {class: 'muted'}, ' · ' + [x.recomendacao, x.preco_alvo ? 'alvo ' + x.preco_alvo : null].filter(Boolean).join(' · ')) : null);
+          })), l.itens.length > 5 ? h('p', {class: 'muted', style: 'font-size:.8rem;margin:2px 0 0'}, '+ ' + (l.itens.length - 5) + ' na ficha do ativo') : null, baixasPauta(l)));
+      });
+      if (gp.sem.length) corpo.appendChild(h('p', {class: 'muted pt-sem'}, 'Sem notícias no período: ', gp.sem.map(function (l, i) { return h('span', null, i ? ', ' : '', h('button', {class: 'btn link', title: l.baixas.length ? l.baixas.length + ' de baixa relevância recolhidas' : null, onclick: function () { A.abrirFicha(l.t); }}, l.t + (l.baixas.length ? ' (' + l.baixas.length + ' de baixa relevância)' : ''))); })));
+      g.appendChild(A.sec('Pilar ' + gp.pilar[1], {badge: h('span', {class: 'sec-n'}, gp.com.length + ' de ' + (gp.com.length + gp.sem.length) + ' empresas com notícias')}, corpo));
+    });
+    wrap.appendChild(h('p', {class: 'hint'}, '"Copiar pauta" copia o texto com títulos, veículos, datas e links, para colar no deck da reunião semanal ou nas notas. Retornos e cotações não entram aqui.'));
+    return wrap;
+  }
+  A.pautaSemana = pautaSemana;
+  A.TEMAS_GESTAO = function () { return TEMAS_GESTAO; };
+  A.temaGestao = function (x, g) { return temaGestao(x, g); };
 })(APP, CORE, INTEL);

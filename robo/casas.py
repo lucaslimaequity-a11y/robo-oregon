@@ -131,3 +131,161 @@ def sondar(cfg, oregon, rede, robots, hoje, agora_, estado, log_=None):
     if log_ and tentados:
         log_('  InvesTalk %s: %d endereços consultados, %d comentários novos' % (q, tentados, len(novos)))
     return novos
+
+
+# ------------------------------------------------------------------ Genial Analisa · página de cada ação (v3.5)
+# O sitemap de relatórios da Genial não respondeu a partir do GitHub. A página de cada ação (/acoes/<TICKER>/) lista os
+# relatórios; o robô aproveita o que a página entrega sem JavaScript: links /acoes/<TICKER>/<slug>/ no HTML ou nos dados
+# embutidos da página e, quando só o título aparece, monta o endereço pelo título (regra observada: sem acentos e sem
+# ( ) : , — "ALLOS (ALOS3) | Resultado 3T26: Imobiliário…" → ALLOS-ALOS3--Resultado-3T26-Imobiliario-…). Cada endereço
+# candidato só vira item depois de aberto e conferido (o título precisa citar o ativo).
+import html as _html  # noqa: E402
+import unicodedata  # noqa: E402
+
+GENIAL_BASE = 'https://analisa.genialinvestimentos.com.br'
+FONTE_GENIAL = {'id': 'genial-paginas-acoes', 'nome': 'Genial Analisa · relatórios pela página da ação', 'organizacao': 'Genial Investimentos', 'categoria': 'instituicao',
+                'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'research', 'casa': 'Genial', 'guardar_resumo': True, 'fuso': 'BRT'}
+# código que a Genial usa quando difere do da carteira (config intel.genial.tickers sobrepõe)
+TICKERS_GENIAL = {'KLBN4': 'KLBN11', 'BBDC3': 'BBDC4', 'CPLE3': 'CPLE6', 'INBR34': 'INBR32'}
+# sem cobertura da Genial em 08/11/2026 (página "Sem Cobertura" ou inexistente): conferidas só uma vez por semana
+SEM_COBERTURA_GENIAL = ['CPLE3', 'AXIA3', 'EQTL3', 'TTEN3', 'VAMO3', 'INBR34']
+_MESES = {'janeiro': 1, 'fevereiro': 2, 'marco': 3, 'abril': 4, 'maio': 5, 'junho': 6, 'julho': 7, 'agosto': 8, 'setembro': 9, 'outubro': 10, 'novembro': 11, 'dezembro': 12}
+_PUBLICADO_EXT = re.compile(r'Publicad[oa] em:?\s*(\d{1,2}) de ([A-Za-zçÇ]+) de (\d{4})(?:\s*(?:às|as)\s*(\d{1,2}):(\d{2}))?', re.I)
+_H1 = re.compile(r'<h1[^>]*>(.*?)</h1>', re.I | re.S)
+_CANONICAL = re.compile(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)', re.I)
+_PUBLICADO = re.compile(r'Publicad[oa] em:?\s*(\d{2})/(\d{2})/(\d{4})(?:\s*(?:às|as|-)?\s*(\d{1,2})[:h](\d{2}))?', re.I)
+
+
+def _sem_acento_mantem_caixa(s):
+    return ''.join(c for c in unicodedata.normalize('NFD', s or '') if unicodedata.category(c) != 'Mn')
+
+
+def slug_genial(titulo):
+    t = _sem_acento_mantem_caixa(titulo or '').strip()
+    t = re.sub(r'[()\[\]:,;!?."“”\'’‘%&/+*#]', '', t).replace('|', '')
+    return re.sub(r'\s', '-', t)
+
+
+def candidatos_genial(html_txt, tk):
+    """Relatórios do ativo na página da Genial: [(endereços a tentar em ordem, título ou None)]. Links e dados embutidos
+    primeiro; depois os títulos, com o endereço montado pelo título (e a variante "-2", que a Genial usa em títulos repetidos)."""
+    out, vis = [], set()
+    for m in re.finditer(r'/acoes/%s/([A-Za-z0-9][A-Za-z0-9\-]{8,240})/?' % re.escape(tk), html_txt):
+        u = '%s/acoes/%s/%s/' % (GENIAL_BASE, tk, m.group(1))
+        if u not in vis:
+            vis.add(u)
+            out.append(([u], None))
+    texto = _html.unescape(re.sub(r'<[^>]+>', '\n', html_txt))
+    for m in re.finditer(r'([^\n<>]{2,80}\(%s\)\s*\|[^\n<>]{5,220})' % re.escape(tk), texto):
+        tit = conteudo.limpa_texto(m.group(1), 240)
+        if re.match(r'\s*Protegido', tit, re.I):  # post com senha: não é público
+            continue
+        base = '%s/acoes/%s/%s/' % (GENIAL_BASE, tk, slug_genial(tit))
+        if base not in vis:
+            vis.add(base)
+            out.append(([base, base[:-1] + '-2/'], tit))
+    return out
+
+
+def data_publicada(txt):
+    """'Publicado em 23/10/2026 às 16:22' ou 'Publicado em 05 de Novembro de 2026 às 23:58:56' (página do relatório)."""
+    limpo = re.sub(r'<[^>]+>', ' ', txt)
+    m = _PUBLICADO.search(limpo)
+    if m:
+        d, mo, a, hh, mi = m.groups()
+        return '%s-%s-%sT%02d:%s-03:00' % (a, mo, d, int(hh), mi) if hh else '%s-%s-%s' % (a, mo, d)
+    m = _PUBLICADO_EXT.search(limpo)
+    if m:
+        d, mes, a, hh, mi = m.groups()
+        mo = _MESES.get(sem_acento(mes))
+        if mo:
+            return '%s-%02d-%02dT%02d:%s-03:00' % (a, mo, int(d), int(hh), mi) if hh else '%s-%02d-%02d' % (a, mo, int(d))
+    return None
+
+
+def h1_da_pagina(txt):
+    m = _H1.search(txt or '')
+    return conteudo.limpa_texto(_html.unescape(re.sub(r'<[^>]+>', ' ', m.group(1))), 240) if m else ''
+
+
+def genial_paginas(cfg, oregon, rede, robots, hoje, agora_, estado, log_=None):
+    """Relatórios novos da Genial sobre as ações das carteiras. Devolve os itens novos (já classificados)."""
+    c = (cfg.get('intel') or {}).get('genial') or {}
+    if not c.get('ativo', True):
+        return []
+    max_pag, max_rel, intervalo = int(c.get('max_paginas_por_rodada', 3)), int(c.get('max_relatorios_por_rodada', 4)), float(c.get('intervalo_horas', 12))
+    mapa = dict(TICKERS_GENIAL, **(c.get('tickers') or {}))
+    E = estado.setdefault('genial', {'paginas': {}, 'vistos': []})
+    vistos = set(E.get('vistos') or [])
+    acoes = [t for t, a in sorted((oregon.get('ativos') or {}).items()) if a.get('classe') == 'Ações' and re.match(r'^[A-Z]{4}\d{1,2}$', t)]
+    fila = []
+    sem_cob = set(c.get('sem_cobertura') or SEM_COBERTURA_GENIAL)
+    for t in acoes:
+        ult = (E['paginas'].get(t) or {}).get('lida_em')
+        try:
+            if ult and (agora_ - dt.datetime.fromisoformat(ult)).total_seconds() < (168 if t in sem_cob else intervalo) * 3600:
+                continue
+        except ValueError:
+            pass
+        fila.append((ult or '', t))
+    fila.sort()
+    novos, abertos = [], 0
+    for _u, t in fila[:max_pag]:
+        if hasattr(rede, 'sem_tempo') and rede.sem_tempo():
+            break
+        tk = mapa.get(t, t)
+        url = '%s/acoes/%s/' % (GENIAL_BASE, tk)
+        E['paginas'][t] = {'lida_em': agora_.isoformat(timespec='minutes')}
+        if robots is not None and not robots.permite(url):
+            continue
+        try:
+            pagina = rede.get(FONTE_GENIAL['nome'], url, timeout=25, tentativas=1).decode('utf-8', 'replace')
+        except Exception:
+            E['paginas'][t]['erro'] = True
+            continue
+        cands = [(us, tit) for us, tit in candidatos_genial(pagina, tk) if us[0] not in vistos]
+        E['paginas'][t]['candidatos'] = len(cands)
+        for us, tit in cands:
+            if abertos >= max_rel or (hasattr(rede, 'sem_tempo') and rede.sem_tempo()):
+                break
+            vistos.add(us[0])
+            txt, u = None, None
+            for alt in us:  # endereço montado pelo título: tenta a variante "-2" só se o primeiro não existir
+                if robots is not None and not robots.permite(alt):
+                    continue
+                abertos += 1
+                try:
+                    txt, u = rede.get(FONTE_GENIAL['nome'], alt, timeout=20, tentativas=1).decode('utf-8', 'replace'), alt
+                    break
+                except Exception:
+                    continue
+            if txt is None:
+                continue
+            # endereço errado devolve a home sem erro: vale o h1 (o og:title às vezes difere) e o endereço canônico do relatório
+            titulo = h1_da_pagina(txt) or titulo_da_pagina(txt) or tit or ''
+            can = _CANONICAL.search(txt)
+            if can and '/acoes/' not in can.group(1):
+                continue
+            if not titulo or not cita(titulo, t[:4], t, (oregon['ativos'].get(t) or {})) and tk.lower() not in sem_acento(titulo):
+                continue
+            x = conteudo._novo_item(dict(FONTE_GENIAL), titulo, u, None, agora_)
+            if not x:
+                continue
+            x.pop('posicao_pagina', None)
+            conteudo.ler_pagina_item(rede, None, x, FONTE_GENIAL, agora_, txt=txt)
+            if not x.get('publicado_em'):
+                dp = data_publicada(txt)
+                if dp:
+                    x['publicado_em'], x['data_estimada'], x['data_da_pagina'] = dp, False, True
+                    x.pop('referencia', None)
+            x['ativos'] = [t]
+            x['ativos_porque'] = {t: 'relatório da Genial na página de %s' % tk}
+            x['casa_fonte'] = FONTE_GENIAL['casa']
+            x['origem'] = 'Genial Analisa · página da ação'
+            analise.classificar(x, oregon, hoje)
+            x['analise'] = analise.analisar_regras(x, oregon)
+            novos.append(x)
+    E['vistos'] = sorted(vistos)[-1500:]
+    if log_ and (abertos or fila):
+        log_('  Genial: %d páginas de ação lidas, %d relatórios abertos, %d novos' % (min(len(fila), max_pag), abertos, len(novos)))
+    return novos

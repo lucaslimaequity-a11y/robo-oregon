@@ -2,7 +2,7 @@
 
 Cadastro: `robo/fontes.json`. Regras que valem para todas: só conteúdo público e gratuito; `robots.txt` respeitado (um caminho vedado é pulado e contado como rejeitado); nada de login, paywall ou contorno de bloqueio (403 encerra a fonte na rodada); de imprensa guardamos só título, link, data e veículo; de gestoras e instituições, um resumo curto do próprio feed (até 300 caracteres) e o link para o original. Nenhuma data é inventada: item sem data recebe a data de detecção, marcada como tal.
 
-Validação feita em 07–08/11/2026 (192 fontes no cadastro, 130 ativas, depois da v3.4) lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhum veículo do Grupo XP entra, em nenhuma hipótese** (v3.4: `noticias.fontes_bloqueadas` = InfoMoney, XP Investimentos, Expert XP, Conteúdos XP, Rico Investimentos, Clear Corretora; descarta também manchetes agregadas desses veículos e não publica o que foi gravado antes do bloqueio). Opinião da XP noticiada por outro veículo continua, com a casa "XP".
+Validação feita em 07–08/11/2026 (217 fontes no cadastro, 152 ativas, depois da v3.4 e do acréscimo da academia brasileira) lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhum veículo do Grupo XP entra, em nenhuma hipótese** (v3.4: `noticias.fontes_bloqueadas` = InfoMoney, XP Investimentos, Expert XP, Conteúdos XP, Rico Investimentos, Clear Corretora; descarta também manchetes agregadas desses veículos e não publica o que foi gravado antes do bloqueio). Opinião da XP noticiada por outro veículo continua, com a casa "XP".
 
 ## Campos do cadastro
 
@@ -56,6 +56,22 @@ oferece a mesma pergunta pronta no Google e no Bing, abertos fora do Oregon.
 **Itaú, Safra e Santander** responderam 403 ao robô a partir do GitHub (Itaú Análises, Safra O Especialista, Santander
 Análise Econômica). Continuam ligadas: se a casa liberar, voltam sozinhas; enquanto isso a falha aparece em Fontes e
 coleta, sem apagar nada.
+
+## Acréscimo de 08/11/2026: academia brasileira de finanças e economia
+
+25 fontes novas, todas públicas e gratuitas (22 ligadas, 3 desligadas com o motivo). Aparecem em **Mundo e Estratégia ›
+Research** (Acadêmico e educacional; Bancos centrais e instituições) e na **Biblioteca**, como as do NBER, CEPR e CFA.
+
+| Grupo | Ligadas | Observação |
+|---|---|---|
+| Revistas acadêmicas | SBFin · Brazilian Review of Finance (ok), FGV EPGE · Revista Brasileira de Economia (ok), FEA-USP · Revista Contabilidade & Finanças (ok), FEA-USP · Estudos Econômicos (ok), FUCAPE · Brazilian Business Review (ok, filtro de finanças e governança), Tesouro · Cadernos de Finanças Públicas (ok), FEA-RP/USP · Economia Aplicada (parcial, filtro), FGV EAESP · RAE (parcial, pelo SciELO, filtro de finanças), Revista de Economia Política (parcial), UFMG · Nova Economia (parcial), IE-UFRJ · Revista de Economia Contemporânea (parcial) | Revistas saem por número: poucos itens por mês. No SciELO a data é a da carga do número; nos feeds da USP, a da última atualização. |
+| Working papers e textos para discussão | Banco Central · Working Papers (parcial, pela série no IDEAS/RePEc), FGV EPGE · Ensaios Econômicos, FGV EESP · Textos para Discussão, FEA-USP · Working Papers (todas parciais, pelo IDEAS), IPEA · Textos para Discussão (ok, filtro), BNDES · Textos para Discussão (parcial), PUC-Rio · Textos para Discussão (parcial), RePEc NEP América Latina (parcial, filtro Brasil e América Latina) | IDEAS, PUC-Rio e NEP só informam o ano: o item entra com a data de detecção, marcada. Na primeira leitura, o que já estava na lista vai para o acervo. |
+| Centros e órgãos | NEFIN-USP · Insights (ok), CVM · Boletim Econômico (parcial, trimestral), CVM · Estudos (parcial: análises de impacto regulatório e de resultado, estudos da assessoria econômica) | O NEFIN é a referência de fatores de risco brasileiros; as páginas de dados não viram itens. |
+
+Desligadas: Tesouro · Textos para Discussão (série parada em 2022), Insper · Working Papers (último de 2025, sem foco em
+finanças), CEMEC-FIPE (o robots.txt barrou a leitura). Não avaliadas nesta rodada: RAC e BAR (ANPAD), Cadernos EBAPE,
+Revista do BNDES, EconomiA (ANPEC), Informações FIPE, estudos da B3. As fontes parciais por página (CVM, IDEAS, PUC-Rio)
+se confirmam na primeira rodada no GitHub; uma falha aparece em Fontes e coleta e não apaga nada.
 
 ## Instituições
 
@@ -323,6 +339,27 @@ O Google Notícias veda a busca a robôs no `robots.txt` (`/rss/search`), e o ro
 | Busca do tema · Bitcoin | `bitcoin ETF` | en-US | IBIT |
 
 **Desambiguação**: a manchete só entra se citar a empresa pelos termos dela e não tiver termo de exclusão (ex.: "Chácara Klabin", "Ema Klabin", "Guiné Equatorial"). Nas buscas de setor e de tema, a manchete precisa ter um dos termos do setor. **Veículos**: o veículo que publicou vira a fonte; os que não estão em `noticias.veiculos_confiaveis` entram marcados "veículo pouco conhecido", aparecem na ficha do ativo e ficam fora da lista do Hoje. InfoMoney e canais da XP entram com o selo "Grupo XP — não citar em material de cliente" (`noticias.fontes_sinalizadas`); para voltar a bloquear, copie os nomes para `noticias.fontes_bloqueadas`.
+
+## Estante (v3.5): acervos completos, conferidos em 08/11/2026
+
+| Coleção | De onde vem | Observações |
+|---|---|---|
+| Michael Mauboussin | Semente: índice público "Michael Mauboussin Index" (Kevin Gee, Google Sheets; 177 de research + 52 outros escritos) e a série Consilient Observer no Morgan Stanley (45 itens, mar/2020 a set/2026). Listagem: página da série no Morgan Stanley. | Os artigos de 1995 a 2019 (CS First Boston, Legg Mason, Credit Suisse, BlueMountain) não têm mais endereço da editora: o link abre o índice no site do autor (michaelmauboussin.com). O robô não lê esse site (ele declara `ai-train=no` e veta robôs de IA). A data da página do artigo prevalece (a listagem do Morgan Stanley costuma mostrar um dia antes). |
+| CFA Institute Research Foundation | Sitemap do Research and Policy Center (`/sitemap.xml?page=1..7`), endereços `/research/foundation/AAAA/...` | A página de publicações é montada por JavaScript (sem itens no HTML). Errata, "-full-pdf" e edições resumidas ficam de fora. Título, data, resumo e PDFs (livro e briefs) vêm da página de cada publicação, alguns por rodada. |
+| Howard Marks · memos | Semente: os 166 memos da página da Oaktree (out/1990 a set/2026). Listagem: a mesma página. | 36 memos têm página própria; os outros abrem a lista da Oaktree e trazem o link da coleção completa em PDF publicada pela Oaktree. |
+| Aswath Damodaran | Semente: 58 papers da página de papers (NYU Stern: PDF no site do autor ou SSRN). Feed do blog Musings on Markets (Blogger, `/feeds/posts/summary`, lotes de 150; 686 posts desde 2008). | Os rótulos da página de papers ("2011 Edition") ganharam o nome da série. Ano só quando está no título. |
+| AQR | Sitemap (`/insights/research/<tipo>/...`): artigos acadêmicos, white papers, working papers, Alternative Thinking, livros | A biblioteca mostra só 11 itens no HTML; o resto vem por JavaScript. O sitemap não tem datas: a data vem da página do item. |
+| GMO | Sitemap (`/research-library/<slug>_<tipo>/`): cartas trimestrais, white papers, Insights, Viewpoints, previsão de 7 anos | Eventos, vídeos e "in the news" ficam de fora. |
+| Compounding Quality | Sitemap do Substack (cerca de 550 posts desde 2023) e feed RSS | Parte dos posts é para assinantes pagos: só título, data e resumo público. Os posts novos também entram no Research (fonte `compounding-quality`, Debate › colaboradores). |
+
+robots.txt conferido para todos os caminhos usados (Morgan Stanley libera a pasta de PDFs com um `Allow` explícito). A
+primeira carga é lenta de propósito: até 8 listagens e 30 páginas de item por rodada, somando as coleções.
+
+## Contas no X
+
+O X só mostra os posts para quem está logado e a leitura automática é pela API paga. Conta do X que o Lucas mandar entra
+como "acesso restrito" (só link) e o robô procura os canais abertos do mesmo autor (site, blog, Substack, YouTube).
+Usar a API do X depende de autorização dele.
 
 ## Documentos das empresas (CVM)
 

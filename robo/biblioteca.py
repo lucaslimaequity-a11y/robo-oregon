@@ -215,7 +215,20 @@ def reindexar(agora_):
     return idx
 
 
+def corrigir_data_futura(x, hoje):
+    """Fonte que data o item no futuro (revista com a data da edição, ex.: CFA Institute em 18/11): o item aparece já,
+    com a data de detecção, e a data da edição fica guardada e dita na tela. Devolve True se corrigiu."""
+    p = x.get('publicado_em')
+    if not p or p[:10] <= (hoje + dt.timedelta(days=1)).isoformat():
+        return False
+    x['data_edicao'] = p
+    x['publicado_em'] = x.get('detectado_em') or hoje.isoformat()
+    x['data_estimada'], x['data_futura'] = True, True
+    return True
+
+
 FONTES_BLOQUEADAS = []  # preenchido pela rodada com noticias.fontes_bloqueadas: nem o histórico desses veículos é publicado
+FILTROS_TITULO = {}  # fonte_id → filtro_titulo do cadastro: um filtro novo vale também para o que foi gravado antes dele (research.json)
 
 
 def bloqueado(x):
@@ -231,6 +244,9 @@ def atualizar_leitura(x, oregon, hoje):
     if oregon is None:
         return x
     import conteudo  # rótulo genérico de versões anteriores ("Read article"): o título vem do endereço, marcado como provisório
+    if x.get('publicado_em') and x['publicado_em'][:10] > (hoje + dt.timedelta(days=1)).isoformat():
+        x = dict(x)
+        corrigir_data_futura(x, hoje)
     if conteudo.ROTULO_GENERICO.match(x.get('titulo') or '') and x.get('link'):
         x = dict(x)
         slug = urllib.parse.unquote(x['link'].rstrip('/').rsplit('/', 1)[-1]).rsplit('.', 1)[0]
@@ -256,7 +272,8 @@ def publicar_recentes(hoje, agora_, dias=10, maximo=1500, oregon=None):
 
 CAMPOS_OPINIAO = ('id', 'titulo', 'link', 'fonte', 'fonte_id', 'organizacao', 'categoria', 'pais', 'tipo', 'publicado_em', 'detectado_em', 'data_estimada', 'resumo', 'autor',
                   'ativos', 'ativos_porque', 'vinculos', 'casas', 'posicao', 'natureza', 'via', 'confiavel', 'aviso_fonte', 'temas', 'regioes', 'tambem_em', 'prioridade',
-                  'recomendacao', 'preco_alvo', 'horizonte', 'analista', 'casa_fonte', 'verificacao', 'nota_pesquisa', 'atualizado_em', 'data_e_atualizacao', 'origem', 'debate', 'setor_de', 'pagina_lida_em')
+                  'recomendacao', 'preco_alvo', 'horizonte', 'analista', 'casa_fonte', 'verificacao', 'nota_pesquisa', 'atualizado_em', 'data_e_atualizacao', 'origem', 'debate', 'setor_de', 'pagina_lida_em',
+                  'data_edicao', 'data_futura', 'tipo', 'fatores', 'ativos_vip', 'vinculos_vip', 'ativos_porque_vip')
 
 
 def publicar_opinioes(hoje, agora_, dias=365, oregon=None):
@@ -295,7 +312,12 @@ def publicar_research(hoje, agora_, dias=90, oregon=None):
         for x in ler_mes(m).get('itens') or []:
             if x.get('agrupado_em') or x.get('acervo') or not x.get('publicado_em') or x['publicado_em'][:10] < ini or x.get('categoria') not in CATEGORIAS_RESEARCH or bloqueado(x):
                 continue
+            ft = FILTROS_TITULO.get(x.get('fonte_id'))
+            if ft and not re.search(ft, x.get('titulo') or '', re.I):
+                continue
             x = atualizar_leitura(x, oregon, hoje)
+            if x.get('natureza') in ('promocional', 'sensacionalista'):  # o Research é para leitura de gestão, não texto de venda
+                continue
             y = {k: x[k] for k in CAMPOS_OPINIAO if k in x}
             for k in ('pdf', 'titulo_provisorio', 'fatores', 'etfs_tema'):
                 if x.get(k):

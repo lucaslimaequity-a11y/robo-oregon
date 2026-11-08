@@ -1,14 +1,15 @@
 name: Oregon Intelligence
 
 # Coleta sete dias por semana. Horários em UTC (Brasília = UTC−3):
-#   a cada 30 minutos das 07:00 às 22:30 em Brasília; de madrugada, às 01:15 e 04:15.
+#   aos 7 e aos 37 minutos de cada hora, das 07:07 às 22:37 em Brasília; de madrugada, às 01:15 e 04:15.
+#   (v3.7: fora da hora cheia e da meia hora, que a documentação do GitHub aponta como pico de atraso e descarte.)
 # Imprensa e instituições são lidas a cada rodada; páginas de cartas, a cada 6 horas (robo/intel.py).
-# O GitHub às vezes atrasa o disparo alguns minutos; o robô não depende do minuto exato.
+# O GitHub às vezes atrasa ou pula o disparo; o robô não depende do minuto exato. Para coletar na hora: Run workflow.
 # Cópia visível deste arquivo em docs/workflow_robo.yml (os testes conferem que as duas são iguais).
 on:
   schedule:
-    - cron: '*/30 10-23 * * *'
-    - cron: '*/30 0,1 * * *'
+    - cron: '7,37 10-23 * * *'  # v3.7: fora do começo da hora e da meia hora (o GitHub atrasa ou descarta nesses horários)
+    - cron: '7,37 0,1 * * *'
     - cron: '15 4,7 * * *'
   push:
     branches: [main]

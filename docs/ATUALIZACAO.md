@@ -36,8 +36,16 @@ Multimercado, Renda Fixa, Cambial), semana a semana e mês a mês. Uma barra mos
 
 ## 2. Mude o horário do robô (se ainda não mudou)
 
-É o mesmo passo da v3.7. No GitHub, abra `.github/workflows/robo.yml`, toque no lápis, troque `*/30` por `7,37` nas duas
-linhas de `cron` e faça o **Commit changes**. O arquivo completo está no pacote, em `.github/workflows/robo.yml`.
+O teste do robô confere se `.github/workflows/robo.yml` é **idêntico** à cópia `docs/workflow_robo.yml`. Por isso, troque o
+conteúdo inteiro do arquivo, não só as duas linhas de `cron`. Se os dois forem diferentes, a rodada para no teste e nada
+é publicado.
+
+1. No GitHub, abra `docs/workflow_robo.yml` (já subiu com o pacote) e toque em **Copy raw file**, o ícone de copiar no
+   alto do arquivo.
+2. Abra `https://github.com/lucaslimaequity-a11y/robo-oregon/edit/main/.github/workflows/robo.yml`, selecione tudo
+   (Ctrl+A), cole (Ctrl+V) e toque em **Commit changes**.
+
+O commit dispara uma rodada; em Actions ela deve aparecer verde.
 
 ## 3. Primeira rodada e conferência
 

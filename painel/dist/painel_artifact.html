@@ -5996,7 +5996,10 @@ var INTEL = (function () {
   // Análise de colaboradores (Seeking Alpha): opinião individual, separada de notícia e de research de banco
   A.ehDebate = function (x) { return !!x && (!!x.debate || (/seeking-?alpha/i.test(x.fonte_id || '') && !/currents|news|noticias/i.test(x.fonte_id || ''))); };
   var REDDIT = [['investing', 'Investimentos em geral, EUA'], ['stocks', 'Ações, EUA'], ['ValueInvesting', 'Value investing'], ['SecurityAnalysis', 'Análise fundamentalista'], ['Bogleheads', 'Alocação passiva e longo prazo'],
-    ['Economics', 'Macroeconomia'], ['dividends', 'Dividendos'], ['investimentos', 'Investimentos, Brasil']];
+    ['Economics', 'Macroeconomia'], ['dividends', 'Dividendos'], ['investimentos', 'Investimentos, Brasil'], ['finance', 'Finanças e mercados'],
+    ['wallstreetbets', 'Varejo especulativo, EUA (termômetro de euforia)'], ['EconomyCharts', 'Gráficos de economia'], ['AskEconomics', 'Perguntas de economia, respostas de economistas'],
+    ['oil', 'Petróleo']];  // v3.8 · finance, wallstreetbets, EconomyCharts, AskEconomics e oil: pedidos do Lucas em 08/11
+  var REDDIT_CURTO = ['investing', 'stocks', 'ValueInvesting', 'SecurityAnalysis', 'finance', 'investimentos'];
   function xBusca(q) { return 'https://x.com/search?q=' + encodeURIComponent(q) + '&f=live'; }
   function nomeBusca(t) { var a = C.ATV[t] || {}; return a.nome && a.nome !== t ? '"' + a.nome.replace(/ ON$| PN$/, '') + '"' : ''; }
   // Consultas externas: abrem o Reddit e o X no navegador de quem usa. O Oregon não coleta nem verifica esse conteúdo.
@@ -6005,7 +6008,7 @@ var INTEL = (function () {
     tks = tks.slice(0, compacto ? 4 : 10);
     var xs = tks.map(function (t) { return [t, xBusca('"' + t + '"' + (nomeBusca(t) ? ' OR ' + nomeBusca(t) : '') + ' lang:pt')]; }).concat([['Ibovespa', xBusca('Ibovespa lang:pt')], ['Copom', xBusca('Copom OR Selic lang:pt')], ['Fed', xBusca('Fed rates OR FOMC lang:en')]]);
     if (compacto) return h('div', {class: 'ext ext-c'}, h('p', null, h('b', null, 'Discussões fora do Oregon'), h('span', {class: 'muted'}, ' · abrem no seu navegador, sem coleta nem verificação')),
-      h('p', {class: 'ext-l'}, h('span', {class: 'ext-k'}, 'Reddit'), REDDIT.slice(0, 4).concat([REDDIT[7]]).map(function (r) { return h('a', {href: 'https://www.reddit.com/r/' + r[0] + '/top/?t=week', target: '_blank', rel: 'noopener'}, 'r/' + r[0]); })),
+      h('p', {class: 'ext-l'}, h('span', {class: 'ext-k'}, 'Reddit'), REDDIT.filter(function (r) { return REDDIT_CURTO.indexOf(r[0]) >= 0; }).map(function (r) { return h('a', {href: 'https://www.reddit.com/r/' + r[0] + '/top/?t=week', target: '_blank', rel: 'noopener'}, 'r/' + r[0]); })),
       h('p', {class: 'ext-l'}, h('span', {class: 'ext-k'}, 'X'), xs.slice(0, 6).map(function (x0) { return h('a', {href: x0[1], target: '_blank', rel: 'noopener'}, x0[0]); })));
     return h('div', {class: 'ext'},
       h('div', {class: 'ext-g'}, h('h3', null, 'Reddit · comunidades'), h('ul', {class: 'ext-ul'}, REDDIT.map(function (r) { return h('li', null, h('a', {href: 'https://www.reddit.com/r/' + r[0] + '/top/?t=week', target: '_blank', rel: 'noopener'}, 'r/' + r[0]), h('span', {class: 'muted'}, ' · ' + r[1] + ' · mais votados da semana')); })),

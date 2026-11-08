@@ -18,6 +18,7 @@ publicado até 3 dias antes ou depois vira o mesmo acontecimento — o item mais
 import datetime as dt
 import os
 import re
+import urllib.parse
 
 import analise
 from util import dados_dir, gravar, ler, sem_acento
@@ -214,6 +215,14 @@ def reindexar(agora_):
     return idx
 
 
+FONTES_BLOQUEADAS = []  # preenchido pela rodada com noticias.fontes_bloqueadas: nem o histórico desses veículos é publicado
+
+
+def bloqueado(x):
+    org = sem_acento(' '.join([x.get('organizacao') or '', x.get('fonte') or '', x.get('via_veiculo') or ''])).lower()
+    return any(b and sem_acento(b).lower() in org for b in FONTES_BLOQUEADAS)
+
+
 def atualizar_leitura(x, oregon, hoje):
     """Item gravado por uma versão anterior do robô: é reclassificado com as regras atuais (vínculo com cada ativo,
     opinião de casa, prioridade) e ganha a leitura curta (v2) na publicação. O que foi coletado (título, link, datas,
@@ -221,8 +230,14 @@ def atualizar_leitura(x, oregon, hoje):
     não é reescrito: a reclassificação vale para o que é publicado."""
     if oregon is None:
         return x
+    import conteudo  # rótulo genérico de versões anteriores ("Read article"): o título vem do endereço, marcado como provisório
+    if conteudo.ROTULO_GENERICO.match(x.get('titulo') or '') and x.get('link'):
+        x = dict(x)
+        slug = urllib.parse.unquote(x['link'].rstrip('/').rsplit('/', 1)[-1]).rsplit('.', 1)[0]
+        x['titulo'] = re.sub(r'[-_]+', ' ', slug).strip().capitalize() or x['titulo']
+        x['titulo_provisorio'] = True
     an = x.get('analise') or {}
-    if 'vinculos' not in x:
+    if x.get('regras') != analise.REGRAS_VERSAO:
         x = dict(x)
         analise.classificar(x, oregon, hoje)
     if an.get('v') != 2 and not an.get('profunda'):
@@ -233,14 +248,15 @@ def atualizar_leitura(x, oregon, hoje):
 
 def publicar_recentes(hoje, agora_, dias=10, maximo=1500, oregon=None):
     # acervo (o que já estava nas páginas na primeira leitura) fica só na Biblioteca, por mês: não é novidade
-    itens = [atualizar_leitura(x, oregon, hoje) for x in carregar_recentes(hoje, dias) if not x.get('agrupado_em') and not x.get('acervo')]
+    itens = [atualizar_leitura(x, oregon, hoje) for x in carregar_recentes(hoje, dias) if not x.get('agrupado_em') and not x.get('acervo') and not bloqueado(x)]
     itens.sort(key=lambda x: (x.get('publicado_em') or x.get('detectado_em') or ''), reverse=True)
     gravar('recentes.json', {'gerado_em': agora_.isoformat(timespec='minutes'), 'dias': dias, 'n': len(itens), 'itens': itens[:maximo]})
     return itens[:maximo]
 
 
 CAMPOS_OPINIAO = ('id', 'titulo', 'link', 'fonte', 'fonte_id', 'organizacao', 'categoria', 'pais', 'tipo', 'publicado_em', 'detectado_em', 'data_estimada', 'resumo', 'autor',
-                  'ativos', 'ativos_porque', 'vinculos', 'casas', 'posicao', 'natureza', 'via', 'confiavel', 'aviso_fonte', 'temas', 'regioes', 'tambem_em', 'prioridade')
+                  'ativos', 'ativos_porque', 'vinculos', 'casas', 'posicao', 'natureza', 'via', 'confiavel', 'aviso_fonte', 'temas', 'regioes', 'tambem_em', 'prioridade',
+                  'recomendacao', 'preco_alvo', 'horizonte', 'analista', 'casa_fonte', 'verificacao', 'nota_pesquisa', 'atualizado_em', 'data_e_atualizacao', 'origem', 'debate', 'setor_de', 'pagina_lida_em')
 
 
 def publicar_opinioes(hoje, agora_, dias=365, oregon=None):
@@ -252,7 +268,7 @@ def publicar_opinioes(hoje, agora_, dias=365, oregon=None):
         if m < ini[:7]:
             continue
         for x in ler_mes(m).get('itens') or []:
-            if x.get('agrupado_em') or x.get('acervo') or data_de(x) < ini:
+            if x.get('agrupado_em') or x.get('acervo') or data_de(x) < ini or bloqueado(x):
                 continue
             x = atualizar_leitura(x, oregon, hoje)
             if x.get('natureza') != 'opiniao_casa':
@@ -261,6 +277,33 @@ def publicar_opinioes(hoje, agora_, dias=365, oregon=None):
     out.sort(key=lambda x: (x.get('publicado_em') or x.get('detectado_em') or ''), reverse=True)
     os.makedirs(os.path.join(dados_dir(), PASTA), exist_ok=True)
     gravar(_caminho('opinioes.json'), {'gerado_em': agora_.isoformat(timespec='minutes'), 'dias': dias, 'n': len(out), 'itens': out})
+    return out
+
+
+CATEGORIAS_RESEARCH = ('gestora_internacional', 'gestora_brasil', 'instituicao', 'academia', 'youtube')
+
+
+def publicar_research(hoje, agora_, dias=90, oregon=None):
+    """biblioteca/research.json: cartas, research e publicações de instituições com data de publicação nos últimos `dias`
+    (90), para a página Research do Mundo e Estratégia separar 7 dias, 8 a 30 e 31 a 90 sem baixar meses inteiros.
+    Itens sem data na fonte e o acervo ficam de fora (estão na Biblioteca)."""
+    ini = (hoje - dt.timedelta(days=dias)).isoformat()
+    out = []
+    for m in meses_disponiveis():
+        if m < ini[:7]:
+            continue
+        for x in ler_mes(m).get('itens') or []:
+            if x.get('agrupado_em') or x.get('acervo') or not x.get('publicado_em') or x['publicado_em'][:10] < ini or x.get('categoria') not in CATEGORIAS_RESEARCH or bloqueado(x):
+                continue
+            x = atualizar_leitura(x, oregon, hoje)
+            y = {k: x[k] for k in CAMPOS_OPINIAO if k in x}
+            for k in ('pdf', 'titulo_provisorio', 'fatores', 'etfs_tema'):
+                if x.get(k):
+                    y[k] = x[k]
+            out.append(y)
+    out.sort(key=lambda x: x.get('publicado_em') or '', reverse=True)
+    os.makedirs(os.path.join(dados_dir(), PASTA), exist_ok=True)
+    gravar(_caminho('research.json'), {'gerado_em': agora_.isoformat(timespec='minutes'), 'dias': dias, 'n': len(out), 'itens': out})
     return out
 
 

@@ -1,0 +1,2516 @@
+{
+ "gerado_em": "2026-11-08",
+ "janela": [
+  "2025-11-08",
+  "2026-11-08"
+ ],
+ "nota": "Opiniões publicadas sobre os ativos das carteiras nos últimos 12 meses, levantadas em pesquisa na web e conferidas uma a uma (link original, veículo e data de publicação). Recomendação, preço-alvo, horizonte e analista só quando escritos na página. Nenhum veículo do grupo XP; opiniões da XP noticiadas por outros veículos aparecem com casas [\"XP\"].",
+ "itens": [
+  {
+   "ativo": "ALOS3",
+   "titulo": "Dividendos robustos e corte de custos: O que esperar da Allos (ALOS3), segundo o BTG",
+   "link": "https://www.moneytimes.com.br/allos-alos3-avanca-em-reducao-de-custos-e-pipeline-de-projetos-espera-juros-mais-baixos-diz-btg-igdl/",
+   "veiculo": "Money Times",
+   "publicado_em": "2025-11-26T13:52-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "verificacao": "pagina",
+   "nota": "Leitura do Investor Day; o texto não traz recomendação nem preço-alvo."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Com dividendos robustos, esta empresa é a principal escolha do BTG Pactual; veja o potencial de alta",
+   "link": "https://www.moneytimes.com.br/com-dividendos-robustos-esta-empresa-e-a-principal-escolha-do-btg-pactual-veja-o-potencial-de-alta-igdl/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-02-03T11:36-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Allos é a top pick do BTG em shoppings; compra, alvo R$ 39."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Allos (ALOS3): O que fazer com as ações após o balanço do 4T25, segundo BTG e BBI",
+   "link": "https://www.moneytimes.com.br/allos-alos3-o-que-fazer-com-as-acoes-apos-o-balanco-do-4t25-segundo-btg-e-bbi-igdl/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-03-11T15:16-03:00",
+   "casas": [
+    "BTG Pactual",
+    "Bradesco BBI"
+   ],
+   "verificacao": "pagina",
+   "nota": "Título sem direção; no texto, BTG reitera compra (alvo R$ 39) e BBI mantém compra."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Dividendos de 12%: BTG reforça compra para Allos (ALOS3) após acordo com a Kinea",
+   "link": "https://www.moneytimes.com.br/dividendos-de-12-btg-reforca-compra-para-allos-alos3-apos-acordo-com-a-kinea-igdl/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-04-13T10:04-03:00",
+   "casas": [
+    "BTG Pactual",
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "BTG compra, alvo R$ 39; Safra outperform, alvo R$ 36."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Allos (ALOS3) 1T26: vendas totais crescem e companhia anuncia mudanças no portfólio",
+   "link": "https://investalk.bb.com.br/noticias/mercado/ALOS_1T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-05-08T15:55-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 32,00",
+   "horizonte": "final de 2026",
+   "analista": "Felipe Mesquita",
+   "nota": "Página mostra 'Atualizado em 08/05/2026 às 15:55'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Esta ação pode subir 33% na bolsa e pagar dividendos de 11,5%, segundo a Genial",
+   "link": "https://www.moneytimes.com.br/esta-acao-pode-subir-33-na-bolsa-e-pagar-dividendos-de-115-segundo-a-genial-veja-igdl/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-18T12:23-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Genial: compra, preço-alvo R$ 38."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Allos supera estimativas no segundo trimestre",
+   "link": "https://oespecialista.safra.com.br/analise/allos-resultados-segundo-trimestre-2026/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-08-07",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "nota": "'Safra mantém recomendação de Compra para Allos'; sem preço-alvo no texto.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Allos (ALOS3) 2T26: linhas de mídia e desenvolvimento imobiliário ganham relevância dentro do portfólio da companhia",
+   "link": "https://investalk.bb.com.br/noticias/mercado/ALOS_2T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-08-07T16:05-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 32,00",
+   "horizonte": "final de 2026",
+   "analista": "Felipe Mesquita",
+   "nota": "Página mostra 'Atualizado em 07/08/2026 às 16:05'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Allos (ALOS3), Iguatemi (IGTI11) ou Multiplan (MULT3)? Analistas escolhem a favorita dos shoppings",
+   "link": "https://www.suno.com.br/noticias/allos-alos3-iguatemi-igti11-multiplan-mult3-acoes-shoppings-mt/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-08-19T17:33-03:00",
+   "casas": [
+    "Bank of America"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "BofA reafirma compra, eleva alvo de R$ 34 para R$ 35 e elege Allos a favorita do setor."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "BTG reforça aposta em Allos após reunião com CEO",
+   "link": "https://euqueroinvestir.com/acoes/btg-reforca-aposta-em-allos-apos-reuniao-com-ceo",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-09-14T11:12-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Compra, preço-alvo R$ 39 em 12 meses."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Recuperação do setor de shoppings anima BB Investimentos; veja por que Allos (ALOS3) e Multiplan (MULT3) tiveram preços-alvo elevados",
+   "link": "https://www.seudinheiro.com/2026/economia/recuperacao-do-setor-de-shoppings-anima-bb-investimentos-veja-por-que-allos-alos3-e-multiplan-mult3-tiveram-precos-alvo-elevados-isca/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-10-02T19:00-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Mantém compra; preço-alvo de R$ 32 para R$ 38 (fim de 2027)."
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "ALLOS (ALOS3) | Flash: KAML11 Começa Menor para Vender Melhor Depois",
+   "link": "https://analisa.genialinvestimentos.com.br/acoes/ALOS3/ALLOS-ALOS3--Flash-KAML11-Comeca-Menor-para-Vender-Melhor-Depois-2/",
+   "veiculo": "Genial Analisa",
+   "publicado_em": "2026-10-23T16:22-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 39,00",
+   "horizonte": "12M",
+   "analista": "João Caldas; Matheus Filgueiras",
+   "nota": "Reitera Compra após venda de participações em 7 shoppings ao KAML11.",
+   "casa_pagina": "Genial"
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "ALLOS (ALOS3) | Prévia 3T26: Receitas Fora do Aluguel Puxam o Crescimento e Deixam o Guidance Curto",
+   "link": "https://analisa.genialinvestimentos.com.br/acoes/ALOS3/ALLOS-ALOS3--Previa-3T26-Receitas-Fora-do-Aluguel-Puxam-o-Crescimento-e-Deixam-o-Guidance-Curto/",
+   "veiculo": "Genial Analisa",
+   "publicado_em": "2026-11-04T18:27-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 37,00",
+   "analista": "João Caldas",
+   "nota": "Mantém Compra, mas corta o preço-alvo de R$ 39,00 para R$ 37,00 (custo de capital maior).",
+   "casa_pagina": "Genial"
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "ALLOS (ALOS3) | Resultado 3T26: Imobiliário Puxa o Número, Aluguel Resiliente",
+   "link": "https://analisa.genialinvestimentos.com.br/acoes/ALOS3/ALLOS-ALOS3--Resultado-3T26-Imobiliario-Puxa-o-Numero-Aluguel-Resiliente/",
+   "veiculo": "Genial Analisa",
+   "publicado_em": "2026-11-05T23:58-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 37,00",
+   "analista": "João Caldas",
+   "nota": "Título no HTML/meta difere ('Aluguel Fica para Trás'); usado o título exibido na página.",
+   "casa_pagina": "Genial"
+  },
+  {
+   "ativo": "ALOS3",
+   "titulo": "Allos (ALOS3) 3T26: evolução de receitas impulsionada pelas linhas de mídia e desenvolvimento imobiliário",
+   "link": "https://investalk.bb.com.br/noticias/mercado/ALOS_3T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-11-06T15:09-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 38,00",
+   "horizonte": "final de 2027",
+   "analista": "Felipe Mesquita",
+   "nota": "Página mostra 'Atualizado em 06/11/2026 às 15:09' (sem data de publicação separada); mantém Compra.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia (AXIA3) tem mais espaço para alta com energia cara e dividendos crescentes, diz Bradesco BBI",
+   "link": "https://www.moneytimes.com.br/axia-energia-axia3-tem-mais-espaco-para-alta-com-energia-cara-e-dividendos-crescentes-diz-bradesco-bbi/",
+   "veiculo": "Money Times",
+   "publicado_em": "2025-11-20T11:44-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 86,00 (AXIA6)",
+   "analista": "Francisco Navarrete, Ricardo França",
+   "nota": "Compra mantida após alta de 80% no ano; o texto atribui o alvo à AXIA6"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia (AXIA3) ainda tem espaço para avançar, diz Safra",
+   "link": "https://www.moneytimes.com.br/axia-energia-axia3-ainda-tem-espaco-para-avancar-diz-safra/",
+   "veiculo": "Money Times",
+   "publicado_em": "2025-11-22T15:00-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Outperform (equivalente a compra)",
+   "preco_alvo": "R$ 71,40 (AXIA3); R$ 77,60 (AXIA6)",
+   "horizonte": "12 meses"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "JP Morgan corta preço-alvo de Axia (AXIA3), Copel (CPLE6) e Auren (AURE3); confira o que esperar para o setor elétrico em 2026",
+   "link": "https://www.seudinheiro.com/2026/empresas/jp-morgan-derruba-preco-alvo-de-axia-axia3-copel-cple6-e-auren-aure3-lvgb/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-01-06T19:12-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Overweight",
+   "preco_alvo": "R$ 55,00",
+   "analista": "Arthur Pereira (líder da equipe)",
+   "nota": "Alvo cortado de R$ 67 para R$ 55 com overweight mantido"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia em tendência de alta reforça perspectiva de dividendos",
+   "link": "https://oespecialista.safra.com.br/analise/axia-energia-alta-precos-estimativas/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-03-05",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 73,10 (AXIA3); R$ 79,70 (AXIA6)",
+   "horizonte": "12 meses",
+   "nota": "Portal da própria casa",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia (AXIA3) é favorita do Santander no setor de energia; Engie (EGIE3) tem preço elevado",
+   "link": "https://www.suno.com.br/noticias/axia-energia-axia3-favorita-santander-energia-go/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-04-02T17:45-03:00",
+   "casas": [
+    "Santander"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 62,66 (AXIA3 e AXIA7); R$ 68,92 (AXIA6)",
+   "horizonte": "fim de 2026",
+   "nota": "Axia como preferida do Santander no setor elétrico"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia (AXIA3) cai mais de 5% após resultado: analistas citam \"dividendos frustrando\"",
+   "link": "https://www.moneytimes.com.br/axia-energia-axia3-cai-mais-de-5-apos-resultado-analistas-citam-dividendos-frustrando/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-07T13:05-03:00",
+   "casas": [
+    "XP",
+    "BTG Pactual",
+    "UBS BB",
+    "Itaú BBA"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra (XP, BTG Pactual, UBS BB para AXIA6); Outperform (Itaú BBA)",
+   "preco_alvo": "R$ 63,30 (XP, AXIA3); R$ 75,00 (BTG Pactual); R$ 80,00 (UBS BB, AXIA6); R$ 50,30 (Itaú BBA, AXIA3)",
+   "analista": "Raul Cavendish (XP); Fillipe Andrade (Itaú BBA)",
+   "nota": "Leitura negativa do 1T26 (dividendos), mas todas as casas mantêm compra"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia (AXIA3): Bradesco BBI vê 'oportunidade tática de entrada' e mantém projeção de dividendos",
+   "link": "https://www.moneytimes.com.br/axia-energia-axia3-bradesco-bbi-ve-oportunidade-tatica-de-entrada-e-mantem-projecao-de-dividendos/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-26T12:17-03:00",
+   "casas": [
+    "Bradesco BBI",
+    "Ágora"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 73,00",
+   "nota": "Alvo de R$ 72 para R$ 73; relatório distribuído pela Ágora"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia (AXIA3): Safra reduz preço-alvo de olho em um fator; entenda",
+   "link": "https://www.moneytimes.com.br/axia-axia3-safra-passa-a-tesoura-em-preco-alvo-de-olho-em-um-fator-entenda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-06-09T14:26-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 72,00",
+   "nota": "Alvo cortado de R$ 73,10 para R$ 72 com compra mantida"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia (AXIA3): BTG vê dividendos concentrados e potencial de alta de 26%",
+   "link": "https://www.moneytimes.com.br/axia-energia-axia3-btg-ve-dividendos-concentrados-e-potencial-de-alta-de-26/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-03T18:34-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 74,00",
+   "horizonte": "12 meses",
+   "analista": "Antonio Junqueira, Gisele Gushiken, Maria Schutz"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia (AXIA3) é subestimada na bolsa? Itaú BBA turbina preço-alvo da ação em 49% — saiba o quanto a elétrica pode saltar",
+   "link": "https://www.seudinheiro.com/2026/bolsa-dolar/axia-axia3-e-subestimada-na-bolsa-itau-bba-turbina-preco-alvo-da-acao-em-49-veja-quanto-a-eletrica-pode-saltar-giov/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-08-10T19:35-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 75,20",
+   "horizonte": "até o final de 2026",
+   "nota": "Alvo de R$ 50,30 para R$ 75,20"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia Energia cai 1%, mas Bradesco BBI vê potencial de alta de 61%",
+   "link": "https://euqueroinvestir.com/acoes/axia-energia-axia3-potencial-alta-bbi",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-08-14T17:05-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 79,00",
+   "horizonte": "final de 2027",
+   "analista": "Francisco Navarrete, Ricardo França"
+  },
+  {
+   "ativo": "AXIA3",
+   "titulo": "Axia (AXIA3): XP mantém compra e vê pressão no curto prazo antes de melhora",
+   "link": "https://bpmoney.com.br/mercado/axia-axia3-xp-mantem-compra-e-ve-pressao-no-curto-prazo-antes-de-melhora/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-09-18T16:42-03:00",
+   "casas": [
+    "XP"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 74,50",
+   "nota": "Opinião da XP noticiada por veículo fora do grupo XP; vê pressão de curto prazo"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Bradesco (BBDC4) dispara 70% e Safra diz o que fazer com papel",
+   "link": "https://www.moneytimes.com.br/bradesco-bbdc4-dispara-70-e-safra-diz-o-que-fazer-com-papel-rnda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2025-11-17T14:07-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 24,00",
+   "analista": "Daniel Vaz, Maria Luisa Guedes, Rafael Nobre",
+   "nota": "Compra mantida e preço-alvo elevado"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Deixe Banco do Brasil (BBAS3) de lado e prefira esses dois outros bancos, recomenda Itaú BBA",
+   "link": "https://www.moneytimes.com.br/deixe-banco-de-brasil-bbas3-de-lado-e-prefira-esses-dois-outros-bancos-recomenda-itau-bba-rnda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2025-11-19T13:27-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "preco_alvo": "R$ 22,00",
+   "horizonte": "até 2026",
+   "nota": "Bradesco apontado como top pick do Itaú BBA entre os bancos"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Bradesco (BBDC4): UBS BB eleva preço-alvo após resultados do 4T; veja recomendação",
+   "link": "https://www.suno.com.br/noticias/bradesco-bbdc4-ubs-bb-eleva-preco-alvo-4t25-go/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-02-10T18:05-03:00",
+   "casas": [
+    "UBS BB"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 27,00",
+   "horizonte": "12 meses",
+   "nota": "Alvo de R$ 25 para R$ 27"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Safra elege Bradesco (BBDC4) como novo banco favorito e vê alta de até 30%",
+   "link": "https://investidor10.com.br/noticias/safra-elege-bradesco-bbdc4-como-novo-banco-favorito-e-ve-alta-de-ate-30-119144/",
+   "veiculo": "Investidor10",
+   "publicado_em": "2026-03-11T17:03-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 26,00",
+   "analista": "Daniel Vaz, Maria Luisa Guedes, Rafael Nobre",
+   "nota": "Bradesco substitui o Itaú como banco preferido do Safra"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Ações do Bradesco (BBDC4): Tombo é oportunidade? Potencial de alta pode chegar a 40%; veja se vale a pena",
+   "link": "https://www.moneytimes.com.br/acoes-do-bradesco-bbdc4-tombo-e-exagero-veja-potencial-apos-resultado-do-1t26-rnda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-07T14:18-03:00",
+   "casas": [
+    "XP",
+    "BTG Pactual",
+    "Safra",
+    "Eleven",
+    "BB Investimentos",
+    "Levante",
+    "Itaú BBA"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra (XP, BTG Pactual, Eleven); Compra (Safra, BB Investimentos, Levante, Itaú BBA)",
+   "preco_alvo": "R$ 24 (XP); R$ 23 (BTG Pactual); R$ 26 (Safra); R$ 16,50 (Eleven); R$ 22 (BB Investimentos, Levante, Itaú BBA)",
+   "analista": "Flavio Conde (Levante)",
+   "nota": "Compilação de recomendações após o 1T26"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Bradesco (BBDC4) cai após balanço; inadimplência preocupa e divide analistas",
+   "link": "https://bpmoney.com.br/mercado/bradesco-bbdc4-cai-apos-balanco-inadimplencia-preocupa-e-divide-analistas/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-08-06T12:52-03:00",
+   "casas": [
+    "XP",
+    "Goldman Sachs",
+    "J.P. Morgan",
+    "Genial Investimentos",
+    "Morgan Stanley"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra (XP); Neutra (Goldman Sachs); Overweight (Morgan Stanley, ADR)",
+   "preco_alvo": "R$ 18,97 (Goldman Sachs)",
+   "horizonte": "12 meses (Goldman Sachs)",
+   "nota": "Leitura do 2T26"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Bradesco (BBDC4) entra mais forte no novo ciclo, mas BTG mantém cautela; entenda",
+   "link": "https://www.suno.com.br/noticias/bradesco-bbdc4-btg-analise-2t26-mt/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-08-06T15:32-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 22,00"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "JPMorgan rebaixa Banco do Brasil para venda e eleva Bradesco à compra após rali",
+   "link": "https://bpmoney.com.br/mercado/acoes/jpmorgan-rebaixa-banco-do-brasil-eleva-bradesco-apos-rali/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-10-06T13:02-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Overweight (equivalente a compra)",
+   "preco_alvo": "R$ 26,00",
+   "nota": "De neutra para overweight; alvo de R$ 22 para R$ 26"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Itaú BBA corta recomendação do Bradesco (BBDC4) e reduz preço-alvo para R$ 20",
+   "link": "https://bpmoney.com.br/mercado/acoes/itau-bba-rebaixa-bradesco-bbdc4-preco-alvo-20-reais/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-10-28T09:59-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra (market perform)",
+   "preco_alvo": "R$ 20,00",
+   "horizonte": "encerramento de 2027",
+   "nota": "De compra para neutra; alvo de R$ 22 para R$ 20"
+  },
+  {
+   "ativo": "BBDC4",
+   "titulo": "Morgan Stanley vai na contramão e reforça compra de Bradesco (BBDC4) após queda de 37%",
+   "link": "https://bpmoney.com.br/mercado/acoes/morgan-stanley-reforca-compra-bradesco-bbdc4-venda-excessiva/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-11-03T11:53-03:00",
+   "casas": [
+    "Morgan Stanley"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Overweight (equivalente a compra)",
+   "preco_alvo": "US$ 4,75 (ADR BBD)",
+   "nota": "Compra reforçada, mas alvo do ADR cortado de US$ 5,50 para US$ 4,75"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BB Seguridade (BBSE3) agora é venda para o JP Morgan, veja por quê",
+   "link": "https://investidor10.com.br/noticias/bb-seguridade-bbse3-agora-e-venda-para-o-jp-morgan-veja-por-que-116694/",
+   "veiculo": "Investidor10",
+   "publicado_em": "2025-11-11T18:43-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Underweight (venda)",
+   "preco_alvo": "R$ 34,00",
+   "nota": "De equal-weight (neutra) para underweight; alvo de R$ 40 para R$ 34"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BB Seguridade (BBSE3) agora é venda para o Safra, veja por quê",
+   "link": "https://investidor10.com.br/noticias/bb-seguridade-bbse3-agora-e-venda-para-o-safra-veja-por-que-117850/",
+   "veiculo": "Investidor10",
+   "publicado_em": "2026-01-08T15:33-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Venda",
+   "preco_alvo": "R$ 39,00",
+   "nota": "Alvo cortado de R$ 47 para R$ 39"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "Goldman derruba BB Seguridade e ação desaba 4,77%",
+   "link": "https://bpmoney.com.br/brasil/goldman-derruba-bb-seguridade-e-acao-desaba-477/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-02-13T16:00-03:00",
+   "casas": [
+    "Goldman Sachs"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 37,00",
+   "nota": "De compra para neutra; alvo de R$ 38 para R$ 37"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BB Seguridade (BBSE3) decepciona em fevereiro e JPMorgan aposta em queda de 9%",
+   "link": "https://investidor10.com.br/noticias/bb-seguridade-bbse3-decepciona-em-fevereiro-e-jpmorgan-aposta-em-queda-de-9-119782/",
+   "veiculo": "Investidor10",
+   "publicado_em": "2026-04-14T14:34-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Venda",
+   "preco_alvo": "R$ 33,00",
+   "nota": "Venda mantida; alvo de R$ 34 para R$ 33"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BB Seguridade (BBSE3) perde força e BBA rebaixa ação; setor acende alerta no 1T26",
+   "link": "https://guiadoinvestidor.com.br/mercado/bb-seguridade-bbse3-perde-forca-e-bba-rebaixa-acao-setor-acende-alerta-no-1t26/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-04-15T16:37-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Underperform",
+   "preco_alvo": "R$ 32,00",
+   "nota": "Rebaixamento para underperform; alvo de R$ 35 para R$ 32"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "Dividendos da BB Seguridade (BBSE3): Genial calcula retornos; vale a compra?",
+   "link": "https://www.moneytimes.com.br/dividendos-da-bb-seguridade-bbse3-genial-calcula-retornos-vale-a-compra-rnda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-04-30T13:02-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 36,80"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "Enquanto BB Seguridade (BBSE3) sofre com o agro, outra ação ganha força entre os analistas",
+   "link": "https://www.seudinheiro.com/2026/empresas/enquanto-bb-seguridade-bbse3-sofre-com-o-agro-outra-acao-ganha-forca-entre-os-analistas-miql/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-06-19T17:35-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Underperform",
+   "preco_alvo": "R$ 32,00",
+   "horizonte": "fim de 2026"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BBSE3 e CCXE3 chegam a despencar 7% com revisão de analistas para ações e dividendos; hora de se preocupar?",
+   "link": "https://www.moneytimes.com.br/bbse3-e-ccxe3-chegam-a-despencar-7-com-revisao-de-analistas-para-acoes-e-dividendos-hora-de-se-preocupar/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-27T18:01-03:00",
+   "casas": [
+    "J.P. Morgan",
+    "Morgan Stanley"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Venda (J.P. Morgan); Venda (Morgan Stanley)",
+   "preco_alvo": "R$ 34,00 (J.P. Morgan)",
+   "horizonte": "dezembro de 2027 (J.P. Morgan)",
+   "nota": "Morgan Stanley rebaixa BB Seguridade e Caixa Seguridade de neutra para venda; ticker CCXE3 grafado assim na manchete"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BB Seguridade (BBSE3): Lucro fica acima do esperado, mas sentimento de cautela permanece; o que fazer com a ação?",
+   "link": "https://www.moneytimes.com.br/bb-seguridade-bbse3-lucro-fica-acima-do-esperado-mas-sentimento-de-cautela-permanece-o-que-fazer-com-a-acao-lmrs/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-04T12:43-03:00",
+   "casas": [
+    "Bradesco BBI",
+    "Ágora",
+    "Itaú BBA",
+    "Bank of America",
+    "Citi"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra (Bradesco BBI/Ágora); Underperform (Itaú BBA); Underperform (Bank of America); Neutra (Citi)",
+   "preco_alvo": "R$ 32,00 (Itaú BBA); R$ 40,00 (Bank of America); R$ 36,00 (Citi)",
+   "analista": "Marcelo Mizrahi (Bradesco BBI); Ricardo França (Ágora)",
+   "nota": "Leitura do 2T26; nenhuma casa com compra"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BB Seguridade: BTG espera balanço do 3T26 com resultado forte",
+   "link": "https://euqueroinvestir.com/acoes/bb-seguridade-btg-espera-balanco-do-3t26-com-resultado-forte",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-10-08T16:31-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "nota": "Prévia positiva do 3T26, mas recomendação neutra mantida"
+  },
+  {
+   "ativo": "BBSE3",
+   "titulo": "BB Seguridade despenca após balanço e alerta de analistas",
+   "link": "https://bpmoney.com.br/mercado/bb-seguridade-despenca-apos-balanco-e-alerta-de-analistas/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-11-04T12:32-03:00",
+   "casas": [
+    "Bradesco BBI",
+    "Morgan Stanley",
+    "Itaú BBA",
+    "J.P. Morgan",
+    "Goldman Sachs"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Venda (Morgan Stanley, Itaú BBA, J.P. Morgan); Neutra (Goldman Sachs)",
+   "preco_alvo": "R$ 35,00 (J.P. Morgan); R$ 40,00 (Goldman Sachs)",
+   "analista": "Marcelo Mizrahi, Renato Chanes (Bradesco BBI)",
+   "nota": "Leitura do 3T26"
+  },
+  {
+   "ativo": "BTLG11",
+   "titulo": "FIIs: reforço em fundos de papel e ajuste para estratégia mais defensiva",
+   "link": "https://oespecialista.safra.com.br/carteira-safra-fiis-marco-2026/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-03-09",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "Safra retira BTLG11 (e KNSC11) da carteira de FIIs de março, por relação risco-retorno menos atrativa.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "BTLG11",
+   "titulo": "Genial troca BTLG11 por GGRC11 em carteira recomendada de FIIs para julho",
+   "link": "https://www.suno.com.br/noticias/genial-troca-btlg11-por-ggrc11-em-carteira-recomendada-de-fiis-para-julho/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-07-03T20:25-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "BTLG11 sai da Carteira Valor da Genial; a casa diz seguir vendo qualidade no portfólio e pode reavaliar."
+  },
+  {
+   "ativo": "BTLG11",
+   "titulo": "Santander troca BRCO11 por BTLG11 na carteira de FIIs",
+   "link": "https://euqueroinvestir.com/fundos-imobiliarios/santander-troca-brco11-por-btlg11-na-carteira-de-fiis",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-09-02T15:30-03:00",
+   "casas": [
+    "Santander"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "BTLG11 entra na carteira recomendada de FIIs do Santander para setembro, no lugar do BRCO11."
+  },
+  {
+   "ativo": "CDII11",
+   "titulo": "O fundo perfeito? Conheça o CDII11, que tem renda isenta atrelada ao CDI",
+   "link": "https://www.moneytimes.com.br/o-fundo-perfeito-conheca-o-cdii11-que-tem-renda-isenta-atrelada-ao-cdi-mlem/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-09-03T10:27-03:00",
+   "casas": [
+    "Empiricus"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Coluna de Matheus Spiess (Empiricus) vê 'uma boa oportunidade'; peça marcada como 'Conteúdo Publicitário BTG Pactual'."
+  },
+  {
+   "ativo": "CPLE3",
+   "titulo": "Copel (CPLE3) é compra para 2026?",
+   "link": "https://www.nordinvestimentos.com.br/blog/copel-cple3-vale-a-pena-investir/",
+   "veiculo": "Nord Investimentos (blog)",
+   "publicado_em": "2025-12-24T07:50-03:00",
+   "casas": [
+    "Nord Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "analista": "Victor Bueno",
+   "nota": "Nord diz não ver atratividade suficiente para recomendar compra no momento (P/L ~18x, DY ~3%)",
+   "casa_pagina": "Nord"
+  },
+  {
+   "ativo": "CPLE3",
+   "titulo": "Dividendos e crescimento: A elétrica que entrega o pacote completo, segundo Safra",
+   "link": "https://www.moneytimes.com.br/dividendos-e-crescimento-a-eletrica-que-entrega-o-pacote-completo-segundo-safra-rnda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-03-03T12:49-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 17,00",
+   "nota": "Manchete não cita o nome; a elétrica é a Copel (CPLE3)"
+  },
+  {
+   "ativo": "CPLE3",
+   "titulo": "Lucro da Copel (CPLE3) sobe +11% no 1T26. Vale a pena investir?",
+   "link": "https://www.nordinvestimentos.com.br/blog/amp/copel-cple3-resultados-1t26/",
+   "veiculo": "Nord Investimentos (blog)",
+   "publicado_em": "2026-05-06T11:10-03:00",
+   "casas": [
+    "Nord Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "nota": "Nord afirma não ter recomendação de compra (reestruturação, alavancagem em alta, rentabilidade neutra); texto de Hugo Cabral",
+   "casa_pagina": "Nord"
+  },
+  {
+   "ativo": "CPLE3",
+   "titulo": "Copel (CPLE3) cai após mudar meta de dívida; JPMorgan mantém compra",
+   "link": "https://bpmoney.com.br/mercado/copel-cple3-cai-apos-mudar-meta-de-divida-jpmorgan-mantem-compra/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-07-16T18:00-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Overweight (equivalente à compra)",
+   "preco_alvo": "R$ 18,00"
+  },
+  {
+   "ativo": "CPLE3",
+   "titulo": "Nova política da Copel (CPLE3) abre espaço para mais dividendos — e faz BofA reforçar aposta na elétrica",
+   "link": "https://www.seudinheiro.com/2026/empresas/nova-politica-da-copel-cple3-abre-espaco-para-mais-dividendos-e-faz-bofa-reforcar-aposta-na-eletrica-mlim/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-07-17T18:46-03:00",
+   "casas": [
+    "Bank of America"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 21,00",
+   "analista": "Gustavo Faria, André Silveira"
+  },
+  {
+   "ativo": "CPLE3",
+   "titulo": "Copel mantém potencial de valorização com revisão positiva para distribuição",
+   "link": "https://oespecialista.safra.com.br/analise/copel-recomendacao-compra/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-07-21",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 17,50",
+   "horizonte": "fim de 2026",
+   "nota": "Alvo de R$ 17,20 para R$ 17,50; portal da própria casa",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "CPLE3",
+   "titulo": "Ação da Copel serve como proteção para eleições, diz Santander",
+   "link": "https://euqueroinvestir.com/acoes/acao-da-copel-serve-como-protecao-para-eleicoes-diz-santander",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-09-01T13:47-03:00",
+   "casas": [
+    "Santander"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 18,57",
+   "horizonte": "2027",
+   "analista": "André Sampaio, Guilherme Lima",
+   "nota": "Alvo para 2027, ante R$ 15,03 para o fim de 2026; manchete sem ticker"
+  },
+  {
+   "ativo": "CPLE6",
+   "titulo": "JP Morgan corta preço-alvo de Axia (AXIA3), Copel (CPLE6) e Auren (AURE3); confira o que esperar para o setor elétrico em 2026",
+   "link": "https://www.seudinheiro.com/2026/empresas/jp-morgan-derruba-preco-alvo-de-axia-axia3-copel-cple6-e-auren-aure3-lvgb/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-01-06T19:12-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Overweight",
+   "preco_alvo": "R$ 14,50",
+   "analista": "Arthur Pereira (líder da equipe)",
+   "nota": "Ajuste leve do alvo de R$ 14,60 para R$ 14,50 com overweight mantido"
+  },
+  {
+   "ativo": "CPLE6",
+   "titulo": "Copel (CPLE6) pode pagar R$ 17,9 bilhões em dividendos até 2030, projeta BTG",
+   "link": "https://investidor10.com.br/noticias/copel-cple6-pode-pagar-r-17-9-bilhoes-em-dividendos-ate-2030-projeta-btg-119468/",
+   "veiculo": "Investidor10",
+   "publicado_em": "2026-03-26T19:32-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 18,00",
+   "nota": "Alvo de R$ 14 para R$ 18, compra mantida"
+  },
+  {
+   "ativo": "CPLE6",
+   "titulo": "Copel (CPLE6) cai com mudanças na política de alavancagem; o que dizem os analistas?",
+   "link": "https://www.moneytimes.com.br/copel-cple6-cai-com-mudancas-na-politica-de-dividendos-o-que-dizem-os-analistas-lils/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-16T12:02-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 19,00",
+   "horizonte": "próximos 12 meses",
+   "analista": "Antonio Junqueira, Gisele Gushiken, Maria Schutz"
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "BB Investimentos recomenda compra de Equatorial (EQTL3) em movimento raro da estratégia de swing trade",
+   "link": "https://www.moneytimes.com.br/bb-investimentos-recomenda-compra-de-equatorial-em-movimento-raro-da-estrategia-de-swing-trade-ceci/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-02-03T09:48-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Sinal tático de swing trade; sem preço-alvo."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Dona da Sabesp, Equatorial supera estimativas",
+   "link": "https://oespecialista.safra.com.br/analise/equatorial-eqtl3-resultados-4t25/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-03-26",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Leitura do 4T25; 'o banco mantém visão positiva para a Equatorial'. Sem rating formal nem alvo.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Equatorial (EQTL3) ganha impulso regulatório e pode destravar valor bilionário",
+   "link": "https://euqueroinvestir.com/negocios/equatorial-eqtl3-ganha-impulso-regulatorio-e-pode-destravar-valor-bilionario",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-04-16T10:48-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "BBI reitera outperform e eleva alvo de R$ 43 para R$ 54 (fim de 2026)."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Preço-alvo EQTL3 2026: veja projeções para Equatorial Energia",
+   "link": "https://guiadoinvestidor.com.br/mercado/preco-alvo-eqtl3-2026/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-04-30T16:32-03:00",
+   "casas": [
+    "XP",
+    "Bradesco BBI",
+    "BTG Pactual",
+    "UBS",
+    "Santander",
+    "Citi",
+    "Itaú BBA",
+    "Scotiabank",
+    "J.P. Morgan",
+    "HSBC",
+    "Morgan Stanley",
+    "Bank of America",
+    "Goldman Sachs",
+    "Safra"
+   ],
+   "verificacao": "pagina",
+   "nota": "Compilado de 14 casas, todas com compra/outperform/overweight; alvos de R$ 42,80 a R$ 58,80."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Equatorial supera em receita, mas custos reduzem brilho do trimestre",
+   "link": "https://oespecialista.safra.com.br/equatorial-1t26-ebitda-em-linha-custos-lucro/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-05-15",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "nota": "Safra 'reitera recomendação de compra'; TIR de 12,2%. Sem preço-alvo.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Para Itaú BBA, Equatorial (EQTL3) está mal precificada",
+   "link": "https://www.moneytimes.com.br/para-itau-bba-equatorial-eqtl3-esta-mal-precificada-lils",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-28T15:56-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Mantém compra; alvo de R$ 48,70 para R$ 53,30 (fim de 2026)."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Equatorial avança na privatização da Copasa e reforça estratégia no saneamento",
+   "link": "https://oespecialista.safra.com.br/equatorial-investidor-referencia-privatizacao-copasa/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-06-05",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "nota": "'A recomendação de compra se mantém para a Equatorial Energia e neutra para a Copasa.'",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Equatorial (EQTL3) ganha reforço com Aneel e Copasa, mas juros altos limitam projeções",
+   "link": "https://guiadoinvestidor.com.br/mercado/equatorial-eqtl3-ganha-reforco-com-aneel-e-copasa-mas-juros-altos-limitam-projecoes/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-07-06T07:47-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "nota": "BBI mantém compra e alvo de R$ 54 (fim de 2026), sem elevar projeções."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "As ações para comprar agora, segundo a EQI; Petrobras (PETR4) e Equatorial (EQTL3) seguem entre as favoritas",
+   "link": "https://guiadoinvestidor.com.br/mercado/as-acoes-para-comprar-agora-segundo-a-eqi-petrobras-petr4-e-equatorial-eqtl3-seguem-entre-as-favoritas/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-07-08T18:10-03:00",
+   "casas": [
+    "EQI Research"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Equatorial é a 'principal aposta' e maior posição (12,5%) da carteira Buy & Hold da EQI."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Alerta Estratégia Radar | Oportunidade Swing Trade Compra Equatorial (EQTL3) – start – 9/7/2026",
+   "link": "https://investalk.bb.com.br/noticias/onde-investir/20260709EQTL3",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-07-09T14:00-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra (swing trade)",
+   "analista": "Luan Calimério",
+   "nota": "Sinal tático de swing trade (não é recomendação fundamentalista); sem preço-alvo.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Equatorial (EQTL3) negocia com desconto raro e XP vê ação barata para o longo prazo",
+   "link": "https://guiadoinvestidor.com.br/mercado/equatorial-eqtl3-negocia-com-desconto-raro-e-xp-ve-acao-barata-para-o-longo-prazo/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-07-15T08:35-03:00",
+   "casas": [
+    "XP"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Opinião da XP noticiada por veículo fora do grupo XP: compra, alvo R$ 61,70 (fim de 2027)."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Equatorial reforça expansão em saneamento e energia",
+   "link": "https://oespecialista.safra.com.br/analise/equatorial-expansao-saneamento-energia-investor-day/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-08-24",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Após o Investor Day, Safra reitera perspectiva positiva; vê 'desconto excessivo' e TIR real de ~14%. Sem preço-alvo.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Equatorial (EQTL3) tem desconto 'injustificado' e pode destravar até R$ 2,3 bilhões em valor, dizem bancos",
+   "link": "https://guiadoinvestidor.com.br/mercado/equatorial-eqtl3-tem-desconto-injustificado-e-pode-destravar-ate-r-23-bilhoes-em-valor-dizem-bancos/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-08-24T08:36-03:00",
+   "casas": [
+    "Morgan Stanley",
+    "Goldman Sachs",
+    "Itaú BBA"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Morgan Stanley compra (R$ 50); Goldman compra (R$ 46); Itaú BBA outperform (R$ 53,50)."
+  },
+  {
+   "ativo": "EQTL3",
+   "titulo": "Ibovespa a 246 mil? Itaú BBA cita EQTL3 e RDOR3 entre ações que ainda podem correr atrás do rali",
+   "link": "https://guiadoinvestidor.com.br/mercado/ibovespa-a-246-mil-itau-bba-cita-eqtl3-e-rdor3-entre-acoes-que-ainda-podem-correr-atras-do-rali/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-10-07T11:27-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "EQTL3 na carteira recomendada do Itaú BBA, destacada no título; sem preço-alvo no texto."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter & Co. (INBR32) 3T25: Ritmo dos avanços capturados pelo preço. Rebaixando para recomendação neutra.",
+   "link": "https://investalk.bb.com.br/noticias/mercado/INBR3T25",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2025-11-13T13:18-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 43,50",
+   "horizonte": "final de 2026",
+   "analista": "Rafael Reis",
+   "nota": "Rebaixamento para neutra. Página mostra 'Atualizado em 13/11/2025 às 13:18'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Itaú BBA derruba projeções e liga alerta para Inter & Co (INBR32) após novos sinais de risco",
+   "link": "https://guiadoinvestidor.com.br/mercado/itau-bba-derruba-projecoes-e-liga-alerta-para-inter-co-inbr32-apos-novos-sinais-de-risco/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2025-11-24T11:11-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "De 'Superar' para 'Desempenho de Mercado'; alvo de US$ 11 para US$ 10."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Banco Inter (INBR32) tem recomendação rebaixada para neutra",
+   "link": "https://oespecialista.safra.com.br/analise/banco-inter-inbr32-recomendacao-neutra/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2025-11-28",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutro",
+   "preco_alvo": "US$ 10,0",
+   "horizonte": "final de 2026",
+   "nota": "Safra rebaixa o Inter para Neutro.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter & Co. (INBR32) 4T25: Operação segue avançando, mas retorno estimado parece distante",
+   "link": "https://investalk.bb.com.br/noticias/mercado/INBR4T25",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-02-11T13:23-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 50,00",
+   "horizonte": "final de 2026",
+   "analista": "Rafael Reis",
+   "nota": "Página mostra 'Atualizado em 11/02/2026 às 13:23'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter terá entregas acima do consenso, avalia BBI",
+   "link": "https://euqueroinvestir.com/acoes/inter-tera-entregas-acima-do-consenso-avalia-bbi",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-04-01T10:06-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Compra; alvo de R$ 52,30 (fim de 2026) mantido."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter & Co. (INBR32) 1T26: crescimento persiste, mas qualidade do crédito e perda relativa de ímpeto se acumulam",
+   "link": "https://investalk.bb.com.br/noticias/mercado/INBR1T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-05-07T15:46-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 50,00",
+   "horizonte": "2026",
+   "analista": "Rafael Reis",
+   "nota": "Página mostra 'Atualizado em 07/05/2026 às 15:46'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter: BDRs decolam após mercado reconhecer \"erro\"",
+   "link": "https://euqueroinvestir.com/acoes/inter-bdrs-decolam-apos-mercado-reconhecer-erro",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-05-12T17:53-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "verificacao": "pagina",
+   "nota": "BBI mantém compra com alvo de R$ 42 para INBR32 e corta estimativas de lucro."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Citi “passa a tesoura” no Inter (INBR32); entenda por que bancão cortou a recomendação e o preço-alvo pela metade",
+   "link": "https://www.seudinheiro.com/2026/bolsa-dolar/inter-intr-inbr32-citi-passa-a-tesoura-e-diminui-recomendacao-e-preco-alvo-pela-metade-kaes/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-05-18T16:10-03:00",
+   "casas": [
+    "Citi"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "De compra para neutra; alvo de US$ 12 para US$ 6,50."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Desempenho de small cap em Inter (INTR)? Queda de 30% pode abrir pernada de alta para ação, calcula BTG; veja potencial",
+   "link": "https://www.moneytimes.com.br/desempenho-de-small-cap-em-inter-intr-queda-de-30-pode-abrir-pernada-de-alta-para-acao-calcula-btg-veja-potencial/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-06-10T13:01-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Compra; alvo US$ 9,86."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter (INTR): Itaú BBA corta preço-alvo do Inter de US$ 10 para US$ 8",
+   "link": "https://bpmoney.com.br/mercado/itau-bba-corta-preco-alvo-inter-us-8-recomendacao-neutra/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-06-23T15:56-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "Mantém neutra; alvo de US$ 10 para US$ 8."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter (INBR32) chega a tombar, mas recupera fôlego; quem tiver 'estômago' pode ver ação saltar 70%, vê Genial",
+   "link": "https://www.moneytimes.com.br/inter-inbr32-chega-a-tombar-mas-recupera-folego-quem-tiver-estomago-pode-ver-acao-saltar-70/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-06T16:33-03:00",
+   "casas": [
+    "Genial Investimentos",
+    "Bradesco BBI",
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Genial compra (R$ 50); BBI compra, alvo de R$ 42 para R$ 38 (fim de 2027); Safra neutra."
+  },
+  {
+   "ativo": "INBR34",
+   "titulo": "Inter & Co. (INBR32) 2T26: Crescimento reacelera, mas o risco também",
+   "link": "https://investalk.bb.com.br/noticias/mercado/INBR2T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-08-07T17:40-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 41,00",
+   "horizonte": "2027",
+   "analista": "Rafael Reis",
+   "nota": "Mantém Neutra e reduz o alvo (antes R$ 50,00), com data-base em 2027. Página mostra 'Atualizado em 07/08/2026 às 17:40'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Itaúsa (ITSA4) é preferida do JPMorgan com fim de ineficiência tributária no radar",
+   "link": "https://bpmoney.com.br/negocios/itausa-e-preferida-por-jp-morgan/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-02-20T11:47-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Overweight",
+   "preco_alvo": "R$ 17,50",
+   "horizonte": "dezembro de 2026"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Itaúsa (ITSA4) pode ter novo salto, vê Safra; veja potencial",
+   "link": "https://www.moneytimes.com.br/itausa-itsa4-pode-ter-novo-salto-ve-safra-veja-potencial-rnda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-03-13T12:32-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "preco_alvo": "R$ 18,00",
+   "horizonte": "até o final do ano",
+   "analista": "Rafael Rehder",
+   "nota": "Potencial de cerca de 30%; matéria não explicita o rótulo da recomendação"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Lucro da Itaúsa (ITSA4) chega a R$ 4,4 bi no 4T25, alta de 21% em um ano",
+   "link": "https://www.nordinvestimentos.com.br/blog/itausa-itsa4-resultados-4t25/",
+   "veiculo": "Nord Investimentos (blog)",
+   "publicado_em": "2026-03-17T10:14-03:00",
+   "casas": [
+    "Nord Investimentos"
+   ],
+   "verificacao": "pagina",
+   "analista": "Hugo Cabral",
+   "nota": "Análise do 4T25 da própria Nord; a casa diz manter compra apenas para Itaú (ITUB3), sem recomendação de compra para Itaúsa",
+   "casa_pagina": "Nord"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Itaú (ITUB4) ou Itaúsa (ITSA4): Goldman dá veredito sobre melhor escolha neste momento",
+   "link": "https://investidor10.com.br/noticias/itau-itub4-ou-itausa-itsa4-goldman-da-veredito-sobre-melhor-escolha-neste-momento-119298/",
+   "veiculo": "Investidor10",
+   "publicado_em": "2026-03-18T16:27-03:00",
+   "casas": [
+    "Goldman Sachs"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 15,00",
+   "nota": "Compra mantida para Itaúsa; alvo de R$ 13,70 para R$ 15"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Conheça os três vetores podem reduzir desconto de holding da Itaúsa (ITSA4)",
+   "link": "https://euqueroinvestir.com/acoes/itausa-itsa4-desconto-holding-bradesco-bbi-compra",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-03-20T11:52-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 15,40",
+   "horizonte": "fim de 2026",
+   "analista": "Marcelo Mizrahi, Renato Chanes",
+   "nota": "Manchete reproduzida como publicada (sem o 'que')"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Itaúsa (ITSA4) vira aposta do Goldman Sachs e pode subir 21% com reforma",
+   "link": "https://guiadoinvestidor.com.br/mercado/itausa-itsa4-vira-aposta-do-goldman-sachs-e-pode-subir-21-com-reforma/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-04-01T15:11-03:00",
+   "casas": [
+    "Goldman Sachs"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 16,90",
+   "nota": "O texto fala em início de cobertura, mas em 18/03 o Goldman já aparecia com compra (Investidor10); tratar como nova revisão de alvo"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Itaúsa tem trimestre neutro e menor desconto para Itaú",
+   "link": "https://oespecialista.safra.com.br/analise/itausa-tem-trimestre-neutro-e-menor-desconto-para-itau/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-05-13",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "nota": "Leitura do 1T26 visto como neutro; compra mantida. Portal da própria casa",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "ITSA4",
+   "titulo": "Itaúsa (ITSA4): JPMorgan eleva preço-alvo e explica por que ação está barata",
+   "link": "https://trademap.com.br/noticias/news-8243352",
+   "veiculo": "TradeMap",
+   "publicado_em": "2026-08-28T11:06-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Overweight",
+   "preco_alvo": "R$ 18,50",
+   "analista": "Yuri Fernandes",
+   "nota": "Alvo de R$ 18 para R$ 18,50; Investidor10 informou o horizonte de dezembro de 2027 na mesma data"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin deve manter retorno elevado para acionistas",
+   "link": "https://euqueroinvestir.com/acoes/klabin-deve-manter-retorno-elevado-para-acionistas/",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-02-11T15:53-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 25,74",
+   "analista": "Mary Silva",
+   "nota": "Leitura do 4T25; recomendação de compra mantida"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11): mesmo com ajuste no preço-alvo, Citi vê 2026 mais favorável",
+   "link": "https://bpmoney.com.br/mercado/klabin-klbn11-mesmo-com-ajuste-no-preco-alvo-citi-ve-2026-mais-favoravel/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-02-19T13:20-03:00",
+   "casas": [
+    "Citi"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 26,00",
+   "nota": "Alvo cortado de R$ 27 para R$ 26, compra mantida"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "JP Morgan rebaixa Klabin (KLBN11) e mantém apenas uma recomendação de compra no setor; veja qual",
+   "link": "https://www.moneytimes.com.br/jp-morgan-rebaixa-klabin-klbn11-e-mantem-apenas-uma-recomendacao-de-compra-no-setor-veja-qual-lils/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-04-23T13:30-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 22,00",
+   "analista": "Rodolfo Angele, Tathiane Candini",
+   "nota": "De compra para neutra; alvo de R$ 26 para R$ 22"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11): Safra aponta pressão para geração de caixa no 1T26; veja recomendação",
+   "link": "https://www.moneytimes.com.br/klabin-klbn11-safra-aponta-pressao-para-geracao-de-caixa-no-1t26-veja-recomendacao-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-06T11:11-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 23,30"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11) tem 1T26 pressionado por custos e caixa negativo; BTG e Santander divergem em recomendação",
+   "link": "https://www.moneytimes.com.br/klabin-klbn11-tem-1t26-pressionado-por-custos-e-caixa-negativo-btg-e-santander-divergem-em-recomendacao-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-06T12:26-03:00",
+   "casas": [
+    "BTG Pactual",
+    "Santander"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra (BTG Pactual); Compra (Santander)",
+   "preco_alvo": "R$ 23,00 (BTG Pactual); R$ 29,00 (Santander)"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11): Safra eleva recomendação e vê espaço para valorização das ações de quase 30% até dezembro",
+   "link": "https://moneytimes.com.br/klabin-klbn11-safra-ve-espaco-para-valorizacao-de-quase-30-ate-dezembro-lils/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-06-02T11:44-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 21,10",
+   "horizonte": "até dezembro",
+   "analista": "Ricardo Monegaglia, Caique Isidoro",
+   "nota": "De neutra para compra"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11): resultado deve melhorar, mas analista vê alerta na ação",
+   "link": "https://www.suno.com.br/noticias/klabin-klbn11-resultados-2t26-analise-mt/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-07-20T17:40-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 21,00",
+   "horizonte": "12 meses",
+   "nota": "Genial não descartava rebaixar para manter se o 2T26 apenas viesse em linha"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11) ou Suzano (SUZB3): Santander vê melhora no 2T26, apesar de pressão para custos; uma ação pode disparar 72%",
+   "link": "https://moneytimes.com.br/klabin-klbn11-ou-suzano-suzb3-santander-ve-melhora-no-2t26-apesar-de-pressao-para-custos-uma-acao-pode-disparar-72/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-03T16:23-03:00",
+   "casas": [
+    "Santander"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 29,00",
+   "nota": "Matéria compara Klabin e Suzano; para Klabin, potencial de cerca de 58,6%"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Após balanço acima do esperado, Klabin (KLBN11) ainda tem espaço para subir? O que dizem Citi e Itaú BBA",
+   "link": "https://www.moneytimes.com.br/vale-comprar-klabin-klbn11-citi-e-itau-bba-avaliam-balanco-e-revelam-precos-alvo-ceci/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-05T14:58-03:00",
+   "casas": [
+    "Citi",
+    "Itaú BBA"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra (Citi); Neutra (Itaú BBA)",
+   "preco_alvo": "R$ 23,00 (Citi); R$ 21,50 (Itaú BBA)"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Papel e Celulose: Suzano é a única recomendação do BBI",
+   "link": "https://euqueroinvestir.com/acoes/papel-e-celulose-suzano-e-a-unica-recomendacao-do-bbi",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-09-22T16:56-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 21,00",
+   "nota": "Manchete cita a Suzano; no corpo, Klabin é rebaixada de compra para neutra e alvo cai de R$ 24 para R$ 21"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11) | Prévia do 3T26: Papel Compensa a Parada em Trimestre Razoável",
+   "link": "https://analisa.genialinvestimentos.com.br/acoes/KLBN11/Klabin-KLBN11--Previa-do-3T26-Papel-Compensa-a-Parada-em-Trimestre-Razoavel/",
+   "veiculo": "Genial Analisa",
+   "publicado_em": "2026-10-16T14:24-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Manter",
+   "preco_alvo": "R$ 20,00",
+   "horizonte": "12 meses",
+   "analista": "Luca Vello Izzo",
+   "nota": "Relatório publicado no portal da própria Genial",
+   "casa_pagina": "Genial"
+  },
+  {
+   "ativo": "KLBN11",
+   "titulo": "Klabin (KLBN11) lucra R$ 393 milhões no 3T26, acima do esperado, mas ações caem 6%",
+   "link": "https://bpmoney.com.br/mercado/acoes/klabin-klbn11-resultados-3t26-acoes-caem/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-10-28T13:51-03:00",
+   "casas": [
+    "Itaú BBA",
+    "J.P. Morgan",
+    "Goldman Sachs"
+   ],
+   "verificacao": "pagina",
+   "recomendacao": "Neutra (Itaú BBA, J.P. Morgan, Goldman Sachs)",
+   "preco_alvo": "R$ 21,00 (Itaú BBA); R$ 19,00 (J.P. Morgan); R$ 18,50 (Goldman Sachs)",
+   "analista": "Daniel Sasson (Itaú BBA)",
+   "nota": "Manchete sobre o resultado; no corpo, as três casas mantêm recomendação neutra"
+  },
+  {
+   "ativo": "KNHF11",
+   "titulo": "KNHF11: Três motivos para investir no fundo imobiliário gerido pela Kinea",
+   "link": "https://www.moneytimes.com.br/knhf11-tres-motivos-para-investir-no-fundo-imobiliario-gerido-pela-kinea/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-09-04T11:06-03:00",
+   "casas": [
+    "Empiricus"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Tese de compra de Matheus Spiess (Empiricus); peça marcada como 'Conteúdo Publicitário BTG Pactual'."
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Goldman mantém compra e vê dividendos atrativos na Petrobras",
+   "link": "https://bpmoney.com.br/economia/goldman-mantem-compra-e-ve-dividendos-atrativos-na-petrobras/",
+   "veiculo": "BP Money",
+   "publicado_em": "2025-11-12T12:02-03:00",
+   "casas": [
+    "Goldman Sachs"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 33,20 (PETR4); R$ 35,50 (PETR3)",
+   "nota": "Reiteração após o 3T25"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "UBS BB reitera recomendação de compra, mas corta preço-alvo de Petrobras (PETR4)",
+   "link": "https://www.moneytimes.com.br/ubs-bb-corta-preco-alvo-de-petrobras-para-r-40-mas-reitera-recomendacao-de-compra-mabe/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-01-14T09:53-03:00",
+   "casas": [
+    "UBS BB"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 40,00",
+   "analista": "Tasso Vasconcellos",
+   "nota": "Alvo cortado de R$ 42 para R$ 40; texto da Reuters"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Petrobras (PETR4): BTG rebaixa recomendação e vê flexibilidade financeira limitada",
+   "link": "https://www.moneytimes.com.br/petrobras-petr4-btg-rebaixa-recomendacao-kda/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-01-16T12:25-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutro",
+   "preco_alvo": "US$ 15 (ADR)",
+   "analista": "Rodrigo Almeida, Gustavo Cunha",
+   "nota": "De compra para neutro"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Petrobras (PETR4): Bradesco BBI corta recomendação de compra para neutra; entenda",
+   "link": "https://www.moneytimes.com.br/petrobras-petr4-bradesco-bbi-corta-recomendacao-de-compra-para-neutra-mas-eleva-preco-alvo-apsa/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-02-03T12:49-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 45,00",
+   "analista": "Vicente Falanga, Ricardo França",
+   "nota": "Rebaixa para neutra, mas eleva alvo de R$ 40 para R$ 45"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Petrobras (PETR4): BTG Pactual eleva ação para compra mesmo após alta de 56% no ano; veja os 3 motivos para isso",
+   "link": "https://www.moneytimes.com.br/petrobras-petr4-btg-pactual-eleva-acao-para-compra-mesmo-apos-alta-de-56-no-ano-veja-os-3-motivos-para-isso-lmrs/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-03-16T09:34-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "US$ 21 (ADR)",
+   "analista": "Rodrigo Almeida",
+   "nota": "De neutro para compra; alvo do ADR de US$ 15 para US$ 21"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "O que levou o Citi a elevar o preço-alvo de Petrobras (PETR4) e do ADR da estatal, mesmo com a recomendação neutra?",
+   "link": "https://www.moneytimes.com.br/o-que-levou-o-citi-a-elevar-o-preco-alvo-de-petrobras-petr4-e-do-adr-da-estatal-mesmo-com-a-recomendacao-neutra/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-04-09T11:55-03:00",
+   "casas": [
+    "Citi"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 49,00",
+   "nota": "Alvo de R$ 37 para R$ 49, recomendação neutra mantida"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Por que o Bank of America decidiu elevar a recomendação da Petrobras para compra",
+   "link": "https://www.bloomberglinea.com.br/mercados/por-que-o-bank-of-america-decidiu-elevar-a-recomendacao-da-petrobras-para-compra/",
+   "veiculo": "Bloomberg Línea",
+   "publicado_em": "2026-04-21T07:31-03:00",
+   "casas": [
+    "Bank of America"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 65,00",
+   "analista": "Caio Ribeiro, Leonardo Marcondes, Nicolás Barros",
+   "nota": "De neutra para compra; alvo de R$ 49 para R$ 65"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Santander eleva Petrobras (PETR3) para compra, aumenta preço-alvo e diz o que esperar dos dividendos",
+   "link": "https://www.seudinheiro.com/2026/empresas/santander-eleva-petrobras-petr3-para-compra-e-ve-espaco-para-acao-subir-mais-21-lvgb/",
+   "veiculo": "Seu Dinheiro",
+   "publicado_em": "2026-05-21T14:03-03:00",
+   "casas": [
+    "Santander"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Outperform (equivalente à compra)",
+   "preco_alvo": "R$ 60,00 (PETR3)",
+   "analista": "Yuri Pereira",
+   "nota": "Alvo da PETR3 de R$ 35 para R$ 60; ADR de US$ 13 para US$ 24"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Safra rebaixa PRIO (PRIO3) e Brava (BRAV3) após rali e vê Petrobras (PETR4) como melhor aposta do setor",
+   "link": "https://www.moneytimes.com.br/safra-rebaixa-prio-prio3-e-brava-brav3-apos-rali-e-ve-petrobras-petr4-como-melhor-aposta-do-setor-vtra/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-06-03T11:34-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 57,00",
+   "analista": "Conrado Vegner, Vinícius Andrade",
+   "nota": "Petrobras como preferida do setor; alvo de R$ 43 para R$ 57"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Petrobras (PETR4): XP eleva preço-alvo para R$ 63 e estima ganho de US$ 7,5 bilhões no fluxo de caixa com subsídios",
+   "link": "https://www.moneytimes.com.br/petrobras-petr4-xp-eleva-preco-alvo-para-r-63-e-estima-ganho-de-us-75-bilhoes-no-fluxo-de-caixa-com-subsidios/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-06-08T15:21-03:00",
+   "casas": [
+    "XP"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 63,00",
+   "nota": "Opinião da XP noticiada por veículo fora do grupo XP; alvo de R$ 47 para R$ 63"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Petrobras (PETR4) tem preço-alvo cortado, mas segue favorita do BofA",
+   "link": "https://www.suno.com.br/noticias/petrobras-petr4-bofa-corte-preco-alvo-petroleo-mt/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-07-02T17:25-03:00",
+   "casas": [
+    "Bank of America"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 55,00",
+   "nota": "Alvo cortado de R$ 65 para R$ 55"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Morgan Stanley vê oportunidade após correção do petróleo, eleva Prio (PRIO3) e mantém Petrobras (PETR4) favorita",
+   "link": "https://www.moneytimes.com.br/morgan-stanley-ve-oportunidade-apos-correcao-do-petroleo-eleva-prio-prio3-e-mantem-petrobras-petr4-favorita/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-07T17:40-03:00",
+   "casas": [
+    "Morgan Stanley"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Petrobras mantida entre as principais recomendações de petróleo na América Latina"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Citi corta preço-alvo da Petrobras (PETR4), mas vê alta nos dividendos após resultado do 2T26",
+   "link": "https://moneytimes.com.br/citi-corta-preco-alvo-da-petrobras-petr4-mas-ve-alta-nos-dividendos-apos-resultado-do-2t26-vtra/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-30T14:42-03:00",
+   "casas": [
+    "Citi"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 47,00",
+   "analista": "Gabriel Barra, Pedro Gama, Andres Cardona",
+   "nota": "Alvo de R$ 49 para R$ 47"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Petrobras (PETR4) pode surpreender com dividendos de até US$ 4,2 bilhões no 3T26; veja projeções",
+   "link": "https://www.suno.com.br/noticias/petrobras-petr4-dividendos-terceiro-trimestre-mt/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2026-10-20T14:45-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "US$ 26 (ADR)",
+   "analista": "Rodrigo Almeida, Gustavo Cunha"
+  },
+  {
+   "ativo": "PETR4",
+   "titulo": "Petrobras (PETR4) pode pagar até US$ 4,2 bilhões em dividendos no 3T26, projeta Itaú BBA",
+   "link": "https://bpmoney.com.br/negocios/empresas/petrobras-petr4-dividendos-ate-42-bilhoes-3t26/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-10-29T15:20-03:00",
+   "casas": [
+    "Itaú BBA",
+    "Safra",
+    "BTG Pactual",
+    "XP"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 64,00 (Itaú BBA); R$ 57,00 (Safra)",
+   "nota": "Prévia do 3T26; casas mantêm compra"
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Itaú BBA corta preços-alvo de Prio (PRIO3), Brava (BRAV3) e PetroReconcavo (RECV3); veja o que esperar de 2026",
+   "link": "https://www.moneytimes.com.br/itau-bba-corta-precos-alvo-de-prio-prio3-brava-brav3-e-petroreconcavo-recv3-veja-o-que-esperar-de-2026/",
+   "veiculo": "Money Times",
+   "publicado_em": "2025-12-13T15:00-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "nota": "Mantém outperform, mas corta o alvo para R$ 50 (fim de 2026), de R$ 62 (fim de 2025)."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "BTG elege Prio (PRIO3) como favorita e rebaixa Petrobras (PETR4) para neutra",
+   "link": "https://investidor10.com.br/noticias/btg-elege-prio-prio3-como-favorita-e-rebaixa-petrobras-petr4-para-neutra-118036/",
+   "veiculo": "Investidor10",
+   "publicado_em": "2026-01-18T10:58-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Prio vira a principal escolha do BTG em óleo e gás."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Goldman vê forte crescimento e eleva PRIO3 para compra; RECV3 e BRAV3 ficam em venda",
+   "link": "https://bpmoney.com.br/mercado/acoes/goldman-ve-forte-crescimento-e-eleva-prio3-para-compra-recv3-e-brav3-ficam-em-venda/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-01-23T11:35-03:00",
+   "casas": [
+    "Goldman Sachs"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "De neutro para compra; alvo R$ 58,45."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Ação da Prio tem \"vários gatilhos\" de crescimento, diz BofA",
+   "link": "https://euqueroinvestir.com/acoes/acao-da-prio-tem-varios-gatilhos-de-crescimento-diz-bofa",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-03-11",
+   "casas": [
+    "Bank of America"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Reitera compra; alvo de R$ 64 para R$ 70."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Depois da disparada, Prio (PRIO3) perde fôlego e banco vê Petrobras (PETR4) como favorita",
+   "link": "https://guiadoinvestidor.com.br/mercado/depois-da-disparada-prio-prio3-perde-folego-e-banco-ve-petrobras-petr4-como-favorita/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-03-30T16:44-03:00",
+   "casas": [
+    "Morgan Stanley"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "Rebaixada de overweight para equal-weight; alvo sobe de R$ 58,50 para R$ 68."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Preço-alvo PRIO3 2026: veja se vale a pena investir na PRIO",
+   "link": "https://guiadoinvestidor.com.br/mercado/preco-alvo-prio3-2026-veja-se-vale-a-pena-investir-na-prio/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-04-27T20:31-03:00",
+   "casas": [
+    "J.P. Morgan",
+    "Itaú BBA",
+    "Bradesco BBI",
+    "XP",
+    "BTG Pactual"
+   ],
+   "verificacao": "pagina",
+   "nota": "Compilado: JPM compra (R$ 73), Itaú BBA neutra (R$ 74), BBI neutra (R$ 69), XP compra (R$ 64), BTG compra (R$ 56)."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "PRIO (PRIO3) cai 4% mesmo com resultado recorde: entenda",
+   "link": "https://www.moneytimes.com.br/prio-prio3-cai-4-mesmo-com-resultado-recorde-entenda-vtra-apsa/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-06T12:22-03:00",
+   "casas": [
+    "BTG Pactual",
+    "Citi",
+    "Itaú BBA"
+   ],
+   "verificacao": "pagina",
+   "nota": "Leitura do 1T26: BTG reitera compra (R$ 72); Citi mantém entre as preferidas."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Safra rebaixa PRIO (PRIO3) e Brava (BRAV3) após rali e vê Petrobras (PETR4) como melhor aposta do setor",
+   "link": "https://www.moneytimes.com.br/safra-rebaixa-prio-prio3-e-brava-brav3-apos-rali-e-ve-petrobras-petr4-como-melhor-aposta-do-setor-vtra/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-06-03T11:34-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "De compra para neutro; alvo sobe de R$ 56 para R$ 69."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Morgan Stanley vê oportunidade após correção do petróleo, eleva Prio (PRIO3) e mantém Petrobras (PETR4) favorita",
+   "link": "https://www.moneytimes.com.br/morgan-stanley-ve-oportunidade-apos-correcao-do-petroleo-eleva-prio-prio3-e-mantem-petrobras-petr4-favorita/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-07T17:40-03:00",
+   "casas": [
+    "Morgan Stanley"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Elevação para overweight (equivalente a compra)."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Prio (PRIO3) | Resultado 2T26: Hat-Trick – geração de caixa, lifting cost e recompra de ações!",
+   "link": "https://analisa.genialinvestimentos.com.br/acoes/PRIO3/prio-prio3-resultado-2t26-hat-trick-geracao-de-caixa-lifting-cost-e-recompra-de-acoes/",
+   "veiculo": "Genial Analisa",
+   "publicado_em": "2026-08-04T23:47-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Manter",
+   "preco_alvo": "R$ 72,00",
+   "analista": "Vitor Sousa",
+   "casa_pagina": "Genial"
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Dividendos à vista? Prio (PRIO3) tem geração de caixa forte no 2T26 e alimenta apostas",
+   "link": "https://www.moneytimes.com.br/depois-de-2t26-forte-analistas-veem-dividendos-da-prio-prio3-mais-proximos-apsa/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-05T12:59-03:00",
+   "casas": [
+    "Citi",
+    "Bradesco BBI",
+    "BTG Pactual"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "nota": "Citi compra (R$ 66); Bradesco BBI neutro (R$ 56, fim de 2027); BTG compra (R$ 72)."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Prio (PRIO3) agora é compra, diz Itaú BBA; veja potencial",
+   "link": "https://www.moneytimes.com.br/prio-prio3-agora-e-compra-diz-itau-bba-lils/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-10T12:39-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Elevação para compra; alvo R$ 73 para o fim de 2027."
+  },
+  {
+   "ativo": "PRIO3",
+   "titulo": "Prio (PRIO3) | Detalhes da Teleconferência do resultado 3T26: 200k bpde, dividendos e produção!",
+   "link": "https://analisa.genialinvestimentos.com.br/acoes/PRIO3/Prio-PRIO3--Detalhes-da-Teleconferencia-do-resultado-3T26-200k-bpde-dividendos-e-producao/",
+   "veiculo": "Genial Analisa",
+   "publicado_em": "2026-11-06T11:19-03:00",
+   "casas": [
+    "Genial Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Comprar",
+   "preco_alvo": "R$ 73,00",
+   "analista": "Vitor Sousa",
+   "nota": "No relatório de 2T26 a casa estava em Manter (R$ 72,00).",
+   "casa_pagina": "Genial"
+  },
+  {
+   "ativo": "TRXF11",
+   "titulo": "Carteira de fundos imobiliários do BB troca TRXF11 por MXRF11",
+   "link": "https://euqueroinvestir.com/fundos-imobiliarios/carteira-de-fundos-imobiliarios-do-bb-troca-trxf11-por-mxrf11",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-09-02T17:06-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "Saída 'temporária' da Carteira Renda do BB por postura mais prudente após notícias ligadas à gestora; fundo segue coberto."
+  },
+  {
+   "ativo": "TRXF11",
+   "titulo": "Cenário favorece retomada dos fundos imobiliários",
+   "link": "https://oespecialista.safra.com.br/carteira-safra-top-fiis-setembro-2026/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-09-14",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "TRXF11 é a única saída da Carteira Top FIIs de setembro (entram HSML11 e VISC11). Título da aba: 'Safra amplia fundos de tijolo na Carteira Top FIIs'.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): BB Investimentos inicia cobertura e recomenda compra da ação",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-bb-investimentos-inicia-cobertura-e-recomenda-compra-para-a-acao-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2025-12-20T11:00-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Início de cobertura com compra; alvo R$ 20,80 (fim de 2026)."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "'O agro não é uma corrida, é uma prova de resistência': A nova top pick da XP Investimentos",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-o-agro-nao-e-uma-corrida-e-uma-prova-de-resistencia-a-nova-top-pick-da-xp-investimentos-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-01-16T12:40-03:00",
+   "casas": [
+    "XP"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Opinião da XP noticiada por veículo fora do grupo XP: top pick do agro, alvo R$ 23,60."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): JP Morgan inicia cobertura e elege ação como top pick do agronegócio",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-jp-morgan-inicia-cobertura-e-elege-acao-como-top-pick-do-agronegocio-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-03-02T17:49-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Início de cobertura com overweight; alvo R$ 21 (fim de 2026)."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): Safra inicia cobertura e vê desconto de 6% para SOJA3 e SLCE3",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-safra-inicia-cobertura-e-ve-desconto-de-6-para-soja3-e-slce3-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-04-16T10:55-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Início de cobertura com outperform; alvo R$ 23 em 12 meses."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3) ganha destaque com avanço do B16 e possível impulso no biodiesel, diz BBI",
+   "link": "https://guiadoinvestidor.com.br/mercado/3tentos-tten3-ganha-destaque-com-avanco-do-b16-e-possivel-impulso-no-biodiesel-diz-bbi/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-05-04T17:34-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "TTEN3 'lidera' as recomendações do BBI no setor; sem rating explícito nem alvo."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3) dispara após lucro operacional dobrar e BTG elogiar trimestre",
+   "link": "https://guiadoinvestidor.com.br/mercado/3tentos-tten3-dispara-apos-lucro-operacional-dobrar-e-btg-elogiar-trimestre/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-05-15T15:02-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Leitura positiva do 1T26; o texto não traz rating nem alvo."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "BB-BI divulga novo preço-alvo para 3Tentos (TTEN3)",
+   "link": "https://investalk.bb.com.br/noticias/mercado/tten3-bb-revisao-preco-maio-26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-05-20T13:54-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 20,90",
+   "horizonte": "final de 2026",
+   "analista": "Georgia Jorge",
+   "nota": "Alvo de R$ 20,80 para R$ 20,90. Página mostra 'Atualizado em 20/05/2026 às 13:54'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "Citi mantém 3Tentos (TTEN3) como a 'queridinha' do agro e vê potencial de salto de quase 30% nas ações",
+   "link": "https://www.moneytimes.com.br/citi-mantem-3tentos-tten3-como-a-queridinha-do-agro-e-ve-potencial-de-salto-de-quase-30-nas-acoes-lils/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-05-29T11:50-03:00",
+   "casas": [
+    "Citi"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Compra e top pick do agro; alvo de R$ 19,50 para R$ 20."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos: Santander eleva preço-alvo e mantém ação como favorita no agro",
+   "link": "https://euqueroinvestir.com/acoes/3tentos-santander-eleva-preco-alvo-e-mantem-acao-como-favorita-no-agro",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-07-17T10:42-03:00",
+   "casas": [
+    "Santander"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Compra reiterada; alvo de R$ 20 (2026) para R$ 26,60 (2027)."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3) derrete mais de 16% nesta terça (28); o que está por trás da queda?",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-derrete-e-recua-mais-de-12-nesta-terca-28-o-que-esta-por-tras-da-queda-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-28T13:00-03:00",
+   "casas": [
+    "Santander",
+    "J.P. Morgan",
+    "Itaú BBA",
+    "XP"
+   ],
+   "verificacao": "pagina",
+   "nota": "Queda após o 2T26; cita Santander outperform (R$ 26,60) e JPM, Itaú BBA e XP com a ação como top pick do agro."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): BTG não vê deterioração estrutural após queda de 16% e reforça recomendação, apesar de 2T26 fraco",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-btg-nao-ve-deterioracao-estrutural-apos-queda-de-16-e-reforca-compra-apesar-de-2t26-fraco-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-29T09:29-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Compra; alvo R$ 26."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): Citi corta preço-alvo por 2T26 fraco e perspectiva de margens mais fracas à frente",
+   "link": "https://moneytimes.com.br/3tentos-tten3-citi-corta-preco-alvo-por-2t26-fraco-e-perspectiva-de-margens-mais-fracas-a-frente/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-29T11:01-03:00",
+   "casas": [
+    "Citi"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "nota": "Mantém compra; alvo de R$ 20 para R$ 17."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): Números fracos? Para o Santander, 2T26 traz marcos de longo prazo para a tese; veja recomendação",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-numeros-fracos-para-o-santander-2t26-traz-marcos-de-longo-prazo-para-a-tese-veja-recomendacao-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-07-30T15:36-03:00",
+   "casas": [
+    "Santander"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Outperform; alvo R$ 26,60."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): Safra corta preço-alvo em 24% com desafios no curto prazo, mas mantém recomendação",
+   "link": "https://www.moneytimes.com.br/3tentos-tten3-safra-corta-preco-alvo-em-24-com-desafios-no-curto-prazo-mas-mantem-recomendacao-pads/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-08-05T11:34-03:00",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "nota": "Mantém outperform; alvo de R$ 23 para R$ 17,50."
+  },
+  {
+   "ativo": "TTEN3",
+   "titulo": "3tentos (TTEN3): Itaú BBA corta preço-alvo, mas vê revés temporário e ação barata",
+   "link": "https://moneytimes.com.br/3tentos-tten3-itau-bba-corta-preco-alvo-mas-ve-reves-temporario-e-acao-barata/",
+   "veiculo": "Money Times",
+   "publicado_em": "2026-09-03T11:08-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "mista",
+   "verificacao": "pagina",
+   "nota": "Mantém outperform; alvo de R$ 20 (fim de 2026) para R$ 19 (fim de 2027)."
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3) tem 3T25 negativo, segundo BB-BI",
+   "link": "https://investalk.bb.com.br/noticias/mercado/VAMO-3T25",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2025-11-12T14:06-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 4,10",
+   "horizonte": "final de 2026",
+   "analista": "Luan Calimério",
+   "nota": "Página mostra 'Atualizado em 12/11/2025 às 14:06'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Esta ação pode subir quase 300% em 12 meses, diz BTG; descubra",
+   "link": "https://www.suno.com.br/noticias/vamos-vamo3-btg-preve-alta-quase-300-por-cento-go/",
+   "veiculo": "Suno Notícias",
+   "publicado_em": "2025-12-02T20:35-03:00",
+   "casas": [
+    "BTG Pactual"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Ação é a Vamos (VAMO3); BTG vê alvo de R$ 15."
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "VAMO3 tem valuation atrativo e recomendação de compra",
+   "link": "https://oespecialista.safra.com.br/analise/vamos-vamo3-compra-analise/",
+   "veiculo": "Safra – O Especialista",
+   "publicado_em": "2026-01-13",
+   "casas": [
+    "Safra"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "nota": "Safra mantém compra; P/L 2026E de 5,4x. Sem preço-alvo.",
+   "casa_pagina": "Safra"
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3) avança em receita mas desafios permanecem, segundo BB-BI",
+   "link": "https://investalk.bb.com.br/noticias/mercado/VAMO-4T25",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-03-26T16:00-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 4,10",
+   "horizonte": "final de 2026",
+   "analista": "Luan Calimério",
+   "nota": "Página mostra 'Atualizado em 26/03/2026 às 16:00'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3) tem trimestre misto mas segue na direção certa, segundo BB-BI",
+   "link": "https://investalk.bb.com.br/noticias/mercado/VAMO-1T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-05-07T12:33-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 4,10",
+   "horizonte": "final de 2026",
+   "analista": "Luan Calimério",
+   "nota": "Página mostra 'Atualizado em 07/05/2026 às 12:33'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3) pode subir 92%, diz Bradesco BBI; banco vê ação barata demais",
+   "link": "https://guiadoinvestidor.com.br/mercado/vamos-vamo3-pode-subir-92-diz-bradesco-bbi-banco-ve-acao-barata-demais/",
+   "veiculo": "Guia do Investidor",
+   "publicado_em": "2026-07-17T08:04-03:00",
+   "casas": [
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Reitera compra; alvo R$ 6,00 (fim de 2026)."
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3): frota mais ocupada desde 2020 anima Safra e BBI",
+   "link": "https://euqueroinvestir.com/acoes/vamos-vamo3-frota-mais-ocupada-desde-2020-anima-safra-e-bbi",
+   "veiculo": "Eu Quero Investir",
+   "publicado_em": "2026-07-17T09:48-03:00",
+   "casas": [
+    "Safra",
+    "Bradesco BBI"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Leitura da prévia operacional do 2T26; o texto não traz rating nem alvo."
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3) tem 2T26 positivo, segundo BB-BI",
+   "link": "https://investalk.bb.com.br/noticias/mercado/VAMO-2T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-08-12T15:51-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "neutra",
+   "verificacao": "pagina",
+   "recomendacao": "Neutra",
+   "preco_alvo": "R$ 4,10",
+   "horizonte": "final de 2026",
+   "analista": "Luan Calimério",
+   "nota": "Alvo vale até a incorporação do 2T26. Página mostra 'Atualizado em 12/08/2026 às 15:51'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3) dispara mais de 6% com trade eleitoral e ganha preço-alvo de R$ 9 no Itaú BBA",
+   "link": "https://bpmoney.com.br/mercado/acoes/vamo3-dispara-trade-eleitoral-itau-bba-preco-alvo-47/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-10-20T15:18-03:00",
+   "casas": [
+    "Itaú BBA"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "nota": "Mantém compra; alvo de R$ 5 para R$ 9."
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "Vamos (VAMO3) tem 3T26 positivo e BB-BI eleva recomendação. Confira.",
+   "link": "https://investalk.bb.com.br/noticias/mercado/VAMO-3T26",
+   "veiculo": "InvesTalk (BB Investimentos)",
+   "publicado_em": "2026-10-30T17:31-03:00",
+   "casas": [
+    "BB Investimentos"
+   ],
+   "posicao": "favoravel",
+   "verificacao": "pagina",
+   "recomendacao": "Compra",
+   "preco_alvo": "R$ 5,90",
+   "horizonte": "final de 2027",
+   "analista": "Luan Calimério",
+   "nota": "Eleva de neutra para compra. Página mostra 'Atualizado em 30/10/2026 às 17:31'.",
+   "casa_pagina": "BB Investimentos",
+   "data_tipo": "atualizacao"
+  },
+  {
+   "ativo": "VAMO3",
+   "titulo": "JPMorgan corta Vamos para neutro e aponta Rumo e Motiva como preferidas no setor",
+   "link": "https://bpmoney.com.br/mercado/acoes/jpmorgan-rebaixa-vamos-neutro-prefere-rumo-motiva/",
+   "veiculo": "BP Money",
+   "publicado_em": "2026-11-03T17:01-03:00",
+   "casas": [
+    "J.P. Morgan"
+   ],
+   "posicao": "contraria",
+   "verificacao": "pagina",
+   "nota": "De compra para neutro; sem alvo para Vamos no texto."
+  }
+ ]
+}

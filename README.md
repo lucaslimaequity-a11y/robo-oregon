@@ -11,9 +11,9 @@ Site público (GitHub Pages): `https://lucaslimaequity-a11y.github.io/robo-orego
 
 | Seção | O que tem |
 |---|---|
-| **Hoje** | Primeira dobra: data, hora da última coleta (separada da hora de publicação de cada notícia), cinco destaques e as demais notícias em linhas (hora · veículo · título · ativo/tema · ↗) que abrem no próprio lugar, com filtros Na carteira, Brasil, Mundo, Gestoras e casas, RI e CVM. Ao lado: ativos das carteiras que foram **assunto** de notícia nas últimas 72 h (menções de passagem à parte) e a agenda oficial recolhida. Abaixo: leituras do dia, leitura recomendada e estudo do dia. |
-| **Brasil** | Ativos das 15 carteiras pela notícia direta mais recente. Na ficha, ao lado: notícias em que o ativo é o assunto, opiniões publicadas a favor e contra (12 meses), documentos à CVM, setor e cadeia e, recolhidas, as menções de passagem. No centro, em abas: Mudanças na tese (primeiro), Eventos e RI, Fundamentos, Setor e pares. |
-| **Mundo e Estratégia** | O que o mundo fala (imprensa internacional e bancos centrais, por região, e temas dos ETFs globais); cartas, research e conteúdo educacional dos últimos 30 dias; ETFs globais com notícias do índice e do tema. |
+| **Hoje** | Data, última coleta e o que chegou desde a sua última visita. Mapa de atenção da carteira (acontecimentos por ativo em 7 dias). Quatro áreas: **Radar das teses** (empresas acompanhadas, separando fato da empresa, opinião publicada, notícia e hipótese de setor), **Agenda decisiva** (temporada de resultados na CVM, documentos das companhias, agenda oficial), **Research global** e **Debate de mercado**. Profundidade rápida, briefing ou aprofundada. Sem cotações, Tesouro, dólar ou IPCA. |
+| **Brasil** | Ativos das 15 carteiras pela notícia direta mais recente. Na ficha, ao lado: notícias em que o ativo é o assunto, opiniões publicadas (12 meses, com recomendação e preço-alvo quando escritos), documentos à CVM, setor e cadeia e menções incidentais. No centro, em abas: Mudanças na tese, Eventos e RI, Fundamentos, Setor e pares. |
+| **Mundo e Estratégia** | Notícias (imprensa internacional e bancos centrais); Research (últimos 7 dias, 8 a 30, ainda relevante 31 a 90, mapa de temas de gestão); Debate de mercado (opiniões publicadas, análises de colaboradores e consultas externas a Reddit e X, sem coleta); ETFs globais. |
 | **Carteiras** | As 15 carteiras com pesos aprovados e validação (sem normalizar), mapa e Decidido × base. |
 | **Biblioteca** | Pesquisa em tudo o que já foi coletado, mês a mês; resumos semanais; meus aprendizados; fontes e coleta (por fonte e por busca). |
 
@@ -26,13 +26,18 @@ robo/fontes.json + buscas de robo/config.json ──► robo/intel.py (GitHub Ac
                       ├─ conteúdo: RSS/Atom/RDF, APIs públicas, páginas com PDF, sitemap, documento de URL fixa, YouTube (API oficial)
                       │    → classificação (temas, regiões, ativos, setores, fatores), vínculo com cada ativo (direto ou menção),
                       │      prioridade e leitura curta por regras
-                      │    → IA opcional (teto diário) → biblioteca mensal + recentes.json + opiniões de 12 meses + coleta.json
+                      │    → IA opcional (teto diário) → biblioteca mensal + recentes.json + opiniões de 12 meses + research de 90 dias + coleta.json
+                      ├─ opiniões conferidas de 12 meses (robo/sementes) · comentários de resultado do InvesTalk no endereço do trimestre
+                      ├─ pesquisa ativo × fator para a janela de leitura (Bing Notícias) → biblioteca/pesquisas.json
                       ├─ briefing do dia → data/hoje.json · resumo da semana → data/semanal.json
                       └─ ramo "dados" (histórico completo) e site (arquivos públicos) ──► painel (painel/src → site/index.html)
 ```
 
 - **Fontes**: só conteúdo público e gratuito; `robots.txt` respeitado; nenhum paywall ou bloqueio contornado. O cadastro
   e as limitações de cada fonte estão em `robo/fontes.json` e `docs/FONTES.md`.
+- **Opiniões** (v3.4): casa, analista, recomendação, preço-alvo e horizonte só quando escritos; sentido do título ou da
+  página da casa; a janela mostra a visão anterior da mesma casa. Nenhum veículo do Grupo XP; opinião da XP noticiada por
+  outro veículo aparece com a casa "XP". Nenhuma nota de risco, convicção ou impacto.
 - **Leitura de uma notícia** (v3.3): título, fonte e data de publicação em destaque; o resumo da fonte quando existe; por
   que importa (só sinais verificáveis: documento à CVM, opinião publicada, resultado, outras fontes); relação com a
   carteira só quando há base, com o vínculo e os pesos aprovados; contrapontos só quando documentados (opinião de sentido
@@ -50,12 +55,13 @@ robo/fontes.json + buscas de robo/config.json ──► robo/intel.py (GitHub Ac
 ## Pastas
 
 - `robo/` — `intel.py` (orquestrador), `conteudo.py` (coletores), `biblioteca.py` (persistência, deduplicação, contadores),
-  `analise.py` (taxonomia, vínculo com o ativo, prioridade, leitura curta, IA opcional), `semanal.py` (briefing e resumo semanal), `fontes.json`,
+  `analise.py` (taxonomia, vínculo com o ativo, opinião de casa, prioridade, leitura curta, IA opcional), `semanal.py` (briefing e resumo semanal),
+  `casas.py` (comentários de resultado do InvesTalk), `pesquisas.py` (pesquisa ativo × fator), `sementes/` (opiniões conferidas de 12 meses), `fontes.json`,
   `config.json`; reaproveitados da v2: `fontes_macro.py`, `agenda.py`, `avisos.py`, `util.py`, `config.py`, `calendario.py`.
   `coletar.py` e os módulos de cotação continuam no repositório, mas não são agendados.
 - `painel/src/` — `intel.js` (dados e vistas de conteúdo), `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js` (Brasil e Mundo e Estratégia), `ui_mapa.js` (carteiras),
   `ui_mesa.js` (validação), `ui_teses.js`, `core.js`, `store.js`, `data.json`, `etfs.json`. `painel/arquivo/` guarda o que saiu.
-- `testes/` — robô (internet simulada) e painel (Node). `painel/test/areas.js` percorre as cinco seções no navegador. `testes/amostras_reais/` guarda amostras reais (busca do Bing; notícias capturadas de empresa, menção em lista, documento da CVM e carta de gestora) usadas nos testes do robô e do painel.
+- `testes/` — robô (internet simulada; `test_v34.py` também usa as opiniões reais conferidas e trechos reais das páginas das casas) e painel (Node). `painel/test/areas.js` percorre as cinco seções no navegador. `testes/amostras_reais/` guarda amostras reais (busca do Bing; notícias capturadas de empresa, menção em lista, documento da CVM e carta de gestora) usadas nos testes do robô e do painel.
 - `docs/` — `ATUALIZACAO.md` (instalar e voltar atrás), `FONTES.md`, `ARQUITETURA.md`, `DIAGNOSTICO.md` (as 72 manchetes),
   `VALIDACAO.md`, `RESULTADOS_TESTES.md` (saída da última execução), `IA.md`, `workflow_robo.yml` (cópia visível do workflow).
 

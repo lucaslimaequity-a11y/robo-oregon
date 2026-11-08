@@ -261,13 +261,17 @@ var APP = (function () {
     var refIds = A.REF.map(function (r) { return r[0]; });
     C.CARTS.forEach(function (m) { var ref = refIds.indexOf(m.id) >= 0; itens.push({t: m.rotulo, d: 'carteira · ' + m.familia + (ref ? ' · referência' : ''), go: function () { S.cart = m.id; S.ver = 'aprovada'; A.go('cart', ref ? 'ref' : 'carteira'); }}); });
     Object.keys(C.ATV).forEach(function (t) { var a = C.ATV[t]; if (a.status === 'placeholder') return; var etf = A.ehETF && A.ehETF(t); itens.push({t: t + ' · ' + (a.nome || ''), d: (a.tipo || '') + (etf ? ' · ficha do ETF' : A.temTese && A.temTese(t) ? ' · tese' : ''), go: function () { A.abrirFicha ? A.abrirFicha(t) : A.abrirTese(t); }}); });
-    if (A.itens) A.itens().slice(0, 400).forEach(function (x) { itens.push({t: x.titulo, d: 'conteúdo · ' + (x.organizacao || x.fonte || '') + (x.publicado_em ? ' · ' + A.dataBR(x.publicado_em) : ''), go: function () { A.abrirItem(x); }}); });
+    // sem texto digitado: ativos vistos por último e a lista "ler depois" vêm antes das seções
+    var topo = [];
+    if (A.ativosRecentes) A.ativosRecentes().forEach(function (t) { var a = C.ATV[t]; if (a) topo.push({t: t + ' · ' + (a.nome || ''), d: 'visto por último · notícias e ficha', go: function () { A.abrirFicha(t); }}); });
+    if (A.salvos) A.salvos().slice(0, 5).forEach(function (s0) { topo.push({t: s0.titulo, d: 'salvo para ler · ' + (s0.fonte || ''), go: function () { var x = A.itemPorId(s0.id) || s0.item; if (x) A.abrirItem(x); }}); });
+    if (A.itens) (A.itensAtivo ? A.itensAtivo() : A.itens()).slice(0, 600).forEach(function (x) { itens.push({t: x.titulo, d: 'conteúdo · ' + (x.organizacao || x.fonte || '') + (x.publicado_em ? ' · ' + A.dataBR(x.publicado_em) : ''), go: function () { A.abrirItem(x); }}); });
     if (typeof INTEL !== 'undefined') Object.keys(INTEL.TX.temas || {}).forEach(function (k) { itens.push({t: INTEL.temaNome(k), d: 'assunto', go: function () { A.go('bib', 'busca'); A.bibFiltro({tema: k}); }}); });
     var inp = h('input', {type: 'search', placeholder: 'Conteúdo, assunto, ativo, carteira ou seção (ex.: juro real, Oaktree, PRIO3, Arrojado)', 'aria-label': 'Buscar'}), ul = h('ul', {role: 'listbox'}), sel = 0, vis = [];
     var bg = h('div', {class: 'cmdk-bg', onclick: function (e) { if (e.target === bg) fechar(); }}, h('div', {class: 'cmdk', role: 'dialog', 'aria-label': 'Busca rápida'}, inp, ul));
     function norm(x) { return String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
     function draw() {
-      var q = norm(inp.value.trim()); vis = (q ? itens.filter(function (it) { return norm(it.t + ' ' + it.d).indexOf(q) >= 0; }) : itens.filter(function (it) { return it.d === 'seção' || it.d.indexOf('carteira') === 0; })).slice(0, 40);
+      var q = norm(inp.value.trim()); vis = (q ? itens.filter(function (it) { return norm(it.t + ' ' + it.d).indexOf(q) >= 0; }) : topo.concat(itens.filter(function (it) { return it.d === 'seção' || it.d.indexOf('carteira') === 0; }))).slice(0, 40);
       sel = Math.min(sel, Math.max(0, vis.length - 1));
       ul.replaceChildren.apply(ul, vis.length ? vis.map(function (it, i) { return h('li', {role: 'option', 'aria-selected': i === sel ? 'true' : 'false', onclick: function () { fechar(); it.go(); }}, h('span', null, it.t), h('small', null, it.d)); }) : [h('li', null, h('span', {class: 'muted'}, 'Nada encontrado.'))]);
     }

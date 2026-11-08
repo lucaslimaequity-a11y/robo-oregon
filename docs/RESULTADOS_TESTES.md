@@ -1,45 +1,64 @@
-# Resultados dos testes · v3.3 · 08/11/2026 (Brasília)
+# Resultados dos testes · v3.4 · 08/11/2026 (Brasília)
 
-Saída literal das execuções desta versão. O contêiner onde os testes rodaram não tem saída para a internet; as provas
-com conteúdo real usam o que o robô já tinha publicado no site (rodada real de 08/11 10:17, 686 itens recentes e a
-biblioteca de novembro), dito pelo nome em cada seção.
+Saída literal das execuções desta versão. O contêiner onde os testes rodaram não tem saída para a internet. Por isso há
+três tipos de prova, sempre ditos pelo nome:
 
-## 1. Publicação v3.3 sobre os dados REAIS já capturados
+- **Dados reais já capturados**: o que o robô publicou no site às 11:48 de 08/11 (ramo `dados`, depois da v3.3), reprocessado
+  com as regras da v3.4. Nada foi coletado de novo.
+- **Conteúdo real conferido**: as 165 opiniões de 12 meses, cada uma aberta na página original em 08/11, e trechos copiados
+  das páginas do InvesTalk e da Genial.
+- **Simulado**: rede de mentira dentro do teste. Prova a lógica (limites, robots.txt, idempotência), não a internet.
 
-A etapa de publicação nova (`biblioteca.publicar_recentes` e `biblioteca.publicar_opinioes`) rodou sobre os dados reais
-publicados às 10:17. Nada foi coletado de novo; os itens foram reclassificados com as regras atuais.
+## 1. Publicação v3.4 sobre os dados REAIS já capturados
 
-- Vínculo com os ativos nos 686 itens recentes: **147 diretos** e **6 menções de passagem**. Exemplos de menção:
-  "Allied paga R$ 0,63 por ação; Santander, Klabin, Lavvi e outros completam dividendos da semana" (Klabin);
-  "Axia (AXIA3), Prio (PRIO3), SmartFit (SMFT3) e outros destaques desta quinta-feira" (Axia e Prio);
-  "Entra Itaú (ITUB4) e Axia Energia (AXIA3): 5 ações para bater o Ibovespa na semana" (Axia).
-- Falsa opinião corrigida: "Lucro dos bancões cresce no 3T26 … Santander perde força, Bradesco desacelera e Itaú mantém
-  a dianteira" deixou de ser "opinião de casa" (era o verbo "mantém") e virou notícia de resultado de Bradesco.
-- `recentes.json`: de 1.405.388 para 729.037 bytes (a análise em sete pontos não é mais guardada em cada item): o celular
-  baixa metade.
-- `biblioteca/opinioes.json`: 12 opiniões de casas nos últimos 12 meses (o robô passou a reconhecer opiniões em novembro;
-  o histórico cresce a cada rodada).
+`migrar_acervo_v34`, `importar_sementes`, reclassificação (`REGRAS_VERSAO` 34), `publicar_recentes`, `publicar_opinioes`,
+`publicar_research` e briefing, sobre a cópia do ramo `dados`:
 
-## 2. Janela de leitura: altura total, antes e depois (mesmos itens reais)
+```
+acervo: 145 cartas antigas sem data deixaram as novidades (mês de referência antigo ou lote do arquivo da página)
+  sementes: opinioes_12m.json → 162 opiniões novas na biblioteca (0 já estavam)
+research 90 dias: 240
+acervo migrado: 145 | sementes novas: 162 | recentes: 699 | opiniões 12m: 172
+opiniões por ativo: [('PETR4', 18), ('BBDC3', 16), ('ALOS3', 15), ('TTEN3', 15), ('KLBN4', 14), ('BBSE3', 13), ('EQTL3', 13), ('INBR34', 12), ('VAMO3', 10), ('CPLE3', 10), ('PRIO3', 9), ('AXIA3', 8), ('ITSA4', 8), ('BTLG11', 3), ('TRXF11', 2), ('KNHF11', 1), ('CDII11', 1)]
+com recomendação: 101 | com preço-alvo: 92 | sentido: Counter({'favoravel': 92, 'contraria': 30, 'mista': 22, 'neutra': 15, None: 13})
+  ALOS3 2026-11-06T15:09 InvesTalk (BB Investimentos) | Allos (ALOS3) 3T26: evolução de receitas impulsionada pelas linhas de  | Compra R$ 38,00 ['BB Investimentos'] favoravel
+  ALOS3 2026-11-05T23:58 Genial Analisa | ALLOS (ALOS3) | Resultado 3T26: Imobiliário Puxa o Número, Aluguel Res | Compra R$ 37,00 ['Genial Investimentos'] favoravel
+  ALOS3 2026-11-04T18:27 Genial Analisa | ALLOS (ALOS3) | Prévia 3T26: Receitas Fora do Aluguel Puxam o Crescime | Compra R$ 37,00 ['Genial Investimentos'] mista
+  ALOS3 2026-10-23T16:22 Genial Analisa | ALLOS (ALOS3) | Flash: KAML11 Começa Menor para Vender Melhor Depois | Compra R$ 39,00 ['Genial Investimentos'] favoravel
+```
 
-Medida com o navegador (computador 1440 × 900, celular 390 × 844). A tela do celular tem 844 px.
+- **Cartas antigas:** 145 itens sem data de páginas de arquivo (Kapitalo, Alaska, Genoa, Oaktree, Atmos…) saem das
+  novidades e continuam na Biblioteca.
+- **ALOS3:** os três relatórios pedidos estão em `biblioteca/opinioes.json`, ligados diretamente a ALOS3, com casa,
+  recomendação e preço-alvo como escritos na página (linhas "ALOS3" acima).
+- **Opiniões de 12 meses:** 172 (eram 12 na v3.3). Com recomendação escrita: 101; com preço-alvo: 92.
+- **Research de 90 dias:** 240 publicações com data (cartas, research e instituições), base da página Research.
+- **Correções vistas nos dados reais:** "Governo debaterá destino de receitas da Margem Equatorial" deixou de ser
+  Equatorial Energia; "Homem de 69 anos tem a conta do Bradesco invadida e sofre prejuízo de R$ 5 mil" e "Copel divulga
+  novo balanço sobre imóveis que ainda estão sem energia" deixaram de ser "resultado" da empresa; "PETR4 — Comunicado ao
+  Mercado: Fitch eleva o Perfil de Crédito" deixou de ser "opinião da Fitch"; o item do InfoMoney que estava em
+  Opiniões não é mais publicado (Grupo XP bloqueado).
 
-| Item | Computador antes | depois | Celular antes | depois |
+## 2. Altura das páginas, antes (v3.3) e depois (v3.4), mesmos dados reais
+
+Medida no navegador (computador 1440 px de largura, celular 390 px). Capturas em `capturas_antes_depois_v3.4.zip`.
+
+| Página | Computador antes | depois | Celular antes | depois |
 |---|---|---|---|---|
-| Opinião (Safra rebaixa Klabin) | 1534 px | 626 px | 2147 px | 786 px |
-| Menção em lista (dividendos da semana) | 1599 px | 546 px | 2229 px | 706 px |
-| Documento à CVM (Klabin) | 1378 px | 598 px | 1892 px | 730 px |
-| Carta de gestora (Kinea) | 1703 px | 554 px | 2575 px | 663 px |
-| Notícia de empresa (Klabin, SPE) | 1421 px | 626 px | 2025 px | 758 px |
+| Hoje | 3.348 px | 3.231 px | 6.875 px | 6.600 px |
+| Brasil · ALOS3 | 4.701 px | 1.831 px | 8.400 px | 7.331 px |
+| Mundo · Debate (v3.3: não existia; a rota abria "O que o mundo fala") | 3.026 px | 2.771 px | 4.881 px | 4.904 px |
+| Mundo · Research (v3.3: 30 dias; v3.4: 90 dias em três faixas e mapa de temas) | 2.552 px | 3.691 px | 3.295 px | 5.180 px |
+
+O Hoje passou a ter quatro áreas e o mapa de atenção na mesma altura de antes. A página Research ficou mais longa porque
+agora cobre 90 dias em vez de 30; as listas começam curtas (8 cartões e 15 linhas por faixa) com "Mostrar mais".
 
 ## 3. Testes automáticos (portão do workflow: se algum falha, nada é publicado)
 
-Amostras reais usadas pelos dois lados (robô e painel precisam classificar igual):
-`testes/amostras_reais/leitura_vinculos_2026-11-08.json` — notícia de empresa, resultado, mudança de recomendação, menção
-em lista de dividendos, menção em destaques do dia, opinião sobre o setor, medida que afeta empresas citadas, documento
-da CVM, notícia do setor sem citar a empresa, duas cartas de gestora e a falsa opinião corrigida.
+### Robô · 102 testes, todos ok
 
-### Robô · 85 testes, todos ok
+`testes/test_v34.py` (17 testes novos) usa o arquivo real de opiniões conferidas e trechos reais das páginas das casas; os
+demais usam a internet simulada.
 
 ```
 test_buscador_vedado_por_robots_para_sozinho (test_intel.TestBuscasPorAtivo.test_buscador_vedado_por_robots_para_sozinho) ... ok
@@ -49,13 +68,20 @@ test_opinioes_publicas_e_fonte_sinalizada (test_intel.TestBuscasPorAtivo.test_op
 test_rodada_agendada_respeita_teto_de_buscas (test_intel.TestBuscasPorAtivo.test_rodada_agendada_respeita_teto_de_buscas) ... ok
 test_sem_indicadores_macro_falha_do_bcb_nao_afeta_rodada (test_intel.TestBuscasPorAtivo.test_sem_indicadores_macro_falha_do_bcb_nao_afeta_rodada) ... ok
 test_setor_e_tema_global (test_intel.TestBuscasPorAtivo.test_setor_e_tema_global) ... ok
+test_chave_recusada_nao_derruba (test_intel.TestIA.test_chave_recusada_nao_derruba) ... ok
+test_com_chave_respeita_teto_e_rotulos (test_intel.TestIA.test_com_chave_respeita_teto_e_rotulos) ... ok
+test_desligada_na_config_nao_chama_mesmo_com_chave (test_intel.TestIA.test_desligada_na_config_nao_chama_mesmo_com_chave) ... ok
+test_sem_chave_continua_util (test_intel.TestIA.test_sem_chave_continua_util) ... ok
 test_agenda_usa_janela_de_30_dias (test_intel.TestImprensa.test_agenda_usa_janela_de_30_dias) ... ok
 test_feed_tolerante_e_fuso_da_fonte (test_intel.TestImprensa.test_feed_tolerante_e_fuso_da_fonte) ... ok
 test_fonte_a_validar_nao_marca_parcial (test_intel.TestImprensa.test_fonte_a_validar_nao_marca_parcial) ... ok
 test_intervalo_por_fonte_e_leitura_manual_completa (test_intel.TestImprensa.test_intervalo_por_fonte_e_leitura_manual_completa) ... ok
+test_migracao_acervo_e_hoje_sem_cartas_antigas (test_intel.TestImprensa.test_migracao_acervo_e_hoje_sem_cartas_antigas) ... ok
 test_noticia_do_mundo_liga_ao_tema_do_etf (test_intel.TestImprensa.test_noticia_do_mundo_liga_ao_tema_do_etf) ... ok
 test_noticia_por_ativo_e_opiniao_de_casa (test_intel.TestImprensa.test_noticia_por_ativo_e_opiniao_de_casa) ... ok
+test_leitura_curta_nao_inventa (test_intel.TestLeituraEVinculo.test_leitura_curta_nao_inventa) ... ok
 test_mencao_em_lista_pesa_menos_que_fato_da_empresa (test_intel.TestLeituraEVinculo.test_mencao_em_lista_pesa_menos_que_fato_da_empresa) ... ok
+test_publica_opinioes_de_12_meses_e_atualiza_itens_antigos (test_intel.TestLeituraEVinculo.test_publica_opinioes_de_12_meses_e_atualiza_itens_antigos) ... ok
 test_reclassificacao_de_item_antigo_corrige_falsa_opiniao (test_intel.TestLeituraEVinculo.test_reclassificacao_de_item_antigo_corrige_falsa_opiniao) ... ok
 test_vinculo_das_noticias_reais (test_intel.TestLeituraEVinculo.test_vinculo_das_noticias_reais) ... ok
 test_detecta_publicacao_nova_e_edicao_atualizada (test_intel.TestRodada.test_detecta_publicacao_nova_e_edicao_atualizada) ... ok
@@ -66,9 +92,11 @@ test_persistencia_por_mes (test_intel.TestRodada.test_persistencia_por_mes) ... 
 test_publica_todos_os_arquivos_e_classifica (test_intel.TestRodada.test_publica_todos_os_arquivos_e_classifica) ... ok
 test_sem_data_no_feed_usa_deteccao_marcada (test_intel.TestRodada.test_sem_data_no_feed_usa_deteccao_marcada) ... ok
 test_cadastro_real_valido_e_publico (test_intel.TestSemanalEConfig.test_cadastro_real_valido_e_publico) ... ok
+test_fontes_invalidas_sao_criticas (test_intel.TestSemanalEConfig.test_fontes_invalidas_sao_criticas) ... ok
 test_oregon_usa_ativos_das_carteiras (test_intel.TestSemanalEConfig.test_oregon_usa_ativos_das_carteiras) ... ok
 test_resultados_cvm_na_rodada_manual_e_preservados_em_falha (test_intel.TestSemanalEConfig.test_resultados_cvm_na_rodada_manual_e_preservados_em_falha) ... ok
 test_resumo_semanal (test_intel.TestSemanalEConfig.test_resumo_semanal) ... ok
+test_workflow_publica_dados_e_nao_expoe_estado (test_intel.TestSemanalEConfig.test_workflow_publica_dados_e_nao_expoe_estado) ... ok
 test_robots_veda_e_nao_contorna (test_intel.TestYouTubeRobots.test_robots_veda_e_nao_contorna) ... ok
 test_youtube_chave_invalida_vira_erro_de_autenticacao (test_intel.TestYouTubeRobots.test_youtube_chave_invalida_vira_erro_de_autenticacao) ... ok
 test_youtube_com_chave_oficial (test_intel.TestYouTubeRobots.test_youtube_com_chave_oficial) ... ok
@@ -118,11 +146,28 @@ test_validacao_das_regras_de_fonte (test_robo.TestRevisao.test_validacao_das_reg
 test_alerta_nao_repete (test_robo.TestTelegram.test_alerta_nao_repete) ... ok
 test_chat_errado_mostra_motivo_e_falha_o_teste (test_robo.TestTelegram.test_chat_errado_mostra_motivo_e_falha_o_teste) ... ok
 test_teste_entregue_e_sem_vazar_token (test_robo.TestTelegram.test_teste_entregue_e_sem_vazar_token) ... ok
-Ran 85 tests in 8.904s
+test_cartas_antigas_sem_data_viram_acervo (test_v34.TestArquivoEPublicacao.test_cartas_antigas_sem_data_viram_acervo) ... ok
+test_research_90_dias_e_grupo_xp_bloqueado (test_v34.TestArquivoEPublicacao.test_research_90_dias_e_grupo_xp_bloqueado) ... ok
+test_rotulo_generico_vira_titulo_do_endereco (test_v34.TestArquivoEPublicacao.test_rotulo_generico_vira_titulo_do_endereco) ... ok
+test_documento_e_newsletter_citando_agencia_nao_viram_opiniao (test_v34.TestClassificacaoV34.test_documento_e_newsletter_citando_agencia_nao_viram_opiniao) ... ok
+test_falsas_opinioes (test_v34.TestClassificacaoV34.test_falsas_opinioes) ... ok
+test_margem_equatorial_nao_e_a_equatorial_energia (test_v34.TestClassificacaoV34.test_margem_equatorial_nao_e_a_equatorial_energia) ... ok
+test_resultado_exige_periodo_ou_valor (test_v34.TestClassificacaoV34.test_resultado_exige_periodo_ou_valor) ... ok
+test_arquivo_sem_xp_e_dentro_de_12_meses (test_v34.TestOpinioesConferidas.test_arquivo_sem_xp_e_dentro_de_12_meses) ... ok
+test_casos_alos3_entram_ligados_com_recomendacao_e_alvo (test_v34.TestOpinioesConferidas.test_casos_alos3_entram_ligados_com_recomendacao_e_alvo) ... ok
+test_reclassificacao_mantem_opiniao_conferida (test_v34.TestOpinioesConferidas.test_reclassificacao_mantem_opiniao_conferida) ... ok
+test_ticker_da_pesquisa_vira_o_da_carteira (test_v34.TestOpinioesConferidas.test_ticker_da_pesquisa_vira_o_da_carteira) ... ok
+test_extracao_so_do_que_esta_escrito (test_v34.TestPaginasDasCasas.test_extracao_so_do_que_esta_escrito) ... ok
+test_genial_pagina_da_casa (test_v34.TestPaginasDasCasas.test_genial_pagina_da_casa) ... ok
+test_investalk_endereco_do_trimestre (test_v34.TestPaginasDasCasas.test_investalk_endereco_do_trimestre) ... ok
+test_investalk_limites_robots_e_titulo (test_v34.TestPaginasDasCasas.test_investalk_limites_robots_e_titulo) ... ok
+test_trimestre_da_temporada (test_v34.TestPaginasDasCasas.test_trimestre_da_temporada) ... ok
+test_pesquisa_ativo_fator (test_v34.TestPesquisasRelacao.test_pesquisa_ativo_fator) ... ok
+Ran 102 tests in 8.391s
 OK
 ```
 
-### Painel (Node) · 29 testes + 25 dos modelos quantitativos
+### Painel (Node) · 30 testes + 25 dos modelos quantitativos
 
 ```
 PASS 1. Nenhuma carteira inválida passa despercebida (10 de 15 com pesos que não fecham) · inválidas: 10
@@ -154,6 +199,7 @@ PASS Linhas de notícia: hora de publicação, separador de dia, data estimada e
 PASS Vínculo com o ativo nas notícias reais capturadas (mesma regra do robô): direto × menção de passagem
 PASS ETFs: as 27 fichas têm fonte oficial e o cadastro divergente aparece, sem alterar o cadastro
 PASS Consistência das carteiras aprovadas: 10 inválidas, pesos preservados como decididos (sem normalizar)
+PASS v3.4: Grupo XP fora de tudo; opiniões da XP em outros veículos continuam; resultado exige período ou valor
 PASS 01 riskContrib: sum(ctr) = sigma and sum(pct) = 1 (random 5x5 PSD)
 PASS 02 riskContrib: mrc equals finite-difference dSigma/dw (h=1e-6)
 PASS 03 toBRL: local -10% and fx +10% gives -1%; fxDecompose reconciles
@@ -182,15 +228,15 @@ PASS 25 misc: hhi/effN, sortino downside over all obs, rolling, beta, divRatio
 
 25 passed, 0 failed
 
-29 de 29 testes do painel passaram; modelos quantitativos ok
+30 de 30 testes do painel passaram; modelos quantitativos ok
 ```
 
-### Percurso no navegador (computador 1440 e celular 390, dados de teste gerados pelo robô) · 102 verificações
+### Percurso no navegador (computador 1440 e celular 390, dados de teste gerados pelo robô) · 118 verificações
 
 ```
 PASS 1440 Hoje abre com as últimas notícias, cada uma com hora e veículo (12)
 PASS 1440 topo mostra a última coleta e as notícias de 24 h
-PASS 1440 Hoje mostra 5 a 8 leituras do dia (6)
+PASS 1440 Hoje mostra 5 a 8 leituras do dia (8)
 PASS 1440 toda leitura abre a fonte original
 PASS 1440 sem caixas de macro; agenda presente
 PASS 1440 estudo do dia e leitura recomendada
@@ -203,6 +249,7 @@ PASS 1440 hoje → hoje/briefing
 PASS 1440 brasil/ativos → brasil/ativos
 PASS 1440 mundo/agora → mundo/agora
 PASS 1440 mundo/cartas → mundo/cartas
+PASS 1440 mundo/debate → mundo/debate
 PASS 1440 mundo/etfs → mundo/etfs
 PASS 1440 cart/ref → cart/ref
 PASS 1440 cart/mapa → cart/mapa
@@ -229,7 +276,7 @@ PASS 1440 itens de prioridade baixa visíveis na Biblioteca (6)
 PASS 1440 mês anterior da biblioteca carrega sob demanda (ok)
 PASS 1440 fontes e coleta por fonte (ok)
 PASS 1440 resumo semanal (ok)
-PASS 1440 ficha PETR4: notícias ao lado, opiniões de 12 meses, mudanças na tese primeiro ({"area":"brasil","semPreco":true,"painel":true,"aFavor":true,"doze":true,"busca":true,"aba":"tese","opiniaoCasa":true,"mudou":true,"velho":false})
+PASS 1440 ficha PETR4: notícias ao lado, opiniões de 12 meses, sem "Opinião da casa", mudanças na tese primeiro ({"area":"brasil","semPreco":true,"painel":true,"aFavor":true,"doze":true,"busca":true,"aba":"tese","opiniaoCasa":false,"mudou":true,"velho":false})
 PASS 1440 aba Fundamentos com a tese e o painel de notícias mantido
 PASS 1440 ficha do ETF IMAB11 com painel de notícias (ok)
 PASS 1440 Mundo e Estratégia mostra o que o mundo fala (3)
@@ -238,10 +285,17 @@ PASS 1440 busca rápida abre a ficha de PRIO3
 PASS 1440 carteiras de referência (cresc-arr|mostra inválida|sem simulador)
 PASS 1440 menu com cinco seções (5|cart)
 PASS 1440 topo: cinco seções, busca e hora da coleta à vista ({"nav":true,"busca":true,"hora":true})
+PASS 1440 Hoje: quatro áreas, sumário, desde a última visita, profundidade e consultas externas ({"areas":4,"sumario":5,"desde":true,"prof":3,"ext":true})
+PASS 1440 profundidade de leitura muda o que aparece (Rápida:sem notícias,Aprofundada:notícias,Briefing:notícias)
+PASS 1440 "Ler depois" aparece em Salvos para ler (1)
+PASS 1440 Research: 7 dias, 8 a 30, 31 a 90 e biblioteca histórica ({"faixas":3,"hist":true})
+PASS 1440 Debate de mercado com consultas externas identificadas ({"op":true,"colab":true,"x":true,"porque":true})
+PASS 1440 diagnóstico das fontes na ordem pedida (Fonte|Última tentativa|Último conteúdo|Falha|Publicados)
+PASS 1440 busca vazia começa pelos ativos vistos por último (PRIO3 · PRIO visto por último · notícias e ficha)
 PASS 1440 Biblioteca com filtros avançados recolhidos
 PASS 390 Hoje abre com as últimas notícias, cada uma com hora e veículo (12)
 PASS 390 topo mostra a última coleta e as notícias de 24 h
-PASS 390 Hoje mostra 5 a 8 leituras do dia (6)
+PASS 390 Hoje mostra 5 a 8 leituras do dia (8)
 PASS 390 toda leitura abre a fonte original
 PASS 390 sem caixas de macro; agenda presente
 PASS 390 estudo do dia e leitura recomendada
@@ -254,6 +308,7 @@ PASS 390 hoje → hoje/briefing
 PASS 390 brasil/ativos → brasil/ativos
 PASS 390 mundo/agora → mundo/agora
 PASS 390 mundo/cartas → mundo/cartas
+PASS 390 mundo/debate → mundo/debate
 PASS 390 mundo/etfs → mundo/etfs
 PASS 390 cart/ref → cart/ref
 PASS 390 cart/mapa → cart/mapa
@@ -280,7 +335,7 @@ PASS 390 itens de prioridade baixa visíveis na Biblioteca (6)
 PASS 390 mês anterior da biblioteca carrega sob demanda (ok)
 PASS 390 fontes e coleta por fonte (ok)
 PASS 390 resumo semanal (ok)
-PASS 390 ficha PETR4: notícias ao lado, opiniões de 12 meses, mudanças na tese primeiro ({"area":"brasil","semPreco":true,"painel":true,"aFavor":true,"doze":true,"busca":true,"aba":"tese","opiniaoCasa":true,"mudou":true,"velho":false})
+PASS 390 ficha PETR4: notícias ao lado, opiniões de 12 meses, sem "Opinião da casa", mudanças na tese primeiro ({"area":"brasil","semPreco":true,"painel":true,"aFavor":true,"doze":true,"busca":true,"aba":"tese","opiniaoCasa":false,"mudou":true,"velho":false})
 PASS 390 aba Fundamentos com a tese e o painel de notícias mantido
 PASS 390 ficha do ETF IMAB11 com painel de notícias (ok)
 PASS 390 Mundo e Estratégia mostra o que o mundo fala (3)
@@ -289,13 +344,59 @@ PASS 390 busca rápida abre a ficha de PRIO3
 PASS 390 carteiras de referência (cresc-arr|mostra inválida|sem simulador)
 PASS 390 menu com cinco seções (5|cart)
 PASS 390 topo: cinco seções, busca e hora da coleta à vista ({"nav":true,"busca":true,"hora":true})
+PASS 390 Hoje: quatro áreas, sumário, desde a última visita, profundidade e consultas externas ({"areas":4,"sumario":5,"desde":true,"prof":3,"ext":true})
+PASS 390 profundidade de leitura muda o que aparece (Rápida:sem notícias,Aprofundada:notícias,Briefing:notícias)
+PASS 390 "Ler depois" aparece em Salvos para ler (1)
+PASS 390 Research: 7 dias, 8 a 30, 31 a 90 e biblioteca histórica ({"faixas":3,"hist":true})
+PASS 390 Debate de mercado com consultas externas identificadas ({"op":true,"colab":true,"x":true,"porque":true})
+PASS 390 diagnóstico das fontes na ordem pedida (Fonte|Última tentativa|Último conteúdo|Falha|Publicados)
+PASS 390 busca vazia começa pelos ativos vistos por último (PRIO3 · PRIO visto por último · notícias e ficha)
 PASS 390 Biblioteca com filtros avançados recolhidos
 tudo ok
 ```
 
-## O que só a primeira rodada no GitHub Actions prova
+## 4. O que funciona, o que depende de autorização e o que não está disponível
 
-- Que as fontes novas "a validar" (Bloomberg, FT, The Economist, The Guardian, El País) respondem a partir dos servidores
-  do GitHub; até lá, falha não marca a rodada. Onde conferir: Biblioteca → Fontes e coleta.
-- Que `data/biblioteca/opinioes.json` é publicado (a pasta `biblioteca` já é copiada inteira pelo workflow).
-- O número real de notícias diretas e menções por ativo por dia: topo do Hoje, coluna "7 d" do Brasil e o painel de cada ficha.
+### Funciona (provado aqui, com dados reais já capturados ou conteúdo real conferido)
+
+- Hoje em quatro áreas, mapa de atenção, desde a última visita, três profundidades, sumário da página.
+- Opiniões dos últimos 12 meses com casa, sentido, recomendação, preço-alvo, horizonte e analista quando escritos; visão
+  anterior da mesma casa na janela; os três relatórios de ALOS3.
+- Research por recência (7, 30 e 90 dias), mapa de temas de gestão com os documentos de cada tema, cartas antigas fora das
+  novidades, data de publicação × atualização × detecção.
+- Debate de mercado com opiniões publicadas e consultas externas a Reddit e X identificadas como tais.
+- "Ler depois" e Salvos para ler; busca com ativos vistos por último; diagnóstico das fontes na ordem pedida.
+- Grupo XP bloqueado em coleta e publicação; nenhum veículo XP nas opiniões conferidas.
+- Funciona sem IA paga: nada nesta versão usa a chave da Anthropic.
+
+### Só a primeira rodada no GitHub Actions prova
+
+- Que o GitHub alcança as fontes novas marcadas "a validar" (NYT ×4, Bloomberg Opinion, CNBC Economy, Genial relatórios
+  por empresa). Onde conferir: Biblioteca › Fontes e coleta.
+- Que o InvesTalk responde ao endereço do trimestre a partir do GitHub (testado aqui com a página real copiada e a rede
+  simulada) e quais grafias cada empresa usa.
+- Que a pesquisa "Relação com a Oregon" (Bing Notícias) traz resultados para cada par ativo × fator: o arquivo
+  `pesquisas.json` só existe depois dessa rodada; até lá, a janela mostra a pergunta, o papel do ativo e os botões de
+  pesquisa no Google e no Bing.
+- Análises de colaboradores do Seeking Alpha: os feeds foram validados em 08/11, mas os itens só chegam na rodada.
+
+### Depende de autorização ou de decisão sua
+
+- **X (Twitter):** API paga por post lido (US$ 0,005), sem plano gratuito. Sem autorização de gasto, só links de busca.
+- **Bing Notícias:** o feed traz o aviso "uso pessoal e não comercial". Serve para pesquisa interna; não use os resultados
+  em material de cliente.
+- **Itaú Análises, Safra O Especialista, Santander Análise Econômica:** responderam 403 ao robô no GitHub. Só a própria
+  casa pode liberar; as fontes continuam ligadas e a falha aparece em Fontes e coleta.
+- **BB e Genial por API:** as páginas das duas casas montam a lista de relatórios com uma chamada interna. Usar essa chamada
+  exigiria confirmar com as casas que o uso é permitido; não foi feito.
+
+### Não disponível
+
+- **Reddit:** robots.txt veda robôs, o JSON sem login devolve 403, o RSS acaba em 13/11/2026, o cadastro da Data API está
+  fechado e a API pública fecha em março de 2027. Só links para as comunidades.
+- **Reuters** (RSS público encerrado em 2020), **Caixin** (pago, sem feed), **BTG Pactual research** (app de página única,
+  sem relatórios no sitemap), **Órama e Levante** (robots.txt veda), **Brookings** (feed quebrado), **Calculated Risk**
+  (encerrado).
+- **Opiniões específicas de XPML11, HGCR11, KNCA11 e JURO11** nos últimos 12 meses: nenhuma encontrada que trate só do fundo.
+- **Notas de risco, convicção ou impacto:** não existem no painel, por não haver metodologia verificável. O mapa de atenção
+  conta acontecimentos e diz que quantidade não é risco nem oportunidade.

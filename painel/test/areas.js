@@ -3,7 +3,7 @@
 // montam e rolagem horizontal. Uso: python painel/test/gera_dados_teste.py <pasta> && (cd <pasta> && python -m http.server 8777) && node painel/test/areas.js http://localhost:8777/index.html
 const { chromium } = require('playwright');
 const url = process.argv[2];
-const ROTAS = ['hoje', 'brasil/ativos', 'mundo/agora', 'mundo/cartas', 'mundo/etfs', 'cart/ref', 'cart/mapa', 'cart/carteira', 'cart/perfis', 'bib/busca', 'bib/semanal', 'bib/aprendizados', 'bib/fontes',
+const ROTAS = ['hoje', 'brasil/ativos', 'mundo/agora', 'mundo/cartas', 'mundo/debate', 'mundo/etfs', 'cart/ref', 'cart/mapa', 'cart/carteira', 'cart/perfis', 'bib/busca', 'bib/semanal', 'bib/aprendizados', 'bib/fontes',
   // endereços antigos continuam funcionando
   'oregon/ativos', 'oregon/carteiras', 'oregon/setores', 'res/empresas', 'res/etfs', 'res/eventos', 'cart/risco', 'cart/construcao', 'global', 'sala/reuniao', 'mesa/mercado', 'cons/editor'];
 const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 'oregon/setores': 'brasil/ativos', 'res/empresas': 'brasil/ativos', 'res/etfs': 'brasil/ativos', 'res/eventos': 'hoje/',
@@ -77,7 +77,7 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     const fe = await p.evaluate(() => { const t = document.getElementById('main').innerText, np = document.querySelector('.ficha-news'), aba = document.querySelector('.fv button[aria-selected="true"]');
       return {area: APP.S.area, semPreco: !/Último preço|Preço do par/.test(t), painel: !!np && np.querySelectorAll('.nl .nw-when').length >= 1 && !!np.querySelector('.nl a.nw-ext[href^="http"]'),
         aFavor: /A favor · 1/.test(np ? np.innerText : ''), doze: /12 meses/i.test(np ? np.innerText : ''), busca: !!(np && np.querySelector('.np-links a[href^="https://news.google.com/"]')), aba: aba && aba.dataset.v, opiniaoCasa: /Opinião da casa/.test(t), mudou: /Fatos que pedem revisão da tese/.test(t), velho: /Conteúdo que cita a empresa/.test(t)}; });
-    rep(fe.area === 'brasil' && fe.semPreco && fe.painel && fe.aFavor && fe.doze && fe.busca && fe.aba === 'tese' && fe.opiniaoCasa && fe.mudou && !fe.velho, vw + ' ficha PETR4: notícias ao lado, opiniões de 12 meses, mudanças na tese primeiro (' + JSON.stringify(fe) + ')');
+    rep(fe.area === 'brasil' && fe.semPreco && fe.painel && fe.aFavor && fe.doze && fe.busca && fe.aba === 'tese' && !fe.opiniaoCasa && fe.mudou && !fe.velho, vw + ' ficha PETR4: notícias ao lado, opiniões de 12 meses, sem "Opinião da casa", mudanças na tese primeiro (' + JSON.stringify(fe) + ')');
     await p.evaluate(() => APP.fichaVista('fundamentos')); await p.waitForTimeout(200);
     const fund = await p.evaluate(() => /A tese/.test(document.getElementById('main').innerText) && !!document.querySelector('.ficha-news'));
     rep(fund, vw + ' aba Fundamentos com a tese e o painel de notícias mantido');
@@ -108,6 +108,32 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     const topo = await p.evaluate(() => { const bs = Array.from(document.querySelectorAll('#nav button')), q = document.querySelector('.qbox'), ds = document.querySelector('.dstat b');
       return {nav: bs.every(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= window.innerWidth + 1 && r.width > 30; }), busca: !!q && q.getBoundingClientRect().width > 80, hora: !!ds && /\d{2}:\d{2}/.test(ds.textContent) && ds.getBoundingClientRect().width > 0}; });
     rep(topo.nav && topo.busca && topo.hora, vw + ' topo: cinco seções, busca e hora da coleta à vista (' + JSON.stringify(topo) + ')');
+    // ---- v3.4: mesa em quatro áreas, profundidade de leitura, sumário, desde a última visita
+    await p.evaluate(() => APP.go('hoje')); await p.waitForTimeout(300);
+    const mesa = await p.evaluate(() => ({areas: ['radar', 'agenda-decisiva', 'research', 'debate'].filter(id => document.getElementById(id)).length, sumario: document.querySelectorAll('nav.sumario a[href^="#"]').length,
+      desde: !!document.querySelector('.desde'), prof: document.querySelectorAll('.prof [role=radio]').length, ext: !!document.querySelector('#debate .ext a[href^="https://www.reddit.com/"]')}));
+    rep(mesa.areas === 4 && mesa.sumario >= 4 && mesa.desde && mesa.prof === 3 && mesa.ext, vw + ' Hoje: quatro áreas, sumário, desde a última visita, profundidade e consultas externas (' + JSON.stringify(mesa) + ')');
+    const prof = await p.evaluate(async () => { const r = []; for (const k of ['Rápida', 'Aprofundada', 'Briefing']) { Array.from(document.querySelectorAll('.prof button')).find(b => b.textContent === k).click(); await new Promise(z => setTimeout(z, 250)); r.push(k + ':' + (document.getElementById('ultimas') ? 'notícias' : 'sem notícias')); } return r.join(','); });
+    rep(prof === 'Rápida:sem notícias,Aprofundada:notícias,Briefing:notícias', vw + ' profundidade de leitura muda o que aparece (' + prof + ')');
+    // "Ler depois" guarda o item e ele aparece em Biblioteca › Salvos para ler
+    const sv = await p.evaluate(async () => { const bt = document.querySelector('#prioridades .nw .nwl'); bt.click(); await new Promise(z => setTimeout(z, 200)); const b = Array.from(document.querySelectorAll('.drawer button')).find(x => /Ler depois/.test(x.textContent)); b.click(); await new Promise(z => setTimeout(z, 300));
+      document.querySelector('.drawer .x').click(); APP.go('bib', 'busca'); APP.bibFiltro({grupo: 'salvos'}); await new Promise(z => setTimeout(z, 300)); return document.querySelectorAll('#main .nw').length; });
+    rep(sv === 1, vw + ' "Ler depois" aparece em Salvos para ler (' + sv + ')');
+    // Mundo › Research: faixas de recência; Debate: opiniões, colaboradores e consultas externas sem coleta
+    await p.evaluate(() => APP.go('mundo', 'cartas')); await p.waitForTimeout(300);
+    const rs = await p.evaluate(() => ({faixas: ['rs-7', 'rs-30', 'rs-90'].filter(id => document.getElementById(id)).length, hist: /Biblioteca histórica/.test(document.getElementById('main').innerText)}));
+    rep(rs.faixas === 3 && rs.hist, vw + ' Research: 7 dias, 8 a 30, 31 a 90 e biblioteca histórica (' + JSON.stringify(rs) + ')');
+    await p.evaluate(() => APP.go('mundo', 'debate')); await p.waitForTimeout(300);
+    const db = await p.evaluate(() => { const t = document.getElementById('main').innerText; return {op: !!document.getElementById('db-op'), colab: !!document.getElementById('db-colab'), x: !!document.querySelector('#db-ext a[href^="https://x.com/search"]'), porque: /Por que não há coleta automática/.test(t)}; });
+    rep(db.op && db.colab && db.x && db.porque, vw + ' Debate de mercado com consultas externas identificadas (' + JSON.stringify(db) + ')');
+    // Fontes e coleta: fonte → última tentativa → último conteúdo → falha → publicados
+    await p.evaluate(() => APP.go('bib', 'fontes')); await p.waitForTimeout(500);
+    const dg = await p.evaluate(() => Array.from(document.querySelectorAll('#main table.t thead th')).map(th => th.textContent.trim()).slice(0, 5).join('|'));
+    rep(dg === 'Fonte|Última tentativa|Último conteúdo|Falha|Publicados', vw + ' diagnóstico das fontes na ordem pedida (' + dg + ')');
+    // busca sem texto: ativos vistos por último no topo
+    await p.evaluate(() => { APP.abrirEmpresa('PRIO3'); APP.go('hoje'); APP.busca(); }); await p.waitForTimeout(200);
+    const bv = await p.evaluate(() => { const li = document.querySelector('.cmdk li'); const t = li ? li.innerText : ''; document.querySelector('.cmdk-bg').remove(); return t; });
+    rep(/PRIO3/.test(bv) && /visto por último/.test(bv), vw + ' busca vazia começa pelos ativos vistos por último (' + bv.replace(/\n/g, ' ') + ')');
     // Biblioteca: filtros avançados recolhidos
     await p.evaluate(() => { APP.go('bib', 'busca'); APP.bibFiltro({}); }); await p.waitForTimeout(300);
     const bf = await p.evaluate(() => { const d = document.querySelector('details.mais-f'); return !!d && !d.open && document.querySelectorAll('.busca-box .busca-l select').length <= 2; });

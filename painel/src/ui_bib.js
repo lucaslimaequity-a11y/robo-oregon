@@ -7,7 +7,10 @@
   A.bibFiltro = function (patch) { Object.assign(F, {q: '', tema: '', regiao: '', tipo: '', categoria: '', org: '', ativo: '', nivel: '', grupo: ''}, patch || {}); A.render(); };
   // Atalhos visíveis por tipo de fonte; os demais filtros ficam recolhidos em "Mais filtros"
   var GRUPOS = [['', 'Tudo'], ['noticias', 'Notícias', function (x) { return x.categoria === 'veiculo' && x.natureza !== 'opiniao_casa'; }], ['opinioes', 'Opiniões', function (x) { return x.natureza === 'opiniao_casa'; }],
-    ['cartas', 'Cartas e research', function (x) { return /^gestora_|^academia$|^youtube$/.test(x.categoria || ''); }], ['oficiais', 'CVM e instituições', function (x) { return x.categoria === 'oficial_empresa' || x.categoria === 'instituicao'; }]];
+    ['cartas', 'Cartas e research', function (x) { return /^gestora_|^academia$|^youtube$/.test(x.categoria || ''); }], ['oficiais', 'CVM e instituições', function (x) { return x.categoria === 'oficial_empresa' || x.categoria === 'instituicao'; }],
+    ['salvos', 'Salvos para ler']];
+  // Lista curta de leitura: o que foi marcado com "Ler depois" (fica neste navegador ou no banco do painel)
+  function salvos() { return A.salvos().map(function (s0) { return A.itemPorId(s0.id) || s0.item; }).filter(Boolean); }
   var AVANC = ['tema', 'org', 'regiao', 'tipo', 'categoria', 'ativo', 'nivel', 'de', 'ate'];
   function E() { return A.intel; }
   function mesesPedidos() {
@@ -27,7 +30,7 @@
   function busca() {
     var e = E(), wrap = h('div'), pend = garantirMeses();
     var todos = A.itens(), base = todos.filter(function (x) { return mesesPedidos().indexOf(I.pub(x).slice(0, 7)) >= 0 || (e.recentes && e.recentes.itens.indexOf(x) >= 0); });
-    var lista = I.filtrar(base, F);
+    var lista = F.grupo === 'salvos' ? I.filtrar(salvos(), F) : I.filtrar(base, F);
     var gr = GRUPOS.filter(function (g) { return g[0] === F.grupo; })[0];
     if (gr && gr[2]) lista = lista.filter(gr[2]);
     if (F.lidos === 'nao') lista = lista.filter(function (x) { return !A.lido(x.id); });
@@ -38,7 +41,7 @@
     var de = h('input', {class: 'inp', type: 'date', value: F.de, 'aria-label': 'De', onchange: function () { F.de = de.value; A.rerender(); }}), ate = h('input', {class: 'inp', type: 'date', value: F.ate, 'aria-label': 'Até', onchange: function () { F.ate = ate.value; A.rerender(); }});
     var nAv = AVANC.filter(function (k) { return F[k]; }).length + (F.lidos !== 'todos' ? 1 : 0);
     var grupos = h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Tipo de fonte'}, GRUPOS.map(function (g) {
-      var n = g[2] ? base.filter(g[2]).length : base.length;
+      var n = g[0] === 'salvos' ? A.salvos().length : g[2] ? base.filter(g[2]).length : base.length;
       return h('button', {'aria-pressed': F.grupo === g[0] ? 'true' : 'false', onclick: function () { F.grupo = g[0]; A.rerender(); }}, g[1], h('small', null, String(n)));
     }));
     var filtros = h('div', {class: 'filtros'},
@@ -58,9 +61,10 @@
     wrap.appendChild(A.pageHead('Biblioteca', 'Pesquisa', 'Tudo o que o robô coletou, mês a mês, sem apagar nada.' + (e.versao ? ' ' + A.mesesDisponiveis().length + ' meses disponíveis.' : '')));
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
     wrap.appendChild(h('div', {class: 'busca-box'}, q, h('div', {class: 'busca-l'}, grupos, filtros), avanc));
-    wrap.appendChild(h('p', {class: 'muted', style: 'font-size:.88rem'}, lista.length + ' de ' + base.length + ' itens' + (pend ? ' · carregando meses…' : '') + (F.tema ? ' · assunto: ' + I.temaNome(F.tema) : '') + (F.ativo ? ' · ativo: ' + F.ativo : '')));
+    if (F.grupo === 'salvos') wrap.appendChild(h('p', {class: 'hint'}, 'Itens marcados com “Ler depois” na janela de leitura ou na linha da notícia. Para tirar da lista, abra o item e toque em “Salvo para ler”.'));
+    wrap.appendChild(h('p', {class: 'muted', style: 'font-size:.88rem'}, lista.length + ' de ' + (F.grupo === 'salvos' ? A.salvos().length : base.length) + ' itens' + (pend ? ' · carregando meses…' : '') + (F.tema ? ' · assunto: ' + I.temaNome(F.tema) : '') + (F.ativo ? ' · ativo: ' + F.ativo : '')));
     var MAX = F.max || 60;
-    wrap.appendChild(A.listaItens(lista, {max: MAX, vazio: base.length ? 'Nenhum item com estes filtros.' : (pend ? 'Carregando…' : 'A biblioteca ainda não tem itens publicados.')}));
+    wrap.appendChild(A.listaItens(lista, {max: MAX, vazio: F.grupo === 'salvos' ? 'Nada salvo para ler. Use “Ler depois” em qualquer notícia.' : base.length ? 'Nenhum item com estes filtros.' : (pend ? 'Carregando…' : 'A biblioteca ainda não tem itens publicados.')}));
     if (lista.length > MAX) wrap.appendChild(h('p', {style: 'text-align:center'}, h('button', {class: 'btn', onclick: function () { F.max = MAX + 60; A.rerender(); }}, 'Mostrar mais ' + Math.min(60, lista.length - MAX))));
     return wrap;
   }
@@ -138,12 +142,16 @@
     var fl = e.fontes || [], porId = {}; fl.forEach(function (f) { porId[f.id] = f; });
     var ids = {}; fl.forEach(function (f) { ids[f.id] = 1; }); Object.keys(cont).forEach(function (k) { ids[k] = 1; });
     var rows = Object.keys(ids).map(function (id) { var f = porId[id] || {}, c = cont[id] || {}, r = c.ultima_rodada || {}; var rej = Object.keys(c.rejeitados || {}).map(function (k) { return k + ' ' + c.rejeitados[k]; }).join(', ');
-      return {id: id, nome: f.nome || c.nome || id, cat: I.CATEGORIA[f.categoria] || f.categoria || '', metodo: f.metodo || '', ativo: f.ativo, motivo: f.motivo_desligada, aguardando: c.aguardando, pais: f.pais || '', recebidos: c.recebidos, rejeitados: rej, novos: c.novos, publicados: c.publicados, erros: c.erros, ok: c.ultima_ok, erro: c.ultimo_erro, rnovos: r.novos, url: f.url_fonte, status: f.status_validacao}; });
+      var up = c.ultimo_publicado || null, dias = up ? Math.floor((Date.now() - Date.parse(up.length <= 10 ? up + 'T12:00:00-03:00' : up)) / 864e5) : null;
+      return {id: id, nome: f.nome || c.nome || id, cat: I.CATEGORIA[f.categoria] || f.categoria || '', metodo: f.metodo || '', ativo: f.ativo, motivo: f.motivo_desligada, aguardando: c.aguardando, pais: f.pais || '', recebidos: c.recebidos, rejeitados: rej, novos: c.novos, publicados: c.publicados, erros: c.erros, ok: c.ultima_ok, erro: c.ultimo_erro, erroEm: c.ultimo_erro_em, tent: r.quando || null, tentErro: r.erro || null, up: up, dias: dias, rnovos: r.novos, url: f.url_fonte, status: f.status_validacao}; });
+    var paradas = rows.filter(function (r) { return r.ativo !== false && r.dias != null && r.dias > 90; }).length, semConteudo = rows.filter(function (r) { return r.ativo !== false && r.tent && r.up == null; }).length;
+    if (paradas || semConteudo) wrap.appendChild(h('p', {class: 'hint'}, (paradas ? paradas + ' fonte(s) ativas sem conteúdo novo há mais de 90 dias' : '') + (paradas && semConteudo ? '; ' : '') + (semConteudo ? semConteudo + ' sem data de publicação lida até agora' : '') + '. Conteúdo antigo dessas fontes não aparece como notícia.'));
     var tabela = A.table([
       {k: 'nome', t: 'Fonte', f: function (r) { return h('span', null, A.link(r.url) ? h('a', {href: A.link(r.url), target: '_blank', rel: 'noopener'}, r.nome) : r.nome, h('div', {class: 'muted', style: 'font-size:.78rem'}, [r.cat, r.pais, r.metodo].filter(Boolean).join(' · ') + (r.ativo === false ? ' · desligada: ' + (r.motivo || '') : r.aguardando ? ' · aguardando chave' : ''))); }},
-      {k: 'recebidos', t: 'Recebidos', r: 1}, {k: 'rejeitados', t: 'Rejeitados', f: function (r) { return r.rejeitados || '—'; }, s: false}, {k: 'novos', t: 'Novos', r: 1}, {k: 'publicados', t: 'Publicados', r: 1},
-      {k: 'ok', t: 'Última leitura ok', f: function (r) { return r.ok ? A.dataBR(r.ok) + ' ' + A.hm(r.ok) : (r.ativo === false ? '—' : 'nunca'); }},
-      {k: 'erros', t: 'Falhas', r: 1, f: function (r) { return r.erros ? h('span', {class: 'down', title: r.erro || ''}, String(r.erros)) : (r.aguardando ? h('span', {class: 'muted', title: r.aguardando}, 'chave') : '0'); }}
+      {k: 'tent', t: 'Última tentativa', f: function (r) { return r.tent ? h('span', {class: r.tentErro ? 'down' : null, title: r.tentErro ? 'Falhou: ' + r.tentErro : 'Leitura ok'}, A.dataBR(r.tent).slice(0, 5) + ' ' + A.hm(r.tent) + (r.tentErro ? ' · falhou' : '')) : (r.ativo === false ? '—' : 'ainda não'); }},
+      {k: 'dias', t: 'Último conteúdo', f: function (r) { return r.up ? h('span', {class: r.dias > 90 ? 'down' : r.dias > 30 ? 'muted' : null, title: 'Data de publicação do item mais recente que a fonte oferece'}, A.dataBR(r.up) + ' · ' + (r.dias <= 0 ? 'hoje' : 'há ' + r.dias + ' d')) : h('span', {class: 'muted'}, '—'); }},
+      {k: 'erros', t: 'Falha', r: 1, f: function (r) { return r.erros ? h('span', {class: 'down', title: (r.erroEm ? A.dataBR(r.erroEm) + ' ' + A.hm(r.erroEm) + ': ' : '') + (r.erro || '')}, r.erros + (r.erro ? ' · ' + String(r.erro).slice(0, 28) : '')) : (r.aguardando ? h('span', {class: 'muted', title: r.aguardando}, 'chave') : '0'); }},
+      {k: 'publicados', t: 'Publicados', r: 1}, {k: 'novos', t: 'Novos', r: 1}, {k: 'recebidos', t: 'Recebidos', r: 1}, {k: 'rejeitados', t: 'Rejeitados', f: function (r) { return r.rejeitados || '—'; }, s: false}
     ], rows, {sort: 'novos', search: 'Filtrar fontes', empty: e.fontesBuscando ? 'Carregando o cadastro…' : 'Sem cadastro de fontes publicado.'});
     wrap.appendChild(A.sec('Fontes cadastradas (' + rows.filter(function (r) { return r.ativo !== false; }).length + ' ativas de ' + rows.length + ')', {flush: true, hint: 'Só conteúdo público e gratuito; robots.txt respeitado; nenhum paywall contornado. O cadastro fica em robo/fontes.json (docs/FONTES.md explica como validar e ligar uma fonte).'}, tabela));
     if (col && col.rodadas && col.rodadas.length > 1) wrap.appendChild(A.sec('Rodadas recentes', {flush: true}, A.table([{k: 'quando', t: 'Quando', f: function (r) { return A.dataBR(r.quando) + ' ' + A.hm(r.quando); }}, {k: 'fontes_ok', t: 'Ok', r: 1}, {k: 'fontes_erro', t: 'Falha', r: 1}, {k: 'recebidos', t: 'Recebidos', r: 1}, {k: 'novos', t: 'Novos', r: 1}, {k: 'publicados', t: 'Publicados', r: 1}], col.rodadas.slice().reverse(), {sort: null})));

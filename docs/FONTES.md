@@ -2,13 +2,60 @@
 
 Cadastro: `robo/fontes.json`. Regras que valem para todas: só conteúdo público e gratuito; `robots.txt` respeitado (um caminho vedado é pulado e contado como rejeitado); nada de login, paywall ou contorno de bloqueio (403 encerra a fonte na rodada); de imprensa guardamos só título, link, data e veículo; de gestoras e instituições, um resumo curto do próprio feed (até 300 caracteres) e o link para o original. Nenhuma data é inventada: item sem data recebe a data de detecção, marcada como tal.
 
-Validação feita em 07–08/11/2026 (149 fontes no cadastro, 104 ativas) lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhuma fonte da XP entra, em nenhuma hipótese** (`noticias.fontes_bloqueadas` descarta também manchetes agregadas desses veículos).
+Validação feita em 07–08/11/2026 (192 fontes no cadastro, 130 ativas, depois da v3.4) lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhum veículo do Grupo XP entra, em nenhuma hipótese** (v3.4: `noticias.fontes_bloqueadas` = InfoMoney, XP Investimentos, Expert XP, Conteúdos XP, Rico Investimentos, Clear Corretora; descarta também manchetes agregadas desses veículos e não publica o que foi gravado antes do bloqueio). Opinião da XP noticiada por outro veículo continua, com a casa "XP".
 
 ## Campos do cadastro
 
-`id`, `nome`, `organizacao`, `categoria` (instituicao · gestora_internacional · gestora_brasil · academia · youtube · veiculo), `pais`, `idioma`, `tipo` (carta · research · paper · macro · relatorio · discurso · documento_oficial · dado_oficial · blog · video · noticia), `metodo`, `url_fonte` (página humana), `url_coleta` (`{ano}` vira o ano corrente), `ativo`. Por método: `padrao` (regex sobre os links da página ou do sitemap), `padrao_data` (regex de data no link), `api` (wp_posts · imf_blog_json · bcb_copom · ibge_releases), `filtro_titulo`/`filtro_link` (regex), `campo_link`, `canal_id` (YouTube), `titulo_item` (documento fixo), `guardar_resumo`, `so_oregon` (feed setorial: só manchetes que citem ativo das carteiras), `maximo`.
+`id`, `nome`, `organizacao`, `categoria` (instituicao · gestora_internacional · gestora_brasil · academia · youtube · veiculo), `pais`, `idioma`, `tipo` (carta · research · paper · macro · relatorio · discurso · documento_oficial · dado_oficial · blog · video · noticia), `metodo`, `url_fonte` (página humana), `url_coleta` (`{ano}` vira o ano corrente), `ativo`. Por método: `padrao` (regex sobre os links da página ou do sitemap), `padrao_data` (regex de data no link), `api` (wp_posts · imf_blog_json · bcb_copom · ibge_releases), `filtro_titulo`/`filtro_link` (regex), `campo_link`, `canal_id` (YouTube), `titulo_item` (documento fixo), `guardar_resumo`, `so_oregon` (feed setorial: só manchetes que citem ativo das carteiras), `maximo`. Desde a v3.4: `casa` (a fonte é a página de research da própria casa: o que ela publica sobre um ativo das carteiras é opinião dela, salvo quando o texto relata outra casa), `ler_item` (o robô abre a página de cada item novo, até `ler_item_max` por rodada, para ler data de publicação, data de atualização, autor e, nas casas, recomendação, preço-alvo e horizonte quando escritos; o texto não é guardado) e `debate` (análise de colaboradores, como o Seeking Alpha: vai para Debate de mercado, separada de notícia e de research de banco).
 
 Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública e que o formato bate com o método, acrescente a entrada com `"ativo": true` e rode o workflow à mão; o Summary da rodada mostra recebidos/novos/erro daquela fonte. Para **desligar**: `"ativo": false`.
+
+## v3.4 (08/11/2026): opiniões das casas, research global e debate
+
+**Os três relatórios de ALOS3 que faltavam estão no site.** InvesTalk (BB Investimentos) "Allos (ALOS3) 3T26" de 06/11
+(Compra, R$ 38,00 para o fim de 2027), Genial "Resultado 3T26" de 05/11 (Compra, R$ 37,00) e Genial "Flash KAML11" de
+23/10 (Compra, R$ 39,00 em 12 meses). Por que não entravam: as duas casas publicam a recomendação em texto aberto, mas as
+listas dos sites não trazem o link no HTML (os cards são montados por JavaScript); o padrão do InvesTalk no cadastro já
+aceitava `ALOS_3T26` (o robô usa busca sem âncora), então o problema não era o padrão. O sitemap do InvesTalk parou em
+23/09 e o de relatórios da Genial deu erro de servidor nas quatro tentativas desta validação.
+
+O que a v3.4 faz para cada caminho:
+
+| Caminho | O que é | Como fica |
+|---|---|---|
+| Opiniões conferidas de 12 meses (`robo/sementes/opinioes_12m.json`) | 165 opiniões publicadas entre 08/11/2025 e 08/11/2026 sobre 18 ativos das carteiras, cada uma aberta e conferida na página original (link, veículo, data, casa, sentido; recomendação, preço-alvo, horizonte e analista só quando escritos). Veículos: Money Times, BP Money, Eu Quero Investir, InvesTalk, Guia do Investidor, Safra O Especialista, Suno, Seu Dinheiro, Investidor10, Genial Analisa, Nord, TradeMap, Bloomberg Línea. Nenhum do Grupo XP. | Entram uma vez na biblioteca (o robô guarda a marca do arquivo; uma versão nova do arquivo entra de novo, sem duplicar). Casas e sentido conferidos ficam guardados no item e não mudam numa reclassificação futura. XPML11, HGCR11, KNCA11 e JURO11: nenhuma opinião específica no período. |
+| InvesTalk · endereço do trimestre (`robo/casas.py`) | O InvesTalk publica um comentário por empresa e trimestre em `/noticias/mercado/<código>` (grafias vistas: `ALOS_3T26`, `INBR3T25`, `VAMO-3T26`). | O robô abre direto o endereço do trimestre de cada ação das carteiras: no máximo 4 endereços por rodada, cada um no máximo uma vez por dia, robots.txt respeitado, e para quando acha. A página só vira item se o título citar a empresa. A data é a de "Atualizado em" (o InvesTalk não mostra outra), dita assim na tela. `intel.investalk` no `config.json`. |
+| Genial · relatórios por empresa (`genial-relatorios-acoes`) | Sitemap de relatórios filtrado pelos tickers das carteiras (inclui os códigos da Genial: KLBN11, BBDC4, CPLE6, AXIA3/ELET3, INBR32). | A validar: confirma-se na primeira rodada no GitHub. Com `casa` e `ler_item`, cada relatório traz recomendação e preço-alvo do próprio relatório, com a data dele (a página do ativo na Genial às vezes mostra outro número). |
+| Busca de opiniões por ativo (Bing Notícias) | Uma busca por ação e FII das carteiras com recomendação, preço-alvo, rebaixa, elevação, início de cobertura. | A cada 6 horas por ativo (`noticias.busca.consulta_opiniao`). O Bing não indexa InvesTalk nem Genial Analisa como notícia; pega a imprensa que repercute as casas. |
+| Safra O Especialista (`safra-o-especialista`) | Análises da própria casa, com data. | `casa` = Safra e `ler_item`. Atenção: na primeira leitura a partir do GitHub recebeu 403; a falha não apaga nada. |
+
+**Fontes novas** (43; 25 ligadas, 18 desligadas com o motivo; correções em `bb-investalk-analises`, `genial-analisa` e `btg-research`):
+
+| Grupo | Ligadas | Desligadas (motivo) |
+|---|---|---|
+| Casas brasileiras | Genial relatórios por empresa (a validar), Nord blog (parcial), Empiricus (parcial). Genial Analisa estratégia volta como parcial. | BTG Pactual (research é app de página única, sem relatórios no sitemap), Ativa (não respondeu), Inter Research (PDFs avulsos sem lista), Órama e Levante (robots.txt veda), Eleven (não respondeu; pago), Guide (não respondeu), Warren (erro de servidor), Toro (só day trade). Ágora continua desligada. |
+| Imprensa internacional | NYT Business, Economy, DealBook e Your Money, Bloomberg Opinion, CNBC Economy (todas a validar), Yicai Global (parcial). | Reuters (RSS público encerrado em 2020; manchetes chegam pelo Bing), AP, Axios (robots.txt veda), Yahoo Finance (feed parado), Barron's, Morningstar, Business Insider, Caixin (sem feed; pago). WSJ, MarketWatch, CNBC Markets, FT, Economist e Bloomberg Markets já estavam. |
+| Estratégia e research global | Seeking Alpha Market Outlook, ETFs & Portfolio Strategy e Dividend Ideas; Seeking Alpha por ativo (PBR, BBD, INTR, EWZ, sem transcrições e anúncios de dividendo); Project Syndicate; CEPR VoxEU; PIIE Realtime Economics (parcial); Apollo Daily Spark (parcial); Wolf Street; Real Investment Advice; CFA Institute (Enterprising Investor, Financial Analysts Journal, Research Foundation); NBER working papers (parcial, sem data na fonte). | Brookings (feed devolve HTML), Calculated Risk (encerrado em jan/2026). Fidelity, PIMCO, AQR, GMO, BlackRock BII, Vanguard e J.P. Morgan AM já estavam. |
+
+Seeking Alpha: os feeds de análise têm `debate: "colaboradores"` e aparecem em **Debate de mercado**, separados de notícia
+e de research de banco. Nos feeds por ativo, as notícias curtas compartilham um único link genérico; só a primeira entra
+(as análises têm link próprio e entram normalmente).
+
+**Reddit e X (consulta feita em 08/11/2026):** o robots.txt do Reddit veda robôs (`Disallow: /`), o `.json` sem login
+devolve 403, o RSS acaba em 13/11/2026, o cadastro da Data API está fechado e a API pública fecha em março de 2027. A API
+do X é paga por post lido (US$ 0,005), sem plano gratuito. Por isso não há coleta: o Debate de mercado traz links para
+comunidades do Reddit e buscas do X, abertos no navegador de quem usa, identificados como consultas externas, sem
+contagem de sentimento.
+
+**Pesquisa "Relação com a Oregon" (`robo/pesquisas.py`):** para cada ativo com premissa interna de sensibilidade (LFTB11 ×
+Selic, IMAB11 × juro real, PETR4 × petróleo…), uma busca curta no RSS do Bing Notícias, refeita a cada 3 dias, até 6 por
+rodada; ficam só os resultados que citam o ativo (`data/biblioteca/pesquisas.json`). O próprio feed do Bing traz o aviso
+"uso pessoal e não comercial": serve para pesquisa interna, não para material de cliente. A janela de leitura também
+oferece a mesma pergunta pronta no Google e no Bing, abertos fora do Oregon.
+
+**Itaú, Safra e Santander** responderam 403 ao robô a partir do GitHub (Itaú Análises, Safra O Especialista, Santander
+Análise Econômica). Continuam ligadas: se a casa liberar, voltam sozinhas; enquanto isso a falha aparece em Fontes e
+coleta, sem apagar nada.
 
 ## Instituições
 
@@ -291,6 +338,8 @@ Fatos relevantes, comunicados ao mercado e avisos aos acionistas das empresas da
 - **Cache e JavaScript**: sites que só montam a lista com JavaScript (Schroders, GSAM, Verde, Constellation) ou que exigem cadastro/declaração de investidor (Bridgewater, Robeco) ficam desligados, com o motivo no cadastro. Não contornamos.
 - **Google Notícias**: o `robots.txt` veda a busca (`/rss/search`) a robôs; o robô não lê. Na ficha de cada ativo há o link "Buscar agora no Google Notícias", que abre a busca no seu navegador.
 - **Bing Notícias**: RSS público de busca, sem chave e sem custo; não é uma API contratada, pode mudar sem aviso (vira erro visível em Fontes e coleta, nunca item inventado). A ordem é por data, mas o Bing devolve no máximo cerca de 10 manchetes por busca; guardamos só título, link, veículo e data. Portais com assinatura (Valor, Estadão, O Globo) aparecem pela manchete; a matéria abre no site do veículo.
-- **Opiniões de casas**: o sentido (a favor, contra, neutra) é lido do título público. O relatório da casa não é acessível e nada é inventado; sem opinião de sentido oposto, a ficha diz "Não há contraponto documentado".
+- **Opiniões de casas**: o sentido (a favor, contra, neutra, mista) vem do título público ou, nas páginas da própria casa e nas opiniões conferidas de 12 meses, da página. Recomendação, preço-alvo, horizonte e analista só aparecem quando estão escritos; nada é deduzido. Documento à CVM ou carta que cita uma agência ou casa ("Fitch eleva o rating") não vira opinião dela. Texto que relata outra casa (comum em Nord e Empiricus) é atribuído à casa citada.
+- **Reddit e X**: sem coleta (ver a seção v3.4). Só links de consulta, abertos fora do Oregon.
+- **Datas**: o painel distingue data de publicação (da fonte), data de atualização (da fonte) e data de detecção (do robô). Quando a fonte só mostra a atualização (InvesTalk), a tela diz isso. Página sem data entra com a data de detecção, marcada; cartas antigas de páginas de arquivo vão para o acervo (Biblioteca), fora das novidades.
 - **Dados macro**: os indicadores (Selic, IPCA, dólar, curvas, Treasuries) foram desligados (`intel.indicadores_macro: false`) e saíram do painel. Fica só a agenda oficial (IBGE, Copom, Fed, Focus). Para religar, troque para `true`.
 - **Resultados da CVM** (`resultados.json`): lidos dos dados abertos da CVM (ITR/DFP) na rodada da noite, a cada 3 dias (ou em execução manual), para as fichas das empresas na seção Oregon. FIIs e empresas sem CNPJ cadastrado ficam em `fora`. Um arquivo que falha não apaga o que já estava lido.

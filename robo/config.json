@@ -324,7 +324,14 @@
   "maximo": 120,
   "ibge": true,
   "cvm": true,
-  "fontes_bloqueadas": [],
+  "fontes_bloqueadas": [
+   "InfoMoney",
+   "XP Investimentos",
+   "Expert XP",
+   "Conteúdos XP",
+   "Rico Investimentos",
+   "Clear Corretora"
+  ],
   "veiculos_confiaveis": [
    "Valor Econômico",
    "Valor Investe",
@@ -717,7 +724,10 @@
    "url": "https://www.bing.com/news/search?q={q}&qft=sortbydate%3d%221%22&format=rss&mkt={mkt}",
    "intervalo_min": 120,
    "max_por_rodada": 14,
-   "por_busca": 15
+   "por_busca": 15,
+   "consulta_opiniao": "\"{nome}\" (recomendação OR \"preço-alvo\" OR rebaixa OR eleva OR \"inicia cobertura\" OR \"corta preço\")",
+   "intervalo_opiniao_min": 360,
+   "_nota_opiniao": "Uma busca de opiniões por ação e FII das carteiras (recomendação, preço-alvo, cobertura), lida a cada 6 horas. Desligar por ativo: noticias.opinioes = false."
   },
   "buscas_setor": [
    {
@@ -858,6 +868,163 @@
      "fundos imobiliários",
      "fundo imobiliário"
     ]
+   },
+   {
+    "nome": "Celulose: capacidade e preços",
+    "consulta": "celulose nova capacidade fábrica preço fibra curta",
+    "mkt": "pt-BR",
+    "ativos": [
+     "KLBN4"
+    ],
+    "termos": [
+     "celulose",
+     "fibra",
+     "capacidade",
+     "Suzano",
+     "Eldorado",
+     "Arauco",
+     "CMPC"
+    ]
+   },
+   {
+    "nome": "Embalagens e papelão ondulado",
+    "consulta": "papelão ondulado expedição embalagens Empapel",
+    "mkt": "pt-BR",
+    "ativos": [
+     "KLBN4"
+    ],
+    "termos": [
+     "papelão",
+     "ondulado",
+     "embalage",
+     "Empapel"
+    ]
+   },
+   {
+    "nome": "Shoppings: ocupação, aluguéis e inadimplência",
+    "consulta": "shopping centers ocupação inadimplência lojistas aluguel",
+    "mkt": "pt-BR",
+    "ativos": [
+     "ALOS3",
+     "XPML11"
+    ],
+    "termos": [
+     "shopping",
+     "lojist",
+     "ocupação",
+     "inadimpl",
+     "aluguel",
+     "Abrasce"
+    ]
+   },
+   {
+    "nome": "Shoppings: transações e cap rate",
+    "consulta": "venda de shopping cap rate fundo imobiliário",
+    "mkt": "pt-BR",
+    "ativos": [
+     "ALOS3",
+     "XPML11"
+    ],
+    "termos": [
+     "shopping",
+     "cap rate",
+     "FII",
+     "fundo imobiliário"
+    ]
+   },
+   {
+    "nome": "Bancos: spread, provisões e funding",
+    "consulta": "spread bancário provisões inadimplência custo de captação",
+    "mkt": "pt-BR",
+    "ativos": [
+     "BBDC3",
+     "ITSA4",
+     "INBR34"
+    ],
+    "termos": [
+     "spread",
+     "provis",
+     "inadimpl",
+     "captação",
+     "funding",
+     "Banco Central"
+    ]
+   },
+   {
+    "nome": "Energia: revisão tarifária e regulação",
+    "consulta": "revisão tarifária Aneel distribuidora concessão",
+    "mkt": "pt-BR",
+    "ativos": [
+     "CPLE3",
+     "EQTL3",
+     "AXIA3"
+    ],
+    "termos": [
+     "Aneel",
+     "tarif",
+     "concess",
+     "distribuidora",
+     "transmiss"
+    ]
+   },
+   {
+    "nome": "Saneamento: regulação e concessões",
+    "consulta": "saneamento concessão leilão tarifa agência reguladora",
+    "mkt": "pt-BR",
+    "ativos": [
+     "EQTL3"
+    ],
+    "termos": [
+     "saneamento",
+     "concess",
+     "leilão",
+     "tarifa"
+    ]
+   },
+   {
+    "nome": "Petróleo: Opep, oferta e refino",
+    "consulta": "Opep produção petróleo margem refino diesel",
+    "mkt": "pt-BR",
+    "ativos": [
+     "PETR4",
+     "PRIO3"
+    ],
+    "termos": [
+     "Opep",
+     "petróleo",
+     "refin",
+     "diesel",
+     "Brent"
+    ]
+   },
+   {
+    "nome": "Oil supply and demand (global)",
+    "consulta": "OPEC oil supply demand outlook",
+    "mkt": "en-US",
+    "ativos": [
+     "PETR4",
+     "PRIO3"
+    ],
+    "termos": [
+     "OPEC",
+     "oil",
+     "crude",
+     "refin"
+    ]
+   },
+   {
+    "nome": "Locação de pesados e caminhões",
+    "consulta": "locação caminhões máquinas pesadas frota",
+    "mkt": "pt-BR",
+    "ativos": [
+     "VAMO3"
+    ],
+    "termos": [
+     "caminh",
+     "locação",
+     "máquinas",
+     "frota"
+    ]
    }
   ],
   "cvm_ipe": {
@@ -865,7 +1032,7 @@
    "intervalo_min": 180,
    "_nota": "Fatos relevantes, comunicados ao mercado e avisos aos acionistas das empresas das carteiras (dados.cvm.gov.br, base aberta). Conferidos por CNPJ e nome."
   },
-  "_bloqueio_nota": "fontes_bloqueadas: veículos que o robô descarta por completo. fontes_sinalizadas: veículos que entram, com aviso (ex.: Grupo XP — útil para pesquisa, não para citar em material de cliente).",
+  "_bloqueio_nota": "fontes_bloqueadas: veículos que o robô descarta por completo e que não são publicados nem do histórico (v3.4: Grupo XP — InfoMoney, XP, Expert XP, Rico, Clear — por decisão da Oregon). Opiniões da XP noticiadas por outros veículos continuam, com a casa \"XP\". fontes_sinalizadas: veículos que entram, com aviso.",
   "fontes_sinalizadas": {
    "InfoMoney": "Grupo XP — não citar em material de cliente",
    "XP Investimentos": "Grupo XP — não citar em material de cliente",
@@ -1204,7 +1371,9 @@
     "excluir": [
      "Guiné Equatorial",
      "Guine Equatorial",
-     "linha do Equador"
+     "linha do Equador",
+     "Margem Equatorial",
+     "Foz do Amazonas"
     ],
     "setor": [
      "energia elétrica",
@@ -1879,6 +2048,18 @@
    "max_tokens_item": 1200,
    "_custo": "Só itens de prioridade alta/média, um pedido por item (título + resumo público + fonte; nunca posições). Com 12 itens/dia a conta fica na casa de 30 a 40 mil tokens/dia; o preço por milhão de tokens do modelo (ia_modelo) está na página de preços da Anthropic."
   },
-  "indicadores_macro": false
+  "indicadores_macro": false,
+  "pesquisas": {
+   "ativo": true,
+   "validade_dias": 3,
+   "max_por_rodada": 6,
+   "_nota": "Pesquisa ativo × fator (premissa interna de sensibilidade) no RSS do Bing Notícias, mostrada na janela de leitura em \"Relação com a Oregon\". Uso pessoal e não comercial, conforme o aviso do próprio feed."
+  },
+  "investalk": {
+   "ativo": true,
+   "max_por_rodada": 4,
+   "intervalo_horas": 24,
+   "_nota": "Comentários de resultado do BB Investimentos no endereço do trimestre (investalk.bb.com.br/noticias/mercado/ALOS_3T26). As listas do site não trazem esses links; o robô consulta poucas grafias por rodada, uma vez por dia cada, respeitando o robots.txt, e para quando acha. \"trimestre\": \"3T26\" fixa o trimestre."
+  }
  }
 }

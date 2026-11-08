@@ -124,13 +124,64 @@ def posicao_opiniao(item):
 OPINIAO_RX = [r'\bmantem (a |sua |o |seu )?(recomendacao|indicacao|compra|venda|neutr|preco|classificacao|rating|outperform|overweight|underweight)']
 
 
+# Verbos que, sozinhos, também descrevem fatos da própria empresa ("Itaú, Bradesco e Santander lucram… e veem fosso no ROE"):
+# em manchete de resultado, só contam como opinião se houver um verbo de recomendação (rebaixa, eleva, preço-alvo, compra…).
+OPINIAO_FRACA = ['ve ', 'veem', 'projeta', 'estima', 'preve', 'espera', 'aposta', 'perspectiva', 'revisa', 'gosta', 'prefere', 'favorit', ' diz', 'avalia',
+                 'segundo', 'alerta', 'sinaliza', 'muda o tom', 'says', 'warns', 'sees', 'expects', 'forecast', 'tira', 'inclui', 'reforca', 'carteira']
+RESULTADO_RX = r'\b(lucr\w*|prejuizo|resultado|balanco|receita|ebitda|[1-4]t\d{2}|trimestre)\b'
+
+
 def casas_citadas(item):
     """Casas de análise citadas COM verbo de opinião no título ou resumo (lista de nomes)."""
     bruto = (item.get('titulo') or '') + ' ' + (item.get('resumo') or '')
     txt = ' ' + sem_acento(bruto).lower() + ' '
-    if not (any(o in txt for o in OPINIAO) or any(re.search(r, txt) for r in OPINIAO_RX)):
+    fortes = [o for o in OPINIAO if o not in OPINIAO_FRACA and o in txt] + [r for r in OPINIAO_RX if re.search(r, txt)]
+    fracas = [o for o in OPINIAO_FRACA if o in txt]
+    if not fortes and not fracas:
+        return []
+    if not fortes and re.search(RESULTADO_RX, txt):
         return []
     return [nome for nome, rx in CASAS if re.search(rx, bruto)]
+
+
+# Recomendação, preço-alvo e horizonte: só quando estão escritos no título, no resumo ou na página pública da casa.
+REC_NOMES = {'compra': 'Compra', 'neutro': 'Neutro', 'neutra': 'Neutro', 'venda': 'Venda', 'manutencao': 'Manutenção', 'outperform': 'Outperform',
+             'market perform': 'Market perform', 'underperform': 'Underperform', 'overweight': 'Overweight', 'underweight': 'Underweight', 'equal weight': 'Equal weight',
+             'buy': 'Compra', 'sell': 'Venda', 'hold': 'Neutro'}
+REC_POSICAO = {'Compra': 'favoravel', 'Outperform': 'favoravel', 'Overweight': 'favoravel', 'Venda': 'contraria', 'Underperform': 'contraria', 'Underweight': 'contraria',
+               'Neutro': 'neutra', 'Manutenção': 'neutra', 'Market perform': 'neutra', 'Equal weight': 'neutra'}
+
+
+def casas_unicas(casas):
+    """Uma casa, um nome: 'Genial' e 'Genial Investimentos' (ou 'BTG' e 'BTG Pactual') ficam com o nome mais completo."""
+    out = []
+    for c in casas or []:
+        k = sem_acento(c).lower()
+        if any(k == sem_acento(o).lower() or sem_acento(o).lower().startswith(k + ' ') for o in out):
+            continue
+        out = [o for o in out if not k.startswith(sem_acento(o).lower() + ' ')] + [c]
+    return out
+
+
+def extrair_recomendacao(texto):
+    """{'recomendacao', 'preco_alvo', 'horizonte'} lidos literalmente do texto; chaves ausentes quando não há."""
+    t = ' ' + sem_acento(texto or '').lower() + ' '
+    out = {}
+    m = re.search(r'recomendacao(?: de| para| em)?[:\s]+(?:de\s+)?(compra|neutr[oa]|venda|manutencao|outperform|market perform|underperform|overweight|underweight|equal weight)\b', t) \
+        or re.search(r'\b(?:rating|classificacao)[:\s]+(compra|neutr[oa]|venda|outperform|market perform|underperform|buy|sell|hold)\b', t) \
+        or re.search(r'\b(?:para|em|reitera|reiteramos|mantem|mantemos|seguimos com|eleva(?: a recomendacao)? para|rebaixa(?: a recomendacao)? para|inicia cobertura com(?: recomendacao de)?)\s+(?:a recomendacao de\s+)?(compra|neutr[oa]|venda|outperform|market perform|underperform|overweight|underweight)\b', t)
+    if m:
+        out['recomendacao'] = REC_NOMES.get(m.group(1).replace('neutra', 'neutro'), m.group(1).capitalize())
+    m = re.search(r'(?:preco[- ]alvo|preco justo|pa)\s*(?:\d{1,2} ?m(?:eses)?\s*)?(?:de|para|em|:)?\s*(?:de\s+)?(r\$|us\$)\s?(\d{1,4}(?:[.,]\d{2})?)', t)
+    if not m:
+        m = re.search(r'(?:preco[- ]alvo|target price).{0,40}?\b(?:para|to)\s+(r\$|us\$|\$)\s?(\d{1,4}(?:[.,]\d{2})?)', t)
+    if m:
+        out['preco_alvo'] = ('R$ ' if m.group(1) == 'r$' else 'US$ ') + m.group(2).replace('.', ',')
+    m = re.search(r'(?:para|ate|no|ao)\s+(?:o\s+)?(?:final|fim) de\s+((?:19|20)\d{2})', t) or re.search(r'\b(?:em|para)\s+(?:12|doze) meses\b|preco[- ]alvo\s*12 ?m\b', t) or re.search(r'\bdez(?:embro)?[/ ](?:de )?((?:20)?\d{2})\b', t)
+    if m and 'preco_alvo' in out:
+        g = m.group(1) if m.lastindex else None
+        out['horizonte'] = ('fim de ' + (g if len(g) == 4 else '20' + g)) if g else '12 meses'
+    return out
 
 
 TIPO_PONTOS = {'fato_relevante': 24, 'carta': 30, 'research': 26, 'paper': 26, 'macro': 22, 'dado_oficial': 20, 'documento_oficial': 18, 'discurso': 20, 'relatorio': 20, 'blog': 12, 'podcast': 12, 'video': 12, 'noticia': 8}
@@ -265,8 +316,13 @@ def classificar(item, oregon, hoje):
         regioes.append('eua')
     fatores = [k for k, termos in FATORES.items() if _casa(txt, termos)]
     ativos, setores, porque_at = [], [], {}
+    def sem_excluidos(a):  # expressões que contêm o nome mas não são a empresa ("Margem Equatorial", "Inter de Milão")
+        t0 = txt
+        for ex in a.get('excluir') or []:
+            t0 = t0.replace(sem_acento(ex).lower(), ' ')
+        return t0
     for t, a in (oregon.get('ativos') or {}).items():
-        achou = _casa(txt, a.get('termos') or [])
+        achou = _casa(sem_excluidos(a), a.get('termos') or [])
         if achou:
             ativos.append(t)
             porque_at[t] = achou[0]
@@ -283,8 +339,13 @@ def classificar(item, oregon, hoje):
         if _casa(txt, te.get('termos') or []):
             temas_etf.append(te['tema'])
             etfs_tema += [e for e in te.get('etfs') or [] if e not in etfs_tema]
+    texto_casa = item.pop('_texto_casa', '') or ''  # texto visível da página da casa: só para ler recomendação; nunca guardado
     casas = casas_citadas(item)
+    casa_fonte = item.get('casa_fonte')  # fonte de research da própria casa (InvesTalk, Genial Analisa…): o texto é a opinião dela
     for t in item.get('ativos') or []:  # ativo já ligado pelo coletor (busca específica, documento da CVM): fica
+        a0 = (oregon.get('ativos') or {}).get(t) or {}
+        if t not in ativos and a0.get('excluir') and _casa(txt, a0['excluir']) and not _casa(sem_excluidos(a0), a0.get('termos') or []):
+            continue  # a busca trouxe o nome dentro de outra expressão ("Margem Equatorial" na busca por Equatorial)
         if t not in ativos:
             ativos.insert(0, t)
             porque_at[t] = porque_at.get(t) or 'busca específica do ativo'
@@ -295,10 +356,20 @@ def classificar(item, oregon, hoje):
         r0 = {'Brasil': 'brasil', 'EUA': 'eua', 'Estados Unidos': 'eua', 'Europa': 'europa', 'Global': 'global'}.get(item.get('pais'))
         if r0:
             regioes.append(r0)
+    if item.get('categoria') not in (None, 'veiculo') and not casa_fonte:
+        # documento à CVM, carta de gestora ou publicação de instituição: citar uma casa ou agência ("Fitch eleva o rating")
+        # não faz do documento a opinião dela; opinião de casa vem da imprensa ou da página de research da própria casa
+        casas, analistas = [], False
+    verif = item.get('opiniao_verificada')  # opinião conferida na página (pesquisa de 12 meses): casas e sentido lidos ali
+    if verif:
+        casas = list(dict.fromkeys(list(verif.get('casas') or []) + casas))
+        posicao = verif.get('posicao') or posicao
     natureza = 'original'
-    if _casa(txt, PROMOCIONAL):
+    if verif:
+        natureza = 'opiniao_casa'
+    elif _casa(txt, PROMOCIONAL):
         natureza = 'promocional'
-    elif casas or (posicao and analistas):
+    elif casas or (posicao and analistas) or (casa_fonte and ativos and item.get('categoria') != 'veiculo'):
         natureza = 'opiniao_casa'
     elif _casa(txt, RECOMENDACAO):
         natureza = 'recomendacao'
@@ -311,9 +382,20 @@ def classificar(item, oregon, hoje):
     item.update({'temas': temas[:6], 'regioes': regioes[:4], 'ativos': ativos[:8], 'setores': setores[:4], 'fatores': fatores[:4], 'natureza': natureza, 'ativos_porque': porque_at,
                  'casas': casas[:4], 'temas_etf': temas_etf[:3], 'etfs_tema': etfs_tema[:8]})
     if natureza == 'opiniao_casa':
+        # página da própria casa: a opinião é dela, salvo quando o texto relata outra casa (Nord e Empiricus fazem isso)
+        if casa_fonte and casa_fonte not in item['casas'] and not item['casas']:
+            item['casas'] = [casa_fonte]
+        item['casas'] = casas_unicas(item['casas'])
+        rec = extrair_recomendacao((item.get('titulo') or '') + ' ' + (item.get('resumo') or '') + ' ' + texto_casa)
+        for k in ('recomendacao', 'preco_alvo', 'horizonte'):
+            if k in rec and not item.get(k):
+                item[k] = rec[k]
+        if not posicao and item.get('recomendacao'):
+            posicao = REC_POSICAO.get(item['recomendacao'])
         item['posicao'] = posicao  # None = opinião sem sentido explícito no título
     else:
         item.pop('posicao', None)
+    item['regras'] = REGRAS_VERSAO
     item['vinculos'] = vinculos(item, oregon)
     item['prioridade'] = prioridade(item, hoje)
     return item
@@ -387,6 +469,9 @@ def prioridade(item, hoje):
     return {'pontos': p, 'nivel': nivel, 'porque': porque}
 
 
+REGRAS_VERSAO = 34  # itens classificados por regras anteriores são reclassificados na publicação (biblioteca.atualizar_leitura)
+
+
 # ------------------------------------------------------------------ vínculo do item com cada ativo citado
 # Manchete que enumera empresas (dividendos da semana, destaques do dia, "e outros"): quem aparece nela foi citado de
 # passagem. As mesmas expressões vão para o painel (TAXON.vinculo), que classifica itens antigos com a mesma regra.
@@ -396,7 +481,9 @@ VINCULO = {
               r'\bacoes para (comprar|investir|ficar|o mes|novembro|dezembro|janeiro|2026|2027)\b', r'\b\d+ acoes\b', r'\btop \d+\b', r'\branking\b', r'\bveja (a lista|quem|quais)\b',
               r'\bdestaques (do dia|da semana|desta|deste|das empresas|do pregao|corporativos)\b', r'\bao vivo\b', r'\bminuto a minuto\b', r'\bresumo do (dia|mercado)\b',
               r'\bo que (mexe|move) (com )?o mercado\b'],
-    'resultado': r'\b(lucro|prejuizo|receita|ebitda|resultado|resultados|balanco|guidance|margem|[1-4]t\d{2}|[1-4]o tri(mestre)?)\b',
+    # resultado da empresa: período (3T26, trimestre, semestre, anual) ou lucro/receita com valor em milhões, bilhões ou %;
+    # "balanço" ou "prejuízo" soltos não bastam ("prejuízo de R$ 5 mil" de um cliente, "balanço sobre imóveis sem energia")
+    'resultado': r'\b(?:[1-4]t\d{2}\b|[1-4]o tri|trimestr|semestr|guidance\b|ebitda\b|resultados? (?:anua|do ano|de 20\d\d)|balanco (?:anual|trimestral|de 20\d\d)|(?:lucro|prejuizo|receita|faturamento)\b[^.]{0,40}?(?:bilh|milh|\bbi\b|\bmi\b|\d ?%))',
     'codigo': r'\b[A-Z]{4}\d{1,2}\b',
 }
 VINCULO_NOME = {'direto': 'trata do ativo', 'mencao': 'citado de passagem', 'setorial': 'notícia do setor', 'tematico': 'tema do índice'}
@@ -429,6 +516,8 @@ def vinculo(item, t, termos=None):
     if n_codigos >= 4 or any(re.search(p, tn) for p in VINCULO['lista']):
         return {'tipo': 'mencao', 'motivo': 'aparece numa manchete que enumera várias empresas', 'evento': None}
     if item.get('natureza') == 'opiniao_casa':
+        if item.get('casa_fonte') and item.get('categoria') != 'veiculo':
+            return {'tipo': 'direto', 'motivo': 'análise publicada pela própria casa (%s)' % item['casa_fonte'], 'evento': 'recomendacao'}
         return {'tipo': 'direto', 'motivo': 'opinião de casa de análise sobre o ativo', 'evento': 'recomendacao'}
     if re.search(VINCULO['resultado'], tn):
         return {'tipo': 'direto', 'motivo': 'a manchete trata do resultado da empresa', 'evento': 'resultado'}

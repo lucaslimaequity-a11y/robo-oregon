@@ -26,6 +26,9 @@ import conteudo  # noqa: E402
 import intel  # noqa: E402
 import util  # noqa: E402
 
+# as rodadas simuladas não importam as sementes reais de opiniões (robo/sementes): cada teste que precisa delas aponta a pasta
+os.environ['ROBO_SEMENTES'] = tempfile.mkdtemp(prefix='sem_sementes_')
+
 CONFIG_TESTE = os.path.join(AQUI, 'config_teste.json')
 FONTES_TESTE = os.path.join(AQUI, 'fontes_teste.json')
 DATA_PAINEL = os.path.join(AQUI, '..', 'painel', 'src', 'data.json')

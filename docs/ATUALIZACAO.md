@@ -1,60 +1,86 @@
-# Atualizar para o Oregon Intelligence v3.3 e como voltar atrás
+# Atualizar para o Oregon Intelligence v3.4 e como voltar atrás
 
-O ZIP `robo-oregon-v3.3.zip` atualiza a v3.2 que está no seu GitHub. Tudo é feito pelo site do GitHub, sem instalar
-nada no computador. Nenhuma chave vai para arquivo: chaves ficam em Settings → Secrets. O workflow (`robo.yml`) não muda.
+O pacote `robo-oregon-v3.4-alterados.zip` atualiza a v3.3 que está no seu GitHub (commit "Add files via upload" de
+08/11, 11:47). Tudo é feito pelo site do GitHub, sem instalar nada. Nenhuma chave vai para arquivo. O workflow
+(`robo.yml`) **não muda**.
 
-## O que muda na v3.3 (fase 1: estética, hierarquia, navegabilidade e leitura das notícias)
+## O que muda na v3.4 (Research Command Center)
 
-- **Topo:** busca sempre à vista, as cinco seções visíveis também no celular (sem rolagem escondida) e a hora da última
-  coleta sempre visível, separada da hora de publicação de cada notícia.
-- **Hoje:** cinco destaques e as demais notícias em linhas compactas (hora · veículo · título · ativo/tema · ↗), com
-  separador por dia; o título abre um resumo no próprio lugar. Filtros: Na carteira, Brasil, Mundo, Gestoras e casas,
-  RI e CVM. Ao lado, os ativos que foram assunto de notícia; a agenda oficial fica recolhida.
-- **Janela da notícia:** sai a análise em sete pontos. Entra uma leitura curta: título, fonte e data; resumo da fonte quando
-  existe; por que importa; relação com a carteira só quando há base; contrapontos só quando documentados; link original
-  sempre à vista; "Aprofundar" recolhido. Com só a manchete, a janela diz isso. Ao fechar, a página volta ao ponto de leitura.
-- **Relevância por empresa:** cada ativo citado tem vínculo **direto** (a empresa é o assunto: notícia, resultado,
-  documento à CVM, mudança de recomendação) ou **menção de passagem** (lista de dividendos, destaques do dia, citado só no
-  resumo). Contadores e prioridade usam só o vínculo direto; as menções ficam recolhidas na ficha. Itens já coletados
-  são reclassificados na publicação, sem mexer no arquivo do mês.
-- **Brasil:** na ficha, notícias e opiniões ao lado (opiniões dos últimos 12 meses, publicadas em
-  `data/biblioteca/opinioes.json`); no centro, **Mudanças na tese** primeiro, depois Eventos e RI, Fundamentos e Setor e
-  pares. No celular, o ativo e as notícias vêm antes da lista.
-- **Biblioteca:** busca e atalhos por tipo de fonte à vista; os demais filtros ficam em "Mais filtros".
-- **Fontes:** 37 entradas novas da sua lista do Notion (22 ativas, 15 desligadas com o motivo), nenhuma do Grupo XP.
-  Detalhes em `docs/FONTES.md`.
-- **Opinião de casa:** "Itaú mantém a dianteira" deixou de contar como opinião; "mantém compra" continua contando.
+- **Visual:** faixa superior escura com marca, seções, busca e hora da coleta; fundo cinza-azulado; cada área do Hoje
+  com uma cor própria na borda (radar azul, agenda âmbar, research azul-petróleo, debate violeta); menos maiúsculas.
+- **Hoje em quatro áreas:** Radar das teses (o que aconteceu com as empresas acompanhadas, com uma linha dizendo se é
+  fato da empresa, opinião publicada, notícia ou hipótese de setor), Agenda decisiva (quantas ações já entregaram o
+  trimestre à CVM, documentos das companhias, agenda oficial), Research global e Debate de mercado. Em cima: mapa de
+  atenção da carteira (acontecimentos por ativo em 7 dias, toque para as notícias), "desde a sua última visita" com os
+  itens novos marcados por um ponto azul, ativos vistos por último e sumário da página. Três profundidades: rápida,
+  briefing e aprofundada.
+- **Mundo e Estratégia:** Notícias · Research (últimos 7 dias, 8 a 30, ainda relevante 31 a 90, mapa de temas de gestão
+  com toque para filtrar, fontes sem publicação recente) · Debate de mercado (opiniões publicadas com filtro a favor/contra,
+  análises de colaboradores do Seeking Alpha, comunidades do Reddit e buscas do X como consultas externas) · ETFs globais.
+- **Opiniões:** os três relatórios de ALOS3 (InvesTalk 06/11, Genial 05/11 e 23/10) e mais 162 opiniões dos últimos
+  12 meses, conferidas na página original, entram na biblioteca. Recomendação, preço-alvo, horizonte e analista aparecem
+  quando escritos; a janela mostra a visão anterior da mesma casa. Comentários de resultado do InvesTalk passam a ser
+  procurados no endereço do trimestre. "Opinião da casa" saiu da ficha; o filtro Opiniões da Biblioteca ficou.
+- **Relação com a Oregon:** a janela mostra a pergunta (ex.: "Como a Selic e os juros de curto prazo afetam ETF de Tesouro
+  Selic (LFTB11)?"), o papel do ativo pela ficha verificada ou pela tese interna, a premissa de sensibilidade, o que se
+  publicou sobre isso (pesquisa do robô no Bing Notícias, a partir da primeira rodada) e botões para a mesma pesquisa no
+  Google e no Bing.
+- **Recência:** cartas antigas sem data deixam as novidades (145 no seu histórico, na primeira rodada; continuam na
+  Biblioteca). A tela separa data de publicação, de atualização e de detecção.
+- **Ergonomia:** "Ler depois" em qualquer notícia, com a lista em Biblioteca › Salvos para ler; busca (tecla / ou Ctrl+K)
+  começa pelos ativos vistos por último; diagnóstico das fontes na ordem fonte → última tentativa → último conteúdo →
+  falha → publicados.
+- **Correções:** "Margem Equatorial" não é mais Equatorial Energia; "prejuízo de R$ 5 mil" de um cliente ou "balanço sobre
+  imóveis" não são mais resultado da empresa; documento à CVM que cita a Fitch não é opinião; nomes repetidos de casa
+  ("Genial" e "Genial Investimentos") viram um só; títulos "Read article" ganham o título do endereço.
+- **Grupo XP:** bloqueado de vez (antes entrava com aviso).
 
 ## 1. Suba os arquivos (um só envio)
 
-1. Descompacte o `robo-oregon-v3.3.zip`.
-2. No Mac, dentro da pasta descompactada, aperte **Cmd + Shift + . (ponto)** para aparecer a pasta oculta `.github`.
-3. No GitHub, repositório `robo-oregon` → **Add file** → **Upload files**.
-4. Arraste **todo o conteúdo** da pasta: `.github`, `docs`, `painel`, `robo`, `site`, `testes` e `README.md`.
-5. Escreva "Oregon Intelligence v3.3" e **Commit changes**.
+1. Descompacte o `robo-oregon-v3.4-alterados.zip`. Ele tem só os 28 arquivos que mudaram, nas pastas certas.
+2. No GitHub, repositório `robo-oregon` → **Add file** → **Upload files**.
+3. Arraste **as pastas** de dentro do ZIP (`docs`, `painel`, `robo`, `site`, `testes`) e o `README.md` de uma vez.
+4. Escreva "Oregon Intelligence v3.4" e **Commit changes**.
 
-Se a pasta `.github` não for junto (o envio mostra a lista de arquivos; confira se aparece `.github/workflows/robo.yml`):
-entre na pasta `.github/workflows` do repositório → **Add file** → **Upload files** → arraste o `robo.yml` enviado
-junto com o ZIP → **Commit changes**. Entre um envio e outro, uma rodada pode falhar no teste que compara
-`.github/workflows/robo.yml` com `docs/workflow_robo.yml`; isso é esperado, nada é publicado e o site fica como estava.
-Não cole o arquivo no editor do GitHub: o editor acrescenta espaços no fim das linhas e o teste acusa diferença.
+Arquivos do pacote (novos marcados com ★):
 
-## 2. Primeira rodada e conferência
+```
+README.md
+docs/ARQUITETURA.md  docs/ATUALIZACAO.md  docs/FONTES.md  docs/RESULTADOS_TESTES.md
+painel/dist/Oregon_Intelligence.html  painel/dist/painel_artifact.html
+painel/src/app.css  painel/src/intel.js  painel/src/store.js  painel/src/tests.js
+painel/src/ui_base.js  painel/src/ui_bib.js  painel/src/ui_hoje.js  painel/src/ui_oregon.js
+painel/test/areas.js
+robo/analise.py  robo/biblioteca.py  robo/casas.py ★  robo/config.json  robo/conteudo.py
+robo/fontes.json  robo/intel.py  robo/pesquisas.py ★  robo/sementes/opinioes_12m.json ★
+site/index.html
+testes/test_intel.py  testes/test_v34.py ★
+```
 
-1. **Actions** → **Oregon Intelligence** → **Run workflow** → modo `normal` → **Run workflow**. A execução manual lê
-   todas as fontes e todas as buscas de uma vez (as agendadas leem até 14 buscas por rodada).
-2. Em 5 a 10 minutos termina. Abra a execução → **Summary**: fonte por fonte, quantos itens chegaram, foram rejeitados
-   (e por quê), já estavam na biblioteca, eram novos e foram publicados.
-3. Abra o site. O topo do **Hoje** diz: "Última coleta concluída há N min · X notícias nas últimas 24 h · M fontes com erro".
-   Toque em "fontes com erro" para ver quais e por quê.
-4. Em **Brasil**, toque em Klabin: à direita, as notícias em que a empresa é o assunto, as opiniões a favor e contra
-   (12 meses) e os documentos da CVM; no centro, a aba Mudanças na tese. Toque numa notícia: a janela é curta e tem o
-   link original no topo.
+O pacote completo (`robo-oregon-v3.4.zip`) tem o repositório inteiro, para guardar ou para começar do zero.
 
-Na primeira rodada, as buscas e as fontes novas aparecem como "a validar" se falharem: isso não marca a rodada como
-parcial. A partir da segunda leitura, falha conta como erro, com o motivo.
+## 2. Primeira rodada
 
-## 3. Chaves (todas opcionais)
+**Actions** → **Oregon Intelligence** → **Run workflow** → modo `normal` → **Run workflow**. Leva 5 a 10 minutos. Nessa
+rodada o robô, uma única vez: tira das novidades as cartas antigas sem data, importa as 165 opiniões conferidas e passa a
+publicar `research.json` (90 dias) e `pesquisas.json`.
+
+## 3. Conferência (5 minutos)
+
+1. **Hoje:** o topo mostra a coleta; abaixo, o mapa de atenção e as quatro áreas. Troque Rápida / Briefing / Aprofundada.
+2. **Brasil › ALOS3:** à direita, nas opiniões de 12 meses, InvesTalk 06/11 (Compra, R$ 38,00) e Genial 05/11 (R$ 37,00)
+   e 23/10 (R$ 39,00). Toque no InvesTalk: a janela mostra casa, analista, recomendação, preço-alvo, a visão anterior e
+   diz que a página só informa a data de atualização.
+3. **Mundo e Estratégia › Research:** últimos 7 dias, 8 a 30 e 31 a 90; nenhuma carta de 2023 como novidade.
+4. **Uma notícia de LFTB11** (ou de Selic): em "Relação com a Oregon", a pergunta, o papel do ETF e, depois da rodada, "O
+   que se publica sobre isso"; os botões abrem a mesma pesquisa no Google e no Bing.
+5. **Biblioteca › Fontes e coleta:** as fontes novas aparecem com última tentativa, último conteúdo e falha. As marcadas
+   "a validar" (NYT, Bloomberg Opinion, CNBC Economy, Genial relatórios) se confirmam ou não nesta rodada, sem marcar a
+   rodada como parcial.
+
+Se algo der errado, o site continua como estava: os testes rodam antes de publicar e, se um falha, nada é publicado.
+
+## 4. Chaves (todas opcionais)
 
 Settings → Secrets and variables → Actions → **New repository secret**:
 
@@ -69,8 +95,10 @@ Credenciais → Criar credencial → Chave de API → restrinja à YouTube Data 
 
 Custo do GitHub: o repositório é público, então os minutos do GitHub Actions são gratuitos; cada rodada leva poucos minutos.
 
-## 4. Voltar atrás
+## 5. Voltar atrás
 
+- **Para a v3.3:** envie de novo os arquivos do pacote `robo-oregon-v3.3-alterados.zip` (mesmo caminho). Os dados não se
+  perdem; `data/biblioteca/research.json` e `pesquisas.json` ficam sem uso e as opiniões conferidas continuam na biblioteca.
 - **Para a v3.2:** envie de novo os arquivos do pacote da v3.2 (mesmo caminho). Os dados não se perdem; o arquivo
   `data/biblioteca/opinioes.json` fica sem uso.
 - **Para a v3:** envie de novo os arquivos do `robo-oregon-v3-intelligence.zip` (mesmo caminho) e o `robo.yml` daquele
@@ -80,7 +108,7 @@ Custo do GitHub: o repositório é público, então os minutos do GitHub Actions
   e continuam na Biblioteca). É uma migração única, registrada no estado do robô.
 - **Configuração:** `robo/config.json` → **History** → versão anterior → copiar → colar → **Commit changes**.
 
-## 5. Ajustes que você pode querer
+## 6. Ajustes que você pode querer
 
 Tudo em `robo/config.json`, bloco `noticias`:
 
@@ -89,8 +117,14 @@ Tudo em `robo/config.json`, bloco `noticias`:
 - **Buscas por setor e cadeia:** `buscas_setor` (consulta, mercado pt-BR ou en-US, ativos ligados, termos exigidos).
 - **Temas dos ETFs:** `etfs[].busca` e `mkt`.
 - **Ritmo das buscas:** `busca.intervalo_min` (120) e `busca.max_por_rodada` (14).
-- **InfoMoney e canais da XP:** entram com o selo "Grupo XP — não citar em material de cliente" (`fontes_sinalizadas`).
-  Para voltar a bloquear: copie os nomes para `fontes_bloqueadas`.
+- **Grupo XP:** bloqueado desde a v3.4 (`fontes_bloqueadas`: InfoMoney, XP Investimentos, Expert XP, Conteúdos XP, Rico
+  Investimentos, Clear Corretora). O que foi gravado antes também deixa de ser publicado. Opinião da XP noticiada por
+  outro veículo continua, com a casa "XP".
+- **Comentários de resultado do InvesTalk:** `intel.investalk` (`max_por_rodada` 4, `intervalo_horas` 24; `"ativo": false`
+  desliga; `"trimestre": "3T26"` fixa o trimestre).
+- **Pesquisa da janela de leitura:** `intel.pesquisas` (`validade_dias` 3, `max_por_rodada` 6; `"ativo": false` desliga).
+- **Expressões que não são a empresa:** `ativos[].noticias.excluir` também vale para a classificação desde a v3.4 (ex.:
+  "Margem Equatorial" não é a Equatorial Energia).
 - **Veículos conhecidos:** `veiculos_confiaveis`. Os demais entram marcados "veículo pouco conhecido" e só aparecem na
   ficha do ativo.
 - **Indicadores de mercado:** `intel.indicadores_macro` (desligado). A agenda oficial continua.

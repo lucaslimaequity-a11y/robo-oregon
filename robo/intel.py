@@ -20,6 +20,7 @@ Chaves (Secrets do GitHub, nunca em arquivo): opcionais TELEGRAM_TOKEN, TELEGRAM
 """
 import datetime as dt
 import html
+import hashlib
 import json
 import os
 import re
@@ -37,6 +38,8 @@ import config  # noqa: E402
 import conteudo  # noqa: E402
 import fontes_macro  # noqa: E402
 import noticias  # noqa: E402  (desambiguação por empresa, reaproveitada da v2)
+import casas  # noqa: E402
+import pesquisas  # noqa: E402
 import resultados  # noqa: E402
 import semanal  # noqa: E402
 from util import ErroFonte, Rede, agora, gravar, ler, log, sem_acento  # noqa: E402
@@ -51,6 +54,25 @@ EXC = (ErroFonte, KeyError, TypeError, ValueError, AttributeError, IndexError)
 # ------------------------------------------------------------------ carga
 def _slug(t):
     return re.sub(r'[^a-z0-9]+', '-', sem_acento(t).lower()).strip('-')[:40]
+
+
+def antigo_sem_data(x, hoje, primeira_leitura=False, lote_arquivo=False):
+    """Item de página sem data de publicação que é acervo (consultável na Biblioteca, fora do feed de novidades), e por quê.
+    - primeira leitura da página: tudo o que já estava lá;
+    - mês de referência no título ou no link ("Carta-K10_junho-2023.pdf", "/2023/julho23.pdf") anterior aos últimos 60 dias;
+    - lote: mais de 3 itens sem data numa fonte já lida, ou link no fim da listagem (posição > 5), típico de arquivo antigo."""
+    if primeira_leitura:
+        return 'primeira leitura da página'
+    ref = x.get('referencia') or conteudo.referencia(x.get('titulo') or '') or conteudo.referencia((x.get('link') or '').rsplit('/', 1)[-1]) or conteudo.referencia(x.get('link') or '')
+    if ref:
+        x['referencia'] = ref
+        if ref < (hoje - dt.timedelta(days=60)).isoformat()[:7]:
+            return 'mês de referência %s/%s' % (ref[5:7], ref[:4])
+    if lote_arquivo:
+        return 'chegou em lote, sem data, numa página já lida'
+    if (x.get('posicao_pagina') or 0) > 5:
+        return 'link no fim da listagem da página, sem data'
+    return None
 
 
 def fontes_de_busca(cfg):
@@ -78,6 +100,14 @@ def fontes_de_busca(cfg):
             for i, q in enumerate(consultas):
                 out.append(dict(base, id='busca-%s%s' % (a['id'].lower(), '-%d' % (i + 1) if i else ''), nome='Busca · %s (%s)' % (q, a['id']), pais='Brasil', idioma='pt',
                                 url_fonte=url(q, 'pt-BR').replace('&format=rss', ''), url_coleta=url(q, 'pt-BR'), busca_ativo=a['id'], consulta=q))
+            # opiniões de casas sobre o ativo (recomendação, preço-alvo, cobertura): consulta própria, que a busca geral nem sempre traz
+            modelo = b.get('consulta_opiniao')
+            if modelo and a.get('classe') in ('acao', 'fii') and e.get('opinioes', True):
+                nome_q = e.get('nome_busca') or next((t.lstrip('=') for t in e['termos'] if not re.match(r'^=?[A-Z]{4}\d{1,2}$', t)), a['id'])
+                q = modelo.replace('{nome}', nome_q).replace('{ticker}', a['id'])
+                out.append(dict(base, id='busca-%s-opiniao' % a['id'].lower(), nome='Busca de opiniões · %s (%s)' % (nome_q, a['id']), pais='Brasil', idioma='pt',
+                                url_fonte=url(q, 'pt-BR').replace('&format=rss', ''), url_coleta=url(q, 'pt-BR'), busca_ativo=a['id'], consulta=q,
+                                intervalo_min=int(b.get('intervalo_opiniao_min', 360))))
         for st in n.get('buscas_setor') or []:
             if not st.get('ativo', True):
                 continue
@@ -149,7 +179,8 @@ def carregar_oregon(cfg, caminho=None):
         nome = a.get('nome') or c.get('nome') or t
         if c.get('classe') in ('acao', 'fii') and c.get('nome') and c['nome'] not in termos:
             termos.append(c['nome'])  # empresas e FIIs: o nome também identifica; ETFs só pelo código (não confundir índice com fundo)
-        ativos[t] = {'nome': nome, 'termos': termos, 'setor': a.get('setor'), 'pilar': a.get('pilar'), 'classe': a.get('classe'), 'tipo': a.get('tipo'), 'pais': a.get('pais'), 'emissor': a.get('emissor')}
+        ativos[t] = {'nome': nome, 'termos': termos, 'excluir': list((c.get('noticias') or {}).get('excluir') or []), 'setor': a.get('setor'), 'pilar': a.get('pilar'), 'classe': a.get('classe'), 'tipo': a.get('tipo'), 'pais': a.get('pais'), 'emissor': a.get('emissor'),
+                     'fator': ((d.get('sens') or {}).get(t) or {}).get('f')}  # fator da premissa interna de sensibilidade (pesquisas ativo × fator)
     setores = []
     for g in d.get('grupos') or []:
         termos = []
@@ -375,6 +406,19 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
         rej['antigo'] = max(0, recebidos - len(itens))
         ja = sum(1 for x in validos if x['id'] in vistos)
         ineditos = [x for x in validos if x['id'] not in vistos]
+        if f.get('casa'):
+            for x in ineditos:
+                x['casa_fonte'] = f['casa']
+        if f.get('debate'):  # análise de colaboradores (Seeking Alpha): opinião individual, separada de notícia e de banco
+            for x in ineditos:
+                x['debate'] = f['debate']
+        if f.get('ler_item'):  # research da casa: a página do item traz data, resumo e, às vezes, recomendação e preço-alvo
+            for x in ineditos[: int(f.get('ler_item_max', 6))]:
+                if rede.sem_tempo():
+                    break
+                conteudo.ler_pagina_item(rede, robots, x, f, agora_)
+        sem_data = [x for x in ineditos if not x.get('publicado_em')]
+        lote_arquivo = not primeira_leitura and len(sem_data) > 3  # muitos itens sem data de uma vez numa fonte já lida: é o arquivo da página
         for x in list(ineditos):
             analise.classificar(x, oregon, hoje)
             if f.get('so_oregon') and not x.get('ativos'):  # feed setorial: só manchetes que citem ativo das carteiras
@@ -386,12 +430,25 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
                 rej['fora_do_tema'] = rej.get('fora_do_tema', 0) + 1
                 ineditos.remove(x)
                 continue
-            if primeira_leitura and f.get('metodo') in ('pagina', 'pagina_html', 'pagina_pdf', 'sitemap') and not x.get('publicado_em'):
-                # primeira leitura de uma página: o que já estava lá é acervo, não novidade de hoje
-                x['acervo'] = True
+            if f.get('metodo') in ('pagina', 'pagina_html', 'pagina_pdf', 'sitemap') and not x.get('publicado_em'):
+                motivo = antigo_sem_data(x, hoje, primeira_leitura, lote_arquivo)
+                if motivo:  # o que já estava na página (ou é de um mês antigo) é acervo, não novidade de hoje
+                    x['acervo'], x['acervo_motivo'] = True, motivo
             x['analise'] = analise.analisar_regras(x, oregon)
         novos += ineditos
         biblioteca.registrar(cont, f['id'], nome, recebidos=recebidos, rejeitados={k: v for k, v in rej.items() if v}, duplicados=ja, novos=len(ineditos), classificados=len(ineditos), marca=marca)
+        # diagnóstico: data do conteúdo mais recente que a fonte oferece (mesmo já visto); sem data, fica a anterior
+        datas = [x.get('publicado_em') for x in itens if x.get('publicado_em') and not x.get('acervo')]
+        if datas:
+            cont[f['id']]['ultimo_publicado'] = max(datas)
+    try:  # comentários de resultado do InvesTalk no endereço do trimestre (as listas do site não trazem os links)
+        achados = casas.sondar(cfg, oregon, rede, robots, hoje, agora_, estado, log_=log_)
+        biblioteca.registrar(cont, casas.FONTE['id'], casas.FONTE['nome'], recebidos=len(achados), novos=len(achados), classificados=len(achados), marca=marca)
+        if achados:
+            cont[casas.FONTE['id']]['ultimo_publicado'] = max([x['publicado_em'] for x in achados if x.get('publicado_em')] or [None]) or cont[casas.FONTE['id']].get('ultimo_publicado')
+        novos += achados
+    except Exception as e:
+        log_('  InvesTalk não consultado: %s' % type(e).__name__)
     res, gravados = biblioteca.incorporar(novos, hoje, agora_)
     for x in gravados:
         c = cont.get(x['fonte_id'])
@@ -406,6 +463,10 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
               'legenda': {'recebidos': 'itens lidos da fonte na rodada', 'rejeitados': 'descartados e por quê (sem link, repetido no feed, fora do filtro, fora do tema, antigo, bloqueado, robots)',
                           'duplicados': 'já estavam na biblioteca (mesmo link) ou são o mesmo fato de outra fonte', 'novos': 'ineditos classificados', 'publicados': 'gravados na biblioteca e no site'}}
     gravar('coleta.json', coleta)
+    try:  # pesquisas ativo × fator (janela de leitura): acessório; uma falha aqui nunca derruba a rodada
+        pesquisas.atualizar(cfg, oregon, rede, robots, hoje, agora_, bloqueio=bloqueio_nomes, log_=log_)
+    except Exception as e:
+        log_('  pesquisas não atualizadas: %s' % type(e).__name__)
     return gravados, erros, ok, coleta
 
 
@@ -482,6 +543,122 @@ def migrar_acervo(estado, fontes_cfg):
     return n
 
 
+def migrar_acervo_v34(estado, hoje):
+    """Uma vez (v3.4): páginas de gestoras que listam o arquivo inteiro sem data (Kapitalo, Alaska, Genoa, Oaktree, Atmos…)
+    vinham soltando, a cada rodada, cartas de 2020–2023 como "detectadas agora". Os itens já guardados nessa situação viram
+    acervo pelas mesmas regras da coleta (mês de referência antigo no título ou no link, ou chegada em lote sem data).
+    Nada é apagado: continuam na Biblioteca, fora das novidades."""
+    if estado.get('migracao_acervo_v34'):
+        return 0
+    n = 0
+    for mes in biblioteca.meses_disponiveis():
+        itens = biblioteca.ler_mes(mes).get('itens') or []
+        cand = [x for x in itens if not x.get('publicado_em') and not x.get('acervo') and x.get('categoria') != 'veiculo']
+        lotes = {}
+        for x in cand:
+            k = (x.get('fonte_id'), (x.get('detectado_em') or '')[:16])
+            lotes[k] = lotes.get(k, 0) + 1
+        mudou = False
+        for x in cand:
+            motivo = antigo_sem_data(x, hoje, False, lotes[(x.get('fonte_id'), (x.get('detectado_em') or '')[:16])] > 3)
+            if motivo:
+                x['acervo'], x['acervo_motivo'] = True, motivo
+                mudou = True
+                n += 1
+        if mudou:
+            biblioteca.gravar_mes(mes, itens)
+    estado['migracao_acervo_v34'] = True
+    if n:
+        log('  acervo: %d cartas antigas sem data deixaram as novidades (mês de referência antigo ou lote do arquivo da página)' % n)
+    return n
+
+
+SEMENTES = os.path.join(AQUI, 'sementes')
+
+
+def ticker_da_carteira(t, oregon):
+    """Ticker da pesquisa → ticker das carteiras: igual, ou outra classe da mesma empresa (KLBN11 → KLBN4, BBDC4 → BBDC3)."""
+    ativos = oregon.get('ativos') or {}
+    t = (t or '').upper().strip()
+    if t in ativos:
+        return t
+    raiz = re.match(r'^([A-Z]{4})\d{1,2}$', t)
+    if raiz:
+        for k in sorted(ativos):
+            if k[:4] == raiz.group(1) and re.match(r'^[A-Z]{4}\d{1,2}$', k):
+                return k
+    return None
+
+
+def importar_sementes(oregon, hoje, agora_, estado, pasta=None):
+    """Opiniões publicadas nos últimos 12 meses, levantadas em pesquisa e conferidas uma a uma (link original, veículo e data
+    de publicação), entram na biblioteca uma vez por versão do arquivo (robo/sementes/*.json). Cada item guarda como foi
+    conferido (`verificacao`: página aberta ou resultado de busca com data). Recomendação, preço-alvo e horizonte só quando
+    estavam escritos na página. A coleta contínua (buscas de opinião por ativo e research das casas) segue a partir daí."""
+    pasta = pasta or os.environ.get('ROBO_SEMENTES') or SEMENTES
+    if not os.path.isdir(pasta):
+        return 0
+    feitos = estado.setdefault('sementes', {})
+    total = 0
+    for nome in sorted(os.listdir(pasta)):
+        if not nome.endswith('.json'):
+            continue
+        with open(os.path.join(pasta, nome), 'rb') as fh:
+            corpo = fh.read()
+        marca_arq = hashlib.sha1(corpo).hexdigest()[:12]
+        if feitos.get(nome) == marca_arq:
+            continue
+        js = json.loads(corpo.decode('utf-8'))
+        itens, por_link = [], {}
+        for s0 in (js.get('itens') if isinstance(js, dict) else js) or []:
+            if not (s0.get('titulo') and s0.get('link') and s0.get('publicado_em') and s0.get('ativo')):
+                continue
+            tk = ticker_da_carteira(s0['ativo'], oregon)
+            if not tk:  # ativo fora das carteiras: não entra
+                continue
+            if s0['link'] in por_link:  # a mesma matéria sobre duas empresas (ex.: JPMorgan corta alvos de Axia e Copel): um item, dois ativos
+                y0 = por_link[s0['link']]
+                if tk not in y0['ativos']:
+                    y0['ativos'].append(tk)
+                    y0['ativos_porque'][tk] = 'busca específica do ativo'
+                    analise.classificar(y0, oregon, hoje)
+                continue
+            casa_pag = s0.get('casa_pagina')  # página publicada pela própria casa (InvesTalk, Genial Analisa…)
+            f = {'id': 'pesquisa-opinioes', 'nome': s0.get('veiculo') or 'Pesquisa de opiniões', 'organizacao': s0.get('veiculo') or '', 'categoria': 'instituicao' if casa_pag else 'veiculo',
+                 'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'research' if casa_pag else 'noticia', 'guardar_resumo': False}
+            p0 = s0['publicado_em']
+            quando = p0 if re.match(r'^\d{4}-\d{2}-\d{2}$', p0) else conteudo.data_iso(p0, 'BRT')
+            x = conteudo._novo_item(f, s0['titulo'], s0['link'], quando, agora_)
+            if not x or not x.get('link'):
+                continue
+            x.pop('posicao_pagina', None)
+            x['ativos'] = [tk]
+            x['ativos_porque'] = {tk: 'busca específica do ativo' + (' (%s)' % s0['ativo'] if tk != s0['ativo'] else '')}
+            if casa_pag:
+                x['casa_fonte'] = casa_pag
+            x['origem'] = 'pesquisa de opiniões de 12 meses (v3.4)'
+            x['verificacao'] = s0.get('verificacao') or 'busca'
+            for k in ('recomendacao', 'preco_alvo', 'horizonte', 'analista'):
+                if s0.get(k):
+                    x[k] = s0[k]
+            if s0.get('data_tipo') == 'atualizacao':  # a página só informa quando foi atualizada (InvesTalk): fica dito
+                x['data_e_atualizacao'], x['atualizado_em'] = True, x.get('publicado_em')
+            if s0.get('nota'):  # observação de quem conferiu (ex.: "alvo cortado de R$ 42 para R$ 40")
+                x['nota_pesquisa'] = str(s0['nota'])[:240]
+            # a pesquisa abriu a página e confirmou que é opinião sobre o ativo (o título nem sempre nomeia a casa):
+            # fica marcado no item, e a reclassificação de versões futuras mantém casas e sentido conferidos
+            x['opiniao_verificada'] = {'casas': list(s0.get('casas') or [])[:4], 'posicao': s0.get('posicao')}
+            analise.classificar(x, oregon, hoje)
+            x['analise'] = analise.analisar_regras(x, oregon)
+            por_link[s0['link']] = x
+            itens.append(x)
+        res, gravados = biblioteca.incorporar(itens, hoje, agora_)
+        feitos[nome] = marca_arq
+        total += len(gravados)
+        log('  sementes: %s → %d opiniões novas na biblioteca (%d já estavam)' % (nome, len(gravados), res['duplicados_id'] + res['duplicados_titulo']))
+    return total
+
+
 # ------------------------------------------------------------------ rodada
 def gravar_versao(agora_, macro, coleta, hoje_js, sem_js, estado):
     gravar('versao.json', {'versao': 3, 'produto': 'Oregon Intelligence', 'gerado_em': agora_.isoformat(timespec='seconds'), 'macro_em': (macro or {}).get('gerado_em'),
@@ -526,6 +703,8 @@ def main():
     log('  Oregon: %d ativos, %d setores, %d carteiras' % (len(oregon['ativos']), len(oregon['setores']), len(oregon['carteiras'])))
     rede = Rede(prazo_seg=int(cfg.get('prazo_rodada_min', 15)) * 60)
     migrar_acervo(estado, fontes_cfg)
+    migrar_acervo_v34(estado, hoje)
+    importar_sementes(oregon, hoje, agora_, estado)
 
     # 1. macro
     macro = coletar_macro(cfg, rede, hoje, agora_, estado, anterior)
@@ -548,12 +727,17 @@ def main():
     hoje_js, sem_arq, idx = {}, ler('semanal.json', {}) or {}, {'total': 0, 'meses': []}
     try:
         # 4. índice, recentes, briefing
+        biblioteca.FONTES_BLOQUEADAS = list((cfg.get('noticias') or {}).get('fontes_bloqueadas') or [])
         idx = biblioteca.reindexar(agora_)
         recentes = biblioteca.publicar_recentes(hoje, agora_, dias=int((cfg.get('intel') or {}).get('recentes_dias', 10)), oregon=oregon)
         try:
             biblioteca.publicar_opinioes(hoje, agora_, oregon=oregon)
         except Exception as e:  # o histórico de opiniões é acessório: nunca impede o resto da publicação
             log('  opiniões de 12 meses não publicadas: %s' % e)
+        try:
+            biblioteca.publicar_research(hoje, agora_, oregon=oregon)
+        except Exception as e:  # idem para o research de 90 dias
+            log('  research de 90 dias não publicado: %s' % e)
         hoje_js = semanal.briefing(recentes, macro, hoje, agora_, estado)
         gravar('hoje.json', hoje_js)
         log('  briefing: %d prioridades (janela de %s), %d itens recentes, %d na biblioteca' % (len(hoje_js['prioridades']), hoje_js['janela'], len(recentes), idx['total']))

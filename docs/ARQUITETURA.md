@@ -16,10 +16,20 @@
    (temas, regiões, ativos, setores, fatores, natureza, prioridade) e `analise.vinculos` (direto ou menção, por ativo) e `analise.analisar_regras` (leitura curta v2: base da leitura, números literais e perguntas do tema);
    `biblioteca.incorporar` deduplica por id (link normalizado) e por título (Jaccard ≥ 0,6, janela de 3 dias, nunca
    entre itens da mesma fonte) e grava por mês. Contadores em `coleta.json`.
+   Desde a v3.4: fontes com `ler_item` têm a página de cada item novo lida (`conteudo.ler_pagina_item`: datas de
+   publicação e atualização, autor e, nas casas com `casa`, recomendação, preço-alvo e horizonte quando escritos; o texto
+   não é guardado); páginas sem data viram acervo pelas regras de `antigo_sem_data` (mês de referência antigo, lote sem
+   data numa página já lida, link no fim da lista); `casas.sondar` procura o comentário de resultado do InvesTalk no
+   endereço do trimestre (até 4 por rodada, uma vez por dia cada); `pesquisas.atualizar` refaz a pesquisa ativo × fator
+   (Bing Notícias, até 6 por rodada, a cada 3 dias). Uma vez por versão: `migrar_acervo_v34` (cartas antigas sem data
+   já guardadas) e `importar_sementes` (opiniões conferidas de 12 meses em `robo/sementes/`, por marca do arquivo).
 5. **IA opcional** (`ler_com_ia`) — só com `ANTHROPIC_API_KEY` e `intel.ia.ativo = true`; itens de prioridade alta/média
    sem análise profunda, até `max_itens_dia` e `max_tokens_dia`; a resposta é validada (rótulos FATO/FONTE/INFERÊNCIA) e
    combinada com as regras (`analise.combinar`); uso registrado em `estado.json` (`ia_uso`, `ia_historico`).
-6. **Índice e recentes** — `biblioteca.reindexar` (`indice.json`) e `publicar_recentes` (`recentes.json`, 14 dias).
+6. **Índice e recentes** — `biblioteca.reindexar` (`indice.json`), `publicar_recentes` (`recentes.json`, 10 dias),
+   `publicar_opinioes` (`biblioteca/opinioes.json`, 12 meses) e `publicar_research` (`biblioteca/research.json`, 90 dias).
+   Itens gravados por versões anteriores são reclassificados na publicação (`REGRAS_VERSAO`), sem reescrever o mês; os
+   veículos de `fontes_bloqueadas` não são publicados nem do histórico.
 7. **Briefing** — `semanal.briefing` → `hoje.json` (prioridades com variedade, macro, gestoras, vídeos, leitura
    recomendada rotativa, perguntas de estudo, agenda).
 8. **Semanal** — sábado (ou modo `semanal`) → `semanal.json` (temas, teses, repetidos, assuntos para estudar;
@@ -42,8 +52,11 @@ Reaproveitados da v2 sem mudança de função: `fontes_macro.py`, `agenda.py`, `
 | `data/coleta.json` | contadores por fonte e últimas 30 rodadas | sim |
 | `data/semanal.json` | até 26 semanas | sim |
 | `data/macro.json`, `data/resultados.json`, `data/status.json`, `data/versao.json` | macro, CVM, situação, versão | sim |
+| `data/biblioteca/opinioes.json` | opiniões de casas dos últimos 12 meses (casa, sentido, recomendação, preço-alvo, horizonte, analista quando escritos) | sim |
+| `data/biblioteca/research.json` | cartas, research e instituições com data nos últimos 90 dias | sim |
+| `data/biblioteca/pesquisas.json` | pesquisa ativo × fator da janela de leitura (título, link, veículo, data) | sim |
 | `data/fontes.json` | cópia de `robo/fontes.json` | sim |
-| `data/estado.json` | controle interno (IA, caches, digesto) | **não** |
+| `data/estado.json` | controle interno (IA, caches, digesto, marca das sementes, endereços do InvesTalk já tentados) | **não** |
 
 Item (`biblioteca`): `id, titulo, link, pdf?, fonte_id, fonte, organizacao, categoria, pais, idioma, tipo, publicado_em,
 detectado_em, data_estimada, resumo, autor, temas[], regioes[], ativos[], ativos_porque{}, setores[], fatores[], natureza,
@@ -56,8 +69,11 @@ visto_em`. Itens absorvidos como "também em" recebem `agrupado_em` e saem das l
   injetada pelo build a partir de `robo/analise.py`) e a camada de dados: `versao.json` a cada 10 minutos, demais
   arquivos quando a versão muda, meses sob demanda (`A.carregarMes`), `resultados.json` quando uma ficha pede; vistas
   `A.itemRow`/`A.listaRows` (linhas de notícia com separador por dia, abrem no lugar), `A.itemCard`, `A.abrirItem` (janela de leitura editorial: fonte e data, resumo, por que importa, relação com a Oregon, contrapontos documentados, aprofundar recolhido; ao fechar, volta ao ponto de leitura), `I.vinculo` (mesma regra do robô, para itens antigos), `A.macroCards`, `A.agendaView`.
-- `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js` — Hoje, Biblioteca e as seções Brasil e Mundo e Estratégia. `ui_mapa.js` + `ui_mesa.js` — as 15 carteiras (pesos como
-  aprovados, validação, exposições agregadas). `ui_teses.js`, `core.js`, `store.js` (coleções `aprendizados` e `leituras`
+- `ui_hoje.js` — Hoje em quatro áreas (Radar das teses, Agenda decisiva, Research global, Debate de mercado), mapa de
+  atenção, desde a última visita e profundidade de leitura (guardadas neste navegador, chaves `oregon-intel-v3:`).
+  `ui_oregon.js` — Brasil e Mundo e Estratégia (Notícias, Research por recência e temas de gestão, Debate de mercado com
+  consultas externas, ETFs globais). `ui_bib.js` — Biblioteca (com Salvos para ler e o diagnóstico das fontes). `ui_mapa.js` + `ui_mesa.js` — as 15 carteiras (pesos como
+  aprovados, validação, exposições agregadas). `ui_teses.js`, `core.js`, `store.js` (coleções `aprendizados`, `leituras` e `salvos`
   neste navegador; no claude.ai, no banco do artefato), `quant.js` (só o que a validação usa).
 - `painel/arquivo/` — módulos arquivados sem apagar: cotações/mercado ao vivo, Sala de Gestão, Comitê, laboratório de
   propostas, risco e cenários, importação de séries, Mundo e Estratégia, Research Brasil antigo.

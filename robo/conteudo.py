@@ -360,6 +360,9 @@ def youtube(rede, f, agora_, desde_iso, chave=None):
     return out[: int(f.get('maximo', 15))], n
 
 
+ROTULO_GENERICO = re.compile(r'^\s*(read( the)? (article|more|full( article| report)?|report|now)|continue reading|learn more|leia( mais| o artigo| na [ií]ntegra)?|saiba mais|ver mais|veja mais|clique aqui|acesse( aqui)?|download|baixar( pdf)?|pdf|more|mais)\s*[›»>→.]*\s*$', re.I)
+
+
 def pagina(rede, f, agora_, vistos):
     """Página HTML pública: links que casem com `padrao` (regex sobre o href) viram itens; só os nunca vistos.
     Título = texto do link (ou o nome do arquivo). Data: só se `padrao_data` encontrar uma no texto do link; senão null."""
@@ -369,8 +372,16 @@ def pagina(rede, f, agora_, vistos):
     padrao = re.compile(f.get('padrao') or r'\.pdf(\?|$)', re.I)
     base = f['url_coleta']
     out, n, achados = [], 0, set()
-    for m in re.finditer(r'<a\b[^>]*href\s*=\s*["\']([^"\']+)["\'][^>]*>(.*?)</a>', txt, re.I | re.S):
+    links = list(re.finditer(r'<a\b[^>]*href\s*=\s*["\']([^"\']+)["\'][^>]*>(.*?)</a>', txt, re.I | re.S))
+    melhor = {}  # o mesmo link costuma aparecer com o título e com "Read article"/"Leia mais": fica o rótulo informativo
+    for m in links:
+        r0 = limpa_texto(m.group(2), TITULO_MAX)
+        if r0 and not ROTULO_GENERICO.match(r0):
+            melhor.setdefault(m.group(1).strip(), r0)
+    for m in links:
         href, rotulo = m.group(1).strip(), limpa_texto(m.group(2), TITULO_MAX)
+        if ROTULO_GENERICO.match(rotulo or ''):
+            rotulo = melhor.get(href, '')
         if not padrao.search(href):
             continue
         n += 1
@@ -391,7 +402,10 @@ def pagina(rede, f, agora_, vistos):
             k = trecho.lower().find('<a ')  # só até o próximo link: a data do item seguinte nunca é atribuída a este
             perto = limpa_texto(trecho[:k] if k >= 0 else trecho, 260)
             quando = data_escrita(perto)
-        x = _novo_item(f, titulo, link, quando, agora_, '', '', {'pdf': link} if link.lower().split('?')[0].endswith('.pdf') else None)
+        extra = {'posicao_pagina': n}  # ordem do link na listagem: arquivos antigos ficam no fim da página
+        if link.lower().split('?')[0].endswith('.pdf'):
+            extra['pdf'] = link
+        x = _novo_item(f, titulo, link, quando, agora_, '', '', extra)
         if x:
             out.append(x)
     if n == 0 and f.get('exige_links', True):
@@ -399,6 +413,57 @@ def pagina(rede, f, agora_, vistos):
     return out[: int(f.get('maximo', 20))], n
 
 
+
+
+# ------------------------------------------------------------------ página do próprio item (fontes de research)
+_META_DATA = [r'<meta[^>]+(?:property|name|itemprop)=["\'](?:article:published_time|og:published_time|datePublished|date|publish[-_]?date|pubdate|dc\.date)["\'][^>]*content=["\']([^"\']+)',
+              r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name|itemprop)=["\'](?:article:published_time|datePublished|date|publish[-_]?date)["\']',
+              r'"datePublished"\s*:\s*"([^"]+)"', r'<time[^>]+datetime=["\']([^"\']+)']
+_META_MOD = [r'<meta[^>]+(?:property|name)=["\'](?:article:modified_time|og:updated_time|dateModified)["\'][^>]*content=["\']([^"\']+)', r'"dateModified"\s*:\s*"([^"]+)"']
+_META_DESC = [r'<meta[^>]+(?:property|name)=["\'](?:og:description|description)["\'][^>]*content=["\']([^"\']+)',
+              r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\'](?:og:description|description)["\']']
+_META_AUTOR = [r'<meta[^>]+name=["\']author["\'][^>]*content=["\']([^"\']+)', r'"author"\s*:\s*\{[^}]*"name"\s*:\s*"([^"]+)"']
+
+
+def _meta(txt, padroes):
+    for rx in padroes:
+        m = re.search(rx, txt, re.I)
+        if m and m.group(1).strip():
+            return html.unescape(m.group(1).strip())
+    return None
+
+
+def ler_pagina_item(rede, robots, x, f, agora_, txt=None):
+    """Abre a página pública do item (só para fontes com `ler_item`, até `ler_item_max` por rodada) e acrescenta o que ela
+    declara: data de publicação e de atualização (meta tags e JSON-LD), resumo curto (descrição da própria página), autor e,
+    nas casas de análise, o texto visível para ler recomendação, preço-alvo e horizonte. Nada é inventado: sem a marcação,
+    o item fica como estava. Respeita o robots.txt e nunca guarda o texto da página."""
+    if txt is None:  # sem o texto já baixado: abre a página (respeitando o robots.txt)
+        if robots is not None and not robots.permite(x['link']):
+            return False
+        try:
+            txt = rede.get(f.get('nome') or f['id'], x['link'], timeout=20, tentativas=1).decode('utf-8', 'replace')
+        except Exception:
+            return False
+    pub = data_iso(_meta(txt, _META_DATA) or '', f.get('fuso'))
+    if pub and not x.get('publicado_em'):
+        x['publicado_em'], x['data_estimada'], x['data_da_pagina'] = pub, False, True
+        x.pop('referencia', None)
+    mod = data_iso(_meta(txt, _META_MOD) or '', f.get('fuso'))
+    if mod and mod != x.get('publicado_em'):
+        x['atualizado_em'] = mod
+    desc = _meta(txt, _META_DESC)
+    if desc and not x.get('resumo') and f.get('guardar_resumo', f.get('categoria') != 'veiculo'):
+        x['resumo'] = limpa_texto(desc)
+    autor = _meta(txt, _META_AUTOR)
+    if autor and not x.get('autor'):
+        x['autor'] = limpa_texto(autor, 80)
+    if f.get('casa'):
+        corpo = re.sub(r'(?is)<(script|style|nav|footer|header)[^>]*>.*?</\1>', ' ', txt)
+        visivel = limpa_texto(corpo, 20000)
+        x['_texto_casa'] = visivel[:6000]  # só para extrair recomendação/preço-alvo na classificação; não é guardado
+    x['pagina_lida_em'] = agora_.isoformat(timespec='minutes')
+    return True
 
 
 def sitemap(rede, f, agora_, desde_iso):

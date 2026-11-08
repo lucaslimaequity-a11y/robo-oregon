@@ -254,6 +254,16 @@ var TESTS = (function () {
       eq(C.sum(C.aprovadaOriginal('alt-sup').pos, function (x) { return x.w; }), 1.7, 1e-9, 'Alternativo Super Arrojado');
       var pil = 0; Object.keys(C.estrategica('intl-mod').alvo).forEach(function (p) { pil += C.estrategica('intl-mod').alvo[p]; }); eq(pil, 1.15, 1e-9, 'pilares do Internacional Moderado');
     });
+    t('v3.4: Grupo XP fora de tudo; opiniões da XP em outros veículos continuam; resultado exige período ou valor', function () {
+      var IN = typeof INTEL !== 'undefined' ? INTEL : null; if (!IN) { ok(true); return; }
+      ok(IN.bloqueado({organizacao: 'InfoMoney'}) && IN.bloqueado({fonte: 'x', aviso_fonte: 'Grupo XP — não citar em material de cliente'}), 'InfoMoney deveria ser bloqueado');
+      ok(!IN.bloqueado({organizacao: 'Money Times', titulo: 'XP revela suas 11 ações favoritas'}), 'opinião da XP em outro veículo foi bloqueada');
+      var L = IN.juntar([[{id: 'a', organizacao: 'InfoMoney', publicado_em: '2026-11-07'}, {id: 'b', organizacao: 'Money Times', publicado_em: '2026-11-07'}]]);
+      ok(L.length === 1 && L[0].id === 'b', 'juntar não removeu o veículo bloqueado');
+      var R = new RegExp(TAXON.vinculo.resultado, 'i');
+      ok(R.test('lucro dos bancoes cresce no 3t26') && R.test('klabin tem lucro 20% maior'), 'resultado não reconhecido');
+      ok(!R.test('homem tem a conta do bradesco invadida e sofre prejuizo de r$ 5 mil') && !R.test('copel divulga novo balanco sobre imoveis sem energia'), 'falso resultado');
+    });
     if (APP && APP.salaTestes) t('Sala local: lê Selic a 16% e propaga sem tratar placeholder como risco', function () {
       var L = APP.salaTestes.lerLocal('Copom eleva a Selic para 16% e a curva abre'); ok(L.base.selic > 2 && L.base.pre > 0, JSON.stringify(L.base));
       var e1 = APP.salaTestes.analiseLocal('Dólar dispara 5% com ruído fiscal', 'cresc-cons'); var I = APP.salaTestes.impactos(e1, 'cresc-cons');

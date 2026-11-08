@@ -63,7 +63,7 @@
     var noticias = c.noticias.filter(function (x) { return x.natureza !== 'opiniao_casa'; });
     var v = A.intel.versao, n7 = c.direto.filter(nos7).length;
     box.appendChild(h('div', {class: 'np-h'}, h('h3', null, 'Notícias de ' + t), h('span', {class: 'muted', title: 'Última coleta do robô'}, v ? 'coleta ' + I.horaAbs(v.gerado_em) : '')));
-    box.appendChild(h('p', {class: 'np-cont'}, h('b', null, String(n7)), (n7 === 1 ? ' direta' : ' diretas') + ' em 7 dias', c.mencoes.length ? ' · ' + c.mencoes.length + (c.mencoes.length > 1 ? ' menções' : ' menção') + ' de passagem' : '', c.tema.length ? ' · ' + c.tema.length + (etf ? ' do tema' : ' do setor') : ''));
+    box.appendChild(h('p', {class: 'np-cont', title: 'Empresa diretamente afetada: o ativo é o assunto. Setor e cadeia: não cita o ativo. Menção incidental: citado numa lista ou só no resumo.'}, h('b', null, String(n7)), (n7 === 1 ? ' diretamente sobre o ativo' : ' diretamente sobre o ativo') + ' em 7 dias', c.tema.length ? ' · ' + c.tema.length + (etf ? ' do tema geral' : ' de setor e cadeia') : '', c.mencoes.length ? ' · ' + c.mencoes.length + (c.mencoes.length > 1 ? ' menções incidentais' : ' menção incidental') : ''));
     box.appendChild(linksBusca(t));
     if (noticias.length) box.appendChild(lista(t, 'n', noticias, 8));
     else box.appendChild(h('p', {class: 'empty'}, A.intel.carregando ? 'Buscando as notícias…' : semDados() ? SEM_DADOS : 'Nenhuma notícia tem ' + (etf ? 'o fundo' : (a.nome || t)) + ' como assunto nos portais e na busca dos últimos dias. Use os links acima para buscar agora.'));
@@ -71,7 +71,7 @@
     if (c.oficiais.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, 'Documentos à CVM · ' + c.oficiais.length), lista(t, 'cvm', c.oficiais, 4)));
     if (c.tema.length) box.appendChild(h('div', null, h('h4', {class: 'np-sub'}, etf ? 'Índice e tema do ETF' : 'Setor e cadeia'),
       h('p', {class: 'hint', style: 'margin:0 0 4px'}, etf ? 'Sobre o mercado que o ETF acompanha, não sobre o fundo.' : 'Notícias do setor e da cadeia que movem a empresa; não citam a empresa.'), lista(t, 'tema', c.tema, 6)));
-    if (c.mencoes.length) box.appendChild(A.more('Menções de passagem (' + c.mencoes.length + ')', h('div', null, h('p', {class: 'hint', style: 'margin:0 0 4px'}, 'Manchetes que citam ' + t + ' numa lista (dividendos da semana, destaques do dia) ou só no resumo. Não entram nos contadores.'), lista(t, 'men', c.mencoes, 8))));
+    if (c.mencoes.length) box.appendChild(A.more('Menções incidentais (' + c.mencoes.length + ')', h('div', null, h('p', {class: 'hint', style: 'margin:0 0 4px'}, 'Manchetes que citam ' + t + ' numa lista (dividendos da semana, destaques do dia) ou só no resumo. Não entram nos contadores.'), lista(t, 'men', c.mencoes, 8))));
     box.appendChild(h('p', {class: 'hint np-pe'}, 'Portais, busca por ativo e CVM. ', h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({ativo: t}); }}, 'Histórico na Biblioteca')));
     return box;
   }
@@ -134,31 +134,6 @@
 
   /* ---------- opinião da casa (único preenchimento manual) ---------- */
   var RASC = {};
-  function opiniaoBox(t, a) {
-    var doc = STORE.get('teses', t) || {}, op = doc.opiniao || {};
-    var novo = RASC[t] || (RASC[t] = {teto: op.teto || '', conviccao: op.conviccao || '', premissas: op.premissas || '', conclusao: op.conclusao || ''});
-    var teto = h('input', {class: 'inp', type: 'number', step: '0.01', min: '0', value: novo.teto, placeholder: a.teto ? 'Teses: ' + A.num(a.teto, 2) : 'R$', oninput: function () { novo.teto = teto.value; }});
-    var conv = h('select', {class: 'inp', onchange: function () { novo.conviccao = conv.value; }}, [['', '—'], ['alta', 'Alta'], ['media', 'Média'], ['baixa', 'Baixa']].map(function (o) { return h('option', {value: o[0], selected: novo.conviccao === o[0] || null}, o[1]); }));
-    var prem = h('textarea', {class: 'inp w', style: 'min-height:70px', placeholder: 'Premissas próprias: crescimento, margens, custo de capital, cenário de juros…', oninput: function () { novo.premissas = prem.value; }}); prem.value = novo.premissas;
-    var conc = h('textarea', {class: 'inp w', style: 'min-height:70px', placeholder: 'Conclusão da casa e decisão do comitê (com a data da reunião)', oninput: function () { novo.conclusao = conc.value; }}); conc.value = novo.conclusao;
-    var mudou = ['teto', 'conviccao', 'premissas', 'conclusao'].some(function (k) { return String(novo[k] || '') !== String(op[k] || ''); });
-    var onde = STORE.mode === 'db' ? 'no banco deste painel no claude.ai' : 'neste navegador';
-    var hist = doc.opinioes || [];
-    return A.sec('Opinião da casa', {hint: 'O único campo preenchido à mão. Fica salvo ' + onde + '; cada gravação guarda a anterior no histórico. Não muda carteira.', right: h('button', {class: 'btn pri', onclick: async function () {
-      var reg = {teto: novo.teto === '' ? null : Number(novo.teto), conviccao: novo.conviccao || null, premissas: String(novo.premissas || '').trim(), conclusao: String(novo.conclusao || '').trim(), quando: STORE.now()};
-      if (reg.teto != null && !(reg.teto > 0)) { A.toast('Preço-teto precisa ser um número positivo.'); return; }
-      var d2 = C.clone(STORE.get('teses', t) || {}); if (d2.opiniao) d2.opinioes = (d2.opinioes || []).concat([d2.opiniao]).slice(-30); d2.opiniao = reg;
-      await STORE.put('teses', t, d2); await STORE.audit('opinião da casa salva', t); delete RASC[t]; A.toast('Opinião da casa sobre ' + t + ' salva.'); A.render();
-    }}, 'Salvar')}, [
-      mudou ? h('div', {class: 'alert warn', style: 'margin-top:0;font-size:.86rem'}, 'Há alterações ainda não salvas nesta ficha.') : null,
-      op.quando ? h('div', {class: 'alert ok', style: 'margin-top:0'}, h('b', null, 'Registrada em ' + A.dataBR(op.quando) + ': '), [op.teto ? 'teto da casa R$ ' + A.num(op.teto, 2) : null, op.conviccao ? 'convicção ' + {alta: 'alta', media: 'média', baixa: 'baixa'}[op.conviccao] : null].filter(Boolean).join(' · ') || 'sem teto nem convicção', op.conclusao ? h('div', {style: 'margin-top:4px'}, op.conclusao) : null) : null,
-      h('div', {class: 'form', style: 'grid-template-columns:repeat(2,minmax(0,1fr))'}, h('label', {class: 'field'}, 'Preço-teto da casa (R$)', teto), h('label', {class: 'field'}, 'Convicção', conv)),
-      h('label', {class: 'field'}, 'Premissas próprias', prem), h('label', {class: 'field'}, 'Conclusões e decisões do comitê', conc),
-      a.teto ? h('p', {class: 'hint'}, 'Referência oficial: preço-teto das Teses de 04/11/2026, R$ ' + A.num(a.teto, 2) + (a.metodologia_teto ? ' (' + a.metodologia_teto + ')' : ' (metodologia não informada)') + '.') : null,
-      hist.length ? A.more('Histórico (' + hist.length + ')', h('ul', null, hist.slice().reverse().map(function (o) { return h('li', null, A.dataBR(o.quando) + ': ' + [o.teto ? 'teto R$ ' + A.num(o.teto, 2) : null, o.conviccao ? 'convicção ' + o.conviccao : null, o.conclusao].filter(Boolean).join(' · ')); }))) : null]);
-  }
-
-  /* ---------- fichas ---------- */
   function blocoTxt(tit, conteudo) { return conteudo ? h('div', {class: 'fbloco'}, h('h3', null, tit), conteudo) : null; }
   function cabecalho(t, a, nm) {
     return h('div', {class: 'tv'}, h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' + (C.PIL[a.pilar] ? C.PIL[a.pilar].nome : '') + ' · ' : '') + (a.setor || a.tipo || '')), h('h2', {class: 'tv-nome', style: (nm || '').length > 60 ? 'font-size:1.45rem' : null}, nm || a.nome, h('span', {class: 'tv-tk'}, t), A.stchip(a.status), a.rec ? h('span', {class: 'tv-peso'}, a.rec) : null));
@@ -181,10 +156,8 @@
   function empresa(t) {
     var a = C.ATV[t]; if (!a) return h('div');
     var tx = A.teseDe(t), T = tx && tx.tese, P = A.prem(), sen = P.sens[t], c = conteudoDe(t);
-    var op = (STORE.get('teses', t) || {}).opiniao;
     var cab = h('div', null, cabecalho(t, a), pesosRef(t)), kpi = h('div', null, h('div', {class: 'vbox'},
       h('div', null, h('span', {class: 'k'}, 'Preço-teto (Teses)'), h('b', null, a.teto ? 'R$ ' + A.num(a.teto, 2) : '—'), h('small', null, a.teto ? (a.fonte_preco || 'Teses') + (a.metodologia_teto ? ' · ' + a.metodologia_teto : ' · metodologia não informada') : 'não informado')),
-      h('div', null, h('span', {class: 'k'}, 'Teto da casa'), h('b', null, op && op.teto ? 'R$ ' + A.num(op.teto, 2) : '—'), h('small', null, op && op.teto ? 'registrado em ' + A.dataBR(op.quando) : 'não registrado')),
       h('div', null, h('span', {class: 'k'}, 'Proventos 12 meses'), h('b', null, a.dy_12m != null ? A.pct(a.dy_12m, 1) : '—'), h('small', null, a.dy_12m != null ? 'dividend yield · ' + (a.fonte_ret || 'deck') : 'não informado')),
       h('div', null, h('span', {class: 'k'}, 'Retorno 12m (' + (a.data_ret || 'data no deck') + ')'), h('b', {class: A.cls(a.ret_12m)}, a.ret_12m != null ? A.spct(a.ret_12m, 1) : '—'), h('small', null, a.ret_12m != null ? (a.fonte_ret || '') + ' · dado do deck, não ao vivo' : 'não informado'))),
       a.ponto ? h('p', {class: 'tv-lead', style: 'margin:0 0 8px'}, h('b', null, (a.ponto_t || 'Leitura de valuation') + ': '), a.ponto) : null);
@@ -197,7 +170,6 @@
         h('div', {class: 'tv'}, T.questao ? h('p', {class: 'tv-lead'}, T.questao) : null, (T.criterios || []).length ? h('ul', null, T.criterios.map(li)) : null,
           (T.indicadores || []).length || a.acompanhamos ? h('div', null, h('h3', null, 'O que acompanhar'), h('ul', null, (T.indicadores || []).map(li).concat(a.acompanhamos ? [li(a.acompanhamos)] : []))) : null)));
       else box.appendChild(A.sec('O que mudaria a tese', null, h('div', null, tx && tx.nota ? h('div', {class: 'alert warn slim'}, tx.nota) : h('p', {class: 'muted'}, 'Sem tese no documento de 30/10/2026.'), a.acompanhamos ? h('p', null, h('b', null, 'O que acompanhar: '), a.acompanhamos) : null)));
-      box.appendChild(opiniaoBox(t, a));
       return box;
     }
     function eventos() {
@@ -284,6 +256,7 @@
   A.abrirEmpresa = function (t) {
     if (t === 'BBDC4' && !C.ATV.BBDC4) t = 'BBDC3';
     if (!C.ATV[t]) return;
+    A.registrarAtivo(t);
     if (ehGlobal(t)) { GLB.t = t; GLB.f = 'Todos'; A.go('mundo', 'etfs'); } else { EMP.t = t; EMP.f = 'Todos'; EMP.setor = null; A.go('brasil', 'ativos'); }
   };
   A.abrirSetor = function (setor) { EMP.setor = setor; EMP.f = 'Todos'; EMP.t = null; A.go('brasil', 'ativos'); };
@@ -291,6 +264,7 @@
   A.abrirFicha = function (t) {
     if (t === 'BBDC4' && !C.ATV.BBDC4) t = 'BBDC3';
     var a = C.ATV[t]; if (!a) return;
+    A.registrarAtivo(t);
     var e = etfInfo(t), tx = A.teseDe(t), T = tx && tx.tese, c = conteudoDe(t), body = h('div');
     body.appendChild(h('p', {class: 'tv-crumb'}, (a.pilar ? a.pilar + ' · ' : '') + (a.setor || a.tipo)));
     body.appendChild(h('h3', null, 'Últimas notícias'));
@@ -362,7 +336,7 @@
     ['instituicao', 'Bancos centrais e instituições', ['instituicao']], ['academia', 'Acadêmico e educacional', ['academia', 'youtube']]];
   function mundoAgora() {
     var wrap = h('div'), itens = A.itens();
-    wrap.appendChild(A.pageHead('Mundo e Estratégia', 'O que o mundo está falando', 'Imprensa internacional, bancos centrais e temas dos ETFs globais, por hora de publicação.'));
+    wrap.appendChild(A.pageHead('Mundo e Estratégia', 'O que o mundo está falando', 'Imprensa internacional, bancos centrais e temas dos ETFs globais, por hora de publicação. Análises e cartas estão em Research; opiniões em Debate.'));
     var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
     var mundo = I.ultimas(itens, {horas: 96, filtro: 'mundo'});
     // temas dos ETFs globais com notícia recente
@@ -387,18 +361,99 @@
         : h('p', {class: 'empty'}, A.intel.carregando ? 'Buscando…' : semDados() ? SEM_DADOS : 'Nada desta região nas últimas 96 horas.'))));
     return wrap;
   }
+  // Research global por recência: últimos 7 dias, 8 a 30, 31 a 90 ("ainda relevante"); o histórico fica na Biblioteca.
+  // Só entram itens com data de publicação; o que a fonte não data aparece à parte, recolhido, com a data de detecção.
+  var TEMAS_GESTAO = [['ciclo', 'Ciclo econômico', ['atividade', 'inflacao', 'fiscal']], ['lucros', 'Lucros e valuation', ['bolsa']], ['juros', 'Juros', ['juros']], ['credito', 'Crédito', ['credito']],
+    ['alocacao', 'Alocação global', ['alocacao', 'emergentes', 'europa', 'china']], ['fatores', 'Fatores', ['fatores']], ['commodities', 'Commodities e energia', ['commodities', 'energia_utilities']],
+    ['cambio', 'Câmbio', ['cambio']], ['portfolio', 'Construção de portfólios', ['metodo']], ['geopolitica', 'Geopolítica', ['geopolitica']], ['tecnologia', 'Tecnologia e IA', ['tecnologia_ia']], ['etfs', 'ETFs', []]];
+  function temaGestao(x, g) { return g[0] === 'etfs' ? (x.etfs_tema || []).length > 0 : (x.temas || []).some(function (t) { return g[2].indexOf(t) >= 0; }); }
+  var RS = {cat: 'todas', tema: null, max: 8, mx: {}};
+  function idadeDias(x) { var p = x.publicado_em; if (!p) return null; return (Date.now() - Date.parse(p.length <= 10 ? p + 'T12:00:00-03:00' : p)) / 864e5; }
   function mundoCartas() {
-    var wrap = h('div'), itens = A.itens();
-    wrap.appendChild(A.pageHead('Mundo e Estratégia', 'Cartas, research e conteúdo educacional', 'Gestoras, bancos centrais e instituições nos últimos 30 dias. Cartas antigas sem data ficam no acervo da Biblioteca.'));
-    var lim = Date.now() - 30 * 24 * 3600 * 1000;
-    var base = itens.filter(function (x) { if (x.acervo || x.agrupado_em) return false; var p = I.pub(x); return p && Date.parse(p.length <= 10 ? p + 'T12:00:00-03:00' : p) >= lim; });
-    var cont = {}; CATS.forEach(function (c) { cont[c[0]] = base.filter(function (x) { return c[2].indexOf(x.categoria) >= 0; }).length; });
-    var cat = CATS.filter(function (c) { return c[0] === MUN.cat; })[0] || CATS[0];
-    var lst = base.filter(function (x) { return cat[2].indexOf(x.categoria) >= 0; }).sort(function (a, b) { return I.pub(b).localeCompare(I.pub(a)); });
-    var barra = h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Filtrar por tipo de fonte'}, CATS.map(function (c) { return h('button', {'aria-pressed': MUN.cat === c[0] ? 'true' : 'false', disabled: !cont[c[0]] && c[0] !== 'todas' ? true : null, onclick: function () { MUN.cat = c[0]; MUN.cmax = 20; A.rerender(); }}, c[1] + (cont[c[0]] ? ' · ' + cont[c[0]] : '')); }));
-    wrap.appendChild(A.sec('Publicações recentes', {id: 'cartas', badge: h('span', {class: 'sec-n'}, '30 dias')}, h('div', null, barra,
-      lst.length ? h('div', null, A.listaItens(lst, {max: MUN.cmax, comNivel: true}), lst.length > MUN.cmax ? h('p', {style: 'text-align:center'}, h('button', {class: 'btn', onclick: function () { MUN.cmax += 20; A.rerender(); }}, 'Mostrar mais')) : null)
-        : h('p', {class: 'empty'}, A.intel.carregando ? 'Buscando…' : semDados() ? SEM_DADOS : 'Nada publicado nos últimos 30 dias por este tipo de fonte.'))));
+    var wrap = h('div'), itens = A.itensResearch ? A.itensResearch() : A.itens();
+    wrap.appendChild(A.pageHead('Mundo e Estratégia', 'Research global', 'Gestoras, bancos, casas de análise e instituições, das publicações mais recentes às ainda relevantes. Cartas antigas ficam na Biblioteca.'));
+    var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
+    var cat = CATS.filter(function (c) { return c[0] === RS.cat; })[0] || CATS[0];
+    var dup = {}, base = itens.filter(function (x) {  // o mesmo documento em vários arquivos (ex.: relatório mensal de cada fundo) aparece uma vez
+      if (x.acervo || x.agrupado_em || cat[2].indexOf(x.categoria) < 0) return false;
+      var k = (x.organizacao || x.fonte) + '|' + x.titulo + '|' + I.pub(x).slice(0, 10); if (dup[k]) return false; dup[k] = 1; return true;
+    });
+    var datados = base.filter(function (x) { var d = idadeDias(x); return d != null && d <= 90 && d > -1; });
+    var semData = base.filter(function (x) { return !x.publicado_em && x.detectado_em && Date.now() - Date.parse(x.detectado_em) <= 7 * 864e5; });
+    var g = TEMAS_GESTAO.filter(function (t) { return t[0] === RS.tema; })[0];
+    var lst = (g ? datados.filter(function (x) { return temaGestao(x, g); }) : datados).sort(function (a, b) { return I.pub(b).localeCompare(I.pub(a)); });
+    var f7 = lst.filter(function (x) { return idadeDias(x) <= 7; }), f30 = lst.filter(function (x) { var d = idadeDias(x); return d > 7 && d <= 30; }), f90 = lst.filter(function (x) { return idadeDias(x) > 30; });
+    // sumário da página e filtros
+    wrap.appendChild(h('nav', {class: 'sumario', 'aria-label': 'Nesta página'}, h('span', {class: 'muted'}, 'Nesta página:'), h('a', {href: '#rs-7'}, 'Últimos 7 dias (' + f7.length + ')'), h('a', {href: '#rs-30'}, '8 a 30 dias (' + f30.length + ')'),
+      h('a', {href: '#rs-90'}, 'Ainda relevante, 31 a 90 dias (' + f90.length + ')'), semData.length ? h('a', {href: '#rs-sem'}, 'Sem data na fonte (' + semData.length + ')') : null, h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({grupo: 'cartas'}); }}, 'Biblioteca histórica ↗')));
+    var cont = {}; CATS.forEach(function (c) { cont[c[0]] = itens.filter(function (x) { var d = idadeDias(x); return !x.acervo && !x.agrupado_em && c[2].indexOf(x.categoria) >= 0 && d != null && d <= 90; }).length; });
+    wrap.appendChild(h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Tipo de fonte'}, CATS.map(function (c) { return h('button', {'aria-pressed': RS.cat === c[0] ? 'true' : 'false', disabled: !cont[c[0]] && c[0] !== 'todas' ? true : null, onclick: function () { RS.cat = c[0]; RS.max = 8; RS.mx = {}; A.rerender(); }}, c[1], cont[c[0]] ? h('small', null, String(cont[c[0]])) : null); })));
+    // mapa de temas: assuntos dominantes nos últimos 90 dias, com os documentos que justificam cada um (toque filtra)
+    var tm = TEMAS_GESTAO.map(function (t) { return {t: t, n: datados.filter(function (x) { return temaGestao(x, t); }).length}; }).filter(function (o) { return o.n; }).sort(function (a, b) { return b.n - a.n; });
+    if (tm.length) {
+      var mx = tm[0].n;
+      wrap.appendChild(A.sec('Mapa de temas', {id: 'rs-temas', badge: h('span', {class: 'sec-n'}, '90 dias · toque para filtrar'), cls: 'sec-temas'}, h('div', {class: 'tbar', role: 'list'}, tm.map(function (o) {
+        var on = RS.tema === o.t[0];
+        return h('button', {class: 'tbar-r' + (on ? ' on' : ''), role: 'listitem', 'aria-pressed': on ? 'true' : 'false', title: o.n + ' publicações sobre ' + o.t[1].toLowerCase() + ' nos últimos 90 dias', onclick: function () { RS.tema = on ? null : o.t[0]; A.rerender(); }},
+          h('span', {class: 'tbar-l'}, o.t[1]), h('span', {class: 'tbar-b'}, h('i', {style: 'width:' + Math.max(4, Math.round(100 * o.n / mx)) + '%'})), h('span', {class: 'tbar-n'}, String(o.n)));
+      }), RS.tema ? h('p', {class: 'tbar-f'}, 'Filtrando: ' + g[1] + ' · ', h('button', {class: 'btn link', onclick: function () { RS.tema = null; A.rerender(); }}, 'mostrar todos os temas')) : null)));
+    }
+    function bloco(id, tit, l, cards) {
+      return A.sec(tit, {id: id, cls: 'sec-rs', badge: h('span', {class: 'sec-n'}, l.length + (l.length === 1 ? ' publicação' : ' publicações'))},
+        l.length ? (cards ? h('div', null, A.listaItens(l, {max: RS.max, comNivel: true}), l.length > RS.max ? h('p', {class: 'mais'}, h('button', {class: 'btn sm', onclick: function () { RS.max += 20; A.rerender(); }}, 'Mostrar mais ' + Math.min(20, l.length - RS.max))) : null)
+          : h('div', null, A.listaRows(l, {abrir: true, max: RS.mx[id] || 15}), l.length > (RS.mx[id] || 15) ? h('p', {class: 'mais'}, h('button', {class: 'btn sm', onclick: function () { RS.mx[id] = (RS.mx[id] || 15) + 30; A.rerender(); }}, 'Mostrar mais ' + Math.min(30, l.length - (RS.mx[id] || 15)))) : null))
+          : h('p', {class: 'empty sm'}, semDados() ? SEM_DADOS : 'Nada publicado neste período' + (g ? ' sobre ' + g[1].toLowerCase() : '') + ' pelas fontes deste filtro.'));
+    }
+    var col = h('div', {id: 'cartas'}); wrap.appendChild(col);
+    col.appendChild(bloco('rs-7', 'Últimos 7 dias', f7, true));
+    col.appendChild(bloco('rs-30', '8 a 30 dias', f30, false));
+    col.appendChild(bloco('rs-90', 'Ainda relevante · 31 a 90 dias', f90, false));
+    if (semData.length) col.appendChild(h('details', {class: 'sec sec-d', id: 'rs-sem'}, h('summary', null, h('h2', null, 'Sem data de publicação na fonte'), h('span', {class: 'sec-n'}, semData.length + ' detectados nos últimos 7 dias')),
+      h('div', {class: 'body'}, h('p', {class: 'hint'}, 'A página da fonte não informa quando publicou; a hora mostrada é a da detecção pelo robô.'), A.listaRows(semData, {abrir: true}))));
+    var co = A.intel.coleta && A.intel.coleta.fontes, paradas = 0;
+    if (co) Object.keys(co).forEach(function (k) { var u = co[k].ultimo_publicado; if (u && Date.now() - Date.parse(u) > 90 * 864e5) paradas++; });
+    if (paradas) col.appendChild(h('p', {class: 'muted rs-paradas'}, paradas + (paradas > 1 ? ' fontes estão' : ' fonte está') + ' sem publicação nova há mais de 90 dias: nada delas é reciclado aqui. ', h('button', {class: 'btn link', onclick: function () { A.go('bib', 'fontes'); }}, 'Ver diagnóstico das fontes')));
+    return wrap;
+  }
+
+  /* ---------- Debate de mercado ---------- */
+  // Análise de colaboradores (Seeking Alpha): opinião individual, separada de notícia e de research de banco
+  A.ehDebate = function (x) { return !!x && (!!x.debate || (/seeking-?alpha/i.test(x.fonte_id || '') && !/currents|news|noticias/i.test(x.fonte_id || ''))); };
+  var REDDIT = [['investing', 'Investimentos em geral, EUA'], ['stocks', 'Ações, EUA'], ['ValueInvesting', 'Value investing'], ['SecurityAnalysis', 'Análise fundamentalista'], ['Bogleheads', 'Alocação passiva e longo prazo'],
+    ['Economics', 'Macroeconomia'], ['dividends', 'Dividendos'], ['investimentos', 'Investimentos, Brasil']];
+  function xBusca(q) { return 'https://x.com/search?q=' + encodeURIComponent(q) + '&f=live'; }
+  function nomeBusca(t) { var a = C.ATV[t] || {}; return a.nome && a.nome !== t ? '"' + a.nome.replace(/ ON$| PN$/, '') + '"' : ''; }
+  // Consultas externas: abrem o Reddit e o X no navegador de quem usa. O Oregon não coleta nem verifica esse conteúdo.
+  A.consultasExternas = function (evs, compacto) {
+    var tks = []; (evs || []).forEach(function (ev) { ev.ts.forEach(function (r) { if (r.k !== 'setor' && tks.indexOf(r.t) < 0 && !A.ehETF(r.t)) tks.push(r.t); }); });
+    tks = tks.slice(0, compacto ? 4 : 10);
+    var xs = tks.map(function (t) { return [t, xBusca('"' + t + '"' + (nomeBusca(t) ? ' OR ' + nomeBusca(t) : '') + ' lang:pt')]; }).concat([['Ibovespa', xBusca('Ibovespa lang:pt')], ['Copom', xBusca('Copom OR Selic lang:pt')], ['Fed', xBusca('Fed rates OR FOMC lang:en')]]);
+    if (compacto) return h('div', {class: 'ext ext-c'}, h('p', null, h('b', null, 'Discussões fora do Oregon'), h('span', {class: 'muted'}, ' · abrem no seu navegador, sem coleta nem verificação')),
+      h('p', {class: 'ext-l'}, h('span', {class: 'ext-k'}, 'Reddit'), REDDIT.slice(0, 4).concat([REDDIT[7]]).map(function (r) { return h('a', {href: 'https://www.reddit.com/r/' + r[0] + '/top/?t=week', target: '_blank', rel: 'noopener'}, 'r/' + r[0]); })),
+      h('p', {class: 'ext-l'}, h('span', {class: 'ext-k'}, 'X'), xs.slice(0, 6).map(function (x0) { return h('a', {href: x0[1], target: '_blank', rel: 'noopener'}, x0[0]); })));
+    return h('div', {class: 'ext'},
+      h('div', {class: 'ext-g'}, h('h3', null, 'Reddit · comunidades'), h('ul', {class: 'ext-ul'}, REDDIT.map(function (r) { return h('li', null, h('a', {href: 'https://www.reddit.com/r/' + r[0] + '/top/?t=week', target: '_blank', rel: 'noopener'}, 'r/' + r[0]), h('span', {class: 'muted'}, ' · ' + r[1] + ' · mais votados da semana')); })),
+        tks.length ? h('p', {class: 'ext-l'}, h('span', {class: 'ext-k'}, 'Buscar no Reddit'), tks.map(function (t) { return h('a', {href: 'https://www.reddit.com/search/?q=' + encodeURIComponent(t) + '&sort=new', target: '_blank', rel: 'noopener'}, t); })) : null),
+      h('div', {class: 'ext-g'}, h('h3', null, 'X · buscas em tempo real'), h('ul', {class: 'ext-ul'}, xs.map(function (x0) { return h('li', null, h('a', {href: x0[1], target: '_blank', rel: 'noopener'}, x0[0])); }))),
+      h('p', {class: 'hint'}, 'Por que não há coleta automática: o Reddit veda robôs no robots.txt, encerra o RSS em 13/11/2026 e passou a exigir acordo para a API; a API do X é paga por post lido. Discussões são percepções de participantes, não fatos nem consenso.'));
+  };
+  var DB = {pos: 'todas'};
+  function mundoDebate() {
+    var wrap = h('div'), todos = A.itensAtivo();
+    wrap.appendChild(A.pageHead('Mundo e Estratégia', 'Debate de mercado', 'Opiniões publicadas, análises de colaboradores e onde o mercado discute. São percepções de participantes, não fatos nem consenso.'));
+    var fx = A.intelFaixa(); if (fx) wrap.appendChild(fx);
+    var ops = todos.filter(function (x) { var d = idadeDias(x); return x.natureza === 'opiniao_casa' && !x.agrupado_em && d != null && d <= 30; }).sort(function (a, b) { return I.pub(b).localeCompare(I.pub(a)); });
+    var colab = todos.filter(function (x) { var d = idadeDias(x); return A.ehDebate(x) && d != null && d <= 14; }).sort(function (a, b) { return I.pub(b).localeCompare(I.pub(a)); });
+    wrap.appendChild(h('nav', {class: 'sumario', 'aria-label': 'Nesta página'}, h('span', {class: 'muted'}, 'Nesta página:'), h('a', {href: '#db-op'}, 'Opiniões publicadas (' + ops.length + ')'), h('a', {href: '#db-colab'}, 'Análises de colaboradores (' + colab.length + ')'), h('a', {href: '#db-ext'}, 'Onde o mercado discute')));
+    var POS = [['todas', 'Todas'], ['favoravel', 'A favor'], ['contraria', 'Contra'], ['outras', 'Neutras ou sem sentido']];
+    var cnt = {todas: ops.length, favoravel: 0, contraria: 0, outras: 0}; ops.forEach(function (x) { cnt[x.posicao === 'favoravel' || x.posicao === 'contraria' ? x.posicao : 'outras']++; });
+    var l = DB.pos === 'todas' ? ops : ops.filter(function (x) { return DB.pos === 'outras' ? x.posicao !== 'favoravel' && x.posicao !== 'contraria' : x.posicao === DB.pos; });
+    wrap.appendChild(A.sec('Opiniões publicadas', {id: 'db-op', cls: 'sec-rs', badge: h('span', {class: 'sec-n'}, '30 dias'), hint: 'Casas de análise e bancos sobre empresas e fundos, como publicados. O sentido vem do título ou da página da casa; recomendação e preço-alvo só quando escritos.'},
+      h('div', null, h('div', {class: 'sub filt', role: 'toolbar', 'aria-label': 'Sentido'}, POS.map(function (p) { return h('button', {'aria-pressed': DB.pos === p[0] ? 'true' : 'false', disabled: !cnt[p[0]] && p[0] !== 'todas' ? true : null, onclick: function () { DB.pos = p[0]; A.rerender(); }}, p[1], h('small', null, String(cnt[p[0]]))); })),
+        l.length ? A.listaRows(l, {abrir: true, max: 60}) : h('p', {class: 'empty sm'}, semDados() ? SEM_DADOS : 'Nenhuma opinião neste filtro nos últimos 30 dias.'))));
+    wrap.appendChild(A.sec('Análises de colaboradores', {id: 'db-colab', cls: 'sec-rs', badge: h('span', {class: 'sec-n'}, '14 dias'), hint: 'Artigos assinados por colaboradores independentes (Seeking Alpha). Popularidade não é qualidade da tese; confira os números na fonte.'},
+      colab.length ? A.listaRows(colab, {abrir: true, max: 40}) : h('p', {class: 'empty sm'}, semDados() ? SEM_DADOS : 'Nenhuma análise de colaboradores coletada nos últimos 14 dias.')));
+    wrap.appendChild(A.sec('Onde o mercado discute', {id: 'db-ext', badge: h('span', {class: 'sec-n'}, 'consultas externas')}, A.consultasExternas(colab.concat(ops).map(function (x) { return {ts: I.diretos(x).map(function (t) { return {t: t, k: 'noticia'}; })}; }), false)));
     return wrap;
   }
   var GRUPOS_GL = [['Todos', null], ['Renda fixa', function (a) { return /Renda fixa/.test(a.classe || ''); }], ['Ações e outros', function (a) { return !/Renda fixa/.test(a.classe || ''); }]];
@@ -406,12 +461,12 @@
     var base = ativosDasCarteiras().filter(function (t) { return ehGlobal(t); });
     return listaComFicha(GLB, GRUPOS_GL, base, A.pageHead('Mundo e Estratégia', 'ETFs globais', 'Ficha verificada de cada ETF global e, ao lado, o que se fala do índice e do tema (não é fato do fundo).'));
   }
-  A.SUBS.mundo = [['agora', 'O que o mundo fala'], ['cartas', 'Cartas e research'], ['etfs', 'ETFs globais']];
+  A.SUBS.mundo = [['agora', 'Notícias'], ['cartas', 'Research'], ['debate', 'Debate de mercado'], ['etfs', 'ETFs globais']];
   A.areas.mundo = function () {
     var wrap = h('div'), s = S.sub.mundo;
     if (!A.SUBS.mundo.some(function (x) { return x[0] === s; })) s = S.sub.mundo = 'agora';
     wrap.appendChild(A.subnav('mundo', A.SUBS.mundo));
-    wrap.appendChild(s === 'cartas' ? mundoCartas() : s === 'etfs' ? mundoEtfs() : mundoAgora());
+    wrap.appendChild(s === 'cartas' ? mundoCartas() : s === 'debate' ? mundoDebate() : s === 'etfs' ? mundoEtfs() : mundoAgora());
     return wrap;
   };
 })(APP, CORE, INTEL);

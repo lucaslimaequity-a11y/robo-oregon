@@ -192,9 +192,12 @@ var INTEL = (function () {
   I.hojeBRT = function (d) { d = d || new Date(); try { var s = new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit'}).format(d); if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; } catch (e) {} return d.toISOString().slice(0, 10); };
   I.menosDias = function (iso, n) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - n); return d.toISOString().slice(0, 10); };
   // Junta listas de itens sem repetir (o mesmo id pode estar em recentes e no arquivo do mês), mais recentes primeiro
+  // Veículos do Grupo XP não aparecem em lugar nenhum (decisão da Oregon), nem o histórico gravado antes do bloqueio
+  var XP_RX = /\b(infomoney|expert ?xp|conte[uú]dos xp|xp investimentos|rico investimentos|clear corretora)\b|grupo xp/i;
+  I.bloqueado = function (x) { return XP_RX.test([x.organizacao, x.fonte, x.aviso_fonte].join(' ')); };
   I.juntar = function (listas) {
     var vis = {}, out = [];
-    listas.forEach(function (l) { (l || []).forEach(function (x) { if (!x || !x.id || vis[x.id] || x.agrupado_em) return; vis[x.id] = 1; out.push(x); }); });
+    listas.forEach(function (l) { (l || []).forEach(function (x) { if (!x || !x.id || vis[x.id] || x.agrupado_em || I.bloqueado(x)) return; vis[x.id] = 1; out.push(x); }); });
     out.sort(function (a, b) { return pub(b).localeCompare(pub(a)); });
     return out;
   };
@@ -261,13 +264,16 @@ var INTEL = (function () {
   async function carregarTudo() {
     var b = base(), st = {};
     async function um(nome, ms) { try { var j = await getJSON(b + nome + marca(), ms); st[nome] = {ok: true}; return j; } catch (e) { st[nome] = {ok: false, msg: motivo(e), ausente: /404/.test(String(e && e.message))}; return undefined; } }
-    var r = await Promise.all([um('macro.json', 15000), um('recentes.json', 30000), um('hoje.json'), um('coleta.json', 20000), um('semanal.json', 15000), um('biblioteca/opinioes.json', 20000)]);
+    var r = await Promise.all([um('macro.json', 15000), um('recentes.json', 30000), um('hoje.json'), um('coleta.json', 20000), um('semanal.json', 15000), um('biblioteca/opinioes.json', 20000), um('biblioteca/pesquisas.json', 15000), um('resultados.json', 20000), um('biblioteca/research.json', 20000)]);
     if (r[0] !== undefined) E.macro = r[0];
     if (r[1] !== undefined) E.recentes = r[1];
     if (r[2] !== undefined) E.hoje = r[2];
     if (r[3] !== undefined) E.coleta = r[3];
     if (r[4] !== undefined) E.semanal = r[4];
+    if (r[8] !== undefined) E.research = r[8];  // research de 90 dias (v3.4)
     if (r[5] !== undefined) E.opinioes = r[5];  // opiniões de 12 meses (publicado a partir da v3.3; ausente antes disso)
+    if (r[6] !== undefined) E.pesquisas = r[6];  // pesquisas sobre a relação ativo × fator (v3.4)
+    if (r[7] !== undefined) { E.res = r[7] && r[7].empresas ? r[7] : null; E.resLido = true; E.resAusente = !E.res; }  // resultados da CVM (temporada no Hoje e fichas)
     E.status = st;
     E.ultimo = new Date().toISOString();
   }
@@ -300,6 +306,8 @@ var INTEL = (function () {
   // Opiniões de casas de análise dos últimos 12 meses (biblioteca/opinioes.json) e o conjunto usado nas fichas dos ativos
   A.opinioes12m = function () { return (E.opinioes && E.opinioes.itens) || []; };
   A.itensAtivo = function () { return I.juntar([A.itens(), A.opinioes12m()]); };
+  // Cartas, research e instituições com data nos últimos 90 dias (biblioteca/research.json) somados ao que já está carregado
+  A.itensResearch = function () { return I.juntar([A.itens(), (E.research && E.research.itens) || []]); };
   A.carregarFontes = function () {
     if (E.fontes || E.fontesBuscando) return;
     E.fontesBuscando = true;
@@ -333,6 +341,29 @@ var INTEL = (function () {
     await STORE.put('aprendizados', id, {quando: reg.quando || STORE.now(), item_id: reg.item_id || null, titulo: reg.titulo || '', fonte: reg.fonte || '', link: A.link(reg.link) || null, temas: reg.temas || [], tipo: reg.tipo || 'aprendizado', nota: String(reg.nota || '').trim()});
     return id;
   };
+
+  /* ---------- ergonomia: última visita, ativos consultados, "ler depois", profundidade (tudo neste navegador) ---------- */
+  var LSK = 'oregon-intel-v3:';
+  function lsGet(k, d) { try { var v = JSON.parse(localStorage.getItem(LSK + k)); return v == null ? d : v; } catch (e) { return d; } }
+  function lsSet(k, v) { try { localStorage.setItem(LSK + k, JSON.stringify(v)); } catch (e) {} }
+  // A visita anterior é a referência de "novo para você" durante toda esta sessão; a atual vira referência da próxima.
+  var VIS = (function () { var v = lsGet('visita', {}); var ref = v.ultima || null; return {ref: ref}; })();
+  function marcarVisita() { lsSet('visita', {ultima: new Date().toISOString()}); }
+  try { window.addEventListener('pagehide', marcarVisita); document.addEventListener('visibilitychange', function () { if (document.hidden) marcarVisita(); }); setTimeout(marcarVisita, 90000); } catch (e) {}
+  A.visitaAnterior = function () { return VIS.ref; };
+  // Item novo para você: detectado pelo robô depois da sua visita anterior (a hora de publicação pode ser anterior)
+  A.novoParaVoce = function (x) { if (!VIS.ref || !x) return false; var d = x.detectado_em || x.publicado_em; return !!d && Date.parse(d) > Date.parse(VIS.ref); };
+  A.ativosRecentes = function () { return lsGet('ativos', []); };
+  A.registrarAtivo = function (t) { if (!t) return; var l = lsGet('ativos', []).filter(function (x) { return x !== t; }); l.unshift(t); lsSet('ativos', l.slice(0, 8)); };
+  A.prof = function () { var p = lsGet('prof', 'briefing'); return ['rapida', 'briefing', 'aprofundada'].indexOf(p) >= 0 ? p : 'briefing'; };
+  A.setProf = function (p) { lsSet('prof', p); A.rerender(); };
+  A.salvo = function (id) { return !!STORE.get('salvos', id); };
+  A.salvar = async function (x, sim) {
+    if (sim === false) { await STORE.del('salvos', x.id); return; }
+    await STORE.put('salvos', x.id, {quando: STORE.now(), titulo: x.titulo, link: A.link(x.link), fonte: x.organizacao || x.fonte, publicado_em: x.publicado_em || null, item: x});
+  };
+  A.salvos = function () { return STORE.list('salvos').sort(function (a, b) { return String(b.quando).localeCompare(String(a.quando)); }); };
+  A.lsGet = lsGet; A.lsSet = lsSet;
 
   /* ---------- vistas de conteúdo ---------- */
   var TIPO_CLS = {carta: 'c-carta', research: 'c-research', paper: 'c-research', macro: 'c-macro', dado_oficial: 'c-oficial', documento_oficial: 'c-oficial', discurso: 'c-oficial', relatorio: 'c-research', video: 'c-video', noticia: 'c-noticia', blog: 'c-research', podcast: 'c-video', fato_relevante: 'c-oficial'};
@@ -389,7 +420,8 @@ var INTEL = (function () {
   // Sinais curtos ao lado do título: opinião (com sentido), documento da CVM, fonte sinalizada, veículo pouco conhecido
   function marcadores(x) {
     var m = [];
-    if (x.natureza === 'opiniao_casa') m.push(h('span', {class: 'mk casa' + (x.posicao ? ' p-' + x.posicao : ''), title: 'Opinião ' + ((x.casas || []).join(', ') || 'de analistas') + (x.posicao ? ' · ' + I.POSICAO[x.posicao] : ' · sem sentido explícito') + ' (lido do título)'}, 'opinião' + (x.posicao === 'favoravel' ? ' ▲' : x.posicao === 'contraria' ? ' ▼' : '')));
+    if (x.natureza === 'opiniao_casa') m.push(h('span', {class: 'mk casa' + (x.posicao ? ' p-' + x.posicao : ''), title: 'Opinião ' + ((x.casas || []).join(', ') || 'de analistas') + (x.posicao ? ' · ' + I.POSICAO[x.posicao] : ' · sem sentido explícito') + (x.recomendacao || x.preco_alvo ? ' (recomendação e preço-alvo como publicados)' : ' (lido do título)')},
+      ((x.casas || [])[0] || 'opinião') + (x.posicao === 'favoravel' ? ' ▲' : x.posicao === 'contraria' ? ' ▼' : '') + (x.recomendacao ? ' · ' + x.recomendacao : '') + (x.preco_alvo ? ' · alvo ' + x.preco_alvo : '')));
     if (x.categoria === 'oficial_empresa') m.push(h('span', {class: 'mk cvm', title: 'Documento entregue pela companhia à CVM'}, x.tipo === 'fato_relevante' ? 'fato relevante' : 'CVM'));
     if (x.aviso_fonte) m.push(h('span', {class: 'mk av', title: x.aviso_fonte}, '!'));
     if (x.via && x.confiavel === false) m.push(h('span', {class: 'mk av', title: 'Veículo pouco conhecido, achado pela busca do ' + x.via + '. Confira na fonte.'}, '?'));
@@ -407,10 +439,12 @@ var INTEL = (function () {
   }
   // Linha de notícia (Hoje, Mundo): hora | veículo | título | ativo/tema | ↗. O título abre e fecha um resumo no próprio lugar.
   var ABERTO = {};
-  A.itemRow = function (x) {
-    var lk = A.link(x.link), ab = !!ABERTO[x.id], id = 'nr-' + x.id, hr = I.hora(x), org = orgDe(x);
-    var row = h('article', {class: 'nw nr' + (A.lido(x.id) ? ' lido' : '') + (ab ? ' aberto' : ''), 'data-id': x.id});
-    var bt = h('button', {class: 'nr-t nwl', 'aria-expanded': ab ? 'true' : 'false', 'aria-controls': id, onclick: function () {
+  A.itemRow = function (x, opt) {
+    opt = opt || {};
+    var lk = A.link(x.link), ab = !opt.abrir && !!ABERTO[x.id], id = 'nr-' + x.id, hr = I.hora(x), org = orgDe(x);
+    var row = h('article', {class: 'nw nr' + (A.lido(x.id) ? ' lido' : '') + (ab ? ' aberto' : '') + (A.novoParaVoce(x) ? ' novo' : ''), 'data-id': x.id});
+    var bt = h('button', {class: 'nr-t nwl', 'aria-expanded': opt.abrir ? null : ab ? 'true' : 'false', 'aria-controls': opt.abrir ? null : id, title: A.novoParaVoce(x) ? 'Novo desde a sua última visita' : null, onclick: function () {
+      if (opt.abrir) { A.abrirItem(x); return; }
       ABERTO[x.id] = !ABERTO[x.id];
       var d = row.querySelector('.nr-d'); if (d) d.remove();
       if (ABERTO[x.id]) row.appendChild(detalheRow(x, id));
@@ -418,7 +452,7 @@ var INTEL = (function () {
     }}, x.titulo);
     row.append(h('time', {class: 'nw-when' + (hr.sem ? ' sem' : ''), datetime: x.publicado_em || x.detectado_em || '', title: hr.tip + (x.publicado_em ? ' · ' + I.quando(x) : '')}, hr.txt),
       h('span', {class: 'nw-src', title: org}, org),
-      h('div', {class: 'nr-tt'}, bt, marcadores(x)),
+      h('div', {class: 'nr-tt'}, bt, marcadores(x), opt.extra ? opt.extra(x) : null),
       h('span', {class: 'nr-a'}, alvoLinha(x)),
       lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', title: 'Abrir a matéria original', 'aria-label': 'Abrir a matéria original'}, '↗') : h('span', {class: 'nw-ext off', 'aria-hidden': 'true'}));
     if (ab) row.appendChild(detalheRow(x, id));
@@ -430,8 +464,9 @@ var INTEL = (function () {
     else d.appendChild(h('p', {class: 'nr-so'}, 'Só a manchete foi coletada; o texto está na fonte original.'));
     var pq = porQueImporta(x).concat(relacaoOregon(x).map(function (r) { return {r: r.r, t: r.txt}; })).slice(0, 3);
     if (pq.length) d.appendChild(h('ul', {class: 'nr-pq'}, pq.map(function (f) { return h('li', null, rotulo(f.r), ' ', f.t); })));
+    var bs = h('button', {class: 'btn sm', onclick: async function () { await A.salvar(x, !A.salvo(x.id)); bs.textContent = A.salvo(x.id) ? 'Salvo' : 'Ler depois'; }}, A.salvo(x.id) ? 'Salvo' : 'Ler depois');
     d.appendChild(h('div', {class: 'nr-act'}, h('button', {class: 'btn sm', onclick: function () { A.abrirItem(x); }}, 'Ler mais'),
-      lk ? h('a', {class: 'btn sm pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte ↗') : null,
+      lk ? h('a', {class: 'btn sm pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte ↗') : null, bs,
       h('span', {class: 'muted nr-dt'}, datasTxt(x, true))));
     return d;
   }
@@ -443,7 +478,7 @@ var INTEL = (function () {
     itens.slice(0, opt.max || itens.length).forEach(function (x) {
       var d = I.hora(x).dia;
       if (opt.dias !== false && d !== dia) { dia = d; box.appendChild(h('div', {class: 'nr-day'}, I.rotuloDia(d))); }
-      box.appendChild(A.itemRow(x));
+      box.appendChild(A.itemRow(x, opt));
     });
     return box;
   };
@@ -466,8 +501,15 @@ var INTEL = (function () {
     var d = String(iso).slice(0, 10), w = DIAS[new Date(d + 'T12:00:00Z').getUTCDay()], m = String(iso).match(/T(\d{2}):(\d{2})/);
     return w + ', ' + d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4) + (m ? ' às ' + m[1] + ':' + m[2] : '');
   }
+  // Três datas distintas: publicação (da fonte), atualização (da fonte) e detecção (do robô)
   function datasTxt(x, curtoTxt) {
-    if (x.publicado_em) { var rel = I.quando(x); return 'Publicado ' + dataLonga(x.publicado_em) + (/^(há|hoje|ontem)/.test(rel) && x.publicado_em.length > 10 ? ' (' + rel + ')' : ''); }
+    if (x.publicado_em) {
+      var rel = I.quando(x), p = [(x.data_e_atualizacao ? 'Atualizado ' : 'Publicado ') + dataLonga(x.publicado_em) + (/^(há|hoje|ontem)/.test(rel) && x.publicado_em.length > 10 ? ' (' + rel + ')' : '')];
+      if (x.data_e_atualizacao) p.push('a página não informa a data de publicação');
+      else if (x.atualizado_em && x.atualizado_em.slice(0, 16) !== x.publicado_em.slice(0, 16)) p.push('atualizado ' + dataLonga(x.atualizado_em));
+      if (!curtoTxt && x.detectado_em) p.push('detectado pelo robô ' + dataLonga(x.detectado_em));
+      return p.join(' · ');
+    }
     if (x.acervo) return 'Acervo: já estava na página quando o robô a leu pela primeira vez' + (x.referencia ? ' · refere-se a ' + x.referencia.slice(5, 7) + '/' + x.referencia.slice(0, 4) : '');
     return 'Sem data de publicação na fonte · detectado pelo robô ' + (x.detectado_em ? dataLonga(x.detectado_em) : '');
   }
@@ -481,7 +523,7 @@ var INTEL = (function () {
   function porQueImporta(x) {
     var out = [], d = I.diretos(x), org = x.organizacao || x.fonte, an = x.analise || {};
     if (x.categoria === 'oficial_empresa') out.push({r: 'fato', t: (x.tipo === 'fato_relevante' ? 'Fato relevante entregue pela própria companhia à CVM: por norma, informação que pode influir na cotação.' : 'Documento entregue pela própria companhia à CVM (' + (x.categoria_cvm || 'documento') + ').')});
-    if (x.natureza === 'opiniao_casa') out.push({r: 'fonte', t: ((x.casas || []).length ? x.casas.join(', ') : 'Analistas não identificados') + (x.posicao ? ' em sentido ' + (x.posicao === 'favoravel' ? 'favorável' : x.posicao === 'contraria' ? 'contrário' : I.POSICAO[x.posicao]) : ', sem sentido explícito') + (d.length ? ' sobre ' + d.join(', ') : '') + ', segundo o título publicado por ' + (x.via ? x.fonte : org) + '. O relatório da casa não foi lido.'});
+    if (x.natureza === 'opiniao_casa') out.push({r: 'fonte', t: ((x.casas || []).length ? x.casas.join(', ') : 'Analistas não identificados') + (x.posicao ? ' em sentido ' + (x.posicao === 'favoravel' ? 'favorável' : x.posicao === 'contraria' ? 'contrário' : I.POSICAO[x.posicao]) : ', sem sentido explícito') + (d.length ? ' sobre ' + d.join(', ') : '') + (x.verificacao === 'pagina' ? ', conferido na página publicada por ' + org + '.' : x.pagina_lida_em && x.casa_fonte ? ', na página de research da própria casa (lida pelo robô).' : ', segundo o título publicado por ' + (x.via ? x.fonte : org) + '. O relatório da casa não foi lido.')});
     d.forEach(function (t) { if (I.vinculo(x, t).evento === 'resultado') out.push({r: 'sistema', t: 'Trata do resultado de ' + nomeAtivo(t) + ' (' + t + '), pela manchete.'}); });
     if (x.categoria === 'instituicao') out.push({r: 'fato', t: 'Fonte primária oficial: ' + org + '.'});
     if (/^gestora_/.test(x.categoria || '') && (x.tipo === 'carta' || x.tipo === 'research')) out.push({r: 'fonte', t: 'Visão própria da ' + org + ' (' + I.tipoNome(x.tipo).toLowerCase() + '), não notícia.'});
@@ -497,14 +539,51 @@ var INTEL = (function () {
     var out = [];
     (x.ativos || []).forEach(function (t) {
       var v = I.vinculo(x, t), p = pesos(t);
-      var resto = (v.tipo === 'direto' ? 'vínculo direto — ' : 'menção de passagem — ') + v.motivo + (p ? '; ' + p : '') + '.', nm = nomeAtivo(t);
+      var resto = (v.tipo === 'direto' ? 'empresa diretamente afetada — ' : 'menção incidental — ') + v.motivo + (p ? '; ' + p : '') + '.', nm = nomeAtivo(t);
       out.push({t: t, r: 'sistema', men: v.tipo !== 'direto', txt: (nm !== t ? nm + ' (' + t + ')' : t) + ': ' + resto, txtSem: (nm !== t ? nm + ': ' : '') + resto});
     });
-    if ((x.setor_de || []).length) out.push({r: 'sistema', txt: 'Setor' + (x.setor_nome ? ' de ' + x.setor_nome : '') + ': notícia do setor, não cita ' + x.setor_de.join(', ') + '.', ts: x.setor_de});
+    if ((x.setor_de || []).length) out.push({r: 'sistema', txt: 'Setor e cadeia' + (x.setor_nome ? ' (' + x.setor_nome + ')' : '') + ': hipótese de efeito sobre ' + x.setor_de.join(', ') + '; a notícia não cita a empresa.', ts: x.setor_de});
     var et = (x.etfs_tema || []).filter(function (t) { return (x.ativos || []).indexOf(t) < 0; });
-    if (et.length) out.push({r: 'sistema', txt: 'Tema de ETF' + (x.tema_etf ? ' (' + x.tema_etf + ')' : '') + ': ' + et.join(', ') + ' — notícia do índice ou do tema, não fato do fundo.', ts: et});
+    if (et.length) out.push({r: 'sistema', txt: 'Tema geral' + (x.tema_etf ? ' (' + x.tema_etf + ')' : '') + ': ' + et.join(', ') + ' — notícia do índice ou do tema, não fato do fundo.', ts: et});
     if ((x.fatores || []).length) out.push({r: 'sistema', txt: 'Fator de risco acompanhado: ' + x.fatores.map(I.fatorNome).join(', ') + ' (pelos termos do texto).'});
     return out;
+  }
+  // Para entender a relação: o mecanismo como a ficha verificada ou a tese interna o descrevem, o que se publica sobre a
+  // relação (pesquisa feita pelo robô no Bing Notícias, com a data) e a pesquisa pronta no Google. Nada aqui é conclusão.
+  var PERG = {selic: 'Como a Selic e os juros de curto prazo afetam', pre: 'Como a curva de juros prefixada afeta', real: 'Como o juro real (IPCA+) afeta', ust: 'Como os juros dos Treasuries afetam',
+    usd: 'Como o dólar afeta', spread: 'Como o spread de crédito afeta', ibov: 'Como a bolsa brasileira afeta', sp: 'Como a bolsa americana afeta', em: 'Como os mercados emergentes afetam', brent: 'Como o petróleo afeta', btc: 'Como o bitcoin afeta'};
+  function sensDe(t) { try { return (A.prem && A.prem().sens[t]) || null; } catch (e) { return null; } }
+  function etfDe(t) { var C0 = typeof CORE !== 'undefined' ? CORE : null; return (C0 && C0.D && C0.D.etfs && C0.D.etfs[t]) || null; }
+  A.perguntaRelacao = function (t, f) { var nm = nomeAtivo(t); return (PERG[f] || 'O que move') + ' ' + (nm !== t ? nm + ' (' + t + ')' : t) + '?'; };
+  A.pesquisa = function (t, f) { var P = E.pesquisas && E.pesquisas.pares; return P ? P[t + '|' + f] || P[t + '|*'] || null : null; };
+  function buscaGoogle(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); }
+  function buscaBing(q) { return 'https://www.bing.com/news/search?q=' + encodeURIComponent(q) + '&qft=sortbydate%3d%221%22'; }
+  function entenderRelacao(x) {
+    var C0 = typeof CORE !== 'undefined' ? CORE : null, ATV = (C0 && C0.ATV) || {};
+    var t = I.diretos(x)[0] || (x.etfs_tema || [])[0] || (x.setor_de || [])[0] || null, f = null, linhas = [];
+    if (t) {
+      var sv = sensDe(t); f = sv && sv.f || (x.fatores || [])[0] || null;
+      var e = etfDe(t), a = ATV[t] || {}, tx = A.teseDe ? A.teseDe(t) : null, T = tx && tx.tese;
+      if (e && (e.objetivo || e.papel_na_carteira)) linhas.push(h('li', null, rotulo('fato'), ' ', h('b', null, 'Ficha verificada do ' + t + ': '), curto(e.papel_na_carteira || e.objetivo, 260)));
+      else if (T && T.resumo) linhas.push(h('li', null, rotulo('sistema'), ' ', h('b', null, 'Tese Oregon (texto interno): '), curto(T.resumo, 240)));
+      else if (a.motores) linhas.push(h('li', null, rotulo('sistema'), ' ', h('b', null, 'Drivers na tese interna: '), curto(a.motores.split(' · ').slice(0, 3).join('; '), 220)));
+      if (f) linhas.push(h('li', null, rotulo('sistema'), ' ', h('b', null, 'Premissa interna de sensibilidade: '), I.fatorNome(f) + '. É hipótese de trabalho da carteira, não elasticidade medida.'));
+    } else if ((x.fatores || []).length) {
+      f = x.fatores[0];
+      var sens = (A.prem && A.prem().sens) || {}, exp = Object.keys(sens).filter(function (k) { return sens[k] && sens[k].f === f && ATV[k] && ATV[k].status !== 'placeholder'; });
+      if (exp.length) linhas.push(h('li', null, rotulo('sistema'), ' ', h('b', null, 'Ativos da carteira com premissa de sensibilidade a ' + I.fatorNome(f) + ': '), exp.slice(0, 8).map(function (k, i) { return h('span', null, i ? ', ' : '', h('button', {class: 'btn link', onclick: function () { fechar(); A.abrirFicha(k); }}, k)); }), exp.length > 8 ? ' e mais ' + (exp.length - 8) : ''));
+      t = exp[0] || null;
+    }
+    if (!t && !f) return null;
+    var q = t ? A.perguntaRelacao(t, f) : (PERG[f] || 'O que move') + ' a carteira?', pq = t ? A.pesquisa(t, f) : null;
+    var box = h('div', {class: 'lr-rel'}, h('p', {class: 'lr-q'}, q));
+    if (linhas.length) box.appendChild(h('ul', {class: 'lr-l'}, linhas));
+    if (pq && (pq.itens || []).length) box.appendChild(h('div', null, h('p', {class: 'lr-sub'}, 'O que se publica sobre isso · pesquisa do robô em ' + (pq.provedor || 'Bing Notícias') + (pq.atualizado_em ? ', ' + I.horaAbs(pq.atualizado_em) : '') + ' (“' + pq.consulta + '”)'),
+      h('ul', {class: 'lr-l refs'}, pq.itens.slice(0, 4).map(function (y) { var lk = A.link(y.link); return h('li', {class: 'lr-ref'}, y.publicado_em ? h('time', {class: 'nw-when'}, I.quando(y)) : null, ' ', lk ? h('a', {href: lk, target: '_blank', rel: 'noopener'}, y.titulo) : y.titulo, h('span', {class: 'muted'}, ' · ' + (y.fonte || ''))); }))));
+    box.appendChild(h('div', {class: 'lr-busca'}, h('a', {class: 'btn sm pri', href: buscaGoogle(q.replace(/\?$/, '')), target: '_blank', rel: 'noopener'}, 'Pesquisar no Google ↗'),
+      h('a', {class: 'btn sm', href: buscaBing(t ? (nomeAtivo(t) !== t ? '"' + nomeAtivo(t) + '" ' : t + ' ') + (f ? I.fatorNome(f).split(' / ')[0] : '') : I.fatorNome(f)), target: '_blank', rel: 'noopener'}, 'Notícias no Bing ↗'),
+      h('span', {class: 'muted lr-bnota'}, 'Abre fora do Oregon; os resultados não são verificados.')));
+    return box;
   }
   // Contrapontos documentados: opiniões em sentido oposto sobre o mesmo ativo, ou contrapontos do próprio texto (IA). Nada genérico.
   function contrapontosDoc(x) {
@@ -523,6 +602,29 @@ var INTEL = (function () {
     return h('li', {class: 'lr-ref'}, h('time', {class: 'nw-when'}, I.quando(y)), ' ', h('button', {class: 'nwl', onclick: function () { A.abrirItem(y); }}, y.titulo),
       h('span', {class: 'muted'}, ' · ' + orgDe(y)), lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', 'aria-label': 'Abrir a fonte'}, '↗') : null);
   }
+  function visaoAnterior(x) {
+    var d = I.diretos(x), casas = x.casas || [];
+    if (!d.length || !casas.length) return null;
+    var pub = I.pub(x);
+    return (A.itensAtivo ? A.itensAtivo() : []).filter(function (y) {
+      return y.id !== x.id && y.natureza === 'opiniao_casa' && I.pub(y) < pub && (y.casas || []).some(function (c) { return casas.indexOf(c) >= 0; }) && I.diretos(y).some(function (t) { return d.indexOf(t) >= 0; });
+    }).sort(function (a, b) { return I.pub(b).localeCompare(I.pub(a)); })[0] || null;
+  }
+  function opiniaoView(x) {
+    var linhas = [], ant = visaoAnterior(x);
+    function li(k, v) { if (v) linhas.push(h('div', null, h('dt', null, k), h('dd', null, v))); }
+    li('Casa', (x.casas || []).join(', ') || null);
+    li('Analista', x.analista || null);
+    li('Recomendação', x.recomendacao || null);
+    li('Preço-alvo', x.preco_alvo ? x.preco_alvo + (x.horizonte ? ' · ' + x.horizonte : '') : null);
+    li('Sentido', x.posicao ? I.POSICAO[x.posicao] + (x.recomendacao || x.verificacao === 'pagina' ? '' : ' (lido do título)') : null);
+    li('Observação', x.nota_pesquisa || null);
+    if (ant) li('Visão anterior', h('span', null, h('button', {class: 'nwl', onclick: function () { A.abrirItem(ant); }}, I.quando(ant)), ': ',
+      [ant.recomendacao, ant.preco_alvo ? 'alvo ' + ant.preco_alvo : null].filter(Boolean).join(' · ') || (ant.posicao ? I.POSICAO[ant.posicao] : 'sem recomendação escrita'),
+      (ant.recomendacao && x.recomendacao && ant.recomendacao !== x.recomendacao) || (ant.preco_alvo && x.preco_alvo && ant.preco_alvo !== x.preco_alvo) ? h('b', {class: 'lr-mud'}, ' · mudou') : null));
+    if (!linhas.length) return null;
+    return h('div', null, h('dl', {class: 'lr-dl'}, linhas), h('p', {class: 'lr-sub'}, x.verificacao === 'pagina' ? 'Conferido na página da fonte. Campos ausentes não estavam escritos.' : 'Campos ausentes não estavam escritos no título, no resumo ou na página da casa.'));
+  }
   A.leituraView = function (x) {
     var lk = A.link(x.link), an = x.analise || {}, box = h('div', {class: 'lr'});
     var kick = x.categoria === 'oficial_empresa' ? 'Documento à CVM · ' + (x.categoria_cvm || I.tipoNome(x.tipo)) : x.natureza === 'opiniao_casa' ? 'Opinião publicada · ' + (I.CATEGORIA[x.categoria] || '') : I.tipoNome(x.tipo) + ' · ' + (I.CATEGORIA[x.categoria] || x.categoria || '');
@@ -531,9 +633,12 @@ var INTEL = (function () {
     box.appendChild(h('p', {class: 'lr-m'}, h('b', null, orgDe(x)), x.autor && x.autor !== orgDe(x) ? ' · ' + x.autor : '', x.via ? h('span', {class: 'muted'}, ' · via ' + x.via) : null, h('br'),
       h('span', {class: x.publicado_em ? '' : 'lr-est'}, datasTxt(x))));
     var lido = A.lido(x.id), btL = h('button', {class: 'btn sm', onclick: async function () { await A.marcarLido(x, !A.lido(x.id)); btL.textContent = A.lido(x.id) ? 'Desmarcar leitura' : 'Marcar como lido'; }}, lido ? 'Desmarcar leitura' : 'Marcar como lido');
+    var btS = h('button', {class: 'btn sm', onclick: async function () { await A.salvar(x, !A.salvo(x.id)); btS.textContent = A.salvo(x.id) ? 'Salvo para ler' : 'Ler depois'; }}, A.salvo(x.id) ? 'Salvo para ler' : 'Ler depois');
     box.appendChild(h('div', {class: 'lr-acts'}, lk ? h('a', {class: 'btn pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte original ↗') : h('span', {class: 'muted'}, 'Item sem link válido.'),
-      x.pdf && A.link(x.pdf) && x.pdf !== x.link ? h('a', {class: 'btn sm', href: A.link(x.pdf), target: '_blank', rel: 'noopener'}, 'PDF') : null, btL));
+      x.pdf && A.link(x.pdf) && x.pdf !== x.link ? h('a', {class: 'btn sm', href: A.link(x.pdf), target: '_blank', rel: 'noopener'}, 'PDF') : null, btS, btL));
     function sec(tit, rot, corpo, cls) { return h('section', {class: 'lr-s' + (cls ? ' ' + cls : '')}, h('h3', null, tit, rot ? rotulo(rot) : null), corpo); }
+    // 0. opinião publicada: casa, analista, recomendação, preço-alvo e horizonte só quando escritos; mudança frente à visão anterior da mesma casa
+    if (x.natureza === 'opiniao_casa') { var op = opiniaoView(x); if (op) box.appendChild(sec('Opinião publicada', 'fonte', op, 'lr-op')); }
     // 1. o que diz a fonte
     if ((an.resumo_ia || []).length) box.appendChild(sec('Resumo', 'ia', h('ul', {class: 'lr-l'}, an.resumo_ia.map(function (f) { return h('li', null, f.t); }))));
     else if (an.base === 'resumo' || (!an.v && x.resumo && x.resumo.length >= 40)) box.appendChild(sec('Resumo da fonte', 'fonte', h('p', {class: 'lr-r'}, curto(x.resumo, 420))));
@@ -542,10 +647,10 @@ var INTEL = (function () {
     var pq = porQueImporta(x);
     if (pq.length) box.appendChild(sec('Por que importa', null, h('ul', {class: 'lr-l'}, pq.map(function (f) { return h('li', null, rotulo(f.r), ' ', f.t); }))));
     // 3. relação com a Oregon
-    var rel = relacaoOregon(x);
-    if (rel.length) box.appendChild(sec('Relação com a Oregon', null, h('ul', {class: 'lr-l'}, rel.map(function (r) {
+    var rel = relacaoOregon(x), ent = entenderRelacao(x);
+    if (rel.length || ent) box.appendChild(sec('Relação com a Oregon', null, h('div', null, rel.length ? h('ul', {class: 'lr-l'}, rel.map(function (r) {
       return h('li', {class: r.men ? 'men' : null}, rotulo(r.r), ' ', r.t ? h('button', {class: 'tag tk' + (r.men ? ' men' : ''), onclick: function () { fechar(); A.abrirFicha(r.t); }}, r.t) : null, r.t ? ' ' : null, r.t ? r.txtSem : r.txt);
-    }))));
+    })) : null, ent)));
     // 4. contrapontos documentados (só quando existem)
     var ct = contrapontosDoc(x);
     if (ct.itens.length) box.appendChild(sec('Contrapontos documentados', ct.itens[0].item ? 'fonte' : 'ia', h('div', null, h('p', {class: 'lr-sub'}, ct.rot),

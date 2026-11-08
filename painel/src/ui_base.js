@@ -83,8 +83,8 @@ var APP = (function () {
   /* ---------- seção ---------- */
   A.sec = function (titulo, opts, body) {
     opts = opts || {};
-    var hd = h('header', null, h('h2', null, titulo), opts.badge || null, opts.mtd ? A.ibtn(opts.mtd) : null, opts.right ? h('div', {class: 'right row'}, opts.right) : null);
-    return h('section', {class: 'sec', id: opts.id || null}, hd, opts.hint ? h('div', {class: 'body', style: 'padding-bottom:0'}, h('p', {class: 'hint'}, opts.hint)) : null, h('div', {class: 'body' + (opts.flush ? ' flush' : '')}, body), opts.more || null);
+    var hd = h('header', null, h('h2', null, titulo), opts.badge || null, opts.mtd ? A.ibtn(opts.mtd) : null, opts.right ? h('div', {class: 'right row'}, opts.right) : null, opts.hint ? h('p', {class: 'hint sh'}, opts.hint) : null);
+    return h('section', {class: 'sec' + (opts.cls ? ' ' + opts.cls : ''), id: opts.id || null}, hd, h('div', {class: 'body' + (opts.flush ? ' flush' : '')}, body), opts.more || null);
   };
   A.more = function (label, body, open) { return h('details', {class: 'x', open: open || null}, h('summary', null, label), h('div', {class: 'body'}, body)); };
 
@@ -436,21 +436,33 @@ var APP = (function () {
   /* ---------- metodologia contextual ---------- */
   A.MTD = {};
   A.ibtn = function (key) { return h('button', {class: 'ibtn', title: 'Metodologia', 'aria-label': 'Metodologia', onclick: function () { A.drawer('Metodologia', A.MTD[key] ? A.MTD[key]() : h('p', null, 'Sem nota.')); }}, 'i'); };
+  // Gaveta (janela lateral). Ao fechar, a página volta ao ponto de leitura e o foco volta ao item que a abriu.
+  var VOLTA = null;
+  function voltar() {
+    var v = VOLTA; VOLTA = null; if (!v) return;
+    if (Math.abs(window.scrollY - v.y) > 2) window.scrollTo(0, v.y);
+    var alvo = v.el && document.body.contains(v.el) ? v.el : v.id ? document.querySelector('[data-id="' + v.id + '"] .nwl, [data-id="' + v.id + '"] button') : null;
+    if (alvo && alvo.focus) { try { alvo.focus({preventScroll: true}); } catch (e) {} }
+  }
   A.drawer = function (titulo, body) {
-    var old = document.querySelector('.drawer'); if (old) old.remove();
+    var old = document.querySelector('.drawer');
+    // troca de gaveta: o ponto de volta continua o da primeira
+    if (old) Element.prototype.remove.call(old); else { var ae = document.activeElement, card = ae && ae.closest ? ae.closest('[data-id]') : null; VOLTA = {y: window.scrollY, el: ae && ae !== document.body ? ae : null, id: card ? card.getAttribute('data-id') : null}; }
     var d = h('aside', {class: 'drawer', role: 'dialog', 'aria-label': titulo}, h('header', null, h('h2', null, titulo), h('button', {class: 'x', onclick: function () { d.remove(); }}, 'Fechar')), h('div', {class: 'body mtd'}, body));
+    var rm = d.remove.bind(d);
+    d.remove = function () { rm(); if (!document.querySelector('.drawer')) setTimeout(voltar, 0); };
     document.body.appendChild(d); A.flush();
-    var close = d.querySelector('.x'); if (close) close.focus();
+    var close = d.querySelector('.x'); if (close) close.focus({preventScroll: true});
     return d;
   };
 
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var d = document.querySelector('.drawer'); if (d) d.remove(); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !document.querySelector('.cmdk-bg')) { var d = document.querySelector('.drawer'); if (d) d.remove(); } });
 
   /* ---------- áreas ---------- */
   A.areas = {};
   // Cinco seções: Hoje (o que saiu agora), Brasil (cada ativo brasileiro com as notícias ao lado), Mundo e Estratégia
   // (o que o mundo fala, cartas e research, ETFs globais), Carteiras (as 15 aprovadas) e Biblioteca (busca, semanal, fontes).
-  A.AREAS = [['hoje', 'Hoje', null], ['brasil', 'Brasil', 'var(--br)'], ['mundo', 'Mundo e Estratégia', 'var(--intl)'], ['cart', 'Carteiras', 'var(--rf)'], ['bib', 'Biblioteca', null]];
+  A.AREAS = [['hoje', 'Hoje', null, 'Hoje'], ['brasil', 'Brasil', 'var(--br)', 'Brasil'], ['mundo', 'Mundo e Estratégia', 'var(--intl)', 'Mundo'], ['cart', 'Carteiras', 'var(--rf)', 'Carteiras'], ['bib', 'Biblioteca', null, 'Biblioteca']];
   A.SUBS = {};  // preenchido por cada módulo (ui_bib.js, ui_oregon.js, ui_mapa.js)
   // A faixa de carteira e versão aparece onde qualquer das 15 pode ser escolhida (Carteiras, fora da referência)
   A.mostraCtx = function () { return S.area === 'cart' && S.sub.cart !== 'ref'; };
@@ -491,7 +503,7 @@ var APP = (function () {
     if (area === 'mundo' && sub && !(A.SUBS.mundo || []).some(function (x) { return x[0] === sub; })) return ['mundo', 'agora'];
     return [area, sub];
   };
-  A.go = function (area, sub) { var t = A.traduz(area, sub); area = t[0]; sub = t[1]; S.area = area; if (sub) S.sub[area] = sub; A.render(); window.scrollTo(0, 0); };
+  A.go = function (area, sub) { VOLTA = null; var t = A.traduz(area, sub); area = t[0]; sub = t[1]; S.area = area; if (sub) S.sub[area] = sub; A.render(); window.scrollTo(0, 0); };
 
   return A;
 })();

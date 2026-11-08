@@ -31,7 +31,7 @@ for _te in (_cfg.get('noticias') or {}).get('etfs') or []:
         if _te.get('busca') and _t not in _buscas:
             _buscas[_t] = _te['busca']
 taxon = {'temas': analise.TEMA_NOME, 'regioes': analise.REGIAO_NOME, 'fatores': analise.FATOR_NOME, 'tipos': analise.TIPO_NOME, 'roteiro': analise.ROTEIRO,
-         'buscas': _buscas, 'cvm': _cvm}
+         'buscas': _buscas, 'cvm': _cvm, 'vinculo': analise.VINCULO}
 js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'main.js']
 parts = [js_const('DATA', data), js_const('TAXON', taxon)]
 for f in js_order:

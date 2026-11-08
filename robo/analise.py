@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Classificação, prioridade e análise em sete pontos do Oregon Intelligence.
+"""Classificação, prioridade, vínculo com os ativos e leitura curta do Oregon Intelligence.
 
 Tudo aqui funciona SEM chave de IA (regras determinísticas sobre título, resumo curto, fonte e tipo). Com a chave
 da Anthropic configurada e `intel.ia.ativo` = true, a leitura por IA complementa os itens prioritários, dentro de
-um teto diário de itens e de tokens (robo/config.json). Em todos os casos cada frase da análise leva um rótulo:
+um teto diário de itens e de tokens (robo/config.json). Cada frase produzida leva um rótulo:
   FATO       — o que a fonte publicou (título, autor, data, tipo) e o que o texto público afirma literalmente;
   FONTE      — opinião ou tese da própria fonte;
-  INFERÊNCIA — ligação feita pelo sistema (palavras-chave → tema, ativo, fator) ou roteiro de estudo.
-O sistema nunca conclui impacto, direção ou recomendação. Onde a evidência não basta, diz "não avaliado".
+  INFERÊNCIA — ligação feita pelo sistema (palavras-chave → tema, ativo, fator).
+O sistema nunca conclui impacto, direção ou recomendação, e não preenche lacunas: com só a manchete, a leitura diz
+isso e manda para a fonte original. Cada ativo citado recebe um vínculo: direto (o ativo é o assunto) ou menção
+(citado de passagem, por exemplo numa lista de dividendos), e só o vínculo direto pesa na prioridade.
 """
 import datetime as dt
 import json
@@ -89,7 +91,7 @@ CASAS = [('BTG Pactual', r'\bBTG\b'), ('XP', r'\bXP\b'), ('Itaú BBA', r'\bIta[u
          ('Suno Research', r'\bSuno Research\b'), ('Barclays', r'\bBarclays\b'), ('HSBC', r'\bHSBC\b'), ('Jefferies', r'\bJefferies\b'), ('Bernstein', r'\bBernstein\b'), ('Moody\'s', r"\bMoody'?s\b"),
          ('S&P Global', r'\bS&P Global\b'), ('Fitch', r'\bFitch\b')]
 OPINIAO = ['recomenda', 'recomendacao', 'eleva', 'rebaixa', 'corta', 'preco-alvo', 'preco alvo', 'compra', 'venda', 'neutr', 'overweight', 'underweight', 'outperform', 'underperform',
-           'carteira', 've ', 'veem', 'projeta', 'estima', 'preve', 'espera', 'aposta', 'inicia cobertura', 'upgrade', 'downgrade', 'target', 'rating', 'perspectiva', 'revisa', 'mantem', 'gosta',
+           'carteira', 've ', 'veem', 'projeta', 'estima', 'preve', 'espera', 'aposta', 'inicia cobertura', 'upgrade', 'downgrade', 'target', 'rating', 'perspectiva', 'revisa', 'gosta',
            'prefere', 'favorit', 'top pick', 'ações para', 'acoes para', 'tira', 'inclui', 'reforca', 'sees', 'raises', 'cuts', 'lifts', 'expects', 'forecast',
            ' diz', 'avalia', 'segundo', 'alerta', 'sinaliza', 'muda o tom', 'says', 'warns']
 
@@ -118,11 +120,15 @@ def posicao_opiniao(item):
     return 'favoravel' if fav else 'contraria' if con else None
 
 
+# "mantém" só é opinião quando se refere à recomendação ("mantém compra"), não em "Itaú mantém a dianteira"
+OPINIAO_RX = [r'\bmantem (a |sua |o |seu )?(recomendacao|indicacao|compra|venda|neutr|preco|classificacao|rating|outperform|overweight|underweight)']
+
+
 def casas_citadas(item):
     """Casas de análise citadas COM verbo de opinião no título ou resumo (lista de nomes)."""
     bruto = (item.get('titulo') or '') + ' ' + (item.get('resumo') or '')
     txt = ' ' + sem_acento(bruto).lower() + ' '
-    if not any(o in txt for o in OPINIAO):
+    if not (any(o in txt for o in OPINIAO) or any(re.search(r, txt) for r in OPINIAO_RX)):
         return []
     return [nome for nome, rx in CASAS if re.search(rx, bruto)]
 
@@ -308,6 +314,7 @@ def classificar(item, oregon, hoje):
         item['posicao'] = posicao  # None = opinião sem sentido explícito no título
     else:
         item.pop('posicao', None)
+    item['vinculos'] = vinculos(item, oregon)
     item['prioridade'] = prioridade(item, hoje)
     return item
 
@@ -322,9 +329,14 @@ def prioridade(item, hoje):
     if cp:
         p += cp
         porque.append('fonte primária (%+d)' % cp)
-    if item.get('ativos'):
+    vin = item.get('vinculos') or {}
+    diretos = [t for t in item.get('ativos') or [] if (vin.get(t) or {}).get('tipo', 'direto') == 'direto']
+    if diretos:
         p += 10
-        porque.append('cita ativo da Oregon (+10)')
+        porque.append('trata de ativo da Oregon: %s (+10)' % ', '.join(diretos[:3]))
+    elif item.get('ativos'):
+        p += 2
+        porque.append('cita ativo da Oregon só de passagem: %s (+2)' % ', '.join(item['ativos'][:3]))
     elif item.get('setores'):
         p += 6
         porque.append('toca setor da carteira (+6)')
@@ -375,24 +387,60 @@ def prioridade(item, hoje):
     return {'pontos': p, 'nivel': nivel, 'porque': porque}
 
 
-# ------------------------------------------------------------------ análise em sete pontos (regras)
-def _fato_publicacao(item):
-    quem = item.get('organizacao') or item.get('fonte')
-    tipo = TIPO_NOME.get(item.get('tipo'), 'Conteúdo').lower()
-    quando = item.get('publicado_em')
-    q = ('em %s' % _br(quando)) if quando else ('detectado em %s (a página não informa a data)' % _br(item.get('detectado_em')))
-    s = '%s publicou %s %s: "%s".' % (quem, _artigo(tipo), q, item.get('titulo'))
-    if item.get('autor'):
-        s += ' Autor: %s.' % item['autor']
-    if item.get('tambem_em'):
-        s += ' O mesmo fato aparece em %s.' % ', '.join(t.get('fonte') or '?' for t in item['tambem_em'][:3])
-    return s
+# ------------------------------------------------------------------ vínculo do item com cada ativo citado
+# Manchete que enumera empresas (dividendos da semana, destaques do dia, "e outros"): quem aparece nela foi citado de
+# passagem. As mesmas expressões vão para o painel (TAXON.vinculo), que classifica itens antigos com a mesma regra.
+VINCULO = {
+    'lista': [r'\be outr[oa]s\b', r'\be mais\b', r'\bentre outr[oa]s\b', r'\bcompletam\b', r'\bdividendos da semana\b', r'\bproventos da semana\b',
+              r'\bagenda de (dividendos|proventos)\b', r'\bdata[- ]com\b', r'\bmaiores (altas|baixas|quedas)\b', r'\bcarteira (recomendada|semanal|mensal|de dividendos)\b',
+              r'\bacoes para (comprar|investir|ficar|o mes|novembro|dezembro|janeiro|2026|2027)\b', r'\b\d+ acoes\b', r'\btop \d+\b', r'\branking\b', r'\bveja (a lista|quem|quais)\b',
+              r'\bdestaques (do dia|da semana|desta|deste|das empresas|do pregao|corporativos)\b', r'\bao vivo\b', r'\bminuto a minuto\b', r'\bresumo do (dia|mercado)\b',
+              r'\bo que (mexe|move) (com )?o mercado\b'],
+    'resultado': r'\b(lucro|prejuizo|receita|ebitda|resultado|resultados|balanco|guidance|margem|[1-4]t\d{2}|[1-4]o tri(mestre)?)\b',
+    'codigo': r'\b[A-Z]{4}\d{1,2}\b',
+}
+VINCULO_NOME = {'direto': 'trata do ativo', 'mencao': 'citado de passagem', 'setorial': 'notícia do setor', 'tematico': 'tema do índice'}
 
 
-def _artigo(tipo):
-    return ('uma ' if tipo.split(' ')[0].endswith('a') else 'um ') + tipo
+def _no_titulo(titulo, termos, t=None):
+    tn = ' ' + sem_acento(titulo or '').lower() + ' '
+    if _casa(tn, [x.lstrip('=') for x in termos if x]):
+        return True
+    m = re.match(r'^([A-Z]{4})\d', t or '')  # outra classe do mesmo papel (KLBN11 para KLBN4)
+    return bool(m and re.search(r'(?<![a-z0-9])' + m.group(1).lower() + r'\d{1,2}(?![a-z0-9])', tn))
 
 
+def vinculo(item, t, termos=None):
+    """Vínculo do item com o ativo t. Devolve {'tipo': 'direto'|'mencao', 'motivo': texto, 'evento': None|'oficial'|'recomendacao'|'resultado'}.
+    direto  = o ativo é assunto da manchete (ou documento da própria companhia);
+    mencao  = citado só no resumo, ou numa manchete que enumera várias empresas (lista de dividendos, destaques do dia).
+    Notícias do setor (setor_de) e do tema de ETF (etfs_tema) não citam o ativo e são tratadas à parte."""
+    if item.get('categoria') == 'oficial_empresa':
+        return {'tipo': 'direto', 'motivo': 'documento da companhia à CVM', 'evento': 'oficial'}
+    tit = item.get('titulo') or ''
+    tn = ' ' + sem_acento(tit).lower() + ' '
+    porque = (item.get('ativos_porque') or {}).get(t)
+    if termos is None:
+        termos = [porque] if porque and porque != 'busca específica do ativo' else []
+    termos = list(termos) + [t]
+    if porque != 'busca específica do ativo' and not _no_titulo(tit, termos, t):  # a busca por ativo já exige o nome no título
+        return {'tipo': 'mencao', 'motivo': 'citado só no resumo, não na manchete', 'evento': None}
+    n_codigos = len(set(re.findall(VINCULO['codigo'], tit)))
+    if n_codigos >= 4 or any(re.search(p, tn) for p in VINCULO['lista']):
+        return {'tipo': 'mencao', 'motivo': 'aparece numa manchete que enumera várias empresas', 'evento': None}
+    if item.get('natureza') == 'opiniao_casa':
+        return {'tipo': 'direto', 'motivo': 'opinião de casa de análise sobre o ativo', 'evento': 'recomendacao'}
+    if re.search(VINCULO['resultado'], tn):
+        return {'tipo': 'direto', 'motivo': 'a manchete trata do resultado da empresa', 'evento': 'resultado'}
+    return {'tipo': 'direto', 'motivo': 'a manchete trata do ativo', 'evento': None}
+
+
+def vinculos(item, oregon):
+    at = (oregon or {}).get('ativos') or {}
+    return {t: vinculo(item, t, (at.get(t) or {}).get('termos')) for t in item.get('ativos') or []}
+
+
+# ------------------------------------------------------------------ leitura curta (regras)
 def _br(iso):
     try:
         d = dt.datetime.fromisoformat(iso)
@@ -406,96 +454,31 @@ def _numeros(item):
     return re.findall(r'(?:R\$|US\$|\$|€)?\s?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d+)?\s?(?:%|p\.p\.|bps|bi|mi|bilh[õo]es|milh[õo]es|trilh[õo]es|billion|million|trillion)?', txt)
 
 
+def resumo_util(item):
+    """O resumo público acrescenta algo à manchete? (não vazio, não é a própria manchete repetida, nem fragmento)."""
+    r = re.sub(r'\s+', ' ', item.get('resumo') or '').strip()
+    if len(r) < 40:
+        return False
+    a, b = sem_acento(r).lower(), sem_acento(item.get('titulo') or '').lower().strip(' .')
+    return not (b and (a.startswith(b) and len(a) < len(b) + 25 or a in b))
+
+
 def analisar_regras(item, oregon):
-    """Sete pontos, cada um como lista de frases rotuladas {'r': FATO|FONTE|INFERÊNCIA, 't': texto}."""
-    temas = item.get('temas') or []
-    resumo = item.get('resumo') or ''
-    A = {'modo': 'regras', 'profunda': False, 'aviso': 'Análise aprofundada (leitura do texto completo por IA) indisponível: estes pontos vêm de regras sobre título, resumo público e fonte.'}
-    A['1_publicacao'] = [{'r': 'FATO', 't': _fato_publicacao(item)}]
-    # 2. tese central: só o que a fonte diz (título/resumo); nunca deduzida
-    tese = []
-    if resumo:
-        primeira = re.split(r'(?<=[.!?])\s', resumo, maxsplit=1)[0]
-        tese.append({'r': 'FONTE', 't': 'Resumo da própria fonte: "%s"' % primeira.rstrip('…') + ('…' if len(primeira) < len(resumo) else '')})
-    else:
-        tese.append({'r': 'FONTE', 't': 'A fonte afirma, no título: "%s".' % item.get('titulo')})
-    if item.get('casas'):
-        tese.append({'r': 'FONTE', 't': 'Opinião atribuída a %s, como publicada por %s. É a visão da casa de análise, não do Oregon.' % (', '.join(item['casas']), item.get('organizacao') or item.get('fonte'))})
-    if item.get('categoria') == 'veiculo':
-        tese.append({'r': 'INFERÊNCIA', 't': 'Veículo de imprensa: o título relata um fato ou declaração; a tese, se houver, é de quem foi citado, não do veículo.'})
-    A['2_tese'] = tese
-    # 3. evidências: só números e dados literalmente presentes
-    # só números com unidade, moeda, percentual ou casa decimal: "Carta 41" ou "3T26" não são evidência
-    nums = [n.strip() for n in _numeros(item) if re.search(r'(%|p\.p\.|bps|bi|mi|lh|R\$|US\$|\$|€|\d[.,]\d)', n)][:6]
-    ev = []
+    """Leitura curta (v2), sem análise inventada: o que a fonte permite verificar. O painel monta o texto a partir dos
+    campos do item (fonte, datas, vínculos, opinião, outras fontes); aqui ficam só a base da leitura, os números literais
+    e as perguntas do tema para quem quiser aprofundar (perguntas, nunca argumentos)."""
+    A = {'modo': 'regras', 'profunda': False, 'v': 2, 'base': 'resumo' if resumo_util(item) else 'manchete'}
+    # só números com unidade, moeda, percentual ou casa decimal: "Carta 41" ou "3T26" não são número citado
+    nums = [n.strip() for n in _numeros(item) if re.search(r'(%|p\.p\.|bps|bi|mi|lh|R\$|US\$|\$|€|\d[.,]\d)', n)]
     if nums:
-        ev.append({'r': 'FATO', 't': 'Números citados no título ou resumo público: %s.' % ', '.join(nums)})
-    if item.get('tipo') in ('dado_oficial', 'documento_oficial') or item.get('categoria') == 'instituicao':
-        ev.append({'r': 'FATO', 't': 'Fonte primária oficial: o dado é o próprio documento, não uma interpretação.'})
-    if not ev:
-        ev.append({'r': 'INFERÊNCIA', 't': 'Não avaliado: sem leitura do texto completo não há como listar as evidências. Abra a fonte original.'})
-    A['3_evidencias'] = ev
-    # 4. contrários: roteiro de perguntas por tema
-    contra = []
-    for t in temas[:3]:
-        for q in (ROTEIRO.get(t) or {}).get('contra', [])[:2]:
-            contra.append({'r': 'INFERÊNCIA', 't': q})
-    if not contra:
-        contra.append({'r': 'INFERÊNCIA', 't': 'Pergunta geral: que premissa o texto assume, e que dado a invalidaria?'})
-    A['4_contrarios'] = contra
-    # 5. implicações por região: canais usuais de transmissão, nunca direção do impacto
-    impl = []
-    regs = item.get('regioes') or []
-    if regs:
-        impl.append({'r': 'FATO', 't': 'Regiões citadas: %s.' % ', '.join(REGIAO_NOME.get(r, r) for r in regs)})
-    canais = []
-    for t in temas[:3]:
-        canais += (ROTEIRO.get(t) or {}).get('canais', [])[:1]
-    for c in canais[:3]:
-        impl.append({'r': 'INFERÊNCIA', 't': 'Canal habitual: ' + c})
-    if 'brasil' not in regs and temas and temas[0] in ('juros', 'inflacao', 'cambio', 'commodities', 'emergentes', 'china'):
-        impl.append({'r': 'INFERÊNCIA', 't': 'Para o Brasil, o tema costuma chegar por juros americanos, dólar e commodities; o impacto depende da reação local e não está avaliado aqui.'})
-    if not impl:
-        impl.append({'r': 'INFERÊNCIA', 't': 'Não avaliado: o título e o resumo não permitem ligar o conteúdo a uma região.'})
-    A['5_regioes'] = impl
-    # 6. Oregon: ligação por palavras-chave, explicitada
-    ore = []
-    at = item.get('ativos') or []
-    if at:
-        nomes = ['%s (%s)' % (t, (oregon.get('ativos') or {}).get(t, {}).get('nome') or t) for t in at[:6]]
-        ore.append({'r': 'FATO', 't': 'Cita, pelo nome ou código, ativos das carteiras Oregon: %s.' % ', '.join(nomes)})
-        ore.append({'r': 'INFERÊNCIA', 't': 'A ligação é por menção no texto público; se o ativo é citado como exemplo, o conteúdo pode não tratar dele. Posições e pesos são os aprovados na seção Oregon, não presumidos aqui.'})
-    st = item.get('setores') or []
-    if st:
-        nomes = [next((s['nome'] for s in oregon.get('setores') or [] if s['id'] == x), x) for x in st]
-        ore.append({'r': 'INFERÊNCIA', 't': 'Setores da carteira relacionados ao tema: %s.' % ', '.join(nomes)})
-    if item.get('etfs_tema'):
-        ore.append({'r': 'INFERÊNCIA', 't': 'Trata do índice ou do tema de %s (%s). Notícia do tema, não fato do fundo.' % (', '.join(item['etfs_tema'][:5]), '; '.join(item.get('temas_etf') or []))})
-    ft = item.get('fatores') or []
-    if ft:
-        ore.append({'r': 'INFERÊNCIA', 't': 'Fatores de risco acompanhados: %s.' % ', '.join(FATOR_NOME.get(f, f) for f in ft)})
-    if not ore:
-        ore.append({'r': 'INFERÊNCIA', 't': 'Sem ligação direta identificada com ativos, setores ou fatores da Oregon. Pode ainda valer como formação.'})
-    A['6_oregon'] = ore
-    # 7. monitorar
-    mon = []
-    vistos = set()
-    for t in temas[:3]:
-        for m in (ROTEIRO.get(t) or {}).get('monitorar', [])[:3]:
-            if m not in vistos:
-                vistos.add(m)
-                mon.append({'r': 'INFERÊNCIA', 't': m})
-    if item.get('tipo') == 'carta':
-        mon.append({'r': 'INFERÊNCIA', 't': 'Próxima carta da mesma gestora: a tese se manteve ou mudou?'})
-    if not mon:
-        mon.append({'r': 'INFERÊNCIA', 't': 'Definir, após a leitura, o dado que confirmaria ou invalidaria a tese.'})
-    A['7_monitorar'] = mon[:5]
-    if item.get('categoria') == 'veiculo':
-        # manchete de imprensa: os pontos 4, 5 e 7 são o roteiro do tema (o mesmo para todas as manchetes do tema);
-        # o painel os monta a partir da taxonomia, em vez de repetir o texto em cada item guardado
-        for k in ('4_contrarios', '5_regioes', '7_monitorar'):
-            A.pop(k, None)
-        A['compacta'] = True
+        A['numeros'] = list(dict.fromkeys(nums))[:6]
+    perg = []
+    for t in (item.get('temas') or [])[:2]:
+        for m in (ROTEIRO.get(t) or {}).get('monitorar', [])[:2]:
+            if m not in perg:
+                perg.append(m)
+    if perg:
+        A['acompanhar'] = perg[:4]
     return A
 
 
@@ -520,13 +503,15 @@ def analisar_ia(rede, item, cfg_ia, chave, oregon, modelo, versao_api):
     if not chave:
         return None, 'sem chave'
     ativos = ', '.join('%s (%s)' % (t, a.get('nome') or t) for t, a in sorted((oregon.get('ativos') or {}).items()))[:3000]
-    sistema = ('Você apoia a formação de um gestor de carteiras profissional. Responda só com JSON válido, em português. '
-               'Use apenas o texto recebido; não invente números, conclusões nem impactos. Quando o texto não bastar, escreva "não avaliado". '
+    sistema = ('Você apoia um gestor de carteiras profissional. Responda só com JSON válido, em português, curto e factual. '
+               'Use apenas o texto recebido; não invente números, conclusões, impactos nem contrapontos. Não repita o título como tese. '
+               'Se o texto for só uma manchete, devolva listas vazias em vez de preencher. '
                'Cada frase deve ter rótulo "r": FATO (o que o texto afirma literalmente), FONTE (opinião ou tese do autor) ou INFERÊNCIA (sua ligação). '
                'Nunca recomende comprar ou vender. Ativos acompanhados (ligue só se o texto tratar deles): ' + ativos + '.')
     pedido = ('Conteúdo público:\nFonte: %s (%s)\nTipo: %s\nTítulo: %s\nResumo do feed: %s\n\n'
-              'Devolva {"tese": [{"r":..,"t":..}], "evidencias": [...], "contrarios": [...], "regioes": [...], "oregon": [...], "monitorar": [...], '
-              '"temas": [até 4 palavras], "resumo_1_frase": "..."} com no máximo 3 frases por lista.'
+              'Devolva {"resumo": [até 2 frases FATO/FONTE com o que o texto diz além do título], "porque": [até 2 frases: por que merece atenção], '
+              '"contrapontos": [só argumentos contrários presentes no próprio texto], "acompanhar": [até 3 dados ou eventos para verificar], '
+              '"temas": [até 4 palavras]}.'
               % (item.get('organizacao') or item.get('fonte'), item.get('categoria'), item.get('tipo'), item.get('titulo'), item.get('resumo') or '(sem resumo)'))
     corpo = json.dumps({'model': modelo, 'max_tokens': int(cfg_ia.get('max_tokens_item', 1200)), 'system': sistema, 'messages': [{'role': 'user', 'content': pedido}]}).encode()
     try:
@@ -547,21 +532,20 @@ def analisar_ia(rede, item, cfg_ia, chave, oregon, modelo, versao_api):
             if isinstance(x, dict) and x.get('r') in ROTULOS and isinstance(x.get('t'), str) and x['t'].strip():
                 out.append({'r': x['r'], 't': x['t'].strip()[:400]})
         return out[:3]
-    A = {'modo': 'ia', 'profunda': True, 'modelo': modelo, 'lido_em': None, '2_tese': lista('tese'), '3_evidencias': lista('evidencias'), '4_contrarios': lista('contrarios'),
-         '5_regioes': lista('regioes'), '6_oregon': lista('oregon'), '7_monitorar': lista('monitorar'),
-         'resumo': str(js.get('resumo_1_frase') or '')[:300], 'temas_ia': [str(t)[:40] for t in (js.get('temas') or []) if isinstance(t, str)][:4]}
-    if not (A['2_tese'] or A['3_evidencias']):
+    A = {'modo': 'ia', 'profunda': True, 'v': 2, 'modelo': modelo, 'lido_em': None, 'resumo_ia': lista('resumo')[:2], 'porque': lista('porque')[:2],
+         'contra_texto': lista('contrapontos'), 'acompanhar_ia': [f['t'] for f in lista('acompanhar')],
+         'temas_ia': [str(t)[:40] for t in (js.get('temas') or []) if isinstance(t, str)][:4]}
+    if not (A['resumo_ia'] or A['porque']):
         return None, 'IA devolveu resposta sem conteúdo utilizável'
     return A, {'entrada': int(uso.get('input_tokens') or 0), 'saida': int(uso.get('output_tokens') or 0)}
 
 
 def combinar(regras, ia):
-    """A IA complementa as regras: o ponto 1 (publicação) é sempre o fato das regras; os demais usam a IA quando existe."""
+    """A IA complementa as regras: base da leitura e números literais vêm sempre das regras."""
     if not ia:
         return regras
     out = dict(regras)
     out.update({k: v for k, v in ia.items() if v})
-    out['modo'], out['profunda'] = 'ia', True
-    out['aviso'] = 'Análise aprofundada por IA sobre título e resumo público (não sobre o texto completo). Confira sempre na fonte original.'
-    out['1_publicacao'] = regras['1_publicacao']
+    out['modo'], out['profunda'], out['v'] = 'ia', True, 2
+    out['aviso'] = 'Leitura por IA sobre título e resumo público (não sobre o texto completo). Confira na fonte original.'
     return out

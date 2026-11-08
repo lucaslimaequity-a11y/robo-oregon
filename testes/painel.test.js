@@ -7,8 +7,10 @@ const C = require(path.join(S, 'core.js')), Q = require(path.join(S, 'quant.js')
 // como no build: as fichas dos ETFs entram em DATA.etfs
 const E = require(path.join(S, 'etfs.json')); D.etfs = {}; Object.keys(E).forEach(k => { if (!k.startsWith('_')) D.etfs[k] = E[k]; });
 global.STORE = require(path.join(S, 'store.js'));
-global.TAXON = (function () { const { execFileSync } = require('child_process'); return JSON.parse(execFileSync('python3', ['-c', 'import sys,json; sys.path.insert(0, sys.argv[1]); import analise; print(json.dumps({"temas": analise.TEMA_NOME, "regioes": analise.REGIAO_NOME, "fatores": analise.FATOR_NOME, "tipos": analise.TIPO_NOME}))', path.join(__dirname, '..', 'robo')], {encoding: 'utf8'})); })();
+global.TAXON = (function () { const { execFileSync } = require('child_process'); return JSON.parse(execFileSync('python3', ['-c', 'import sys,json; sys.path.insert(0, sys.argv[1]); import analise; print(json.dumps({"temas": analise.TEMA_NOME, "regioes": analise.REGIAO_NOME, "fatores": analise.FATOR_NOME, "tipos": analise.TIPO_NOME, "roteiro": analise.ROTEIRO, "vinculo": analise.VINCULO}))', path.join(__dirname, '..', 'robo')], {encoding: 'utf8'})); })();
 global.INTEL = require(path.join(S, 'intel.js'));
+// notícias reais já capturadas (testes/amostras_reais): o painel e o robô precisam classificar o vínculo igual
+global.AMOSTRAS_LEITURA = require(path.join(__dirname, 'amostras_reais', 'leitura_vinculos_2026-11-08.json'));
 const res = T.run(C, Q, D, null);
 let f = 0; for (const r of res) { console.log((r.ok ? 'PASS ' : 'FAIL ') + r.nome + (r.det ? ' · ' + r.det : '')); if (!r.ok) f++; }
 const q = require('child_process').spawnSync(process.execPath, [path.join(__dirname, 'quant.test.js')], {encoding: 'utf8'});

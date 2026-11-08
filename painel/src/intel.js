@@ -45,53 +45,127 @@ var INTEL = (function () {
     if (d === I.menosDias(hoje, 1)) return 'ontem ' + hm(x.publicado_em);
     return dm(x.publicado_em) + (d.slice(0, 4) !== hoje.slice(0, 4) ? '/' + d.slice(0, 4) : '') + ' ' + hm(x.publicado_em);
   };
+  // Hora da linha de notícia (a data fica no separador do dia): publicação com hora → "10:20"; só com data → "—";
+  // sem data de publicação → "≈10:17", hora em que o robô detectou (marcada como estimada).
+  I.hora = function (x) {
+    var p = x && x.publicado_em;
+    if (p && p.length > 10) return {txt: hm(p), dia: p.slice(0, 10), sem: false, tip: 'Publicado ' + dm(p) + ' ' + hm(p)};
+    if (p) return {txt: '—', dia: p.slice(0, 10), sem: true, tip: 'A fonte informa só a data de publicação (' + dm(p) + ')'};
+    if (x && x.detectado_em) return {txt: '≈' + hm(x.detectado_em), dia: x.detectado_em.slice(0, 10), sem: true, est: true, tip: 'Sem data de publicação na fonte: hora em que o robô detectou'};
+    return {txt: '—', dia: '', sem: true, tip: 'Sem data'};
+  };
+  // Hora absoluta curta: "10:17" (hoje), "ontem 22:30", "06/11 14:35"
+  I.horaAbs = function (iso, agora) {
+    if (!iso) return '';
+    var hj = I.hojeBRT(agora || new Date()), d = String(iso).slice(0, 10), t = hm(iso);
+    if (!t) return dm(iso);
+    return d === hj ? t : d === I.menosDias(hj, 1) ? 'ontem ' + t : dm(iso) + ' ' + t;
+  };
+  // Separador de dia nas listas de notícias: "Hoje · dom 08/11", "Ontem · sáb 07/11", "sex 06/11"
+  I.rotuloDia = function (d, agora) {
+    if (!d) return 'Sem data';
+    var hj = I.hojeBRT(agora || new Date()), w = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'][new Date(d + 'T12:00:00Z').getUTCDay()];
+    return (d === hj ? 'Hoje · ' : d === I.menosDias(hj, 1) ? 'Ontem · ' : '') + w + ' ' + dm(d) + (d.slice(0, 4) !== hj.slice(0, 4) ? '/' + d.slice(0, 4) : '');
+  };
+  // Destaques: as n mais relevantes pela prioridade do robô (cita ativo da carteira, fonte primária, recência, várias fontes),
+  // sem sensacionalismo nem conteúdo promocional na frente; exibidas da mais nova para a mais antiga.
+  I.destaques = function (lista, n) {
+    var pen = {sensacionalista: 30, promocional: 30, recomendacao: 20};
+    var sc = function (x) { return I.relevancia(x) + 3 * Math.min(2, (x.tambem_em || []).length) - (pen[x.natureza] || 0); };
+    return lista.slice().sort(function (a, b) { return (sc(b) - sc(a)) || pub(b).localeCompare(pub(a)); }).slice(0, n || 5)
+      .sort(function (a, b) { return pub(b).localeCompare(pub(a)); });
+  };
   // Últimas notícias: só itens com data de publicação nas últimas `horas`, mais recentes primeiro (imprensa e documentos oficiais).
-  // filtro: 'carteira' (cita ativo ou tema de ETF), 'brasil', 'mundo', 'casas' (opinião de casa de análise).
+  // filtro: 'carteira' (vínculo direto com ativo das carteiras; menção de passagem não conta), 'brasil', 'mundo', 'casas' (opinião de casa de análise), 'oficial' (CVM e
+  // instituições), 'ri' (só documentos das companhias à CVM), 'gestoras' (cartas e research de gestoras + opiniões de casas).
   I.ultimas = function (itens, opt) {
     opt = opt || {};
     var agora = (opt.agora || new Date()).getTime(), lim = (opt.horas || 48) * 3600 * 1000, f = opt.filtro || 'tudo';
     return itens.filter(function (x) {
       if (!x.publicado_em || x.acervo || x.agrupado_em) return false;
-      if (opt.so_noticias !== false && !(x.categoria === 'veiculo' || x.categoria === 'instituicao' || x.categoria === 'oficial_empresa')) return false;
+      if (f === 'gestoras' && /^gestora_/.test(x.categoria || '')) { /* cartas e research entram neste filtro */ }
+      else if (opt.so_noticias !== false && !(x.categoria === 'veiculo' || x.categoria === 'instituicao' || x.categoria === 'oficial_empresa')) return false;
       if (x.via && x.confiavel === false && !opt.todosVeiculos) return false;
       if (x.categoria === 'veiculo' && !opt.todosVeiculos && !((x.temas || []).length || (x.ativos || []).length || (x.etfs_tema || []).length || (x.setor_de || []).length)) return false;
       var t = Date.parse(x.publicado_em.length <= 10 ? x.publicado_em + 'T12:00:00-03:00' : x.publicado_em); if (!isFinite(t) || agora - t > lim || t - agora > 6 * 3600 * 1000) return false;
-      if (f === 'carteira') return (x.ativos || []).length > 0 || (x.etfs_tema || []).length > 0;
+      if (f === 'carteira') return I.diretos(x).length > 0;
       if (f === 'brasil') return (x.regioes || []).indexOf('brasil') >= 0 || x.pais === 'Brasil';
       if (f === 'mundo') return x.pais !== 'Brasil' || (x.regioes || []).some(function (r) { return r !== 'brasil'; }) && (x.regioes || []).indexOf('brasil') < 0;
       if (f === 'casas') return x.natureza === 'opiniao_casa';
+      if (f === 'gestoras') return x.natureza === 'opiniao_casa' || /^gestora_/.test(x.categoria || '');
+      if (f === 'ri') return x.categoria === 'oficial_empresa';
       if (f === 'oficial') return x.categoria === 'oficial_empresa' || x.categoria === 'instituicao';
       return true;
     }).sort(function (a, b) { return b.publicado_em.localeCompare(a.publicado_em); });
   };
-  // Ativos com notícia recente: [{t, n, ultimo, itens}] ordenado pela notícia mais recente
+  // Vínculo do item com o ativo t — a mesma regra do robô (robo/analise.py: vinculo), cujas expressões chegam em TAXON.vinculo.
+  // Itens novos já trazem x.vinculos; os coletados por versões anteriores são classificados aqui, só com o termo guardado.
+  // direto = o ativo é assunto da manchete (ou documento da companhia); mencao = citado de passagem (lista, destaques, só no resumo).
+  var VR = TX.vinculo || null, VRX = null;
+  function vr() { if (!VRX && VR) VRX = {lista: (VR.lista || []).map(function (p) { return new RegExp(p); }), resultado: new RegExp(VR.resultado), codigo: new RegExp(VR.codigo, 'g')}; return VRX; }
+  function casaTermo(tn, termo) {
+    var k = norm(termo).replace(/^=/, '').trim(); if (k.length < 3) return false;
+    if (k.length <= 6 && /^[a-z0-9]+$/.test(k)) return new RegExp('(^|[^a-z0-9])' + k + '(?![a-z0-9])').test(tn);
+    return tn.indexOf(k) >= 0;
+  }
+  I.vinculo = function (x, t) {
+    var v = x && x.vinculos && x.vinculos[t]; if (v) return v;
+    if (x.categoria === 'oficial_empresa') return {tipo: 'direto', motivo: 'documento da companhia à CVM', evento: 'oficial'};
+    var R = vr(); if (!R) return {tipo: 'direto', motivo: 'a manchete trata do ativo', evento: null};
+    var tit = x.titulo || '', tn = ' ' + norm(tit) + ' ', porque = (x.ativos_porque || {})[t];
+    if (porque !== 'busca específica do ativo') {
+      var termos = (porque ? [porque] : []).concat([t]), raiz = /^([A-Z]{4})\d/.exec(t || '');
+      var ok = termos.some(function (k) { return casaTermo(tn, k); }) || (raiz && new RegExp('(^|[^a-z0-9])' + raiz[1].toLowerCase() + '\\d{1,2}(?![a-z0-9])').test(tn));
+      if (!ok) return {tipo: 'mencao', motivo: 'citado só no resumo, não na manchete', evento: null};
+    }
+    var cods = {}; (tit.match(R.codigo) || []).forEach(function (c) { cods[c] = 1; });
+    if (Object.keys(cods).length >= 4 || R.lista.some(function (re) { return re.test(tn); })) return {tipo: 'mencao', motivo: 'aparece numa manchete que enumera várias empresas', evento: null};
+    if (x.natureza === 'opiniao_casa') return {tipo: 'direto', motivo: 'opinião de casa de análise sobre o ativo', evento: 'recomendacao'};
+    if (R.resultado.test(tn)) return {tipo: 'direto', motivo: 'a manchete trata do resultado da empresa', evento: 'resultado'};
+    return {tipo: 'direto', motivo: 'a manchete trata do ativo', evento: null};
+  };
+  I.diretos = function (x) { return (x.ativos || []).filter(function (t) { return I.vinculo(x, t).tipo === 'direto'; }); };
+  I.mencoes = function (x) { return (x.ativos || []).filter(function (t) { return I.vinculo(x, t).tipo !== 'direto'; }); };
+  // Relevância para ordenar destaques: a prioridade do robô; item antigo que só cita ativo de passagem perde o bônus do ativo
+  I.relevancia = function (x) {
+    var p = I.pontos(x);
+    if (!x.vinculos && (x.ativos || []).length && !I.diretos(x).length) p -= 8;
+    return p;
+  };
+  // Ativos com notícia recente: [{t, n (diretas), m (menções), casas, ultimo, itens}], pela notícia direta mais recente.
+  // Só menção de passagem não põe o ativo na lista (fica em .soMencao).
   I.porAtivo = function (itens, opt) {
     opt = opt || {};
-    var agora = (opt.agora || new Date()).getTime(), lim = (opt.horas || 72) * 3600 * 1000, m = {};
+    var agora = (opt.agora || new Date()).getTime(), lim = (opt.horas || 72) * 3600 * 1000, m = {}, mm = {};
     itens.forEach(function (x) {
       if (!x.publicado_em || x.acervo || x.agrupado_em) return;
-      var t = Date.parse(x.publicado_em); if (!isFinite(t) || agora - t > lim) return;
-      (x.ativos || []).forEach(function (a) { (m[a] = m[a] || []).push(x); });
+      var t = Date.parse(x.publicado_em.length <= 10 ? x.publicado_em + 'T12:00:00-03:00' : x.publicado_em); if (!isFinite(t) || agora - t > lim) return;
+      (x.ativos || []).forEach(function (a) { if (I.vinculo(x, a).tipo === 'direto') (m[a] = m[a] || []).push(x); else (mm[a] = mm[a] || []).push(x); });
     });
-    return Object.keys(m).map(function (a) { var l = m[a].sort(function (p, q) { return q.publicado_em.localeCompare(p.publicado_em); }); return {t: a, n: l.length, ultimo: l[0], itens: l, casas: l.filter(function (x) { return x.natureza === 'opiniao_casa'; }).length}; })
+    var out = Object.keys(m).map(function (a) { var l = m[a].sort(function (p, q) { return q.publicado_em.localeCompare(p.publicado_em); }); return {t: a, n: l.length, m: (mm[a] || []).length, ultimo: l[0], itens: l, casas: l.filter(function (x) { return x.natureza === 'opiniao_casa'; }).length}; })
       .sort(function (p, q) { return q.ultimo.publicado_em.localeCompare(p.ultimo.publicado_em); });
+    out.soMencao = Object.keys(mm).filter(function (a) { return !m[a]; }).sort().map(function (a) { return {t: a, m: mm[a].length}; });
+    return out;
   };
-  // Notícias de um ativo (cita o ativo) e do tema do ETF (índice, estratégia), separadas; mais recentes primeiro
+  // Conteúdo de um ativo, separado pelo vínculo: direto (cita o ativo como assunto), mencoes (de passagem), tema (setor ou
+  // índice do ETF, sem citar o ativo; x._v = 'setorial' | 'tematico'). Opiniões e documentos da CVM vêm só dos diretos.
   I.doAtivo = function (itens, t) {
-    var direto = [], tema = [], vis = {};
+    var direto = [], mencoes = [], tema = [], vis = {};
     itens.forEach(function (x) {
       if (x.acervo || x.agrupado_em || vis[x.id]) return; vis[x.id] = 1;
-      if ((x.ativos || []).indexOf(t) >= 0) direto.push(x);
-      else if ((x.etfs_tema || []).indexOf(t) >= 0 || (x.setor_de || []).indexOf(t) >= 0) tema.push(x);
+      if ((x.ativos || []).indexOf(t) >= 0) (I.vinculo(x, t).tipo === 'direto' ? direto : mencoes).push(x);
+      else if ((x.etfs_tema || []).indexOf(t) >= 0) tema.push(x);
+      else if ((x.setor_de || []).indexOf(t) >= 0) tema.push(x);
     });
     var o = function (a, b) { return pub(b).localeCompare(pub(a)); };
-    direto.sort(o); tema.sort(o);
+    direto.sort(o); mencoes.sort(o); tema.sort(o);
     var op = direto.filter(function (x) { return x.natureza === 'opiniao_casa'; });
-    return {direto: direto, tema: tema, oficiais: direto.filter(function (x) { return x.categoria === 'oficial_empresa'; }),
+    return {direto: direto, mencoes: mencoes, tema: tema, oficiais: direto.filter(function (x) { return x.categoria === 'oficial_empresa'; }),
       noticias: direto.filter(function (x) { return x.categoria !== 'oficial_empresa'; }),
       opinioes: {favoravel: op.filter(function (x) { return x.posicao === 'favoravel'; }), contraria: op.filter(function (x) { return x.posicao === 'contraria'; }),
         outras: op.filter(function (x) { return x.posicao !== 'favoravel' && x.posicao !== 'contraria'; }), total: op.length}};
   };
+  I.vinculoTema = function (x, t) { return (x.etfs_tema || []).indexOf(t) >= 0 ? 'tematico' : (x.setor_de || []).indexOf(t) >= 0 ? 'setorial' : null; };
   I.POSICAO = {favoravel: 'a favor', contraria: 'contra', neutra: 'neutra', mista: 'mista'};
   // Contraponto documentado: outra fonte concreta. Opinião com sentido → opiniões de sentido oposto sobre o mesmo ativo;
   // notícia de ativo → opiniões publicadas sobre ele; carta/research → outras fontes sobre o mesmo tema (divergência só lendo).
@@ -187,12 +261,13 @@ var INTEL = (function () {
   async function carregarTudo() {
     var b = base(), st = {};
     async function um(nome, ms) { try { var j = await getJSON(b + nome + marca(), ms); st[nome] = {ok: true}; return j; } catch (e) { st[nome] = {ok: false, msg: motivo(e), ausente: /404/.test(String(e && e.message))}; return undefined; } }
-    var r = await Promise.all([um('macro.json', 15000), um('recentes.json', 30000), um('hoje.json'), um('coleta.json', 20000), um('semanal.json', 15000)]);
+    var r = await Promise.all([um('macro.json', 15000), um('recentes.json', 30000), um('hoje.json'), um('coleta.json', 20000), um('semanal.json', 15000), um('biblioteca/opinioes.json', 20000)]);
     if (r[0] !== undefined) E.macro = r[0];
     if (r[1] !== undefined) E.recentes = r[1];
     if (r[2] !== undefined) E.hoje = r[2];
     if (r[3] !== undefined) E.coleta = r[3];
     if (r[4] !== undefined) E.semanal = r[4];
+    if (r[5] !== undefined) E.opinioes = r[5];  // opiniões de 12 meses (publicado a partir da v3.3; ausente antes disso)
     E.status = st;
     E.ultimo = new Date().toISOString();
   }
@@ -222,6 +297,9 @@ var INTEL = (function () {
     return p;
   };
   A.mesesDisponiveis = function () { return (E.versao && E.versao.meses) || []; };
+  // Opiniões de casas de análise dos últimos 12 meses (biblioteca/opinioes.json) e o conjunto usado nas fichas dos ativos
+  A.opinioes12m = function () { return (E.opinioes && E.opinioes.itens) || []; };
+  A.itensAtivo = function () { return I.juntar([A.itens(), A.opinioes12m()]); };
   A.carregarFontes = function () {
     if (E.fontes || E.fontesBuscando) return;
     E.fontesBuscando = true;
@@ -257,9 +335,11 @@ var INTEL = (function () {
   };
 
   /* ---------- vistas de conteúdo ---------- */
-  var TIPO_CLS = {carta: 'c-carta', research: 'c-research', paper: 'c-research', macro: 'c-macro', dado_oficial: 'c-oficial', documento_oficial: 'c-oficial', discurso: 'c-oficial', relatorio: 'c-research', video: 'c-video', noticia: 'c-noticia', blog: 'c-research', podcast: 'c-video'};
+  var TIPO_CLS = {carta: 'c-carta', research: 'c-research', paper: 'c-research', macro: 'c-macro', dado_oficial: 'c-oficial', documento_oficial: 'c-oficial', discurso: 'c-oficial', relatorio: 'c-research', video: 'c-video', noticia: 'c-noticia', blog: 'c-research', podcast: 'c-video', fato_relevante: 'c-oficial'};
   function quandoTxt(x) { return I.quando(x); }
   A.quandoTxt = quandoTxt;
+  function orgDe(x) { return x.categoria === 'oficial_empresa' ? 'CVM · ' + (x.organizacao || '') : x.via ? x.fonte : (x.organizacao || x.fonte); }
+  A.orgDe = orgDe;
   function chipsItem(x, opt) {
     opt = opt || {};
     var ch = [];
@@ -269,93 +349,231 @@ var INTEL = (function () {
     if (x.via && x.confiavel === false) ch.push(A.chip('veículo pouco conhecido', 'g-baixa', 'Achado pela busca do ' + x.via + '; confira na fonte antes de usar.'));
     if (x.categoria === 'oficial_empresa') ch.push(A.chip(x.categoria_cvm || 'CVM', 'tp c-oficial', 'Documento entregue pela companhia à CVM'));
     if (opt.comNivel && x.categoria !== 'veiculo') { var n = I.nivel(x); if (n === 'alta') ch.push(A.chip('prioridade alta', 'g-critica', (x.prioridade && x.prioridade.porque || []).join(' · '))); }
-    if (x.analise && x.analise.profunda) ch.push(A.chip('análise IA', 'o-ia', 'Leitura por IA sobre o título e o resumo público'));
+    if (x.analise && x.analise.profunda) ch.push(A.chip('leitura IA', 'o-ia', 'Leitura por IA sobre o título e o resumo público'));
     if (x.natureza === 'promocional' || x.natureza === 'sensacionalista') ch.push(A.chip(x.natureza, 'g-baixa'));
     if (A.lido(x.id)) ch.push(A.chip('lido', 'o-obs'));
     return ch;
   }
-  // Cartão de conteúdo: a hora vem primeiro; o título abre a análise (gaveta); ↗ abre a fonte original em nova aba
+  // Etiqueta do ativo citado: cheia quando o vínculo é direto, tracejada quando é menção de passagem
+  function tagAtivo(x, t) {
+    var v = I.vinculo(x, t), men = v.tipo !== 'direto';
+    return h('button', {class: 'tag tk' + (men ? ' men' : ''), title: (men ? 'Menção de passagem: ' : 'Vínculo direto: ') + v.motivo, onclick: function (e) { e.stopPropagation(); A.abrirFicha(t); }}, t);
+  }
+  // Cartão de conteúdo (cartas, research, leituras do dia): a hora vem primeiro; o título abre a leitura; ↗ abre a fonte original
   A.itemCard = function (x, opt) {
     opt = opt || {};
-    var org = x.categoria === 'oficial_empresa' ? 'CVM · ' + (x.organizacao || '') : x.via ? x.fonte : (x.organizacao || x.fonte), lk = A.link(x.link);
+    var org = orgDe(x), lk = A.link(x.link);
     var card = h('article', {class: 'nw ' + (TIPO_CLS[x.tipo] || '') + (A.lido(x.id) ? ' lido' : '') + (x.acervo ? ' acervo' : ''), 'data-id': x.id});
     card.appendChild(h('div', {class: 'nw-top'}, h('time', {class: 'nw-when' + (x.publicado_em ? '' : ' sem'), datetime: x.publicado_em || ''}, quandoTxt(x)), h('span', {class: 'nw-src'}, org), chipsItem(x, opt)));
     card.appendChild(h('h3', {class: 'nw-t'}, h('button', {class: 'nwl', onclick: function () { A.abrirItem(x); }}, x.titulo), lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', title: 'Abrir a fonte original', 'aria-label': 'Abrir a fonte original'}, '↗') : null));
     if (x.resumo && !opt.semResumo) card.appendChild(h('p', {class: 'nw-r'}, x.resumo));
-    var tags = (x.ativos || []).slice(0, 4).map(function (t) { return h('button', {class: 'tag tk', onclick: function () { A.abrirFicha(t); }}, t); })
+    var tags = (x.ativos || []).slice(0, 4).map(function (t) { return tagAtivo(x, t); })
       .concat((x.etfs_tema || []).filter(function (t) { return (x.ativos || []).indexOf(t) < 0; }).slice(0, 3).map(function (t) { return h('button', {class: 'tag tk tema', title: 'Notícia do índice ou do tema do ETF, não do fundo', onclick: function () { A.abrirFicha(t); }}, t + ' · tema'); }))
       .concat(opt.semTemas ? [] : (x.temas || []).slice(0, 2).map(function (t) { return h('button', {class: 'tag', onclick: function () { A.go('bib', 'busca'); if (A.bibFiltro) A.bibFiltro({tema: t}); }}, I.temaNome(t)); }));
     if (x.tambem_em && x.tambem_em.length) tags.push(h('span', {class: 'tag mu', title: x.tambem_em.map(function (t) { return t.fonte; }).join(', ')}, '+' + x.tambem_em.length + ' fonte(s)'));
     if (tags.length) card.appendChild(h('div', {class: 'nw-tags'}, tags));
     return card;
   };
-  // Linha compacta (painel lateral de notícias): hora · veículo · título
-  A.itemLinha = function (x) {
-    var lk = A.link(x.link);
-    return h('li', {class: 'nl' + (A.lido(x.id) ? ' lido' : '')}, h('time', {class: 'nw-when' + (x.publicado_em ? '' : ' sem')}, quandoTxt(x)),
+  // Linha compacta (painel de notícias da ficha): hora · título · veículo ↗ · sinal curto (opinião, CVM, menção)
+  A.itemLinha = function (x, t) {
+    var lk = A.link(x.link), men = t && (x.ativos || []).indexOf(t) >= 0 && I.vinculo(x, t).tipo !== 'direto';
+    return h('li', {class: 'nl' + (A.lido(x.id) ? ' lido' : '') + (men ? ' men' : ''), 'data-id': x.id}, h('time', {class: 'nw-when' + (x.publicado_em ? '' : ' sem')}, quandoTxt(x)),
       h('div', null, h('button', {class: 'nwl', onclick: function () { A.abrirItem(x); }}, x.titulo),
         h('div', {class: 'nl-src'}, x.categoria === 'oficial_empresa' ? 'CVM · ' + (x.categoria_cvm || 'documento') : (x.fonte && x.via ? x.fonte : x.organizacao || x.fonte),
           lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', title: 'Abrir a matéria original', 'aria-label': 'Abrir a matéria original'}, '↗') : null,
-          chipsItem(x).filter(function (c) { return !/\blido\b/.test(c.textContent); }))));
+          marcadores(x))));
   };
-  A.listaLinhas = function (itens, max, vazio) { if (!itens.length) return h('p', {class: 'empty'}, vazio || 'Sem notícias recentes.'); return h('ul', {class: 'nls'}, itens.slice(0, max || itens.length).map(A.itemLinha)); };
+  A.listaLinhas = function (itens, max, vazio, t) { if (!itens.length) return h('p', {class: 'empty'}, vazio || 'Sem notícias recentes.'); return h('ul', {class: 'nls'}, itens.slice(0, max || itens.length).map(function (x) { return A.itemLinha(x, t); })); };
   A.listaItens = function (itens, opt) { opt = opt || {}; if (!itens.length) return h('p', {class: 'empty'}, opt.vazio || 'Nada aqui ainda.'); return h('div', {class: 'nwlist'}, itens.slice(0, opt.max || itens.length).map(function (x) { return A.itemCard(x, opt); })); };
-  // Análise em sete pontos, com o rótulo de cada frase. Nada aqui vira recomendação.
-  A.analiseView = function (x) {
-    var an = x.analise;
-    if (!an) return h('p', {class: 'muted'}, 'Este item ainda não tem análise (foi coletado por uma versão anterior do robô). Abra a fonte original.');
-    var box = h('div', {class: 'an'});
-    box.appendChild(h('div', {class: 'alert ' + (an.profunda ? 'ok' : 'warn'), style: 'margin-top:0;font-size:.86rem'}, h('b', null, an.profunda ? 'Análise aprofundada (IA). ' : 'Análise por regras. '), an.aviso || ''));
-    box.appendChild(h('p', {class: 'an-leg'}, Object.keys(I.ROTULO).map(function (k) { return h('span', {class: 'rot r-' + k.toLowerCase().replace('ê', 'e')}, I.ROTULO[k]); })));
-    var rt = (I.TX.roteiro || {}), temas = x.temas || [];
-    function roteiro(campo, rot) { var out = []; temas.slice(0, 3).forEach(function (t) { ((rt[t] || {})[campo] || []).slice(0, 2).forEach(function (q) { out.push({r: 'INFERÊNCIA', t: rot ? rot + q : q}); }); }); return out; }
-    an = Object.assign({}, an);
-    var generico = [];
-    if (!an.profunda) {
-      // Ponto 4 só com contraponto DOCUMENTADO (outra fonte concreta). As perguntas genéricas do tema vão para um roteiro à parte.
-      generico = (an['4_contrarios'] || []).filter(function (f) { return f.r === 'INFERÊNCIA'; }).map(function (f) { return f.t; });
-      if (!generico.length) generico = roteiro('contra').map(function (f) { return f.t; });
-      var ctp = I.contrapontos(A.itens ? A.itens() : [], x);
-      an['4_contrarios'] = ctp.itens.length ? [{r: 'FATO', t: ctp.rotulo}].concat(ctp.itens.map(function (y) {
-        return {r: 'FONTE', t: (y.posicao ? '[' + I.POSICAO[y.posicao] + '] ' : '') + ((y.casas || []).length ? y.casas.join(', ') + ' · ' : '') + (y.via ? y.fonte : y.organizacao || y.fonte) + ' · ' + I.quando(y) + ': ' + y.titulo, item: y};
-      })) : [{r: 'FATO', t: 'Não há contraponto documentado nas fontes lidas' + ((x.ativos || []).length ? ' sobre ' + x.ativos.join(', ') : '') + '. Sem outra fonte concreta, o sistema não cria argumentos contrários.'}];
-    }
-    if (an.compacta) {  // manchete de imprensa: o roteiro do tema é o mesmo para todas, por isso não vem guardado em cada item
-      if (!an['5_regioes']) an['5_regioes'] = [{r: 'FATO', t: 'Regiões citadas: ' + ((x.regioes || []).map(I.regiaoNome).join(', ') || 'nenhuma identificada') + '.'}];
-      if (!an['7_monitorar']) an['7_monitorar'] = roteiro('monitorar', 'Roteiro do tema: ').slice(0, 4);
-    }
-    I.PONTOS.forEach(function (p, i) {
-      var frases = an[p[0]] || [];
-      box.appendChild(h('section', {class: 'an-p'}, h('h4', null, h('span', {class: 'an-n'}, String(i + 1)), p[1]), frases.length ? h('ul', null, frases.map(function (f) {
-        var lk = f.item && A.link(f.item.link);
-        return h('li', null, h('span', {class: 'rot r-' + String(f.r).toLowerCase().replace('ê', 'e'), title: I.ROTULO[f.r] || f.r}, I.ROTULO[f.r] || f.r), ' ', f.t, lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', title: 'Abrir a fonte'}, ' ↗') : null); })) : h('p', {class: 'muted'}, 'Não avaliado.')));
+
+  // Sinais curtos ao lado do título: opinião (com sentido), documento da CVM, fonte sinalizada, veículo pouco conhecido
+  function marcadores(x) {
+    var m = [];
+    if (x.natureza === 'opiniao_casa') m.push(h('span', {class: 'mk casa' + (x.posicao ? ' p-' + x.posicao : ''), title: 'Opinião ' + ((x.casas || []).join(', ') || 'de analistas') + (x.posicao ? ' · ' + I.POSICAO[x.posicao] : ' · sem sentido explícito') + ' (lido do título)'}, 'opinião' + (x.posicao === 'favoravel' ? ' ▲' : x.posicao === 'contraria' ? ' ▼' : '')));
+    if (x.categoria === 'oficial_empresa') m.push(h('span', {class: 'mk cvm', title: 'Documento entregue pela companhia à CVM'}, x.tipo === 'fato_relevante' ? 'fato relevante' : 'CVM'));
+    if (x.aviso_fonte) m.push(h('span', {class: 'mk av', title: x.aviso_fonte}, '!'));
+    if (x.via && x.confiavel === false) m.push(h('span', {class: 'mk av', title: 'Veículo pouco conhecido, achado pela busca do ' + x.via + '. Confira na fonte.'}, '?'));
+    return m;
+  }
+  // Coluna "ativo/tema" da linha: ativos com vínculo direto; senão menção (tracejada); senão tema de ETF; senão o assunto
+  function alvoLinha(x) {
+    var d = I.diretos(x), men = I.mencoes(x), out = d.slice(0, 2).map(function (t) { return tagAtivo(x, t); });
+    if (!out.length && men.length) out = men.slice(0, 1).map(function (t) { return tagAtivo(x, t); });
+    if (!out.length && (x.etfs_tema || []).length) out = [h('button', {class: 'tag tk tema', title: 'Notícia do índice ou do tema do ETF, não do fundo', onclick: function (e) { e.stopPropagation(); A.abrirFicha(x.etfs_tema[0]); }}, x.etfs_tema[0])];
+    if (!out.length && (x.temas || []).length) out = [h('span', {class: 'nr-tema'}, I.temaNome(x.temas[0]))];
+    var resto = d.length + (d.length ? 0 : men.length) - out.length;
+    if (resto > 0 && (d.length || men.length)) out.push(h('span', {class: 'nr-mais'}, '+' + resto));
+    return out;
+  }
+  // Linha de notícia (Hoje, Mundo): hora | veículo | título | ativo/tema | ↗. O título abre e fecha um resumo no próprio lugar.
+  var ABERTO = {};
+  A.itemRow = function (x) {
+    var lk = A.link(x.link), ab = !!ABERTO[x.id], id = 'nr-' + x.id, hr = I.hora(x), org = orgDe(x);
+    var row = h('article', {class: 'nw nr' + (A.lido(x.id) ? ' lido' : '') + (ab ? ' aberto' : ''), 'data-id': x.id});
+    var bt = h('button', {class: 'nr-t nwl', 'aria-expanded': ab ? 'true' : 'false', 'aria-controls': id, onclick: function () {
+      ABERTO[x.id] = !ABERTO[x.id];
+      var d = row.querySelector('.nr-d'); if (d) d.remove();
+      if (ABERTO[x.id]) row.appendChild(detalheRow(x, id));
+      row.classList.toggle('aberto', !!ABERTO[x.id]); bt.setAttribute('aria-expanded', ABERTO[x.id] ? 'true' : 'false');
+    }}, x.titulo);
+    row.append(h('time', {class: 'nw-when' + (hr.sem ? ' sem' : ''), datetime: x.publicado_em || x.detectado_em || '', title: hr.tip + (x.publicado_em ? ' · ' + I.quando(x) : '')}, hr.txt),
+      h('span', {class: 'nw-src', title: org}, org),
+      h('div', {class: 'nr-tt'}, bt, marcadores(x)),
+      h('span', {class: 'nr-a'}, alvoLinha(x)),
+      lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', title: 'Abrir a matéria original', 'aria-label': 'Abrir a matéria original'}, '↗') : h('span', {class: 'nw-ext off', 'aria-hidden': 'true'}));
+    if (ab) row.appendChild(detalheRow(x, id));
+    return row;
+  };
+  function detalheRow(x, id) {
+    var lk = A.link(x.link), d = h('div', {class: 'nr-d', id: id}), an = x.analise || {};
+    if (an.base === 'resumo' || (!an.v && x.resumo)) d.appendChild(h('p', {class: 'nw-r'}, curto(x.resumo, 320)));
+    else d.appendChild(h('p', {class: 'nr-so'}, 'Só a manchete foi coletada; o texto está na fonte original.'));
+    var pq = porQueImporta(x).concat(relacaoOregon(x).map(function (r) { return {r: r.r, t: r.txt}; })).slice(0, 3);
+    if (pq.length) d.appendChild(h('ul', {class: 'nr-pq'}, pq.map(function (f) { return h('li', null, rotulo(f.r), ' ', f.t); })));
+    d.appendChild(h('div', {class: 'nr-act'}, h('button', {class: 'btn sm', onclick: function () { A.abrirItem(x); }}, 'Ler mais'),
+      lk ? h('a', {class: 'btn sm pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte ↗') : null,
+      h('span', {class: 'muted nr-dt'}, datasTxt(x, true))));
+    return d;
+  }
+  // Lista de linhas com separador por dia (a hora de cada linha é a de publicação; o dia fica no separador)
+  A.listaRows = function (itens, opt) {
+    opt = opt || {};
+    if (!itens.length) return h('p', {class: 'empty'}, opt.vazio || 'Nada aqui ainda.');
+    var box = h('div', {class: 'nrl'}), dia = null;
+    itens.slice(0, opt.max || itens.length).forEach(function (x) {
+      var d = I.hora(x).dia;
+      if (opt.dias !== false && d !== dia) { dia = d; box.appendChild(h('div', {class: 'nr-day'}, I.rotuloDia(d))); }
+      box.appendChild(A.itemRow(x));
     });
-    if (generico.length) box.appendChild(A.more('Roteiro genérico do tema (perguntas para você verificar, não são argumentos de nenhuma fonte)', h('ul', {class: 'lst'}, generico.slice(0, 6).map(function (q) { return h('li', null, q); }))));
-    if (x.prioridade) box.appendChild(h('p', {class: 'hint'}, 'Prioridade ' + x.prioridade.nivel + ' (' + x.prioridade.pontos + ' pontos): ' + (x.prioridade.porque || []).join('; ') + '. A prioridade só ordena; nenhum item é escondido.'));
     return box;
   };
+
+  /* ---------- leitura de um item (janela ao clicar na notícia) ----------
+     Editorial e curta: título, fonte e data; resumo da fonte quando houver; por que importa; relação com a carteira só
+     quando sustentada; contrapontos só quando documentados; link original sempre à vista; aprofundar recolhido.
+     Rótulos: Fonte (texto publicado) · Verificado (dados da coleta e das carteiras) · Sistema (classificação automática). */
+  var ROT = {fonte: ['Fonte', 'r-fonte', 'Texto publicado pela fonte'], fato: ['Verificado', 'r-fato', 'Dado da coleta, da CVM ou das carteiras aprovadas'], sistema: ['Sistema', 'r-inferencia', 'Classificação automática por regras sobre título e resumo'], ia: ['IA', 'r-inferencia', 'Leitura por IA sobre título e resumo público']};
+  function rotulo(k) { var r = ROT[k] || ROT.sistema; return h('span', {class: 'rot ' + r[1], title: r[2]}, r[0]); }
+  function curto(s, n) {
+    s = String(s || '').replace(/\s+/g, ' ').replace(/\s*(Leia aqui|Leia mais|Continue lendo)\.?\s*$/i, '').trim();
+    if (s.length <= n) return s;
+    var c = s.slice(0, n), p = Math.max(c.lastIndexOf('. '), c.lastIndexOf('; '));
+    return (p > n * 0.5 ? c.slice(0, p + 1) : c.replace(/\s+\S*$/, '') + '…');
+  }
+  var DIAS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+  function dataLonga(iso) {
+    if (!iso) return '';
+    var d = String(iso).slice(0, 10), w = DIAS[new Date(d + 'T12:00:00Z').getUTCDay()], m = String(iso).match(/T(\d{2}):(\d{2})/);
+    return w + ', ' + d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4) + (m ? ' às ' + m[1] + ':' + m[2] : '');
+  }
+  function datasTxt(x, curtoTxt) {
+    if (x.publicado_em) { var rel = I.quando(x); return 'Publicado ' + dataLonga(x.publicado_em) + (/^(há|hoje|ontem)/.test(rel) && x.publicado_em.length > 10 ? ' (' + rel + ')' : ''); }
+    if (x.acervo) return 'Acervo: já estava na página quando o robô a leu pela primeira vez' + (x.referencia ? ' · refere-se a ' + x.referencia.slice(5, 7) + '/' + x.referencia.slice(0, 4) : '');
+    return 'Sem data de publicação na fonte · detectado pelo robô ' + (x.detectado_em ? dataLonga(x.detectado_em) : '');
+  }
+  function nomeAtivo(t) { var c = typeof CORE !== 'undefined' && CORE.ATV ? CORE.ATV[t] : null; return c && c.nome ? c.nome : t; }
+  function pesos(t) {
+    var pw = A.pesosDoAtivo ? A.pesosDoAtivo(t) : []; if (!pw.length) return '';
+    var mx = pw[0];
+    return 'em ' + pw.length + (pw.length > 1 ? ' carteiras aprovadas' : ' carteira aprovada') + ', até ' + A.pct(mx.w, 1) + ' (' + mx.m.rotulo + ')';
+  }
+  // Por que merece atenção: só sinais verificáveis (tipo de documento, opinião publicada, resultado, outras fontes, fonte primária)
+  function porQueImporta(x) {
+    var out = [], d = I.diretos(x), org = x.organizacao || x.fonte, an = x.analise || {};
+    if (x.categoria === 'oficial_empresa') out.push({r: 'fato', t: (x.tipo === 'fato_relevante' ? 'Fato relevante entregue pela própria companhia à CVM: por norma, informação que pode influir na cotação.' : 'Documento entregue pela própria companhia à CVM (' + (x.categoria_cvm || 'documento') + ').')});
+    if (x.natureza === 'opiniao_casa') out.push({r: 'fonte', t: ((x.casas || []).length ? x.casas.join(', ') : 'Analistas não identificados') + (x.posicao ? ' em sentido ' + (x.posicao === 'favoravel' ? 'favorável' : x.posicao === 'contraria' ? 'contrário' : I.POSICAO[x.posicao]) : ', sem sentido explícito') + (d.length ? ' sobre ' + d.join(', ') : '') + ', segundo o título publicado por ' + (x.via ? x.fonte : org) + '. O relatório da casa não foi lido.'});
+    d.forEach(function (t) { if (I.vinculo(x, t).evento === 'resultado') out.push({r: 'sistema', t: 'Trata do resultado de ' + nomeAtivo(t) + ' (' + t + '), pela manchete.'}); });
+    if (x.categoria === 'instituicao') out.push({r: 'fato', t: 'Fonte primária oficial: ' + org + '.'});
+    if (/^gestora_/.test(x.categoria || '') && (x.tipo === 'carta' || x.tipo === 'research')) out.push({r: 'fonte', t: 'Visão própria da ' + org + ' (' + I.tipoNome(x.tipo).toLowerCase() + '), não notícia.'});
+    if ((x.tambem_em || []).length) out.push({r: 'fato', t: 'Também publicado por ' + x.tambem_em.length + ' outra(s) fonte(s): ' + x.tambem_em.slice(0, 3).map(function (y) { return y.fonte; }).join(', ') + '.'});
+    (an.porque || []).forEach(function (f) { out.push({r: 'ia', t: f.t}); });
+    if (x.natureza === 'sensacionalista' || x.natureza === 'promocional') out.push({r: 'sistema', t: 'Título ' + x.natureza + ': confira na fonte antes de usar.'});
+    if (x.via && x.confiavel === false) out.push({r: 'sistema', t: 'Veículo fora da lista de veículos conhecidos, achado pela busca do ' + x.via + ': confira na fonte.'});
+    if (x.aviso_fonte) out.push({r: 'fato', t: 'Fonte sinalizada: ' + x.aviso_fonte + '.'});
+    return out;
+  }
+  // Relação com a Oregon: ativo (direto ou de passagem, com os pesos aprovados), setor, tema de ETF e fatores — só o que tem base
+  function relacaoOregon(x) {
+    var out = [];
+    (x.ativos || []).forEach(function (t) {
+      var v = I.vinculo(x, t), p = pesos(t);
+      var resto = (v.tipo === 'direto' ? 'vínculo direto — ' : 'menção de passagem — ') + v.motivo + (p ? '; ' + p : '') + '.', nm = nomeAtivo(t);
+      out.push({t: t, r: 'sistema', men: v.tipo !== 'direto', txt: (nm !== t ? nm + ' (' + t + ')' : t) + ': ' + resto, txtSem: (nm !== t ? nm + ': ' : '') + resto});
+    });
+    if ((x.setor_de || []).length) out.push({r: 'sistema', txt: 'Setor' + (x.setor_nome ? ' de ' + x.setor_nome : '') + ': notícia do setor, não cita ' + x.setor_de.join(', ') + '.', ts: x.setor_de});
+    var et = (x.etfs_tema || []).filter(function (t) { return (x.ativos || []).indexOf(t) < 0; });
+    if (et.length) out.push({r: 'sistema', txt: 'Tema de ETF' + (x.tema_etf ? ' (' + x.tema_etf + ')' : '') + ': ' + et.join(', ') + ' — notícia do índice ou do tema, não fato do fundo.', ts: et});
+    if ((x.fatores || []).length) out.push({r: 'sistema', txt: 'Fator de risco acompanhado: ' + x.fatores.map(I.fatorNome).join(', ') + ' (pelos termos do texto).'});
+    return out;
+  }
+  // Contrapontos documentados: opiniões em sentido oposto sobre o mesmo ativo, ou contrapontos do próprio texto (IA). Nada genérico.
+  function contrapontosDoc(x) {
+    var out = [];
+    if (I.diretos(x).length && (x.posicao === 'favoravel' || x.posicao === 'contraria')) {
+      // só sentido oposto e de outra casa: a mesma casa noticiada por outro veículo, ou uma opinião "mista", não é contraponto
+      var oposto = x.posicao === 'favoravel' ? 'contraria' : 'favoravel', c = I.contrapontos(A.itensAtivo ? A.itensAtivo() : [], x);
+      c.itens.filter(function (y) { return y.posicao === oposto && !(y.casas || []).some(function (k) { return (x.casas || []).indexOf(k) >= 0; }); }).forEach(function (y) { out.push({item: y}); });
+      return {itens: out, rot: 'Opiniões em sentido ' + (oposto === 'contraria' ? 'contrário' : 'favorável') + ' sobre ' + I.diretos(x).join(', ') + ', de outras casas:'};
+    }
+    ((x.analise || {}).contra_texto || []).forEach(function (f) { out.push({t: f.t}); });
+    return {itens: out, rot: 'Contrapontos apresentados no próprio texto (leitura por IA):'};
+  }
+  function linhaRef(y) {
+    var lk = A.link(y.link);
+    return h('li', {class: 'lr-ref'}, h('time', {class: 'nw-when'}, I.quando(y)), ' ', h('button', {class: 'nwl', onclick: function () { A.abrirItem(y); }}, y.titulo),
+      h('span', {class: 'muted'}, ' · ' + orgDe(y)), lk ? h('a', {class: 'nw-ext', href: lk, target: '_blank', rel: 'noopener', 'aria-label': 'Abrir a fonte'}, '↗') : null);
+  }
+  A.leituraView = function (x) {
+    var lk = A.link(x.link), an = x.analise || {}, box = h('div', {class: 'lr'});
+    var kick = x.categoria === 'oficial_empresa' ? 'Documento à CVM · ' + (x.categoria_cvm || I.tipoNome(x.tipo)) : x.natureza === 'opiniao_casa' ? 'Opinião publicada · ' + (I.CATEGORIA[x.categoria] || '') : I.tipoNome(x.tipo) + ' · ' + (I.CATEGORIA[x.categoria] || x.categoria || '');
+    box.appendChild(h('p', {class: 'lr-k'}, kick));
+    box.appendChild(h('h2', {class: 'lr-t'}, x.titulo));
+    box.appendChild(h('p', {class: 'lr-m'}, h('b', null, orgDe(x)), x.autor && x.autor !== orgDe(x) ? ' · ' + x.autor : '', x.via ? h('span', {class: 'muted'}, ' · via ' + x.via) : null, h('br'),
+      h('span', {class: x.publicado_em ? '' : 'lr-est'}, datasTxt(x))));
+    var lido = A.lido(x.id), btL = h('button', {class: 'btn sm', onclick: async function () { await A.marcarLido(x, !A.lido(x.id)); btL.textContent = A.lido(x.id) ? 'Desmarcar leitura' : 'Marcar como lido'; }}, lido ? 'Desmarcar leitura' : 'Marcar como lido');
+    box.appendChild(h('div', {class: 'lr-acts'}, lk ? h('a', {class: 'btn pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte original ↗') : h('span', {class: 'muted'}, 'Item sem link válido.'),
+      x.pdf && A.link(x.pdf) && x.pdf !== x.link ? h('a', {class: 'btn sm', href: A.link(x.pdf), target: '_blank', rel: 'noopener'}, 'PDF') : null, btL));
+    function sec(tit, rot, corpo, cls) { return h('section', {class: 'lr-s' + (cls ? ' ' + cls : '')}, h('h3', null, tit, rot ? rotulo(rot) : null), corpo); }
+    // 1. o que diz a fonte
+    if ((an.resumo_ia || []).length) box.appendChild(sec('Resumo', 'ia', h('ul', {class: 'lr-l'}, an.resumo_ia.map(function (f) { return h('li', null, f.t); }))));
+    else if (an.base === 'resumo' || (!an.v && x.resumo && x.resumo.length >= 40)) box.appendChild(sec('Resumo da fonte', 'fonte', h('p', {class: 'lr-r'}, curto(x.resumo, 420))));
+    else box.appendChild(h('p', {class: 'lr-so'}, x.categoria === 'oficial_empresa' ? 'O robô registra o documento entregue à CVM, mas não lê o arquivo. O conteúdo está no link original.' : 'Só a manchete foi coletada: o robô não leu o texto. Para entender o fato, abra a fonte original.'));
+    // 2. por que importa
+    var pq = porQueImporta(x);
+    if (pq.length) box.appendChild(sec('Por que importa', null, h('ul', {class: 'lr-l'}, pq.map(function (f) { return h('li', null, rotulo(f.r), ' ', f.t); }))));
+    // 3. relação com a Oregon
+    var rel = relacaoOregon(x);
+    if (rel.length) box.appendChild(sec('Relação com a Oregon', null, h('ul', {class: 'lr-l'}, rel.map(function (r) {
+      return h('li', {class: r.men ? 'men' : null}, rotulo(r.r), ' ', r.t ? h('button', {class: 'tag tk' + (r.men ? ' men' : ''), onclick: function () { fechar(); A.abrirFicha(r.t); }}, r.t) : null, r.t ? ' ' : null, r.t ? r.txtSem : r.txt);
+    }))));
+    // 4. contrapontos documentados (só quando existem)
+    var ct = contrapontosDoc(x);
+    if (ct.itens.length) box.appendChild(sec('Contrapontos documentados', ct.itens[0].item ? 'fonte' : 'ia', h('div', null, h('p', {class: 'lr-sub'}, ct.rot),
+      h('ul', {class: 'lr-l refs'}, ct.itens.slice(0, 4).map(function (c) { return c.item ? linhaRef(c.item) : h('li', null, c.t); })))));
+    // 5. aprofundar (recolhido)
+    var fundo = h('div', {class: 'lr-fundo'});
+    var mais = [], vis = {}; vis[x.id] = 1;
+    I.diretos(x).slice(0, 2).forEach(function (t) { I.doAtivo(A.itens ? A.itens() : [], t).direto.forEach(function (y) { if (!vis[y.id] && mais.length < 5) { vis[y.id] = 1; mais.push(y); } }); });
+    if (mais.length) fundo.appendChild(h('div', null, h('h4', null, 'Mais sobre ' + I.diretos(x).slice(0, 2).join(' e ')), h('ul', {class: 'lr-l refs'}, mais.map(linhaRef))));
+    if (!I.diretos(x).length && !ct.itens.length) { var oc = I.contrapontos(A.itens ? A.itens() : [], x); if (oc.itens.length) fundo.appendChild(h('div', null, h('h4', null, 'Outras fontes sobre o tema'), h('p', {class: 'lr-sub'}, 'Mesmo tema nos 30 dias anteriores; se divergem, só a leitura dos textos dirá.'), h('ul', {class: 'lr-l refs'}, oc.itens.slice(0, 4).map(linhaRef)))); }
+    if ((x.tambem_em || []).length) fundo.appendChild(h('div', null, h('h4', null, 'O mesmo fato em outras fontes'), h('ul', {class: 'lr-l'}, x.tambem_em.map(function (t) { return h('li', null, A.link(t.link) ? h('a', {href: A.link(t.link), target: '_blank', rel: 'noopener'}, t.fonte + ' ↗') : t.fonte); }))));
+    var perg = (an.acompanhar_ia || []).length ? an.acompanhar_ia : (an.acompanhar || []);
+    if (!perg.length) (x.temas || []).slice(0, 2).forEach(function (t) { (((I.TX.roteiro || {})[t] || {}).monitorar || []).slice(0, 2).forEach(function (q) { if (perg.indexOf(q) < 0) perg.push(q); }); });
+    if (perg.length) fundo.appendChild(h('div', null, h('h4', null, 'Para verificar'), h('p', {class: 'lr-sub'}, 'Dados e eventos do roteiro do tema. São perguntas para você, não argumentos de nenhuma fonte.'), h('ul', {class: 'lr-l'}, perg.slice(0, 4).map(function (q) { return h('li', null, q); }))));
+    if ((an.numeros || []).length) fundo.appendChild(h('p', {class: 'lr-sub'}, h('b', null, 'Números citados na manchete ou no resumo: '), an.numeros.join(' · ')));
+    var cls = (x.temas || []).map(I.temaNome).concat((x.regioes || []).map(I.regiaoNome));
+    fundo.appendChild(h('p', {class: 'lr-sub'}, h('b', null, 'Classificação do robô: '), (cls.join(', ') || 'sem tema identificado') + (x.prioridade ? ' · prioridade ' + x.prioridade.nivel + ' (' + x.prioridade.pontos + ' pontos: ' + (x.prioridade.porque || []).join('; ') + ')' : '') + '. A prioridade só ordena; nada é escondido.'));
+    fundo.appendChild(h('div', null, h('h4', null, 'Anotar aprendizado'), A.formAprendizado(x)));
+    box.appendChild(h('details', {class: 'lr-mais'}, h('summary', null, 'Aprofundar'), fundo));
+    box.appendChild(h('p', {class: 'lr-nota'}, an.profunda ? 'Leitura por IA sobre o título e o resumo público, não sobre o texto completo.' : 'Leitura por regras sobre o título e o resumo público, sem acesso ao texto completo.',
+      ' Rótulos: ', rotulo('fonte'), ' texto publicado · ', rotulo('fato'), ' coleta, CVM e carteiras · ', rotulo('sistema'), ' classificação automática.'));
+    return box;
+  };
+  A.analiseView = A.leituraView;  // nome antigo (v3.2)
+  function fechar() { var d = document.querySelector('.drawer'); if (d) d.remove(); }
   A.abrirItem = function (x) {
-    var lk = A.link(x.link), body = h('div', {class: 'item-full'});
-    body.appendChild(h('div', {class: 'nw-top'}, chipsItem(x), h('span', {class: 'muted nw-meta'}, (I.CATEGORIA[x.categoria] || x.categoria || '') + ' · ' + (x.via ? x.fonte : x.organizacao || x.fonte) + (x.pais ? ' · ' + x.pais : '') + (x.autor ? ' · ' + x.autor : '') + (quandoTxt(x) ? ' · ' + quandoTxt(x) : ''))));
-    body.appendChild(h('div', {class: 'row', style: 'gap:8px;flex-wrap:wrap;margin:10px 0'},
-      lk ? h('a', {class: 'btn pri', href: lk, target: '_blank', rel: 'noopener'}, 'Abrir a fonte original ↗') : h('span', {class: 'alert bad', style: 'margin:0'}, 'Item sem link válido.'),
-      x.pdf && A.link(x.pdf) && x.pdf !== x.link ? h('a', {class: 'btn', href: A.link(x.pdf), target: '_blank', rel: 'noopener'}, 'PDF') : null,
-      h('button', {class: 'btn', onclick: async function () { await A.marcarLido(x, !A.lido(x.id)); A.abrirItem(x); }}, A.lido(x.id) ? 'Desmarcar leitura' : 'Marcar como lido')));
-    if (x.resumo) body.appendChild(h('p', {class: 'nw-r', style: 'font-size:.98rem'}, h('span', {class: 'rot r-fonte'}, 'Resumo da fonte'), ' ', x.resumo));
-    if (x.natureza === 'opiniao_casa') body.appendChild(h('div', {class: 'alert', style: 'font-size:.9rem'}, h('b', null, 'Opinião publicada: '), ((x.casas || []).length ? x.casas.join(', ') : 'analistas não identificados no título') + (x.posicao ? ' · sentido ' + I.POSICAO[x.posicao] + ' (lido do título)' : ' · sem sentido explícito no título') + ', como relatada por ' + (x.via ? x.fonte : x.organizacao || x.fonte) + '. É a visão de terceiros reportada pela imprensa; o relatório original não é acessível e o Oregon não recomenda compra nem venda.'));
-    if (x.aviso_fonte) body.appendChild(h('p', {class: 'hint'}, 'Fonte sinalizada: ' + x.aviso_fonte + '.'));
-    if (x.via) body.appendChild(h('p', {class: 'hint'}, 'Achado pela busca do ' + x.via + (x.confiavel === false ? '; veículo fora da lista de veículos conhecidos — confira na fonte antes de usar.' : '.')));
-    if (x.acervo) body.appendChild(h('p', {class: 'hint'}, 'Acervo: já estava publicado na página da gestora quando o robô a leu pela primeira vez. ' + (x.referencia ? 'O documento se refere a ' + x.referencia.slice(5, 7) + '/' + x.referencia.slice(0, 4) + ' (pelo nome do arquivo).' : 'A página não informa a data.')));
-    else if (x.data_estimada) body.appendChild(h('p', {class: 'hint'}, 'A página não informa a data de publicação: a data mostrada é a de detecção pelo robô.'));
-    if (x.tambem_em && x.tambem_em.length) body.appendChild(h('p', {style: 'font-size:.9rem'}, h('b', null, 'O mesmo fato em: '), x.tambem_em.map(function (t, i) { return h('span', null, i ? ' · ' : '', A.link(t.link) ? h('a', {href: A.link(t.link), target: '_blank', rel: 'noopener'}, t.fonte) : t.fonte); })));
-    var tags = (x.temas || []).map(function (t) { return A.chip(I.temaNome(t)); }).concat((x.regioes || []).map(function (r) { return A.chip(I.regiaoNome(r), 'o-q'); }), (x.fatores || []).map(function (f) { return A.chip(I.fatorNome(f), 'o-e'); }));
-    if (tags.length) body.appendChild(h('div', {class: 'row', style: 'gap:6px;flex-wrap:wrap;margin:0 0 10px'}, tags));
-    if (x.ativos && x.ativos.length) body.appendChild(h('p', {style: 'font-size:.92rem'}, h('b', null, 'Ativos da Oregon citados: '), x.ativos.map(function (t, i) { return h('span', null, i ? ', ' : '', h('button', {class: 'btn link', onclick: function () { d.remove(); A.abrirFicha(t); }}, t), x.ativos_porque && x.ativos_porque[t] && x.ativos_porque[t] !== t ? h('span', {class: 'muted'}, ' (“' + x.ativos_porque[t] + '”)') : null); }), h('span', {class: 'muted'}, ' · ligação por menção no texto público, não é posição presumida')));
-    body.appendChild(h('h3', null, 'Análise em sete pontos'));
-    body.appendChild(A.analiseView(x));
-    body.appendChild(h('h3', null, 'Meu aprendizado'));
-    body.appendChild(A.formAprendizado(x));
-    var d = A.drawer(x.titulo, body); d.classList.add('wide');
+    var d = A.drawer(x.organizacao || x.fonte || 'Leitura', A.leituraView(x));
+    d.classList.add('leitura');
     return d;
   };
   A.formAprendizado = function (x, existente) {
@@ -367,8 +585,8 @@ var INTEL = (function () {
       if (!nota.value.trim()) { A.toast('Escreva a nota antes de salvar.'); return; }
       await A.salvarAprendizado({id: reg.id, quando: reg.quando, item_id: x ? x.id : (reg.item_id || null), titulo: x ? x.titulo : reg.titulo, fonte: x ? (x.organizacao || x.fonte) : reg.fonte, link: x ? x.link : reg.link, temas: x ? x.temas : reg.temas, tipo: tipo.value, nota: nota.value});
       A.toast('Aprendizado salvo ' + onde + '.'); if (x) { try { await A.marcarLido(x, true); } catch (e) {} }
-      var d = document.querySelector('.drawer'); if (d) d.remove(); A.render();
-    }}, existente ? 'Salvar alteração' : 'Salvar no registro')), nota, h('p', {class: 'hint'}, 'Fica salvo ' + onde + '. O registro alimenta o resumo semanal pessoal.'));
+      var d = document.querySelector('.drawer'); if (d) d.remove(); A.rerender();
+    }}, existente ? 'Salvar alteração' : 'Salvar no registro')), nota, h('p', {class: 'hint'}, 'Fica salvo ' + onde + '.'));
   };
 
   /* ---------- agenda (calendários oficiais: IBGE, Copom, Fed, Focus) ---------- */
@@ -388,17 +606,18 @@ var INTEL = (function () {
   A.hm = hm;
   // Estado dos dados no topo: hora da última rodada e situação
   A.dadosPill = function () {
-    var v = E.versao, txt, cls;
-    if (!v) { txt = E.carregando ? 'buscando…' : 'sem dados'; cls = E.erro ? 'critico' : 'parcial'; }
-    else { var idade = (Date.now() - new Date(v.gerado_em).getTime()) / 60000; txt = 'Atualizado ' + I.quando({publicado_em: v.gerado_em}); cls = idade > 120 ? 'parcial' : 'completo'; if (idade > 180) txt += ' · robô atrasado'; }
-    return h('button', {class: 'dstat', title: 'Hora da última rodada do robô. Ele lê os portais e as fontes a cada 30 minutos, das 7h às 22h30 (não é tempo real). Toque para ver a coleta por fonte.', onclick: function () { A.go('bib', 'fontes'); }}, h('i', {class: 'dot ' + cls}), txt);
+    var v = E.versao, abs = '', rel = '', cls, atras = false;
+    if (!v) { abs = E.carregando ? 'buscando…' : 'sem dados'; cls = E.erro ? 'critico' : 'parcial'; }
+    else { var idade = (Date.now() - new Date(v.gerado_em).getTime()) / 60000; abs = I.horaAbs(v.gerado_em); rel = I.quando({publicado_em: v.gerado_em}); cls = idade > 120 ? 'parcial' : 'completo'; atras = idade > 180; }
+    return h('button', {class: 'dstat' + (atras ? ' atras' : ''), title: 'Última coleta concluída pelo robô' + (rel ? ' (' + rel + ')' : '') + '. Ele lê as fontes a cada 30 minutos, das 7h às 22h30 (não é tempo real). Toque para ver a coleta por fonte.', onclick: function () { A.go('bib', 'fontes'); }},
+      h('i', {class: 'dot ' + cls}), h('span', {class: 'ds-l'}, v ? 'Coleta ' : ''), h('b', null, abs), rel ? h('span', {class: 'ds-r'}, ' · ' + rel) : null, atras ? h('span', {class: 'ds-a'}, ' · robô atrasado') : null);
   };
   // Faixa de aviso quando o robô novo ainda não rodou ou os dados não chegam
   A.intelFaixa = function () {
     if (E.versao && E.versao.produto === 'Oregon Intelligence') return null;
     if (E.versaoAntiga) return h('div', {class: 'alert warn'}, h('b', null, 'O robô publicado ainda é a versão anterior (cotações). '), 'O site mostra o que existe. Para ligar a coleta de conteúdo, atualize o arquivo .github/workflows/robo.yml no GitHub com o conteúdo de docs/workflow_robo.yml e rode “Oregon Intelligence” em Actions (docs/ATUALIZACAO.md).');
-    if (E.erro) return h('div', {class: 'alert warn'}, h('b', null, 'Sem acesso aos dados do robô agora: '), E.erro + '. ' + (noClaude() ? 'Nesta visualização (claude.ai) o navegador pode não alcançar o site público; abra o painel em ' + SITE_PADRAO + '.' : 'As carteiras, fichas e teses abaixo não dependem dele.'));
-    if (!E.versao && !E.carregando) return h('div', {class: 'alert warn'}, 'O robô ainda não publicou dados (primeira rodada pendente). Em Actions → Oregon Intelligence → Run workflow.');
+    if (E.erro) return h('div', {class: 'alert warn slim'}, h('b', null, 'Sem acesso aos dados do robô agora: '), E.erro + '. ' + (noClaude() ? 'Nesta visualização (claude.ai) o navegador pode não alcançar o site público; abra o painel em ' + SITE_PADRAO + '.' : 'As carteiras, fichas e teses abaixo não dependem dele.'));
+    if (!E.versao && !E.carregando) return h('div', {class: 'alert warn slim'}, 'O robô ainda não publicou dados (primeira rodada pendente). Em Actions → Oregon Intelligence → Run workflow.');
     return null;
   };
 })(typeof APP !== 'undefined' ? APP : null, typeof CORE !== 'undefined' ? CORE : null, INTEL);

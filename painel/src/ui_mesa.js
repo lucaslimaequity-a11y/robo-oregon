@@ -6,7 +6,9 @@
   A.renderTop = function () {
     var tr = document.getElementById('top-r');
     if (tr) tr.replaceChildren(
-      h('button', {class: 'kbtn', title: 'Buscar conteúdo, ativo, carteira ou seção (tecla /)', onclick: function () { A.busca(); }}, '⌕', h('span', null, ' Buscar'), h('kbd', null, '/')),
+      h('button', {class: 'kbtn qbox', type: 'button', title: 'Buscar notícia, empresa, carteira, assunto ou seção (tecla / ou Ctrl+K)', 'aria-label': 'Buscar', onclick: function () { A.busca(); }},
+        h('span', {class: 'qi', 'aria-hidden': 'true', html: '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.8"/><path d="M10.6 10.6 14 14" stroke-linecap="round"/></svg>'}),
+        h('span', {class: 'qp qp-l'}, 'Buscar notícia, empresa, carteira…'), h('span', {class: 'qp qp-s'}, 'Buscar'), h('kbd', null, '/')),
       A.dadosPill ? A.dadosPill() : null);
     // faixa de contexto: só em Oregon › Carteiras fora da referência (qualquer das 15 pode ser escolhida)
     var ctx = document.getElementById('ctx'); if (ctx) ctx.hidden = !A.mostraCtx();

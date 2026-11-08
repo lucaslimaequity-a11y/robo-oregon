@@ -1,0 +1,708 @@
+{
+ "_sobre": "Itens REAIS capturados pelo robô do Oregon Intelligence (data/recentes.json e biblioteca de nov/2026, lidos em 08/11/2026). Servem de referência para a classificação do vínculo com cada ativo (direto ou menção) e para a base da leitura curta. Usados por testes/test_intel.py (robô) e testes/painel.test.js (painel), que precisam concordar.",
+ "casos": [
+  {
+   "caso": "noticia_de_empresa",
+   "item": {
+    "id": "098ff33dde2a107e",
+    "titulo": "Klabin faz acordo para formação de SPE de madeira no Paraná",
+    "link": "https://www.portaldoholanda.com.br/index.php/mundo/klabin-faz-acordo-para-formacao-de-spe-de-madeira-no-parana",
+    "fonte_id": "busca-klbn4",
+    "fonte": "Portal do Holanda",
+    "organizacao": "Portal do Holanda",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-06T12:33-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "ativos": [
+     "KLBN4"
+    ],
+    "confiavel": false,
+    "temas": [],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [],
+    "fatores": [],
+    "natureza": "noticia",
+    "ativos_porque": {
+     "KLBN4": "Klabin"
+    },
+    "casas": [],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "prioridade": {
+     "pontos": 22,
+     "nivel": "baixa",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "KLBN4": [
+      "direto",
+      null
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "resultado_da_empresa",
+   "item": {
+    "id": "3faf58e2f206da2e",
+    "titulo": "Klabin: resultado do 3T26 mostra lucro menor, mas receita cresce e supera expectativas",
+    "link": "https://br.advfn.com/noticias/PAPERBR/2026/artigo/99576920",
+    "fonte_id": "busca-klbn4",
+    "fonte": "ADVFN Brasil",
+    "organizacao": "ADVFN Brasil",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-05T13:00-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "ativos": [
+     "KLBN4"
+    ],
+    "confiavel": true,
+    "temas": [
+     "bolsa"
+    ],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [],
+    "fatores": [],
+    "natureza": "noticia",
+    "ativos_porque": {
+     "KLBN4": "Klabin"
+    },
+    "casas": [],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "prioridade": {
+     "pontos": 24,
+     "nivel": "baixa",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "KLBN4": [
+      "direto",
+      "resultado"
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "mudanca_de_recomendacao",
+   "item": {
+    "id": "f55f9fcabac817e1",
+    "titulo": "Klabin (KLBN11): Safra corta preço-alvo e rebaixa recomendação diante de cenário mais desafiador",
+    "link": "https://www.moneytimes.com.br/klabin-klbn11-safra-corta-preco-alvo-e-rebaixa-recomendacao-diante-de-cenario-mais-desafiador/",
+    "fonte_id": "busca-klbn4",
+    "fonte": "Money Times",
+    "organizacao": "Money Times",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-06T05:12-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "ativos": [
+     "KLBN4"
+    ],
+    "confiavel": true,
+    "temas": [],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [],
+    "fatores": [],
+    "natureza": "opiniao_casa",
+    "ativos_porque": {
+     "KLBN4": "Klabin"
+    },
+    "casas": [
+     "Safra"
+    ],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "posicao": "contraria",
+    "prioridade": {
+     "pontos": 26,
+     "nivel": "baixa",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)",
+      "opinião de casa de análise: Safra (+4)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "KLBN4": [
+      "direto",
+      "recomendacao"
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "mencao_em_lista_de_dividendos",
+   "item": {
+    "id": "ff355d67a8cd1b64",
+    "titulo": "Allied paga R$ 0,63 por ação; Santander, Klabin, Lavvi e outros completam dividendos da semana",
+    "link": "https://www.msn.com/pt-br/dinheiro/principais-a%C3%A7%C3%B5es/allied-paga-r-0-63-por-a%C3%A7%C3%A3o-santander-klabin-lavvi-e-outros-completam-dividendos-da-semana/ar-AA2h0phc",
+    "fonte_id": "busca-klbn4",
+    "fonte": "Estadão on MSN",
+    "organizacao": "Estadão on MSN",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-08T00:00-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "ativos": [
+     "KLBN4"
+    ],
+    "confiavel": true,
+    "temas": [
+     "bolsa",
+     "bancos"
+    ],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [],
+    "fatores": [],
+    "natureza": "noticia",
+    "ativos_porque": {
+     "KLBN4": "Klabin"
+    },
+    "casas": [],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "prioridade": {
+     "pontos": 30,
+     "nivel": "media",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "KLBN4": [
+      "mencao",
+      null
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "mencao_em_destaques_do_dia",
+   "item": {
+    "id": "710919009db465a0",
+    "titulo": "Brasil — Axia (AXIA3), Prio (PRIO3), SmartFit (SMFT3) e outros destaques desta quinta-feira (5)",
+    "link": "https://prensamercosur.org/2026/11/05/brasil-axia-axia3-prio-prio3-smartfit-smft3-e-outros-destaques-desta-quinta-feira-5/",
+    "fonte_id": "busca-prio3",
+    "fonte": "prensamercosur",
+    "organizacao": "prensamercosur",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-05T06:05-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "ativos": [
+     "AXIA3",
+     "PRIO3"
+    ],
+    "confiavel": false,
+    "temas": [],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [
+     "ele",
+     "oil"
+    ],
+    "fatores": [],
+    "natureza": "noticia",
+    "ativos_porque": {
+     "AXIA3": "AXIA3",
+     "PRIO3": "PRIO3"
+    },
+    "casas": [],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "prioridade": {
+     "pontos": 22,
+     "nivel": "baixa",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "AXIA3": [
+      "mencao",
+      null
+     ],
+     "PRIO3": [
+      "mencao",
+      null
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "opiniao_sobre_o_setor_com_o_ativo_no_titulo",
+   "item": {
+    "id": "e68dbca1802e78c0",
+    "titulo": "Safra rebaixa BB (BBSA3) para venda; Itaú (ITUB4) e Bradesco (BBDC4) também sofrem e só uma ação escapa da degola",
+    "link": "https://www.seudinheiro.com/2026/empresas/safra-rebaixa-bb-bbsa3-para-venda-itau-itub4-e-bradesco-bbdc4-tambem-sofrem-e-so-uma-acao-escapa-da-degola-rnda/",
+    "fonte_id": "busca-bbdc3",
+    "fonte": "Seu Dinheiro",
+    "organizacao": "Seu Dinheiro",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-06T09:23-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "ativos": [
+     "BBDC3"
+    ],
+    "confiavel": true,
+    "temas": [
+     "bancos"
+    ],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [
+     "fin"
+    ],
+    "fatores": [],
+    "natureza": "opiniao_casa",
+    "ativos_porque": {
+     "BBDC3": "Bradesco"
+    },
+    "casas": [
+     "Safra"
+    ],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "posicao": "contraria",
+    "prioridade": {
+     "pontos": 28,
+     "nivel": "media",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)",
+      "opinião de casa de análise: Safra (+4)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "BBDC3": [
+      "direto",
+      "recomendacao"
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "medida_que_afeta_empresas_citadas",
+   "item": {
+    "id": "931fa437abdb4ced",
+    "titulo": "Imposto de exportação de petróleo é prorrogado: como afeta Petrobras, Brava e PRIO?",
+    "link": "https://www.infomoney.com.br/mercados/imposto-de-exportacao-de-petroleo-e-prorrogado-como-afeta-petrobras-brava-e-prio/",
+    "fonte_id": "busca-petr4",
+    "fonte": "InfoMoney",
+    "organizacao": "InfoMoney",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-06T02:23-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "ativos": [
+     "PETR4",
+     "PRIO3"
+    ],
+    "confiavel": true,
+    "aviso_fonte": "Grupo XP — não citar em material de cliente",
+    "temas": [
+     "fiscal",
+     "commodities"
+    ],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [
+     "oil"
+    ],
+    "fatores": [
+     "brent"
+    ],
+    "natureza": "noticia",
+    "ativos_porque": {
+     "PETR4": "Petrobras",
+     "PRIO3": "PRIO"
+    },
+    "casas": [],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "prioridade": {
+     "pontos": 26,
+     "nivel": "baixa",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "PETR4": [
+      "direto",
+      null
+     ],
+     "PRIO3": [
+      "direto",
+      null
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "documento_oficial_cvm",
+   "item": {
+    "id": "9d154e5ebf708925",
+    "titulo": "KLBN4 — Comunicado ao Mercado: Operação Florestal",
+    "link": "https://www.rad.cvm.gov.br/ENET/frmDownloadDocumento.aspx?Tela=ext&descTipo=IPE&CodigoInstituicao=1&numProtocolo=1585868&numSequencia=1110574&numVersao=1",
+    "fonte_id": "cvm-ipe",
+    "fonte": "CVM — fatos relevantes e comunicados das empresas",
+    "organizacao": "KLABIN S.A.",
+    "categoria": "oficial_empresa",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "documento_oficial",
+    "publicado_em": "2026-11-06",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "ativos": [
+     "KLBN4"
+    ],
+    "categoria_cvm": "Comunicado ao Mercado",
+    "so_data": true,
+    "temas": [],
+    "regioes": [
+     "brasil"
+    ],
+    "setores": [],
+    "fatores": [],
+    "natureza": "original",
+    "ativos_porque": {
+     "KLBN4": "KLBN4"
+    },
+    "casas": [],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "prioridade": {
+     "pontos": 40,
+     "nivel": "media",
+     "porque": [
+      "Documento oficial (+18)",
+      "fonte primária (+8)",
+      "cita ativo da Oregon (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "KLBN4": [
+      "direto",
+      "oficial"
+     ]
+    },
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "noticia_do_setor_sem_citar_a_empresa",
+   "item": {
+    "id": "4104c94211d3819b",
+    "titulo": "Banco do Brasil (BBAS3) sobe quase 4%, mas dividendos de 2027 ainda geram dúvidas",
+    "link": "https://opetroleo.com.br/banco-do-brasil-bbas3-sobe-quase-4-mas-dividendos-de-2027-ainda-geram-duvidas/",
+    "fonte_id": "busca-setor-bancos-e-credito",
+    "fonte": "O Petróleo",
+    "organizacao": "O Petróleo",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-08T01:17-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "",
+    "via": "Bing Notícias",
+    "setor_de": [
+     "BBDC3",
+     "ITSA4",
+     "INBR34"
+    ],
+    "setor_nome": "Bancos e crédito",
+    "confiavel": false,
+    "temas": [
+     "bolsa",
+     "bancos"
+    ],
+    "regioes": [
+     "brasil"
+    ],
+    "ativos": [],
+    "setores": [],
+    "fatores": [],
+    "natureza": "noticia",
+    "ativos_porque": {},
+    "casas": [],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "prioridade": {
+     "pontos": 20,
+     "nivel": "baixa",
+     "porque": [
+      "Notícia (+8)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {},
+    "base": "manchete"
+   }
+  },
+  {
+   "caso": "carta_de_gestora",
+   "item": {
+    "id": "97c3227c2aede7b6",
+    "titulo": "As Lições de Hemingway",
+    "link": "https://www.kinea.com.br/blog/carta-do-gestor-as-licoes-de-hemingway/",
+    "fonte_id": "kinea-carta-insights",
+    "fonte": "Kinea — Carta do Gestor e Kinea Insights",
+    "organizacao": "Kinea Investimentos",
+    "categoria": "gestora_brasil",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "carta",
+    "publicado_em": "2026-10-30T18:42-03:00",
+    "detectado_em": "2026-11-08T08:58-03:00",
+    "data_estimada": false,
+    "resumo": "As Lições de Hemingway inspiram a análise da Kinea sobre os desafios fiscais do Brasil, o cenário econômico global, os investimentos em inteligência artificial e os movimentos do mercado de commodities.",
+    "autor": "",
+    "temas": [
+     "commodities",
+     "tecnologia_ia",
+     "carta_gestor",
+     "metodo"
+    ],
+    "regioes": [
+     "brasil",
+     "global"
+    ],
+    "ativos": [],
+    "setores": [],
+    "fatores": [],
+    "natureza": "original",
+    "ativos_porque": {},
+    "prioridade": {
+     "pontos": 46,
+     "nivel": "alta",
+     "porque": [
+      "Carta de gestor (+30)",
+      "fonte primária (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T08:58-03:00"
+   },
+   "esperado": {
+    "vinculos": {},
+    "base": "resumo"
+   }
+  },
+  {
+   "caso": "carta_de_gestora_curta",
+   "item": {
+    "id": "2c50130cbef0514e",
+    "titulo": "Carta 130 – O Tácito do Tempo",
+    "link": "https://www.dynamo.com.br/carta-130-o-tacito-do-tempo/",
+    "fonte_id": "dynamo-cartas",
+    "fonte": "Dynamo — Cartas Dynamo",
+    "organizacao": "Dynamo Administração de Recursos",
+    "categoria": "gestora_brasil",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "carta",
+    "publicado_em": "2026-10-30T11:00-03:00",
+    "detectado_em": "2026-11-08T08:58-03:00",
+    "data_estimada": false,
+    "resumo": "Discorre sobre os atributos escondidos dos negócios relacionais, que envolvem rotinas tácitas, confiança e reciprocidade. Leia aqui",
+    "autor": "Vinicius Gomes Vieira",
+    "temas": [
+     "carta_gestor"
+    ],
+    "regioes": [
+     "brasil"
+    ],
+    "ativos": [],
+    "setores": [],
+    "fatores": [],
+    "natureza": "original",
+    "ativos_porque": {},
+    "prioridade": {
+     "pontos": 42,
+     "nivel": "media",
+     "porque": [
+      "Carta de gestor (+30)",
+      "fonte primária (+10)"
+     ]
+    },
+    "visto_em": "2026-11-08T08:58-03:00"
+   },
+   "esperado": {
+    "vinculos": {},
+    "base": "resumo"
+   }
+  },
+  {
+   "caso": "resultado_de_bancos_citando_santander",
+   "item": {
+    "id": "68ccb5589ea828c8",
+    "titulo": "Lucro dos bancões cresce no 3T26, mas a conta dos juros chega: Santander perde força, Bradesco desacelera e Itaú mantém a dianteira",
+    "link": "https://www.seudinheiro.com/2026/empresas/lucro-dos-bancoes-cresce-no-3t26-mas-a-conta-dos-juros-chega-santander-perde-forca-bradesco-desacelera-e-itau-mantem-a-dianteira-miql/",
+    "fonte_id": "imprensa-seu-dinheiro",
+    "fonte": "Seu Dinheiro",
+    "organizacao": "Seu Dinheiro",
+    "categoria": "veiculo",
+    "pais": "Brasil",
+    "idioma": "pt",
+    "tipo": "noticia",
+    "publicado_em": "2026-11-07T15:08-03:00",
+    "detectado_em": "2026-11-08T10:17-03:00",
+    "data_estimada": false,
+    "resumo": "",
+    "autor": "Seu Dinheiro",
+    "temas": [
+     "juros",
+     "bolsa",
+     "bancos"
+    ],
+    "regioes": [
+     "brasil"
+    ],
+    "ativos": [
+     "BBDC3"
+    ],
+    "setores": [
+     "fin"
+    ],
+    "fatores": [],
+    "natureza": "opiniao_casa",
+    "ativos_porque": {
+     "BBDC3": "Bradesco"
+    },
+    "casas": [
+     "Santander"
+    ],
+    "temas_etf": [],
+    "etfs_tema": [],
+    "posicao": null,
+    "prioridade": {
+     "pontos": 36,
+     "nivel": "media",
+     "porque": [
+      "Notícia (+8)",
+      "cita ativo da Oregon (+10)",
+      "opinião de casa de análise: Santander (+4)"
+     ]
+    },
+    "visto_em": "2026-11-08T10:17-03:00"
+   },
+   "esperado": {
+    "vinculos": {
+     "BBDC3": [
+      "direto",
+      "recomendacao"
+     ]
+    },
+    "base": "manchete",
+    "natureza_reclassificada": "noticia",
+    "evento_reclassificado": "resultado"
+   },
+   "nota": "Capturado como \"opinião\" pela regra antiga (\"Itaú mantém a dianteira\" contava como verbo de opinião). Com a regra atual vira notícia de resultado."
+  }
+ ]
+}

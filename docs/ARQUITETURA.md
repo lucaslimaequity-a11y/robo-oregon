@@ -13,7 +13,7 @@
    Copom, Fed, Focus) → `macro.json`. Falha mantém o último valor, marcado `reaproveitado`; nunca zero.
 4. **Conteúdo** (`coletar_conteudo`) — para cada fonte ativa: `conteudo.coletar_fonte` (rss/atom/rdf, youtube via API,
    pagina, sitemap, arquivo_fixo, api), com `Robots` por host; rejeições contadas por motivo; `analise.classificar`
-   (temas, regiões, ativos, setores, fatores, natureza, prioridade) e `analise.analisar_regras` (sete pontos rotulados);
+   (temas, regiões, ativos, setores, fatores, natureza, prioridade) e `analise.vinculos` (direto ou menção, por ativo) e `analise.analisar_regras` (leitura curta v2: base da leitura, números literais e perguntas do tema);
    `biblioteca.incorporar` deduplica por id (link normalizado) e por título (Jaccard ≥ 0,6, janela de 3 dias, nunca
    entre itens da mesma fonte) e grava por mês. Contadores em `coleta.json`.
 5. **IA opcional** (`ler_com_ia`) — só com `ANTHROPIC_API_KEY` e `intel.ia.ativo = true`; itens de prioridade alta/média
@@ -55,7 +55,7 @@ visto_em`. Itens absorvidos como "também em" recebem `agrupado_em` e saem das l
 - `intel.js` — módulo `INTEL` (funções puras: juntar, filtrar, ordenar, contagens, importação de aprendizados; taxonomia
   injetada pelo build a partir de `robo/analise.py`) e a camada de dados: `versao.json` a cada 10 minutos, demais
   arquivos quando a versão muda, meses sob demanda (`A.carregarMes`), `resultados.json` quando uma ficha pede; vistas
-  `A.itemCard`, `A.abrirItem` (gaveta com sete pontos, fonte original, leitura e aprendizado), `A.macroCards`, `A.agendaView`.
+  `A.itemRow`/`A.listaRows` (linhas de notícia com separador por dia, abrem no lugar), `A.itemCard`, `A.abrirItem` (janela de leitura editorial: fonte e data, resumo, por que importa, relação com a Oregon, contrapontos documentados, aprofundar recolhido; ao fechar, volta ao ponto de leitura), `I.vinculo` (mesma regra do robô, para itens antigos), `A.macroCards`, `A.agendaView`.
 - `ui_hoje.js`, `ui_bib.js`, `ui_oregon.js` — Hoje, Biblioteca e as seções Brasil e Mundo e Estratégia. `ui_mapa.js` + `ui_mesa.js` — as 15 carteiras (pesos como
   aprovados, validação, exposições agregadas). `ui_teses.js`, `core.js`, `store.js` (coleções `aprendizados` e `leituras`
   neste navegador; no claude.ai, no banco do artefato), `quant.js` (só o que a validação usa).

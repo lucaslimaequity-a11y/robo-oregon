@@ -152,12 +152,12 @@ class TestRodada(Base):
         self.assertEqual(carta['prioridade']['nivel'], 'alta')
         self.assertEqual(carta['analise']['modo'], 'regras')
         self.assertFalse(carta['analise']['profunda'])
+        self.assertEqual(carta['analise']['v'], 2)                                     # leitura curta: nada dos sete pontos
         for k in ('1_publicacao', '2_tese', '3_evidencias', '4_contrarios', '5_regioes', '6_oregon', '7_monitorar'):
-            self.assertTrue(carta['analise'][k], k)
-            for fr in carta['analise'][k]:
-                self.assertIn(fr['r'], ('FATO', 'FONTE', 'INFERÊNCIA'))
-        self.assertEqual(carta['analise']['1_publicacao'][0]['r'], 'FATO')
-        self.assertTrue(any('PETR4' in fr['t'] for fr in carta['analise']['6_oregon']))
+            self.assertNotIn(k, carta['analise'])
+        self.assertEqual(carta['analise']['base'], 'resumo')                            # o resumo da carta acrescenta algo à manchete
+        self.assertEqual(carta['vinculos']['PETR4']['tipo'], 'mencao')                   # citada no resumo, não na manchete
+        self.assertTrue(all(x.get('vinculos') is not None for x in rec['itens']))
         self.assertTrue(all(x['link'].startswith('http') for x in rec['itens']))     # a fonte original sempre abre
         self.assertTrue(all('analise' in x for x in rec['itens']))                    # ninguém fica sem análise
         # veículo de imprensa: nada do texto guardado; sensacionalismo penalizado mas visível
@@ -281,7 +281,7 @@ class TestRodada(Base):
         pdf = next(x for x in self.ler('biblioteca/%d-11.json' % ANO)['itens'] if x['titulo'] == 'Carta Mensal Outubro 2026')
         self.assertIsNone(pdf['publicado_em'])
         self.assertTrue(pdf['data_estimada'])
-        self.assertIn('a página não informa a data', pdf['analise']['1_publicacao'][0]['t'])
+        self.assertEqual(pdf['analise']['base'], 'manchete')                             # só o nome do arquivo: nada de leitura inventada
 
 
 class TestImprensa(Base):
@@ -295,9 +295,8 @@ class TestImprensa(Base):
         self.assertEqual(btg['casas'], ['BTG Pactual'])
         self.assertEqual(btg['natureza'], 'opiniao_casa')
         self.assertEqual(btg['resumo'], '')                                            # imprensa: só título, link, data e veículo
-        self.assertTrue(btg['analise']['compacta'])                                     # pontos 4, 5 e 7 vêm do roteiro do tema no painel
-        self.assertNotIn('4_contrarios', btg['analise'])
-        self.assertTrue(any('BTG Pactual' in fr['t'] and fr['r'] == 'FONTE' for fr in btg['analise']['2_tese']))
+        self.assertEqual(btg['analise']['base'], 'manchete')                             # só manchete: o painel não produz análise aprofundada
+        self.assertEqual(btg['vinculos']['PETR4'], {'tipo': 'direto', 'motivo': 'opinião de casa de análise sobre o ativo', 'evento': 'recomendacao'})
         xp = por_link['https://portal.teste/xp-carteira']                              # opinião da XP publicada por outro portal: entra
         self.assertEqual(xp['casas'], ['XP'])
         self.assertEqual(xp['organizacao'], 'Portal Teste')
@@ -375,10 +374,10 @@ class TestImprensa(Base):
 
 
 class TestIA(Base):
-    RESP = {'tese': [{'r': 'FONTE', 't': 'A gestora defende que o juro real de 7% é raro.'}], 'evidencias': [{'r': 'FATO', 't': 'Cita NTN-B a 7% ao ano.'}],
-            'contrarios': [{'r': 'INFERÊNCIA', 't': 'Risco fiscal pode manter o prêmio.'}], 'regioes': [{'r': 'INFERÊNCIA', 't': 'Brasil.'}],
-            'oregon': [{'r': 'INFERÊNCIA', 't': 'Toca IMAB11 e B5P211.'}, {'r': 'ERRADO', 't': 'rótulo inválido deve cair'}], 'monitorar': [{'r': 'INFERÊNCIA', 't': 'Focus e curva.'}],
-            'temas': ['juros', 'renda fixa'], 'resumo_1_frase': 'Carta sobre juro real.'}
+    RESP = {'resumo': [{'r': 'FONTE', 't': 'A gestora defende que o juro real de 7% é raro.'}, {'r': 'ERRADO', 't': 'rótulo inválido deve cair'}],
+            'porque': [{'r': 'INFERÊNCIA', 't': 'Toca o carrego de IMAB11 e B5P211.'}],
+            'contrapontos': [{'r': 'FONTE', 't': 'O próprio texto admite que o risco fiscal pode manter o prêmio.'}],
+            'acompanhar': [{'r': 'INFERÊNCIA', 't': 'Focus e curva.'}], 'temas': ['juros', 'renda fixa']}
 
     def _cfg_ia(self, ativo, max_itens=12):
         c = json.load(open(CONFIG_TESTE, encoding='utf-8'))
@@ -411,9 +410,10 @@ class TestIA(Base):
         self.assertEqual(len(lidos), 2)
         carta = next(x for x in lidos if x['titulo'].startswith('Carta 41'))
         self.assertTrue(carta['analise']['profunda'])
-        self.assertEqual(carta['analise']['1_publicacao'][0]['r'], 'FATO')              # o fato da publicação vem sempre das regras
-        self.assertEqual(len(carta['analise']['6_oregon']), 1)                           # rótulo inválido descartado
-        self.assertEqual(carta['analise']['2_tese'][0]['r'], 'FONTE')
+        self.assertEqual(carta['analise']['base'], 'resumo')                             # a base da leitura vem sempre das regras
+        self.assertEqual(len(carta['analise']['resumo_ia']), 1)                          # rótulo inválido descartado
+        self.assertEqual(carta['analise']['resumo_ia'][0]['r'], 'FONTE')
+        self.assertEqual(carta['analise']['acompanhar_ia'], ['Focus e curva.'])
         pedido = json.dumps(m.ia_pedidos[0], ensure_ascii=False)
         self.assertIn('Carta 41', pedido)
         for proibido in ('0.2', 'peso', 'cresc-cons', 'wp"'):                           # nada de pesos ou carteiras vai para a IA
@@ -713,6 +713,94 @@ class TestBuscasPorAtivo(Base):
         fr = next(x for x in cvm if 'KLBN4' in x['titulo'])
         self.assertEqual((fr['ativos'][0], fr['tipo'], fr['publicado_em'], fr['categoria']), ('KLBN4', 'fato_relevante', '2026-11-06', 'oficial_empresa'))
         self.assertTrue(fr['so_data'])
+
+
+AMOSTRAS_LEITURA = os.path.join(AQUI, 'amostras_reais', 'leitura_vinculos_2026-11-08.json')
+
+
+class TestLeituraEVinculo(Base):
+    """v3.3: notícias REAIS já capturadas (testes/amostras_reais) — vínculo direto × menção de passagem, peso na prioridade,
+    leitura curta sem análise inventada e histórico de opiniões de 12 meses. O painel usa as mesmas amostras."""
+
+    def casos(self):
+        with open(AMOSTRAS_LEITURA, encoding='utf-8') as f:
+            return json.load(f)['casos']
+
+    def oregon(self):
+        cfg = json.load(open(CONFIG_TESTE, encoding='utf-8'))
+        return intel.carregar_oregon(cfg, DATA_PAINEL)
+
+    def test_vinculo_das_noticias_reais(self):
+        ore = self.oregon()
+        for c in self.casos():
+            x = dict(c['item'])
+            v = analise.vinculos(x, ore)
+            got = {t: [d['tipo'], d['evento']] for t, d in v.items()}
+            self.assertEqual(got, c['esperado']['vinculos'], '%s: %s' % (c['caso'], x['titulo']))
+            sem_termos = {t: [d['tipo'], d['evento']] for t, d in analise.vinculos(x, {}).items()}   # só com o termo guardado no item (como o painel faz)
+            self.assertEqual(sem_termos, c['esperado']['vinculos'], 'sem cadastro: ' + c['caso'])
+
+    def test_reclassificacao_de_item_antigo_corrige_falsa_opiniao(self):
+        ore, hoje = self.oregon(), dt.date(ANO, 11, 8)
+        c = next(c for c in self.casos() if c['caso'] == 'resultado_de_bancos_citando_santander')
+        x = biblioteca.atualizar_leitura(dict(c['item']), ore, hoje)                       # como na publicação do recentes.json
+        self.assertEqual(x['natureza'], c['esperado']['natureza_reclassificada'])           # "Itaú mantém a dianteira" não é opinião de casa
+        self.assertEqual(x['vinculos']['BBDC3']['evento'], c['esperado']['evento_reclassificado'])
+        self.assertNotIn('posicao', x)
+        self.assertEqual(analise.casas_citadas({'titulo': 'Itaú BBA mantém recomendação de compra para Klabin'}), ['Itaú BBA'])
+        self.assertEqual(c['item']['natureza'], 'opiniao_casa')                              # o item guardado não é alterado
+
+    def test_mencao_em_lista_pesa_menos_que_fato_da_empresa(self):
+        ore, hoje = self.oregon(), dt.date(ANO, 11, 8)
+        por = {c['caso']: dict(c['item'], publicado_em='%d-11-08T09:00-03:00' % ANO) for c in self.casos()}   # mesma data: só o vínculo e o tipo diferem
+        for x in por.values():
+            x['vinculos'] = analise.vinculos(x, ore)
+            x['prioridade'] = analise.prioridade(x, hoje)
+        lista = por['mencao_em_lista_de_dividendos']['prioridade']
+        self.assertIn('só de passagem', ' '.join(lista['porque']))
+        for forte in ('noticia_de_empresa', 'resultado_da_empresa', 'mudanca_de_recomendacao', 'documento_oficial_cvm'):
+            self.assertGreater(por[forte]['prioridade']['pontos'], lista['pontos'], forte)
+        self.assertIn('trata de ativo da Oregon: KLBN4 (+10)', por['noticia_de_empresa']['prioridade']['porque'])
+
+    def test_leitura_curta_nao_inventa(self):
+        ore = self.oregon()
+        for c in self.casos():
+            x = dict(c['item'])
+            A = analise.analisar_regras(x, ore)
+            self.assertEqual(A['v'], 2)
+            self.assertEqual(A['base'], c['esperado']['base'], c['caso'])
+            txt = json.dumps(A, ensure_ascii=False)
+            self.assertNotIn('Não avaliado', txt)                                         # nada de seções vazias preenchidas
+            self.assertNotIn(x['titulo'], txt)                                            # o título não vira "tese"
+            for k in ('1_publicacao', '2_tese', '4_contrarios', '6_oregon'):
+                self.assertNotIn(k, A)
+        kl = next(c['item'] for c in self.casos() if c['caso'] == 'resultado_da_empresa')
+        self.assertFalse(analise.resumo_util(kl))                                         # imprensa: só manchete
+        self.assertFalse(analise.resumo_util({'titulo': 'Copom mantém a Selic', 'resumo': 'Copom mantém a Selic.'}))  # resumo que repete a manchete
+
+    def test_publica_opinioes_de_12_meses_e_atualiza_itens_antigos(self):
+        pasta = os.path.join(self.tmp, 'data', 'biblioteca')
+        os.makedirs(pasta, exist_ok=True)
+        base = next(c['item'] for c in self.casos() if c['caso'] == 'mudanca_de_recomendacao')
+        antiga = dict(base, id='op-jan', publicado_em='%d-01-15T10:00-03:00' % ANO, titulo='Klabin (KLBN11): Safra eleva recomendação para compra', posicao='favoravel')
+        velha = dict(base, id='op-velha', publicado_em='%d-09-01T10:00-03:00' % (ANO - 1), titulo='Klabin: BTG rebaixa para neutro')
+        for nome, it in (('%d-01' % ANO, antiga), ('%d-09' % (ANO - 1), velha)):
+            with open(os.path.join(pasta, nome + '.json'), 'w', encoding='utf-8') as f:
+                json.dump({'mes': nome, 'n': 1, 'itens': [dict(it, analise={'modo': 'regras', '1_publicacao': [{'r': 'FATO', 't': 'x'}]})]}, f, ensure_ascii=False)
+        rec = self.rodar(mundo())
+        op = self.ler('biblioteca/opinioes.json')
+        ids = [x['id'] for x in op['itens']]
+        self.assertIn('op-jan', ids)                                                      # 10 meses atrás: entra
+        self.assertNotIn('op-velha', ids)                                                 # mais de 12 meses: fica só na Biblioteca
+        self.assertTrue(any(x['link'] == 'https://portal.teste/bba-klbn' for x in op['itens']))
+        jan = next(x for x in op['itens'] if x['id'] == 'op-jan')
+        self.assertEqual(jan['vinculos']['KLBN4']['tipo'], 'direto')                     # item antigo ganha o vínculo na publicação
+        self.assertNotIn('analise', jan)                                                  # só os campos que o painel usa
+        self.assertTrue(all(x['natureza'] == 'opiniao_casa' for x in op['itens']))
+        self.assertTrue(all((x.get('analise') or {}).get('v') == 2 for x in rec['itens']))
+        self.assertIn('opinioes', open(os.path.join(AQUI, '..', '.github', 'workflows', 'robo.yml'), encoding='utf-8').read().replace('biblioteca/*.json', 'opinioes'))  # publicado com a pasta da biblioteca
+        self.assertNotIn('opinioes', self.ler('versao.json')['meses'])                   # não vira um "mês" da Biblioteca
+
 
 if __name__ == '__main__':
     unittest.main()

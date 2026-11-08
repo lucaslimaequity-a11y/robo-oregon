@@ -100,7 +100,7 @@ class Mundo:
         self.apis = kw.get('apis', {})        # url -> objeto JSON
         self.heads = kw.get('heads', {})      # url -> cabeçalhos devolvidos ao HEAD
         self.robots = kw.get('robots', {})    # host -> texto do robots.txt
-        self.ia_respostas = kw.get('ia_respostas')  # lista de respostas JSON da IA para a análise em sete pontos
+        self.ia_respostas = kw.get('ia_respostas')  # lista de respostas JSON da IA para a leitura curta
         self.ia_pedidos = []
 
     # --- respostas por fonte
@@ -366,7 +366,7 @@ class Mundo:
     def _anthropic(self, url, hdr, dados):
         corpo = json.loads(dados.decode())
         self.ia_pedidos.append(corpo)
-        if self.ia_respostas is not None:  # análise em sete pontos do Oregon Intelligence
+        if self.ia_respostas is not None:  # leitura curta do Oregon Intelligence
             r = self.ia_respostas[min(len(self.ia_pedidos) - 1, len(self.ia_respostas) - 1)] if self.ia_respostas else {}
             return Resp(json.dumps({'stop_reason': 'end_turn', 'usage': {'input_tokens': 700, 'output_tokens': 300}, 'content': [{'type': 'text', 'text': json.dumps(r)}]}))
         itens = [{'i': 0, 'relevancia': 'alta', 'tickers': ['KLBN4'], 'fatores': ['usd', 'inventado'], 'direcao': 'positivo', 'resumo': 'Resumo de teste.'}]

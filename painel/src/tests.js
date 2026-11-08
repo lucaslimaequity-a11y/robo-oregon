@@ -195,24 +195,50 @@ var TESTS = (function () {
       ok(IN.quando({publicado_em: '2026-11-06'}, ag) === '06/11', 'documento com data e sem hora não ganha hora: ' + IN.quando({publicado_em: '2026-11-06'}, ag));
       ok(IN.quando({acervo: true, referencia: '2025-03'}, ag) === 'acervo · ref. mar/2025', 'acervo');
       var n = function (id, h, extra) { return Object.assign({id: 'n' + id, titulo: 'N' + id, link: 'https://x.test/' + id, publicado_em: h, categoria: 'veiculo', pais: 'Brasil', regioes: ['brasil'], ativos: [], natureza: 'noticia'}, extra || {}); };
-      var L = [n(1, '2026-11-08T09:00-03:00', {ativos: ['KLBN4'], natureza: 'opiniao_casa', casas: ['Safra'], posicao: 'contraria'}),
-        n(2, '2026-11-08T08:00-03:00', {ativos: ['KLBN4'], natureza: 'opiniao_casa', casas: ['BTG Pactual'], posicao: 'favoravel'}),
-        n(3, '2026-11-07T20:00-03:00', {ativos: ['KLBN4'], via: 'Bing Notícias', confiavel: false, fonte: 'Agora Litoral'}),
-        n(4, '2026-11-06', {ativos: ['KLBN4'], categoria: 'oficial_empresa', tipo: 'fato_relevante'}),
+      var kl = {ativos: ['KLBN4'], ativos_porque: {KLBN4: 'Klabin'}};
+      var L = [n(1, '2026-11-08T09:00-03:00', Object.assign({titulo: 'Safra rebaixa Klabin para neutro', natureza: 'opiniao_casa', casas: ['Safra'], posicao: 'contraria'}, kl)),
+        n(2, '2026-11-08T08:00-03:00', Object.assign({titulo: 'BTG eleva Klabin para compra', natureza: 'opiniao_casa', casas: ['BTG Pactual'], posicao: 'favoravel'}, kl)),
+        n(3, '2026-11-07T20:00-03:00', Object.assign({titulo: 'Klabin amplia fábrica em Ortigueira', via: 'Bing Notícias', confiavel: false, fonte: 'Agora Litoral'}, kl)),
+        n(4, '2026-11-06', {ativos: ['KLBN4'], titulo: 'KLBN4 — Fato Relevante', categoria: 'oficial_empresa', tipo: 'fato_relevante'}),
         n(5, '2026-11-08T07:00-03:00', {setor_de: ['KLBN4'], titulo: 'Celulose na China'}),
         n(6, '2026-11-08T05:00-03:00', {pais: 'EUA', regioes: ['eua'], etfs_tema: ['IB01']}),
-        n(7, '2026-11-01T09:00-03:00', {ativos: ['KLBN4']}), n(8, '2026-11-08T09:10-03:00', {acervo: true}), n(9, '2026-11-08T09:20-03:00', {categoria: 'gestora_brasil', tipo: 'carta'})];
+        n(7, '2026-11-01T09:00-03:00', Object.assign({titulo: 'Klabin conclui projeto Puma II'}, kl)), n(8, '2026-11-08T09:10-03:00', {acervo: true}), n(9, '2026-11-08T09:20-03:00', {categoria: 'gestora_brasil', tipo: 'carta'}),
+        n(10, '2026-11-08T06:00-03:00', Object.assign({titulo: 'Allied paga R$ 0,63; Santander, Klabin, Lavvi e outros completam dividendos da semana'}, kl))];
       var u = IN.ultimas(L, {horas: 48, agora: ag}).map(function (x) { return x.id; });
-      ok(u.join() === 'n1,n2,n5,n6,n4', 'últimas: ordem, janela, sem acervo/carta e sem veículo pouco conhecido: ' + u.join());
-      ok(IN.ultimas(L, {horas: 48, agora: ag, todosVeiculos: true}).length === 6, 'na ficha entram os veículos pouco conhecidos');
+      ok(u.join() === 'n1,n2,n5,n10,n6,n4', 'últimas: ordem, janela, sem acervo/carta e sem veículo pouco conhecido: ' + u.join());
+      ok(IN.ultimas(L, {horas: 48, agora: ag, todosVeiculos: true}).length === 7, 'na ficha entram os veículos pouco conhecidos');
       ok(IN.ultimas(L, {horas: 48, agora: ag, filtro: 'casas'}).length === 2 && IN.ultimas(L, {horas: 48, agora: ag, filtro: 'oficial'})[0].id === 'n4' && IN.ultimas(L, {horas: 48, agora: ag, filtro: 'mundo'})[0].id === 'n6', 'filtros opiniões, oficiais e mundo');
+      ok(IN.ultimas(L, {horas: 48, agora: ag, filtro: 'gestoras'}).map(function (x) { return x.id; }).join() === 'n9,n1,n2', 'gestoras e casas: carta + opiniões');
+      ok(IN.ultimas(L, {horas: 48, agora: ag, filtro: 'ri'}).map(function (x) { return x.id; }).join() === 'n4', 'RI e CVM: só documentos da companhia');
+      ok(IN.ultimas(L, {horas: 48, agora: ag, filtro: 'carteira'}).map(function (x) { return x.id; }).indexOf('n10') < 0, 'Na carteira não inclui a menção na lista de dividendos');
       var c = IN.doAtivo(L, 'KLBN4');
-      ok(c.direto.length === 5 && c.tema.length === 1 && c.tema[0].id === 'n5', 'diretas e setor: ' + c.direto.length + '/' + c.tema.length);
+      ok(c.direto.length === 5 && c.mencoes.length === 1 && c.mencoes[0].id === 'n10' && c.tema.length === 1 && c.tema[0].id === 'n5', 'diretas, menções e setor: ' + c.direto.length + '/' + c.mencoes.length + '/' + c.tema.length);
       ok(c.oficiais.length === 1 && c.noticias.length === 4, 'documentos da CVM separados');
       ok(c.opinioes.total === 2 && c.opinioes.favoravel[0].id === 'n2' && c.opinioes.contraria[0].id === 'n1', 'opiniões a favor e contra');
       var ct = IN.contrapontos(L, L[0]); ok(ct.itens.length === 1 && ct.itens[0].id === 'n2', 'contraponto da opinião contrária é a favorável');
       ok(IN.contrapontos(L, n(10, '2026-11-08T09:00-03:00', {ativos: ['ITSA4']})).itens.length === 0, 'sem fonte concreta não há contraponto');
-      var pa = IN.porAtivo(L, {horas: 72, agora: ag}); ok(pa[0].t === 'KLBN4' && pa[0].casas === 2, 'ativos com notícia: ' + JSON.stringify(pa.map(function (r) { return [r.t, r.n, r.casas]; })));
+      var pa = IN.porAtivo(L, {horas: 72, agora: ag}); ok(pa[0].t === 'KLBN4' && pa[0].casas === 2 && pa[0].m === 1, 'ativos com notícia: ' + JSON.stringify(pa.map(function (r) { return [r.t, r.n, r.m, r.casas]; })));
+    });
+    if (IN) t('Linhas de notícia: hora de publicação, separador de dia, data estimada e destaques sem sensacionalismo', function () {
+      var ag = new Date('2026-11-08T12:40:00Z');
+      ok(IN.hora({publicado_em: '2026-11-08T09:28-03:00'}).txt === '09:28' && !IN.hora({publicado_em: '2026-11-08T09:28-03:00'}).sem, 'hora de publicação');
+      var so = IN.hora({publicado_em: '2026-11-06'}); ok(so.txt === '—' && so.sem && so.dia === '2026-11-06', 'só data: sem hora inventada');
+      var det = IN.hora({detectado_em: '2026-11-08T10:17-03:00'}); ok(det.est && det.txt === '≈10:17' && /detectou/.test(det.tip), 'sem data de publicação: hora de detecção marcada');
+      ok(IN.horaAbs('2026-11-08T10:17:14-03:00', ag) === '10:17' && IN.horaAbs('2026-11-07T22:30-03:00', ag) === 'ontem 22:30' && IN.horaAbs('2026-11-05T08:00-03:00', ag) === '05/11 08:00', 'hora absoluta da coleta');
+      ok(IN.rotuloDia('2026-11-08', ag) === 'Hoje · dom 08/11' && IN.rotuloDia('2026-11-07', ag) === 'Ontem · sáb 07/11' && IN.rotuloDia('2026-11-06', ag) === 'sex 06/11', 'separador de dia');
+      var p = function (id, pts, h, extra) { return Object.assign({id: id, titulo: id, publicado_em: '2026-11-08T' + h + '-03:00', prioridade: {pontos: pts}}, extra || {}); };
+      var D = IN.destaques([p('a', 10, '09:00'), p('b', 40, '08:00'), p('c', 60, '07:00', {natureza: 'sensacionalista'}), p('d', 35, '10:00'), p('e', 32, '06:00'), p('f', 20, '05:00'), p('g', 5, '11:00')], 3);
+      ok(D.map(function (x) { return x.id; }).join() === 'd,b,e', 'destaques por relevância, exibidos por hora: ' + D.map(function (x) { return x.id; }).join());
+    });
+    if (IN && typeof AMOSTRAS_LEITURA !== 'undefined') t('Vínculo com o ativo nas notícias reais capturadas (mesma regra do robô): direto × menção de passagem', function () {
+      AMOSTRAS_LEITURA.casos.forEach(function (c) {
+        var got = {}; (c.item.ativos || []).forEach(function (tk) { var v = IN.vinculo(c.item, tk); got[tk] = [v.tipo, v.evento]; });
+        ok(JSON.stringify(got) === JSON.stringify(c.esperado.vinculos), c.caso + ': ' + JSON.stringify(got));
+      });
+      var men = AMOSTRAS_LEITURA.casos.filter(function (c) { return c.caso === 'mencao_em_lista_de_dividendos'; })[0].item;
+      ok(IN.relevancia(men) < IN.pontos(men), 'item antigo só com menção perde o bônus do ativo');
+      var tem = AMOSTRAS_LEITURA.casos.filter(function (c) { return c.caso === 'noticia_do_setor_sem_citar_a_empresa'; })[0].item;
+      var c = IN.doAtivo([tem], 'BBDC3'); ok(c.tema.length === 1 && c.direto.length === 0 && IN.vinculoTema(tem, 'BBDC3') === 'setorial', 'notícia do setor fica em Setor e cadeia');
     });
     t('ETFs: as 27 fichas têm fonte oficial e o cadastro divergente aparece, sem alterar o cadastro', function () {
       var E = DATA.etfs; if (!E) { ok(true); return; }

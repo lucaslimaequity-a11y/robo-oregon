@@ -8,11 +8,11 @@ Roda no GitHub Actions (.github/workflows/robo.yml), sete dias por semana, e tam
      agenda de divulgações (Banco Central, IBGE, Tesouro, Tesouro dos EUA). Sem cotação de ação e sem câmbio ao vivo;
   2. conteúdo das fontes cadastradas em robo/fontes.json (gestoras, instituições, canais oficiais): RSS, APIs públicas,
      páginas e PDFs públicos, respeitando robots.txt e sem contornar bloqueios;
-  3. classificação (temas, regiões, ativos e setores da Oregon, fatores), prioridade e análise em sete pontos por regras;
+  3. classificação (temas, regiões, ativos e setores da Oregon, fatores), vínculo com cada ativo (direto ou menção), prioridade e leitura curta por regras;
      com ANTHROPIC_API_KEY e intel.ia.ativo, leitura por IA dos itens prioritários dentro de um teto diário;
   4. biblioteca persistente por mês (nada é apagado), deduplicação, contadores por fonte e briefing do dia;
   5. aos sábados (ou em modo "semanal"), o resumo da semana.
-Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json
+Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json (meses, índice e opinioes.json)
 (publicados no site) e estado.json (interno, só no ramo "dados").
 
 Modos (ROBO_MODO): normal | semanal | teste_telegram.
@@ -549,7 +549,11 @@ def main():
     try:
         # 4. índice, recentes, briefing
         idx = biblioteca.reindexar(agora_)
-        recentes = biblioteca.publicar_recentes(hoje, agora_, dias=int((cfg.get('intel') or {}).get('recentes_dias', 10)))
+        recentes = biblioteca.publicar_recentes(hoje, agora_, dias=int((cfg.get('intel') or {}).get('recentes_dias', 10)), oregon=oregon)
+        try:
+            biblioteca.publicar_opinioes(hoje, agora_, oregon=oregon)
+        except Exception as e:  # o histórico de opiniões é acessório: nunca impede o resto da publicação
+            log('  opiniões de 12 meses não publicadas: %s' % e)
         hoje_js = semanal.briefing(recentes, macro, hoje, agora_, estado)
         gravar('hoje.json', hoje_js)
         log('  briefing: %d prioridades (janela de %s), %d itens recentes, %d na biblioteca' % (len(hoje_js['prioridades']), hoje_js['janela'], len(recentes), idx['total']))

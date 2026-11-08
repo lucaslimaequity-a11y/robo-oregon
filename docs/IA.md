@@ -1,6 +1,6 @@
 # Análise por IA (opcional)
 
-Desligada por padrão. O sistema é útil sem ela: os sete pontos vêm de regras e a tela diz "Análise por regras".
+Desligada por padrão. O sistema é útil sem ela: a leitura de cada item vem de regras sobre título e resumo público, e a janela diz isso.
 
 ## Como ligar
 
@@ -12,10 +12,11 @@ Desligada por padrão. O sistema é útil sem ela: os sete pontos vêm de regras
 ## O que a IA recebe e devolve
 
 Recebe **só conteúdo público**: fonte, tipo, título e o resumo curto do feed. Nunca pesos, carteiras, posições ou dados
-de clientes (há teste para isso). Devolve JSON com os pontos 2 a 7, cada frase rotulada FATO / FONTE / INFERÊNCIA; rótulo
-inválido é descartado; o ponto 1 (o que foi publicado) vem sempre das regras. A IA é instruída a escrever "não avaliado"
-quando o texto não basta e a nunca recomendar compra ou venda. O item fica marcado `análise IA` e a gaveta avisa que a
-leitura é sobre título e resumo, não sobre o texto completo.
+de clientes (há teste para isso). Devolve JSON curto (v3.3): `resumo` (até 2 frases sobre o que o texto diz além do título),
+`porque` (até 2), `contrapontos` (só os que o próprio texto apresenta) e `acompanhar` (até 3), cada frase rotulada
+FATO / FONTE / INFERÊNCIA; rótulo inválido é descartado; a base da leitura e os números citados vêm sempre das regras.
+Com só a manchete, a IA é instruída a devolver listas vazias em vez de preencher, e a nunca recomendar compra ou venda.
+O item fica marcado `leitura IA` e a janela avisa que a leitura é sobre título e resumo, não sobre o texto completo.
 
 ## Custo e controle
 

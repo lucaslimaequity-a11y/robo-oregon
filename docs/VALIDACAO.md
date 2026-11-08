@@ -5,7 +5,7 @@
 `python -m unittest discover -s testes` — 66 testes do robô com internet simulada (`testes/simulador.py`), dos quais
 **20 do Oregon Intelligence** (`testes/test_intel.py`):
 
-- publicação de todos os arquivos e classificação (temas, regiões, ativos da Oregon, fatores, rótulos dos sete pontos,
+- publicação de todos os arquivos e classificação (temas, regiões, ativos da Oregon, fatores, vínculo direto × menção, leitura curta sem "não avaliado",
   link original em todo item, veículo sem texto, sensacionalismo penalizado mas visível, XP descartada, mesmo fato
   agrupado com a fonte primária como principal, contadores por fonte, briefing com 5 a 8 prioridades, macro sem cotação);
 - **falha de fonte** não apaga histórico e fica registrada (`ultima_ok`, `ultimo_erro`, status parcial);
@@ -33,7 +33,7 @@ injetada do robô, exportar/importar aprendizados descartando link `javascript:`
 
 `node painel/test/areas.js` — Playwright, computador (1440) e celular (390), com dados gerados pelo robô contra a
 internet simulada (`painel/test/gera_dados_teste.py`): Hoje (5–8 prioridades, links originais, macro, agenda, estudo,
-leitura), gaveta com sete pontos e rótulos, aprendizado salvo, todas as rotas das cinco seções e as antigas traduzidas,
+leitura), janela de leitura editorial (sem os sete pontos), linha de notícia que abre no lugar, volta ao ponto de leitura ao fechar, aprendizado salvo, todas as rotas das cinco seções e as antigas traduzidas,
 busca e filtros da Biblioteca, prioridade baixa visível, mês anterior sob demanda, fontes e coleta, resumo semanal,
 fichas de PETR4 e IMAB11 sem cotação, busca rápida, carteiras de referência sem simulador, menu com cinco seções, sem
 erro de JavaScript e sem rolagem horizontal no celular. Resultado da última execução: **tudo ok**.

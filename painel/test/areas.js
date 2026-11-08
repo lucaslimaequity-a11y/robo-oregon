@@ -26,12 +26,26 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     rep(hj.links, vw + ' toda leitura abre a fonte original');
     rep(!hj.macro && hj.agenda, vw + ' sem caixas de macro; agenda presente');
     rep(hj.estudo >= 1 && hj.leitura, vw + ' estudo do dia e leitura recomendada');
-    // análise em sete pontos com rótulos, aberta pelo título
-    const an = await p.evaluate(() => { const bt = document.querySelector('#prioridades .nw .nwl'); bt.click(); const d = document.querySelector('.drawer'); if (!d) return 'gaveta não abriu'; const pts = d.querySelectorAll('.an-p').length, rot = d.querySelectorAll('.rot').length, orig = !!d.querySelector('a.btn.pri[href^="http"]'); return pts === 7 && rot >= 7 && orig ? 'ok' : 'pontos ' + pts + ' rótulos ' + rot + ' original ' + orig; });
-    rep(an === 'ok', vw + ' análise em sete pontos com rótulos e link original (' + an + ')');
+    // linha de notícia abre um resumo no próprio lugar (sem sair da lista), com a fonte original à mão
+    const ln = await p.evaluate(() => { const r = document.querySelector('#ultimas .nr'), bt = r.querySelector('.nr-t'); bt.click(); const d = r.querySelector('.nr-d'); const ok1 = !!d && bt.getAttribute('aria-expanded') === 'true' && !!d.querySelector('a.btn[href^="http"]'); bt.click(); return ok1 && !r.querySelector('.nr-d') ? 'ok' : 'linha não abriu/fechou'; });
+    rep(ln === 'ok', vw + ' linha de notícia abre e fecha no lugar (' + ln + ')');
+    // janela de leitura: título, fonte e data em destaque, link original, sem os sete pontos nem "não avaliado"; aprofundar recolhido
+    const y0 = await p.evaluate(() => { const c = document.querySelector('#prioridades .nw'); c.scrollIntoView(); window.scrollBy(0, -120); return window.scrollY; });
+    const an = await p.evaluate(() => { const bt = document.querySelector('#prioridades .nw .nwl'); bt.focus(); bt.click(); const d = document.querySelector('.drawer'); if (!d) return 'gaveta não abriu';
+      const t = d.innerText, tit = d.querySelector('.lr-t'), orig = !!d.querySelector('.lr-acts a.btn.pri[href^="http"]'), pts = d.querySelectorAll('.an-p').length, mais = d.querySelector('details.lr-mais');
+      return tit && /Publicado|Sem data de publicação|Acervo/.test(t) && orig && pts === 0 && !/Não avaliado|não avaliado/.test(t) && mais && !mais.open && d.querySelectorAll('.lr-s').length <= 4 ? 'ok' : 'título ' + !!tit + ' original ' + orig + ' pontos ' + pts + ' seções ' + d.querySelectorAll('.lr-s').length; });
+    rep(an === 'ok', vw + ' janela de leitura editorial, curta e com a fonte original (' + an + ')');
     // registrar um aprendizado pela gaveta
     const ap = await p.evaluate(async () => { const d = document.querySelector('.drawer'); const ta = d.querySelector('textarea'); ta.value = 'Teste de aprendizado: a carta assume juro real alto por muito tempo.'; const bt = Array.from(d.querySelectorAll('button')).find(x => /Salvar no registro/.test(x.textContent)); bt.click(); await new Promise(r => setTimeout(r, 400)); return APP.aprendizados().length; });
     rep(ap === 1, vw + ' aprendizado salvo neste navegador (' + ap + ')');
+    // fechar a janela devolve o ponto de leitura
+    await p.evaluate(() => { const bt = document.querySelector('#prioridades .nw .nwl'); bt.focus(); bt.click(); }); await p.waitForTimeout(150);
+    await p.evaluate(() => document.querySelector('.drawer .x').click()); await p.waitForTimeout(250);
+    const volta = await p.evaluate(y0 => ({dy: Math.abs(window.scrollY - y0), foco: !!(document.activeElement && document.activeElement.closest && document.activeElement.closest('#prioridades'))}), y0);
+    rep(volta.dy < 40 && volta.foco, vw + ' fechar a janela volta ao ponto de leitura (' + JSON.stringify(volta) + ')');
+    // menção de passagem não conta como notícia do ativo
+    const men = await p.evaluate(() => { const x = {id: 'm1', titulo: 'Allied paga R$ 0,63; Santander, Klabin, Lavvi e outros completam dividendos da semana', ativos: ['KLBN4'], ativos_porque: {KLBN4: 'Klabin'}}; return INTEL.vinculo(x, 'KLBN4').tipo; });
+    rep(men === 'mencao', vw + ' lista de dividendos é menção de passagem (' + men + ')');
     for (const r of ROTAS) {
       const [a, s] = r.split('/');
       await p.evaluate(([a, s]) => APP.go(a, s || undefined), [a, s]); await p.waitForTimeout(300);
@@ -60,11 +74,15 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     rep(sm === 'ok', vw + ' resumo semanal (' + sm + ')');
     // Brasil: ficha de empresa com o painel de notícias ao lado (hora, veículo, ↗), opiniões a favor/contra e links de busca
     await p.evaluate(() => APP.abrirEmpresa('PETR4')); await p.waitForTimeout(400);
-    const fe = await p.evaluate(() => { const t = document.getElementById('main').innerText, np = document.querySelector('.ficha-news');
+    const fe = await p.evaluate(() => { const t = document.getElementById('main').innerText, np = document.querySelector('.ficha-news'), aba = document.querySelector('.fv button[aria-selected="true"]');
       return {area: APP.S.area, semPreco: !/Último preço|Preço do par/.test(t), painel: !!np && np.querySelectorAll('.nl .nw-when').length >= 1 && !!np.querySelector('.nl a.nw-ext[href^="http"]'),
-        aFavor: /A favor · 1/.test(np ? np.innerText : ''), busca: !!(np && np.querySelector('.np-links a[href^="https://news.google.com/"]')), opiniaoCasa: /Opinião da casa/.test(t), tese: /A tese/.test(t), velho: /Conteúdo que cita a empresa/.test(t)}; });
-    rep(fe.area === 'brasil' && fe.semPreco && fe.painel && fe.aFavor && fe.busca && fe.opiniaoCasa && fe.tese && !fe.velho, vw + ' ficha PETR4 com notícias ao lado, opinião a favor, busca e tese (' + JSON.stringify(fe) + ')');
+        aFavor: /A favor · 1/.test(np ? np.innerText : ''), doze: /12 meses/i.test(np ? np.innerText : ''), busca: !!(np && np.querySelector('.np-links a[href^="https://news.google.com/"]')), aba: aba && aba.dataset.v, opiniaoCasa: /Opinião da casa/.test(t), mudou: /Fatos que pedem revisão da tese/.test(t), velho: /Conteúdo que cita a empresa/.test(t)}; });
+    rep(fe.area === 'brasil' && fe.semPreco && fe.painel && fe.aFavor && fe.doze && fe.busca && fe.aba === 'tese' && fe.opiniaoCasa && fe.mudou && !fe.velho, vw + ' ficha PETR4: notícias ao lado, opiniões de 12 meses, mudanças na tese primeiro (' + JSON.stringify(fe) + ')');
+    await p.evaluate(() => APP.fichaVista('fundamentos')); await p.waitForTimeout(200);
+    const fund = await p.evaluate(() => /A tese/.test(document.getElementById('main').innerText) && !!document.querySelector('.ficha-news'));
+    rep(fund, vw + ' aba Fundamentos com a tese e o painel de notícias mantido');
     await p.evaluate(() => APP.abrirEmpresa('IMAB11')); await p.waitForTimeout(400);
+    await p.evaluate(() => APP.fichaVista('documentos')); await p.waitForTimeout(200);
     const fetf = await p.evaluate(() => { const t = document.getElementById('main').innerText; return APP.S.area === 'brasil' && !/Último preço|Preço do par/.test(t) && /Documentos oficiais/.test(t) && !!document.querySelector('.ficha-news') ? 'ok' : 'ficha incompleta'; });
     rep(fetf === 'ok', vw + ' ficha do ETF IMAB11 com painel de notícias (' + fetf + ')');
     // Mundo e Estratégia: últimas do mundo (imprensa internacional) e ETF global abre aqui
@@ -86,6 +104,14 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     rep(ref === 'cresc-arr|mostra inválida|sem simulador', vw + ' carteiras de referência (' + ref + ')');
     const menu = await p.evaluate(() => { const bs = Array.from(document.querySelectorAll('#nav button')); return bs.length + '|' + (bs.find(b => b.getAttribute('aria-selected') === 'true') || {}).dataset.a; });
     rep(menu === '5|cart', vw + ' menu com cinco seções (' + menu + ')');
+    // as cinco seções e a busca ficam visíveis sem rolagem escondida, inclusive no celular; a hora da coleta não some
+    const topo = await p.evaluate(() => { const bs = Array.from(document.querySelectorAll('#nav button')), q = document.querySelector('.qbox'), ds = document.querySelector('.dstat b');
+      return {nav: bs.every(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= window.innerWidth + 1 && r.width > 30; }), busca: !!q && q.getBoundingClientRect().width > 80, hora: !!ds && /\d{2}:\d{2}/.test(ds.textContent) && ds.getBoundingClientRect().width > 0}; });
+    rep(topo.nav && topo.busca && topo.hora, vw + ' topo: cinco seções, busca e hora da coleta à vista (' + JSON.stringify(topo) + ')');
+    // Biblioteca: filtros avançados recolhidos
+    await p.evaluate(() => { APP.go('bib', 'busca'); APP.bibFiltro({}); }); await p.waitForTimeout(300);
+    const bf = await p.evaluate(() => { const d = document.querySelector('details.mais-f'); return !!d && !d.open && document.querySelectorAll('.busca-box .busca-l select').length <= 2; });
+    rep(bf, vw + ' Biblioteca com filtros avançados recolhidos');
     if (errs.length) rep(false, 'erros de JavaScript: ' + errs.join(' | '));
     await p.close();
   }

@@ -12,7 +12,8 @@
   if (S.ver && S.ver.indexOf('prop:') === 0) S.ver = 'aprovada'; // propostas carregam depois do banco
   window.addEventListener('unhandledrejection', function (e) { var r = e.reason || {}; A.toast('Não foi possível concluir: ' + (r.message || r.code || r)); });
   var nav = document.getElementById('nav');
-  A.AREAS.forEach(function (a) { nav.appendChild(A.h('button', {role: 'tab', 'data-a': a[0], onclick: function () { A.go(a[0]); }}, a[2] ? A.h('i', {style: 'background:' + a[2]}) : null, a[1])); });
+  // rótulo completo no computador e curto no celular (as cinco seções cabem sem rolagem escondida)
+  A.AREAS.forEach(function (a) { nav.appendChild(A.h('button', {role: 'tab', 'data-a': a[0], title: a[1], onclick: function () { A.go(a[0]); }}, a[2] ? A.h('i', {style: 'background:' + a[2]}) : null, A.h('span', {class: 'lab-l'}, a[1]), A.h('span', {class: 'lab-s'}, a[3] || a[1]))); });
   if (typeof DATA !== 'undefined' && location.search.indexOf('simulado') >= 0) document.body.classList.add('sim');
   var r0 = A.render;
   function topH() { var t = document.querySelector('.top'); if (t) document.documentElement.style.setProperty('--top-h', t.offsetHeight + 'px'); }

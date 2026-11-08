@@ -76,7 +76,7 @@ def briefing(itens, macro, hoje, agora_, estado, n_min=5, n_max=8):
     return {'gerado_em': agora_.isoformat(timespec='minutes'), 'data': hoje.isoformat(), 'janela': janela, 'n_itens_janela': len(base),
             'prioridades': [rel(x) for x in prioridades], 'macro': [rel(x) for x in macro_itens], 'gestoras': [rel(x) for x in gestoras], 'videos': [rel(x) for x in videos],
             'leitura': rel(leitura) if leitura else None, 'temas': temas_dia[:6], 'estudo': perguntas, 'agenda': prox,
-            'aviso': None if any((x.get('analise') or {}).get('profunda') for x in prioridades) else 'Análise aprofundada por IA desligada: os sete pontos vêm de regras e abrem com a fonte original.'}
+            'aviso': None if any((x.get('analise') or {}).get('profunda') for x in prioridades) else 'Leitura por IA desligada: a leitura de cada item vem de regras sobre título e resumo público e abre com a fonte original.'}
 
 
 def semana_iso(d):

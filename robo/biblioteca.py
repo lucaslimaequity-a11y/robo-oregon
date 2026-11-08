@@ -7,6 +7,7 @@ Arquivos em data/biblioteca/:
   indice.json   — meses disponíveis, contagens por fonte, tipo e tema; o painel carrega os meses sob demanda.
 Em data/:
   recentes.json — itens dos últimos N dias (o que o painel abre primeiro).
+  opinioes.json — opiniões de casas de análise dos últimos 12 meses (histórico de opiniões da ficha de cada ativo).
   coleta.json   — contadores por fonte: recebidos, rejeitados (por motivo), duplicados, novos, classificados,
                   publicados, erro e última leitura boa. Também as últimas rodadas.
 
@@ -18,6 +19,7 @@ import datetime as dt
 import os
 import re
 
+import analise
 from util import dados_dir, gravar, ler, sem_acento
 
 PASTA = 'biblioteca'
@@ -212,12 +214,54 @@ def reindexar(agora_):
     return idx
 
 
-def publicar_recentes(hoje, agora_, dias=10, maximo=1500):
+def atualizar_leitura(x, oregon, hoje):
+    """Item gravado por uma versão anterior do robô: é reclassificado com as regras atuais (vínculo com cada ativo,
+    opinião de casa, prioridade) e ganha a leitura curta (v2) na publicação. O que foi coletado (título, link, datas,
+    resumo, fonte, ativos ligados pelo coletor) não muda; a leitura por IA, se houver, é preservada. O arquivo do mês
+    não é reescrito: a reclassificação vale para o que é publicado."""
+    if oregon is None:
+        return x
+    an = x.get('analise') or {}
+    if 'vinculos' not in x:
+        x = dict(x)
+        analise.classificar(x, oregon, hoje)
+    if an.get('v') != 2 and not an.get('profunda'):
+        x = dict(x)
+        x['analise'] = analise.analisar_regras(x, oregon)
+    return x
+
+
+def publicar_recentes(hoje, agora_, dias=10, maximo=1500, oregon=None):
     # acervo (o que já estava nas páginas na primeira leitura) fica só na Biblioteca, por mês: não é novidade
-    itens = [x for x in carregar_recentes(hoje, dias) if not x.get('agrupado_em') and not x.get('acervo')]
+    itens = [atualizar_leitura(x, oregon, hoje) for x in carregar_recentes(hoje, dias) if not x.get('agrupado_em') and not x.get('acervo')]
     itens.sort(key=lambda x: (x.get('publicado_em') or x.get('detectado_em') or ''), reverse=True)
     gravar('recentes.json', {'gerado_em': agora_.isoformat(timespec='minutes'), 'dias': dias, 'n': len(itens), 'itens': itens[:maximo]})
     return itens[:maximo]
+
+
+CAMPOS_OPINIAO = ('id', 'titulo', 'link', 'fonte', 'fonte_id', 'organizacao', 'categoria', 'pais', 'tipo', 'publicado_em', 'detectado_em', 'data_estimada', 'resumo', 'autor',
+                  'ativos', 'ativos_porque', 'vinculos', 'casas', 'posicao', 'natureza', 'via', 'confiavel', 'aviso_fonte', 'temas', 'regioes', 'tambem_em', 'prioridade')
+
+
+def publicar_opinioes(hoje, agora_, dias=365, oregon=None):
+    """biblioteca/opinioes.json: opiniões de casas de análise publicadas nos últimos `dias` (12 meses), só os campos que o
+    painel usa. Assim a ficha de cada ativo mostra o histórico de opiniões sem baixar a biblioteca inteira."""
+    ini = (hoje - dt.timedelta(days=dias)).isoformat()
+    out = []
+    for m in meses_disponiveis():
+        if m < ini[:7]:
+            continue
+        for x in ler_mes(m).get('itens') or []:
+            if x.get('agrupado_em') or x.get('acervo') or data_de(x) < ini:
+                continue
+            x = atualizar_leitura(x, oregon, hoje)
+            if x.get('natureza') != 'opiniao_casa':
+                continue
+            out.append({k: x[k] for k in CAMPOS_OPINIAO if k in x})
+    out.sort(key=lambda x: (x.get('publicado_em') or x.get('detectado_em') or ''), reverse=True)
+    os.makedirs(os.path.join(dados_dir(), PASTA), exist_ok=True)
+    gravar(_caminho('opinioes.json'), {'gerado_em': agora_.isoformat(timespec='minutes'), 'dias': dias, 'n': len(out), 'itens': out})
+    return out
 
 
 # ------------------------------------------------------------------ contadores por fonte

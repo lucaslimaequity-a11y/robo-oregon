@@ -2,7 +2,7 @@
 
 Cadastro: `robo/fontes.json`. Regras que valem para todas: só conteúdo público e gratuito; `robots.txt` respeitado (um caminho vedado é pulado e contado como rejeitado); nada de login, paywall ou contorno de bloqueio (403 encerra a fonte na rodada); de imprensa guardamos só título, link, data e veículo; de gestoras e instituições, um resumo curto do próprio feed (até 300 caracteres) e o link para o original. Nenhuma data é inventada: item sem data recebe a data de detecção, marcada como tal.
 
-Validação feita em 07–08/11/2026 lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhuma fonte da XP entra, em nenhuma hipótese** (`noticias.fontes_bloqueadas` descarta também manchetes agregadas desses veículos).
+Validação feita em 07–08/11/2026 (149 fontes no cadastro, 104 ativas) lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhuma fonte da XP entra, em nenhuma hipótese** (`noticias.fontes_bloqueadas` descarta também manchetes agregadas desses veículos).
 
 ## Campos do cadastro
 
@@ -151,6 +151,78 @@ Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública
 | [MarketWatch · Top stories](https:/) | EUA | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
 | [Seeking Alpha · Market Currents](https://seekingalpha.com/market_currents.xml) | EUA | ativa · ok | só manchetes de economia, mercados ou ativos das carteiras |
 | [CNBC · Markets](https://www.cnbc.com/id/15839069/device) | EUA | ativa · a validar na 1ª rodada | só manchetes de economia, mercados ou ativos das carteiras |
+
+## Fontes acrescentadas na v3.3 (lista do Notion, validada em 08/11/2026)
+
+37 entradas novas no cadastro: 22 ativas e 15 desligadas com o motivo (`motivo_desligada`). Nenhuma do Grupo XP. As de imprensa internacional marcadas **a validar** não puderam ser abertas pela ferramenta de validação (bloqueio a robôs de leitura ou acesso só pelo navegador); o endereço do feed vem da lista pública de feeds do próprio veículo, e a primeira rodada no GitHub mostra, em **Biblioteca → Fontes e coleta**, se o feed responde. Se o `robots.txt` do veículo vedar o robô, a fonte é pulada e contada como rejeitada — nada é contornado. Itens pagos (Commodity Context, research de bancos) entram só com título, link, data e o subtítulo público.
+
+### Bancos e research globais
+
+| Fonte | Entrou? | Método | Por quê |
+|---|---|---|---|
+| Goldman Sachs · Insights | ativa (ok) | página | Artigos datados no HTML; robots libera /insights. |
+| Morgan Stanley · Insights | ativa (parcial) | página | Só os destaques (sem data) estão no HTML; o resto vem por JavaScript. |
+| J.P. Morgan · Global Research | ativa (parcial) | sitemap | Listagem só por JavaScript; o sitemap US/en tem lastmod, mas no trecho lido não apareciam itens recentes. |
+| Bank of America Institute | ativa (ok) | página | Lista em HTML (mês/ano); robots libera. |
+| Citi Institute / Citi GPS | desligada | — | Lista só por JavaScript; citivelocity não respondeu. |
+| UBS CIO · House View Daily | ativa (parcial) | página | Os itens datados são áudios (MP3) diários; os artigos ficam em URL fixa. |
+| Barclays | desligada | — | Insights do IB só por JavaScript; o Private Bank só tem podcast. |
+| Deutsche Bank Research | ativa (parcial) | página | O RSS oficial veio sem itens; a home lista relatórios datados. |
+| HSBC | desligada | — | Sem listagem pública nem feed. |
+| Jefferies · Insights | ativa (ok) | RSS | Feed WordPress; posts "Protected:" são descartados. |
+| Nomura Connects | ativa (ok) | página | Lista em HTML (mês/ano). |
+| Société Générale | desligada | — | A página não expõe as edições; sem feed. |
+| BNP Paribas · Eco Week | ativa (ok) | RSS | Feed oficial; marcadores "Article coming soon" descartados. |
+| RBC Economics | ativa (ok) | página | US Analysis com textos datados; thoughtleadership.rbc.com está parado. |
+| Wells Fargo Economics | ativa (parcial) | página | 3 links sem data (cada edição nova vira um item). |
+
+### Imprensa internacional (só título, link e data)
+
+| Fonte | Entrou? | Método | Por quê |
+|---|---|---|---|
+| Bloomberg · Markets | ativa (a validar) | RSS | Feed oficial; a ferramenta foi recusada pelo robots da Bloomberg — o robô confere na 1ª rodada. |
+| Financial Times · Markets | ativa (a validar) | RSS | Feed oficial (?format=rss); a ferramenta não acessa o FT. |
+| Financial Times · Global Economy | ativa (a validar) | RSS | Mesmo caso. |
+| The Economist · Finance and economics | ativa (a validar) | RSS | Feed oficial; a ferramenta não acessa o site. |
+| The Guardian · Business | ativa (a validar) | RSS | Feed oficial; a ferramenta não acessa o site. |
+| El País · Economía | ativa (a validar) | RSS | Feed oficial; em espanhol, o filtro de tema casa só parte das manchetes. |
+| CNN · World | desligada | RSS | O RSS oficial está parado desde 2023. |
+
+### Analista independente
+
+| Fonte | Entrou? | Método | Por quê |
+|---|---|---|---|
+| Commodity Context (Rory Johnston) | ativa (ok) | RSS | Feed do Substack; a maior parte é paga, então entram só título, link, data e subtítulo. |
+
+### Bancos e corretoras brasileiras
+
+| Fonte | Entrou? | Método | Por quê |
+|---|---|---|---|
+| BTG Pactual Research | desligada | — | Lista só por JavaScript; relatório completo pede conta. |
+| Itaú · Análises | ativa (ok) | sitemap | Sitemap próprio com lastmod (06/11). Cockpit do Copom sim; Consenso, Carta do Gestor e Radar não aparecem nessa seção. |
+| Genial Analisa | desligada (a validar) | sitemap | Sem RSS; o sitemap da seção deu erro de servidor. |
+| BB Investimentos (Investalk) | ativa (parcial) | página | O padrão do link foi inferido de um único card. |
+| Safra · O Especialista | ativa (ok) | RSS | Feed WordPress. |
+| Santander · Análise Econômica | ativa (parcial) | página | PDFs com data no nome do arquivo; boletins semanais ficam em URL fixa. |
+| Ágora Investimentos | desligada | — | Sem página pública de research; só cópias de terceiros. |
+| Suno Research | desligada | — | Pago; as manchetes já entram por Suno Notícias. |
+
+### Imprensa brasileira
+
+| Fonte | Entrou? | Método | Por quê |
+|---|---|---|---|
+| Correio Braziliense | desligada | RSS | O feed /feed estava parado desde fev/2024; não há feed de Economia. |
+| MKT News | desligada | — | Não identificada com segurança: o site só abre com JavaScript e sem feed. |
+| CNN Brasil · Internacional/Geral | não cadastrada | — | Economia já está no cadastro; o resto quase não passaria no filtro de tema. |
+
+### Ferramentas e dados
+
+| Fonte | Entrou? | Método | Por quê |
+|---|---|---|---|
+| Finviz | desligada | — | Ferramenta de dados; as notícias são de outros veículos. |
+| Trading Economics | desligada | — | Sem RSS; notícias só pela API paga; licença pessoal. |
+| Mapa de calor de ações | desligada | — | Ferramenta visual; site não especificado. |
+| Fundos com posição em SOJA3 | desligada | — | Página não especificada; consulta de dados, sem feed. |
 
 ## Buscas por ativo, setor e tema (geradas de `robo/config.json`, não ficam em `fontes.json`)
 

@@ -1333,3 +1333,8 @@ input[type=search].inp{width:100%;max-width:520px;margin-bottom:8px}
 .a-macro .mb-h{display:none}
 .a-macro .mb-h.mostra,html.explica .a-macro .mb-h{display:block}
 .xp-b{flex:none;align-self:center;font-size:.68rem;font-weight:600;line-height:1.4;padding:0 6px;border-radius:6px;border:1px solid var(--warn);color:var(--warn);white-space:nowrap}
+/* v3.11 · painel novo publicado no GitHub: faixa no rodapé com "Recarregar" */
+.painel-novo{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:79;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:center;width:max-content;max-width:min(680px,calc(100% - 32px));padding:10px 14px;border-radius:8px;border:1px solid var(--blue);border-left-width:4px;background:var(--panel);color:var(--ink);box-shadow:var(--shadow-pop);font-size:.9rem}
+.painel-novo span{flex:1 1 260px}
+@media (max-width:640px){.painel-novo{bottom:calc(78px + env(safe-area-inset-bottom));width:calc(100% - 32px);justify-content:flex-start}}
+@media print{.painel-novo{display:none}}

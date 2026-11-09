@@ -2,10 +2,11 @@
 Uso (na pasta do repositório):  python painel/build.py
 Saídas:
   site/index.html                    (o site publicado pelo GitHub Pages)
+  site/painel.json                   (v3.11: identidade do painel publicado, para o Atualizar recarregar quando muda)
   painel/dist/painel_artifact.html   (corpo para a versão privada no claude.ai)
   painel/dist/Oregon_Intelligence.html (arquivo completo, abre sozinho)
 """
-import os, sys, json
+import os, sys, json, hashlib
 B = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.join(B, '..')
 sys.path.insert(0, os.path.join(RAIZ, 'robo'))
@@ -38,7 +39,7 @@ for _st in (_cfg.get('noticias') or {}).get('buscas_setor') or []:
             _lentes.setdefault(_t, []).append({'nome': _st['nome'], 'pares': _st.get('pares') or []})
 taxon = {'eventos': [[k, n, rx, analise.EVENTOS_FORA.get(k)] for k, n, rx in analise.EVENTOS], 'lentes': _lentes, 'temas': analise.TEMA_NOME, 'regioes': analise.REGIAO_NOME, 'fatores': analise.FATOR_NOME, 'tipos': analise.TIPO_NOME, 'roteiro': analise.ROTEIRO,
          'buscas': _buscas, 'cvm': _cvm, 'vinculo': analise.VINCULO, 'macro_br': [[k, n] for k, n, _rx in analise.MACRO_BR]}  # v3.10: nomes dos subtemas de macro do Brasil
-js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'ui_vip.js', 'ui_comite.js', 'ui_br36.js', 'ui_estudo36.js', 'ui_v37.js', 'ui_v38.js', 'ui_ingles.js', 'ui_v391.js', 'ui_v310.js', 'main.js']
+js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'ui_vip.js', 'ui_comite.js', 'ui_br36.js', 'ui_estudo36.js', 'ui_v37.js', 'ui_v38.js', 'ui_ingles.js', 'ui_v391.js', 'ui_v310.js', 'ui_v311.js', 'main.js']
 # v3.5 · carteiras VG VIP (aba separada): números do print enviado pelo Lucas; publicação autorizada por ele em 08/11/2026
 _vip_p = os.path.join(B, 'src', 'vip.json')
 vip = json.load(open(_vip_p, encoding='utf-8')) if os.path.exists(_vip_p) else {'carteiras': []}
@@ -48,10 +49,14 @@ _glos = {'grupos': _glos.get('grupos') or {}, 'termos': _glos.get('termos') or [
 parts = [js_const('DATA', data), js_const('TAXON', taxon), js_const('VIP_DATA', vip), js_const('GLOSSARIO_EN', _glos)]
 for f in js_order:
     parts.append(rd(f))
+css = rd('app.css')
+# v3.11 · identidade do painel: muda só quando o código, o visual ou os dados embutidos mudam (nada de data e hora).
+# Vai no próprio painel (PAINEL_BUILD) e em site/painel.json; o Atualizar compara as duas e recarrega quando o GitHub publica outro.
+BUILD = hashlib.sha256(('\n;\n'.join(parts) + css).encode('utf-8')).hexdigest()[:12]
+parts.insert(0, js_const('PAINEL_BUILD', BUILD))
 js = '\n;\n'.join(parts)
 for bad in ['</script', '<!--']:
     assert bad not in js, bad
-css = rd('app.css')
 fonts = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600&display=swap" rel="stylesheet">'
 body = '''<div class="ov">
 <header class="top">
@@ -75,6 +80,8 @@ os.makedirs(os.path.join(RAIZ, 'site'), exist_ok=True)
 full = ('<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
         + page.split('<div class="ov">')[0] + '</head>\n<body>\n<div class="ov">' + page.split('<div class="ov">', 1)[1] + '</body>\n</html>\n')
 open(os.path.join(RAIZ, 'site', 'index.html'), 'w', encoding='utf-8').write(full)
+json.dump({'build': BUILD, '_leia': 'v3.11 · identidade do painel publicado (painel/build.py). O Atualizar do site compara com a do painel aberto e recarrega a página quando são diferentes.'},
+          open(os.path.join(RAIZ, 'site', 'painel.json'), 'w', encoding='utf-8'), ensure_ascii=False)
 open(os.path.join(B, 'dist', 'Oregon_Intelligence.html'), 'w', encoding='utf-8').write(full)
 for velho in ('Oregon_Investment_Desk.html',):
     try: os.remove(os.path.join(B, 'dist', velho))

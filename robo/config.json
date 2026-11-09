@@ -3282,6 +3282,7 @@
   "telegram_digesto": true,
   "telegram_hora": "07:30",
   "mercado_hoje": {"telegram": true, "horas": 18, "maximo": 5, "_nota": "v3.10 · macro do Brasil no briefing do Telegram: até 5 manchetes das últimas 18 horas, agenda do dia primeiro, sem repetir o mesmo fato e sem veículo do Grupo XP. Para tirar do Telegram, troque telegram para false."},
+  "corrente": {"ativo": true, "minutos_dia": 15, "minutos_noite": 30, "minutos_apos_falha": 60, "dia_de": 6, "dia_ate": 23, "_nota": "v3.11 · corrente de rodadas: cada rodada dispara a seguinte pelo próprio GitHub (robo/corrente.py), porque o agendador do GitHub atrasa e descarta horários. Intervalo contado do início da rodada: minutos_dia das dia_de às dia_ate horas (Brasília), minutos_noite no resto, minutos_apos_falha depois de uma rodada com falha (cada um entre 5 e 60). Cada fonte segue o próprio intervalo, como na rodada agendada; feeds RSS e buscas, que não têm intervalo, são lidos a cada rodada, como antes. Para desligar, troque ativo para false: ficam só os horários do robo.yml."},
   "ingles": {"telegram": true, "site": "https://lucaslimaequity-a11y.github.io/robo-oregon/", "_nota": "v3.9 · inglês do mercado: a frase do dia em inglês no briefing do Telegram (manchete coletada com os termos do glossário robo/glossario_en.json, link para o Google Tradutor e para Biblioteca › Inglês). Para tirar do Telegram, troque telegram para false."},
   "ia": {
    "ativo": false,

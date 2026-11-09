@@ -1,3 +1,40 @@
+# Resultados dos testes · v3.11 · 09/11/2026 (Brasília)
+
+- **Robô (Python):** 193 testes, todos OK, sendo 20 novos em `testes/test_v311.py`. Eles conferem:
+  - o intervalo da corrente: 15 min das 6h às 23h, 30 min de madrugada (nas viradas 05:59/06:00 e 22:59/23:00, com a hora
+    de Brasília mesmo quando a data vem em UTC), 60 min depois de falha, e nunca mais de 60 nem menos de 5;
+  - a espera contada do início da rodada (rodada mais longa que o intervalo dispara já);
+  - que a corrente não dispara quando já existe rodada mais nova no main (cancelada e de outro ramo não contam), nem com
+    a corrente desligada, nem fora do GitHub; que dispara sempre no main;
+  - a coleta cancelada: com rodada mais nova, para; sem ela (passou do prazo), espera a hora de depois de falha e dispara;
+  - que uma falha da API vira aviso, depois de 4 tentativas, sem deixar a rodada vermelha (também com resposta cortada
+    no meio); e que uma falha passageira se resolve na terceira tentativa;
+  - o mesmo fluxo por HTTP de verdade, com um servidor local no papel da API do GitHub: cabeçalhos, endereço e corpo do
+    disparo (`modo: normal`, `corrente: true`) e a resposta 204 sem corpo;
+  - o `robo.yml`: a etapa `seguinte` só com `actions: write` e `contents: read`, sem nenhum Secret; a rodada da corrente
+    com `ROBO_MANUAL` falso (cada site no próprio intervalo); a fila na coleta e na publicação;
+  - a validação de `intel.corrente` no `config.json` e o `versao.json` com a próxima rodada prevista;
+  - que `site/painel.json` traz a mesma identidade do painel publicado e que ela não depende de data e hora.
+- **Painel (Node):** 66 de 66. O teste novo confere a próxima coleta pela corrente (inclusive "parou" e "desligada"), a
+  decisão de recarregar (mesma versão, versão nova, acabou de tentar, tentar de novo depois de 5 min, 3ª tentativa) e que
+  a recarga mantém os outros parâmetros do endereço.
+- **Navegador:** 224 verificações, todas PASS, em 1440 px e 390 px. A nova confere:
+  - a hora da próxima coleta e o texto da corrente no detalhe da coleta;
+  - o aviso de atraso com rodada "em andamento" há 40 min (diz que passou do tempo e mostra o Coletar agora), com rodada
+    que falhou e com rodada rodando de verdade (diz que está rodando e esconde o botão);
+  - que o Atualizar não recarrega quando o painel é o mesmo e recarrega quando o `painel.json` traz outro;
+  - a faixa "Recarregar" no rodapé, sem rolagem para o lado;
+  - que o `painel.json` do site de teste bate com o painel aberto.
+- **Workflow:** `actionlint` 1.7.12 sem apontamentos no `robo.yml`.
+- **Revisão independente** (outro agente, sem ver o raciocínio do trabalho): não achou risco de correntes duplicadas
+  nem de rodadas em cascata. Apontou seis ajustes, todos feitos: teto de 60 min no intervalo, disparo sempre no main,
+  erros de HTTP que escapavam, coleta que passa do prazo, mais tentativas e o aviso de "rodando" durante a espera.
+- **Dados reais (coleta das 09:53 de 09/11, montada aqui com o painel novo):** às 10:05 o detalhe da coleta mostra a
+  próxima às 10:07 e o texto da corrente. A faixa aparece no rodapé no computador e no celular.
+- **Ressalva:** isto não prova que o GitHub dispara a próxima rodada. A confirmação é, na aba Actions, a etapa
+  `seguinte` terminar com "Próxima rodada disparada às …" e, uns 15 minutos depois, aparecer uma rodada
+  `workflow_dispatch`.
+
 # Resultados dos testes · v3.10 · 09/11/2026 (Brasília)
 
 - **Robô (Python):** 173 testes, todos OK, sendo 8 novos em `testes/test_v310.py`. Eles conferem:

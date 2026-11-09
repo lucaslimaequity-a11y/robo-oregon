@@ -175,6 +175,16 @@ def validar(cfg):
         erros.append('intel/mercado_hoje: "telegram" precisa ser true ou false, sem aspas')
     if not isinstance((it.get('ingles') or {}).get('telegram', True), bool):
         erros.append('intel/ingles: "telegram" precisa ser true ou false, sem aspas')
+    cr = it.get('corrente') or {}  # v3.11 · corrente de rodadas (robo/corrente.py)
+    if not isinstance(cr.get('ativo', True), bool):
+        erros.append('intel/corrente: "ativo" precisa ser true ou false, sem aspas')
+    # até 60 min: a etapa "seguinte" do robo.yml tem 75 min de prazo para esperar e disparar
+    for k, lim in (('minutos_dia', (5, 60)), ('minutos_noite', (5, 60)), ('minutos_apos_falha', (5, 60)), ('dia_de', (0, 23)), ('dia_ate', (1, 24))):
+        v = cr.get(k, lim[0])
+        if not isinstance(v, int) or isinstance(v, bool) or not lim[0] <= v <= lim[1]:
+            erros.append('intel/corrente: "%s" precisa ser um número inteiro entre %d e %d' % (k, lim[0], lim[1]))
+    if isinstance(cr.get('dia_de', 6), int) and isinstance(cr.get('dia_ate', 23), int) and cr.get('dia_de', 6) >= cr.get('dia_ate', 23):
+        erros.append('intel/corrente: "dia_de" precisa ser menor que "dia_ate"')
     for k in ('max_itens_dia', 'max_tokens_dia', 'max_tokens_item'):
         if not isinstance((it.get('ia') or {}).get(k, 1), int) or (it.get('ia') or {}).get(k, 1) < 0:
             erros.append('intel/ia: "%s" precisa ser um número inteiro' % k)

@@ -29,6 +29,27 @@ for (const arq of fs.readdirSync(S).filter(n => /\.js$/.test(n))) {
   const iguais = SL.length === esperado.size && SL.every(x => esperado.has(x));
   res.push({ok: iguais, nome: 'agenda do painel = horários do robo.yml (' + SL.length + ' por dia)', det: iguais ? '' : 'painel ' + JSON.stringify(SL) + ' · robo.yml ' + JSON.stringify([...esperado].sort((a, b) => a - b))});
 })();
+// v3.11 · corrente de rodadas e painel novo (ui_v311.js): as regras puras, sem navegador
+(function () {
+  const A = {h: () => null, proximaColeta: () => '14:37', intelAtualizar: async () => 'ok'}, I = {coletasPrevistas: () => [Date.parse('2026-11-09T14:37:00-03:00')]};
+  new Function('APP', 'CORE', 'INTEL', fs.readFileSync(path.join(S, 'ui_v311.js'), 'utf8'))(A, {}, I);
+  const agora = Date.parse('2026-11-09T14:33:00-03:00'), vc = p => ({corrente: {ativo: true, minutos: 15, proxima: p}});
+  const ok = {
+    proxima: I.proximaCorrente(vc('2026-11-09T14:45-03:00'), agora) === Date.parse('2026-11-09T14:45-03:00'),
+    parou: I.proximaCorrente(vc('2026-11-09T14:05-03:00'), agora) === null,
+    rodandoAgora: I.proximaCorrente(vc('2026-11-09T14:25-03:00'), agora) === Date.parse('2026-11-09T14:25-03:00'),
+    desligada: I.proximaCorrente({corrente: {ativo: false}}, agora) === null && I.proximaCorrente({}, agora) === null && I.proximaCorrente(null, agora) === null,
+    mesmo: I.painelNovo('aaa', 'aaa', null, agora) === null,
+    novo: I.painelNovo('aaa', 'bbb', null, agora) === 'recarregar',
+    acabouDeTentar: I.painelNovo('aaa', 'bbb', {b: 'bbb', t: agora - 60e3, n: 1}, agora) === 'aguardar',
+    tentaDeNovo: I.painelNovo('aaa', 'bbb', {b: 'bbb', t: agora - 6 * 60e3, n: 1}, agora) === 'recarregar',
+    terceira: I.painelNovo('aaa', 'bbb', {b: 'bbb', t: agora - 20 * 60e3, n: 3}, agora) === 'aguardar' && I.painelNovo('aaa', 'bbb', {b: 'bbb', t: agora - 31 * 60e3, n: 3}, agora) === 'recarregar',
+    outraVersao: I.painelNovo('aaa', 'ccc', {b: 'bbb', t: agora - 60e3, n: 1}, agora) === 'recarregar',
+    semResposta: I.painelNovo('aaa', null, null, agora) === null && I.painelNovo(null, 'bbb', null, agora) === null,
+    outrosParametros: JSON.stringify(I.semV('?simulado&v=abc.2')) === '["simulado"]' && JSON.stringify(I.semV('')) === '[]'};
+  const tudo = Object.values(ok).every(Boolean);
+  res.push({ok: tudo, nome: 'v3.11: próxima coleta pela corrente e quando recarregar o painel novo', det: tudo ? '' : JSON.stringify(ok)});
+})();
 let f = 0; for (const r of res) { console.log((r.ok ? 'PASS ' : 'FAIL ') + r.nome + (r.det ? ' · ' + r.det : '')); if (!r.ok) f++; }
 const q = require('child_process').spawnSync(process.execPath, [path.join(__dirname, 'quant.test.js')], {encoding: 'utf8'});
 process.stdout.write(q.stdout); if (q.status !== 0) f++;

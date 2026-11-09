@@ -144,5 +144,6 @@ if _dq:
         json.dump(_dq, f, ensure_ascii=False)
 os.remove(os.path.join(dados, 'estado.json'))  # o site nunca recebe o estado interno
 shutil.copy(os.path.join(RAIZ, 'site', 'index.html'), os.path.join(saida, 'index.html'))
+shutil.copy(os.path.join(RAIZ, 'site', 'painel.json'), os.path.join(saida, 'painel.json'))  # v3.11 · identidade do painel publicado
 shutil.copy(T.FONTES_TESTE, os.path.join(dados, 'fontes.json'))
 print('site de teste em', saida, '·', sorted(os.listdir(dados)))

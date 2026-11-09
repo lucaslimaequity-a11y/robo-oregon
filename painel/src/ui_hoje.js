@@ -136,7 +136,7 @@
     var semDados = !v && !itens.length;
 
     // ---- topo da mesa
-    var status = v ? h('p', {class: 'status-l', title: 'O robô lê as fontes aos 7 e aos 37 minutos de cada hora, das 5h07 às 22h37, também aos 22 e aos 52 das 9h22 às 18h52, e de madrugada (o GitHub pode atrasar); esta página se atualiza sozinha. A hora de cada notícia é a de publicação na fonte.'},
+    var status = v ? h('p', {class: 'status-l', title: 'O robô lê as fontes aos 7 e aos 37 minutos de cada hora, das 5h07 às 22h37, também aos 22 e aos 52 das 9h22 às 18h52, e de madrugada (o GitHub pode atrasar); além disso, cada rodada dispara a seguinte, a cada 15 min das 6h às 23h e a cada 30 min de madrugada; esta página se atualiza sozinha. A hora de cada notícia é a de publicação na fonte.'},
       'Última coleta concluída ', h('b', null, I.horaAbs(v.gerado_em)), h('span', {class: 'muted'}, ' (' + I.quando({publicado_em: v.gerado_em}) + ')'), ' · ', h('b', null, String(n24)), ' notícias nas últimas 24 h',
       u ? [' · ', u.fontes_erro ? h('button', {class: 'btn link', onclick: function () { A.go('bib', 'fontes'); }}, u.fontes_erro + (u.fontes_erro > 1 ? ' fontes com erro' : ' fonte com erro')) : 'nenhuma fonte com erro'] : null)
       : h('p', {class: 'status-l'}, e.carregando ? 'Buscando os dados do robô…' : 'Sem dados do robô nesta visualização.');

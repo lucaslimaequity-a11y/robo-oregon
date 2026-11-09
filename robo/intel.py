@@ -45,6 +45,7 @@ import fundos  # noqa: E402  (v3.6 · quem tem a ação)
 import fluxo  # noqa: E402  (v3.8 · fluxo dos fundos)
 import ingles  # noqa: E402  (v3.9 · inglês do mercado: frase do dia no Telegram)
 import mercado_hoje  # noqa: E402  (v3.10 · macro do Brasil no Telegram)
+import corrente  # noqa: E402  (v3.11 · corrente de rodadas: a próxima coleta prevista vai no versao.json)
 import proventos  # noqa: E402  (v3.6 · agenda de proventos)
 import pesquisas  # noqa: E402
 import resultados  # noqa: E402
@@ -850,10 +851,13 @@ def importar_sementes(oregon, hoje, agora_, estado, pasta=None):
 
 
 # ------------------------------------------------------------------ rodada
-def gravar_versao(agora_, macro, coleta, hoje_js, sem_js, estado):
-    gravar('versao.json', {'versao': 3, 'produto': 'Oregon Intelligence', 'gerado_em': agora_.isoformat(timespec='seconds'), 'macro_em': (macro or {}).get('gerado_em'),
-                           'coleta_em': (coleta or {}).get('gerado_em'), 'hoje_em': (hoje_js or {}).get('gerado_em'), 'semanal_em': (sem_js or {}).get('gerado_em'),
-                           'meses': biblioteca.meses_disponiveis(), 'ia': bool((estado.get('ia_uso') or {}).get('itens'))})
+def gravar_versao(agora_, macro, coleta, hoje_js, sem_js, estado, cfg=None):
+    v = {'versao': 3, 'produto': 'Oregon Intelligence', 'gerado_em': agora_.isoformat(timespec='seconds'), 'macro_em': (macro or {}).get('gerado_em'),
+         'coleta_em': (coleta or {}).get('gerado_em'), 'hoje_em': (hoje_js or {}).get('gerado_em'), 'semanal_em': (sem_js or {}).get('gerado_em'),
+         'meses': biblioteca.meses_disponiveis(), 'ia': bool((estado.get('ia_uso') or {}).get('itens'))}
+    if cfg is not None:
+        v['corrente'] = corrente.resumo(cfg, agora_)  # v3.11 · o painel mostra a próxima coleta prevista pela corrente
+    gravar('versao.json', v)
 
 
 def saidas_github(nivel, motivos, resumo_md, pular=False):
@@ -1098,7 +1102,7 @@ def main():
     if modo == 'teste_telegram' and not tg['ok']:
         motivos.insert(0, 'teste do Telegram falhou: ' + tg['msg'])
         nivel = 'critico'
-    gravar_versao(agora_, macro, coleta, hoje_js, sem_arq, estado)
+    gravar_versao(agora_, macro, coleta, hoje_js, sem_arq, estado, cfg)
     gravar('status.json', {'gerado_em': agora_.isoformat(timespec='seconds'), 'status': {'nivel': nivel, 'motivos': motivos}, 'macro': macro['fontes'], 'conteudo': coleta.get('ultima'),
                            'ia': {'ok': (n_ia > 0) if chaves.get('anthropic') else None, 'msg': msg_ia}, 'telegram': tg if tem_tg else None, 'resultados': res_msg, 'rede': rede_c.resumo()})
     gravar('estado.json', estado)

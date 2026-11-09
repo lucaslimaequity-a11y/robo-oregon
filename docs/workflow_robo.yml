@@ -8,6 +8,11 @@ name: Oregon Intelligence
 # v3.9.1 (aprovado pelo Lucas em 09/11/2026, depois de uma noite com 2 de 6 rodadas): rodadas extras às 02:07, 03:07,
 #   05:07, 05:37, 06:07 e 06:37, e aos 22 e 52 minutos das 09:22 às 18:52, todo dia (a coleta é de sete dias). Cada fonte segue o
 #   próprio intervalo (robo/intel.py), então os sites não são lidos com mais frequência; rodada sem nada novo só republica.
+# v3.11 (aprovado pelo Lucas em 09/11/2026, dia em que o GitHub disparou só 2 de 28 horários): a corrente. Cada rodada,
+#   no fim, dispara a seguinte pelo próprio GitHub (etapa "seguinte", robo/corrente.py): 15 min das 6h às 23h, 30 min de
+#   madrugada, 60 min depois de falha, contados do início da rodada. Esse disparo não passa pelo agendador que descarta
+#   horários. Os horários acima ficam como reserva: se a corrente parar, o primeiro que o GitHub disparar a religa.
+#   Desligar: robo/config.json → intel → corrente → "ativo": false.
 # Cópia visível deste arquivo em docs/workflow_robo.yml (os testes conferem que as duas são iguais).
 on:
   schedule:
@@ -27,18 +32,23 @@ on:
         type: choice
         options: [normal, semanal, teste_telegram]
         default: normal
+      corrente:
+        description: 'marcado só pela corrente de rodadas (v3.11): roda como a agendada, cada site no próprio intervalo'
+        type: boolean
+        default: false
 
 # Nada de permissão por padrão; cada etapa recebe só o que usa.
 permissions: {}
 
-concurrency:
-  group: robo-oregon
-  cancel-in-progress: false
-
+# v3.11: a fila única vale para a coleta e para a publicação (antes valia para a rodada inteira). Assim a espera da
+# corrente (etapa "seguinte") não segura um "Coletar agora": ele começa assim que a coleta anterior termina.
 jobs:
   coletar:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    concurrency:
+      group: robo-oregon
+      cancel-in-progress: false
     permissions:
       contents: write   # gravar os dados no ramo "dados" e o arquivo que mantém o agendamento ativo
     outputs:
@@ -88,7 +98,7 @@ jobs:
         id: robo
         env:
           ROBO_MODO: ${{ github.event_name == 'workflow_dispatch' && inputs.modo || 'normal' }}
-          ROBO_MANUAL: ${{ github.event_name != 'schedule' }}
+          ROBO_MANUAL: ${{ github.event_name != 'schedule' && !(github.event_name == 'workflow_dispatch' && inputs.corrente) }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -143,6 +153,9 @@ jobs:
     if: needs.coletar.outputs.pular != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    concurrency:
+      group: robo-oregon-site
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write
@@ -164,3 +177,25 @@ jobs:
             parcial) echo "::warning title=Rodada parcial::$m" ;;
             *)       echo "Rodada completa." ;;
           esac
+
+  seguinte:
+    # v3.11 · a corrente: espera o intervalo e dispara a próxima rodada, a menos que já exista uma mais nova (essa segue a
+    # corrente). Roda depois da publicação, com falha ou sem; não roda se esta rodada foi cancelada.
+    needs: [coletar, publicar]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    permissions:
+      actions: write    # disparar a próxima rodada e ver se já há outra mais nova; só isso
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: robo
+
+      - name: Esperar o intervalo e disparar a próxima rodada (robo/corrente.py)
+        env:
+          GH_TOKEN: ${{ github.token }}   # chave temporária da própria rodada, que vale só enquanto ela roda; nenhuma chave nova
+          COLETAR: ${{ needs.coletar.result }}
+        run: python3 robo/corrente.py

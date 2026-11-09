@@ -395,6 +395,49 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       APP.setProf(p0); await z(100);
       return r; });
     rep(Object.values(mh10).every(v => v === true), vw + ' mercado hoje · Brasil: em todos os modos, depois do mapa, com a agenda do dia, filtro por assunto, InfoMoney marcado Grupo XP e filtro Macro Brasil (' + JSON.stringify(mh10) + ')');
+    // v3.11 · corrente de rodadas (próxima coleta e texto do detalhe) e painel novo no Atualizar (painel.json simulado)
+    const c11 = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms)), r = {}, v = APP.intel.versao, c0 = v.corrente, f0 = window.fetch, rc0 = APP._recarregar, u0 = APP.intel.ultimoAviso;
+      const hm = t => new Date(t - 3 * 3600e3).toISOString().slice(11, 16), iso = t => new Date(t - 3 * 3600e3).toISOString().slice(0, 16) + '-03:00';
+      r.robo = !!(c0 && c0.ativo && /T\d\d:\d\d-03:00$/.test(c0.proxima));   // o versao.json do robô traz a corrente
+      const slot = INTEL.coletasPrevistas(Date.now(), Date.now() + 2 * 864e5)[0];
+      v.corrente = {ativo: true, minutos: 15, proxima: iso(Date.now() + 4 * 60e3)}; const tc = Date.parse(v.corrente.proxima);
+      r.prox = APP.proximaColeta() === (slot < tc ? hm(slot) : hm(tc));
+      v.corrente = {ativo: true, minutos: 15, proxima: iso(Date.now() - 40 * 60e3)}; r.parou = APP.proximaColeta() === hm(slot);
+      v.corrente = c0;
+      // aviso de atraso com a corrente: rodada "em andamento" há 40 min (coleta falhou, a etapa seguinte espera) e rodada que falhou
+      const g0 = v.gerado_em, u1 = APP.intel.ultimoAviso, fg = window.fetch; APP.intel.ultimoAviso = null; v.gerado_em = new Date(Date.now() - 3 * 3600e3).toISOString();
+      window.fetch = (u, o) => /api\.github\.com/.test(String(u)) ? Promise.resolve({ok: true, json: () => Promise.resolve({workflow_runs: window.__gh11})}) : fg(u, o);
+      const caso = async runs => { window.__gh11 = runs; APP._ghColeta.t = 0; APP._ghColeta.runs = null; APP.go('hoje'); APP.atrasoColeta(); await z(150); APP.rerender(); await z(150); const a = document.querySelector('#main .aviso-gh'); return a ? [a.textContent, !!a.querySelector('a.btn')] : ['', false]; };
+      const ini = new Date(Date.now() - 40 * 60e3).toISOString();
+      const dm = await caso([{status: 'in_progress', conclusion: null, created_at: ini, run_started_at: ini}]);
+      r.demorando = /passou do tempo normal/.test(dm[0]) && dm[1] && !/está rodando agora/.test(dm[0]);
+      const ini2 = new Date(Date.now() - 70 * 60e3).toISOString();
+      const fl = await caso([{status: 'completed', conclusion: 'failure', created_at: ini2, run_started_at: ini2}]);
+      r.falhou = /a rodada das .* falhou\..*A corrente tenta de novo em até 1 hora/.test(fl[0]) && fl[1];
+      const ini3 = new Date(Date.now() - 5 * 60e3).toISOString();
+      const rd = await caso([{status: 'in_progress', conclusion: null, created_at: ini3, run_started_at: ini3}]);
+      r.rodandoDeVerdade = /está rodando agora/.test(rd[0]) && !rd[1];
+      window.fetch = fg; v.gerado_em = g0; APP.intel.ultimoAviso = u1; APP._ghColeta.t = 0; APP._ghColeta.runs = null; APP.rerender(); await z(100);
+      document.querySelector('.dstat').click(); await z(80); r.pop = Array.from(document.querySelectorAll('.pop .pop-l')).some(e => /Corrente de rodadas: cada rodada também dispara a seguinte/.test(e.textContent));
+      document.body.click(); await z(50); const pp = document.querySelector('.pop'); if (pp) pp.remove();
+      // painel novo
+      let rec = null; APP._recarregar = b => { rec = b; };
+      window.fetch = (u, o) => /painel\.json/.test(String(u)) ? Promise.resolve({ok: true, json: () => Promise.resolve({build: window.__pj})}) : f0(u, o);
+      sessionStorage.removeItem('oi-painel-recarga');
+      r.build = /^[0-9a-f]{12}$/.test(APP.PAINEL_BUILD || '');
+      window.__pj = APP.PAINEL_BUILD; await APP.intelAtualizar(); await z(1500); r.igual = rec === null;
+      window.__pj = 'ffffffffffff'; await APP.intelAtualizar(); r.toast = /versão nova do painel/.test((document.querySelector('.toast') || {}).textContent || '');
+      await z(1500); r.recarrega = rec === 'ffffffffffff';
+      rec = null; APP._painelNovo.faixa = null; await APP._conferirPainel(); const fx = document.querySelector('.painel-novo');
+      r.faixa = !!fx && /Recarregar/.test(fx.textContent) && getComputedStyle(fx).position === 'fixed';
+      r.sw = document.documentElement.scrollWidth <= innerWidth;
+      if (fx) { fx.querySelector('.btn.pri').click(); r.botao = rec === 'ffffffffffff'; fx.querySelector('[aria-label="Fechar este aviso"]').click(); r.fecha = !document.querySelector('.painel-novo'); }
+      // o arquivo publicado pelo site de teste é o mesmo do painel aberto
+      window.fetch = f0; r.publicado = (await APP.lerPainelPublicado()) === APP.PAINEL_BUILD;
+      APP._recarregar = rc0; APP._painelNovo.faixa = null; APP.intel.ultimoAviso = u0; APP.rerender(); await z(100);
+      return r; });
+    rep(Object.values(c11).every(v => v === true), vw + ' corrente de rodadas (próxima coleta e detalhe) e painel novo: o Atualizar recarrega, a faixa oferece Recarregar (' + JSON.stringify(c11) + ')');
     await p.emulateMedia({media: 'print'});
     const pr7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'comite'); await z(400);
       return {top: getComputedStyle(document.querySelector('.top')).display, sug: getComputedStyle(document.querySelector('.cm-g > .no-print')).display, imp: Array.from(document.querySelectorAll('button')).some(b => b.textContent === 'Imprimir')}; });

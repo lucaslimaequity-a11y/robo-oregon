@@ -1,3 +1,62 @@
+# Oregon Intelligence v3.11 · corrente de rodadas e painel novo no Atualizar (09/11/2026)
+
+O pacote `robo-oregon-v3.11-alterados.zip` vale sobre a v3.10 que já está no seu GitHub (commit d92a447). Nada foi
+retirado, nenhuma chave nova entra e nenhuma API paga entra. **O `robo.yml` muda: são dois passos** (no fim desta seção).
+
+**Por quê.** Em 09/11 a última rodada foi a das 09:53. Depois dela o GitHub não começou nenhuma das 18 rodadas agendadas
+entre 10:07 e 14:22. Desde a meia-noite, das 28 agendadas, só 2 saíram. Nenhuma falhou: o agendador do GitHub atrasa e,
+com carga alta, descarta rodadas (está na documentação dele). Pôr mais horários não resolve, porque ele descarta todos.
+
+## O que entra
+
+- **Corrente de rodadas.** Cada rodada, ao terminar, dispara a seguinte pelo próprio GitHub. Esse disparo não passa pelo
+  agendador que descarta horários; a documentação do GitHub diz que ele sempre cria a rodada.
+  - **Frequência:** a cada 15 minutos das 6h às 23h e a cada 30 minutos de madrugada, contados do início da rodada
+    anterior. Depois de uma rodada com falha, espera 60 minutos (para não encher seu e-mail de avisos se algo quebrar).
+  - **Cada fonte continua no próprio intervalo.** A rodada da corrente funciona como a agendada: páginas de gestoras,
+    cartas, buscas de macro e as demais fontes com intervalo seguem o delas. Feeds RSS e buscas por empresa, que já eram
+    lidos a cada rodada, passam a ser lidos a cada 15 minutos também fora do pregão (antes, a cada 30) e a cada 30 minutos
+    de madrugada. Só o "Coletar agora" lê tudo, como antes.
+  - **Nunca duas ao mesmo tempo.** Se já existir uma rodada mais nova (sua, de horário ou de envio), é ela que segue a
+    corrente.
+  - **Os horários continuam de reserva.** Se a corrente parar, o primeiro horário que o GitHub disparar, ou um "Coletar
+    agora", a religa.
+  - **Sem custo e sem chave nova.** Usa a chave temporária que o GitHub dá a cada rodada e que vale só enquanto ela roda.
+    O repositório é público, então os minutos são gratuitos.
+  - **O "Coletar agora" não fica esperando a corrente:** ele começa assim que a coleta anterior termina.
+  - **Para desligar:** em `robo/config.json`, `intel` → `corrente` → troque `"ativo": true` para `false`. Ficam só os
+    horários. Os intervalos também ficam ali (entre 5 e 60 minutos).
+  - **Sempre no ramo main.** Uma rodada de teste em outro ramo não leva a corrente para lá.
+- **O Atualizar traz o painel novo.** Quando o GitHub publica uma versão nova do painel e a sua aba está aberta com a
+  antiga, o Atualizar avisa e recarrega a página. Sem tocar em nada, aparece no rodapé "O painel foi atualizado no GitHub"
+  com o botão **Recarregar**. Foi o que aconteceu hoje: a aba aberta desde cedo não mostrava o aviso de atraso, que já
+  estava no site.
+- **Hora da próxima coleta:** no detalhe da coleta e no Atualizar, a hora prevista passa a ser a da corrente.
+- **Aviso de atraso mais exato.** Quando a coleta de uma rodada falha, ela ainda aparece "em andamento" no GitHub por até
+  1 hora, enquanto espera para disparar a próxima. O aviso não diz mais "está rodando, os dados chegam em uns 10 minutos"
+  nesse caso. Ele diz que a rodada passou do tempo normal ou que falhou, e mostra o "Coletar agora".
+
+**Limite.** Se o Actions inteiro do GitHub cair, nada roda, nem a corrente nem os horários. O aviso de atraso no topo do
+Hoje continua avisando.
+
+## Como subir (dois passos, porque o `robo.yml` muda)
+
+1. **Primeiro o pacote.** Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`docs/…`,
+   `painel/…`, `robo/…`, `site/…`, `testes/…`, `README.md`) e clique em Commit changes.
+   - A rodada que esse envio dispara vai falhar no teste. É esperado: o teste exige o `robo.yml` novo, que só chega no
+     passo 2. Nada se perde: os dados e o site ficam como estavam.
+   - Se a pasta `.github` também entrar no arrastar, a rodada já fica verde e o passo 2 não é preciso.
+2. **Depois o horário.** No GitHub, abra `.github/workflows/robo.yml` e clique no lápis (Edit). Apague tudo, cole o
+   conteúdo inteiro do arquivo `robo.yml` que vai junto e clique em Commit changes. Essa rodada fica verde, publica e
+   começa a corrente.
+
+**Como conferir.** Na aba Actions, cada rodada passa a ter uma terceira etapa, **seguinte**. Ela termina com "Próxima rodada
+disparada às …". Uns 15 minutos depois aparece uma rodada nova com o evento `workflow_dispatch`.
+
+## Voltar atrás
+
+Na lista de commits, abra o commit do envio e use Revert. Para só parar a corrente, basta o `"ativo": false` acima.
+
 # Oregon Intelligence v3.10 · macro do Brasil (09/11/2026)
 
 O pacote `robo-oregon-v3.10-alterados.zip` vale sobre a v3.9.1 que já está no seu GitHub (commit 71ae922, com o

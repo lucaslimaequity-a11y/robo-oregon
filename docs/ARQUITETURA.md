@@ -158,6 +158,20 @@ Brasília), depois de uma noite em que o GitHub disparou só 2 de 6 rodadas. A a
 `versao.gerado_em` com os horários previstos até 25 minutos atrás e, só quando há atraso, consulta a API pública de execuções
 do GitHub (sem chave, no máximo a cada 3 minutos) para dizer se a coleta está rodando, terminou ou não foi disparada.
 
+v3.11 · **corrente de rodadas.** Terceiro job, `seguinte` (`needs: [coletar, publicar]`, `if: !cancelled()`, permissões
+`actions: write` e `contents: read`, nenhum Secret), roda `robo/corrente.py` com a `GITHUB_TOKEN` da rodada. Ele lê o início
+da rodada na API, espera o intervalo (`intel.corrente`: 15 min das 6h às 23h, 30 min de madrugada, 60 min depois de falha
+ou cancelamento da coleta; sempre entre 5 e 60, porque o job tem 75 min de prazo), confere se já existe rodada mais nova
+no `main` (número maior, cancelada não conta) e, se não existe, dispara `workflow_dispatch` no `main` com
+`corrente: true`. Até 4 tentativas por chamada (15, 30 e 60 s); se um disparo repetido criar uma rodada a mais, a mais
+velha vê a mais nova e para. Disparo pela `GITHUB_TOKEN` cria rodada só nesse caso (e no `repository_dispatch`),
+segundo a documentação do GitHub. Com `corrente: true`, `ROBO_MANUAL` fica `false`: a rodada respeita o intervalo de cada
+fonte, como a agendada. A fila deixou de valer para a rodada inteira e passou para os jobs: `coletar` no grupo
+`robo-oregon` e `publicar` no grupo `robo-oregon-site`, ambos sem cancelar o que está rodando. Assim a espera do `seguinte`
+não segura um "Run workflow". Os crons continuam como reserva. O robô grava em `versao.json` → `corrente` a próxima rodada
+prevista (`{ativo, minutos, proxima}`); o painel usa essa hora em "Próxima coleta prevista" quando ela vem antes do próximo
+horário (`ui_v311.js`, `I.proximaCorrente`).
+
 
 ## Painel · v3.9 (Biblioteca › Inglês)
 - `painel/src/ui_ingles.js`: página Biblioteca › Inglês e os botões de inglês nas notícias. Embrulha `A.itemRow` (botão
@@ -196,3 +210,23 @@ do GitHub (sem chave, no máximo a cada 3 minutos) para dizer se a coleta está 
   - Filtro "Macro Brasil" em Todas as notícias.
   - Selo "Grupo XP" nas linhas do InfoMoney.
   - `TAXON.macro_br` traz os nomes dos subtemas, injetados pelo `build.py`.
+
+
+## v3.11 · corrente de rodadas e painel novo
+- **Robô:** `robo/corrente.py` (só biblioteca padrão; funções puras `ajustes`, `intervalo_min`, `espera_seg`, `resumo`,
+  `rodada_mais_nova`, e `main` com a API injetável nos testes). Nunca deixa a rodada vermelha: erro de rede ou HTTP
+  (inclusive resposta cortada, `http.client.HTTPException`) vira `::warning` e o próximo horário religa a corrente. `config.py` valida `intel.corrente`. `intel.gravar_versao` grava
+  `corrente` no `versao.json`.
+- **Identidade do painel:** `painel/build.py` calcula `PAINEL_BUILD` (12 caracteres do SHA-256 do JavaScript e do CSS
+  montados, sem data e hora, então só muda quando o painel muda), injeta no HTML e grava `site/painel.json`.
+- **Painel, `ui_v311.js`:**
+  - Embrulha `A.intelAtualizar`: depois dos dados, lê `painel.json` (sem cache). Se for diferente do `PAINEL_BUILD`
+    aberto, avisa e recarrega com `?v=<build>`.
+  - A mesma versão só é tentada de novo depois de 5 minutos (depois da 3ª vez, de 30), anotado no `sessionStorage`,
+    para não entrar em laço enquanto o GitHub publica.
+  - A cada 10 minutos, e quando a aba volta a ficar visível, confere sozinho e mostra a faixa `.painel-novo` com
+    "Recarregar".
+  - Só no site: no claude.ai e no arquivo local, nada muda. A recarga mantém os outros parâmetros do endereço.
+  - Embrulha `A.atrasoColeta` e `I.textoAtraso`: rodada "em andamento" há mais de 25 min vira `demorando` (a coleta
+    falhou e a etapa `seguinte` espera) e rodada concluída com falha vira `falhou`. Nos dois casos o aviso mostra o
+    "Coletar agora".

@@ -45,7 +45,8 @@
     return h('div', null,
       h('p', {class: 'pop-l'}, h('i', {class: 'dot ' + s.cls}), ' Última coleta concluída: ', h('b', null, s.abs), s.rel ? h('span', {class: 'muted'}, ' (' + s.rel + ')') : null),
       s.atras ? h('p', {class: 'pop-l warn'}, 'O robô está atrasado: a última coleta tem mais de 3 horas.') : null,
-      h('p', {class: 'pop-l muted'}, 'Próxima coleta prevista às ' + A.proximaColeta() + '. O robô roda no GitHub aos 7 e aos 37 minutos de cada hora, das 7h às 22h37 (e à 1h15 e às 4h15). O GitHub pode atrasar ou pular rodadas; a rodada leva uns 10 minutos para publicar. Para coletar na hora, use "Coletar agora".'),
+      A.avisoAtraso ? A.avisoAtraso('pop') : null,  // v3.9.1 · qual coleta prevista não chegou
+      h('p', {class: 'pop-l muted'}, 'Próxima coleta prevista às ' + A.proximaColeta() + '. O robô roda no GitHub aos 7 e aos 37 minutos de cada hora, das 5h07 às 22h37, também aos 22 e aos 52 das 9h22 às 18h52, e à 1h15, 2h07, 3h07 e 4h15. O GitHub pode atrasar ou pular rodadas; a rodada leva uns 10 minutos para publicar. Para coletar na hora, use "Coletar agora".'),
       e.ultimoAviso ? h('p', {class: 'pop-l'}, e.ultimoAviso) : null,
       h('div', {class: 'pop-acts'},
         h('button', {class: 'btn sm', onclick: function () { fecharPop(); A.intelAtualizar(); }}, 'Atualizar agora'),

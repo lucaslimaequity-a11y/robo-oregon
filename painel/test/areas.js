@@ -239,7 +239,10 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       return {linhas: t ? t.querySelectorAll('tbody tr').length : 0, klbn: /KLBN4[\s\S]*Itaú BBA[\s\S]*Compra · R\$ 25,00\s+Neutro/.test(tx), txt: tx.slice(0, 300)}; });
     rep(rm7.linhas >= 1 && rm7.klbn, vw + ' mudanças de recomendação: a mesma casa contra a visão anterior (' + JSON.stringify(rm7) + ')');
     const fs7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'semana'); await z(500); const t = document.getElementById('main').innerText;
-      return {secs: document.querySelectorAll('.fs .sec').length, fluxo: /Ações [−+]?R\$/.test(t), copiar: /Copiar/.test(t), imprimir: /Imprimir/.test(t), mud: /Klabin|KLBN4/.test(t), recompra: /recompra/i.test(t), carta: /Gestora Teste A/.test(t)}; });
+      const r = {secs: document.querySelectorAll('.fs .sec').length, fluxo: /Ações [−+]?R\$/.test(t), copiar: /Copiar/.test(t), imprimir: /Imprimir/.test(t), mud: /Klabin|KLBN4/.test(t), recompra: /recompra/i.test(t), carta: /Gestora Teste A/.test(t)};
+      // o fluxo e as cartas do site de teste têm datas fixas (semana de 02/11): numa semana sem esses dados, confere a semana anterior
+      if (!r.fluxo || !r.carta) { APP.FS = {off: 1}; APP.rerender(); await z(300); const t1 = document.getElementById('main').innerText; r.fluxo = r.fluxo || /Ações [−+]?R\$/.test(t1); r.carta = r.carta || /Gestora Teste A/.test(t1); r.semanaAnterior = true; APP.FS = {off: 0}; APP.rerender(); await z(150); }
+      return r; });
     rep(fs7.secs === 9 && fs7.fluxo && fs7.copiar && fs7.imprimir && fs7.mud && fs7.recompra && fs7.carta, vw + ' fechamento da semana com as nove seções (com o fluxo dos fundos), copiar e imprimir (' + JSON.stringify(fs7) + ')');
     const bq7 = await p.evaluate(() => { const it = APP.itensAtivo(), f = q => INTEL.filtrar(it, {q: q}).map(x => x.id);
       return {ev: f('evento:recompra').join(','), fonte: f('fonte:"Money Times" ativo:KLBN4').length, frase: f('"programa de recompra"').join(','), fora: f('Klabin -corta').some(id => id === 'op_new'), periodo: f('ativo:KLBN4 desde:01/11/2026').indexOf('op_old') < 0, tipo: f('tipo:opiniao ativo:KLBN4').length}; });
@@ -342,6 +345,31 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       APP.lsSet('ing-passo', null); APP.lsSet('ing-feitos', []);
       return r; });
     rep(Object.values(en9).every(v => v === true), vw + ' inglês: sessão do dia (ouvir, texto, glossário, traduzir, conferir a fala, salvar, falar sobre a carteira), revisão, Anki, glossário, podcasts e botão nas manchetes em inglês (' + JSON.stringify(en9) + ')');
+    // v3.9.1 · aviso de atraso do GitHub (API do GitHub simulada: sem rodada, rodando, sem resposta)
+    const gh9 = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms)), r = {}, v = APP.intel.versao, g0 = v.gerado_em, f0 = window.fetch;
+      window.fetch = (u, o) => /api\.github\.com/.test(String(u)) ? (window.__ghFix === 'erro' ? Promise.reject(new Error('offline')) : Promise.resolve({ok: true, json: () => Promise.resolve({workflow_runs: window.__ghFix})})) : f0(u, o);
+      const caso = async (fix) => { window.__ghFix = fix; APP._ghColeta.t = 0; APP._ghColeta.runs = null; APP.go('hoje'); APP.atrasoColeta(); await z(150); APP.rerender(); await z(150); const a = document.querySelector('#main .aviso-gh'); return a ? a.textContent : ''; };
+      v.gerado_em = new Date(Date.now() - 5 * 3600e3).toISOString(); const u0 = APP.intel.ultimoAviso; APP.intel.ultimoAviso = null;
+      const t9 = await caso([]); r.nada = /Atraso do GitHub: (ele não disparou .*; nada novo desde a coleta das|desde a coleta das .*, ele não disparou as \d+ coletas previstas\.)/.test(t9);
+      APP.intel.ultimoAviso = 'Conferido às 07:12: nada novo desde a coleta das 03:11. Próxima coleta prevista às 07:37; o GitHub costuma atrasar.'; APP.rerender(); await z(100);
+      r.semRepetir = !!document.querySelector('#main .aviso-at') && !/nada novo/.test(document.querySelector('#main .aviso-gh').textContent);
+      // textos: 1 coleta, 2 coletas e várias (funções puras, horários de Brasília)
+      const dH = INTEL.hojeBRT(), T = (n, gh) => INTEL.textoAtraso({perdidas: [Date.parse(dH + 'T04:15:00-03:00'), Date.parse(dH + 'T05:07:00-03:00'), Date.parse(dH + 'T05:37:00-03:00')].slice(0, n), desde: Date.parse(dH + 'T03:11:00-03:00'), gh: gh});
+      r.textos = /não disparou a coleta prevista das 04:15; nada novo desde a coleta das 03:11\./.test(T(1, 'nada')) && /as coletas previstas das 04:15 e das 05:07 ainda não chegaram; nada novo desde a coleta das 03:11\./.test(T(2, null)) && /desde a coleta das 03:11, ele não disparou as 3 coletas previstas\./.test(T(3, 'nada')); APP.intel.ultimoAviso = u0; APP.rerender(); await z(80);
+      r.botao = !!document.querySelector('#main .aviso-gh a.btn.pri') && document.querySelector('#main .mesa-ctl a[href*="actions/workflows/robo.yml"]').classList.contains('pri');
+      r.depoisDoTitulo = document.querySelector('#main .mesa-h').nextElementSibling.classList.contains('aviso-gh');
+      const ini = Date.now() - 6e5, brt = new Date(ini - 3 * 3600e3), hmBRT = ('0' + brt.getUTCHours()).slice(-2) + ':' + ('0' + brt.getUTCMinutes()).slice(-2);
+      r.rodando = (await caso([{status: 'in_progress', created_at: new Date(ini).toISOString(), run_started_at: new Date(ini).toISOString()}])).indexOf('está rodando agora (começou às ' + hmBRT + ')') >= 0 && !document.querySelector('#main .aviso-gh a.btn');
+      r.semApi = /ainda não cheg(ou|aram)/.test(await caso('erro'));
+      document.querySelector('.dstat').click(); await z(80); r.pop = Array.from(document.querySelectorAll('.pop .pop-l.warn')).some(e => /Atraso do GitHub/.test(e.textContent)); document.body.click(); await z(50);
+      const pp = document.querySelector('.pop'); if (pp) pp.remove();
+      r.prox = /^\d\d:\d\d$/.test(APP.proximaColeta());
+      r.sw = document.documentElement.scrollWidth <= innerWidth;
+      v.gerado_em = new Date(Date.now() - 4 * 60e3).toISOString(); APP.rerender(); await z(150); r.semAtraso = !document.querySelector('#main .aviso-gh');
+      v.gerado_em = g0; window.fetch = f0; APP._ghColeta.t = 0; APP._ghColeta.runs = null; APP.rerender(); await z(100);
+      return r; });
+    rep(Object.values(gh9).every(v => v === true), vw + ' atraso do GitHub: aviso no topo do Hoje e no detalhe da coleta, com o Coletar agora destacado; some quando a coleta chega (' + JSON.stringify(gh9) + ')');
     await p.emulateMedia({media: 'print'});
     const pr7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'comite'); await z(400);
       return {top: getComputedStyle(document.querySelector('.top')).display, sug: getComputedStyle(document.querySelector('.cm-g > .no-print')).display, imp: Array.from(document.querySelectorAll('button')).some(b => b.textContent === 'Imprimir')}; });

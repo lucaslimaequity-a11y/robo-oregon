@@ -1318,6 +1318,12 @@ input[type=search].inp{width:100%;max-width:520px;margin-bottom:8px}
 @media print{.en-row,.en-bar{display:none}}
 .a.en-trad,a.btn.en-trad{text-decoration:none}
 
+/* v3.9.1 · aviso de atraso do GitHub no topo do Hoje */
+.aviso-gh{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin:0 0 10px;padding:8px 12px;border-radius:8px;border:1px solid var(--warn);border-left-width:4px;background:var(--panel);font-size:.9rem}
+.aviso-gh span{flex:1 1 320px}
+@media print{.aviso-gh{display:none}}
+.aviso-gh a.btn{text-decoration:none;flex:none}
+
 </style>
 <div class="ov">
 <header class="top">
@@ -6744,7 +6750,7 @@ var INTEL = (function () {
     var semDados = !v && !itens.length;
 
     // ---- topo da mesa
-    var status = v ? h('p', {class: 'status-l', title: 'O robô lê as fontes aos 7 e aos 37 minutos de cada hora, das 7h às 22h37 (o GitHub pode atrasar); esta página se atualiza sozinha. A hora de cada notícia é a de publicação na fonte.'},
+    var status = v ? h('p', {class: 'status-l', title: 'O robô lê as fontes aos 7 e aos 37 minutos de cada hora, das 5h07 às 22h37, também aos 22 e aos 52 das 9h22 às 18h52, e de madrugada (o GitHub pode atrasar); esta página se atualiza sozinha. A hora de cada notícia é a de publicação na fonte.'},
       'Última coleta concluída ', h('b', null, I.horaAbs(v.gerado_em)), h('span', {class: 'muted'}, ' (' + I.quando({publicado_em: v.gerado_em}) + ')'), ' · ', h('b', null, String(n24)), ' notícias nas últimas 24 h',
       u ? [' · ', u.fontes_erro ? h('button', {class: 'btn link', onclick: function () { A.go('bib', 'fontes'); }}, u.fontes_erro + (u.fontes_erro > 1 ? ' fontes com erro' : ' fonte com erro')) : 'nenhuma fonte com erro'] : null)
       : h('p', {class: 'status-l'}, e.carregando ? 'Buscando os dados do robô…' : 'Sem dados do robô nesta visualização.');
@@ -7764,7 +7770,8 @@ var INTEL = (function () {
     return h('div', null,
       h('p', {class: 'pop-l'}, h('i', {class: 'dot ' + s.cls}), ' Última coleta concluída: ', h('b', null, s.abs), s.rel ? h('span', {class: 'muted'}, ' (' + s.rel + ')') : null),
       s.atras ? h('p', {class: 'pop-l warn'}, 'O robô está atrasado: a última coleta tem mais de 3 horas.') : null,
-      h('p', {class: 'pop-l muted'}, 'Próxima coleta prevista às ' + A.proximaColeta() + '. O robô roda no GitHub aos 7 e aos 37 minutos de cada hora, das 7h às 22h37 (e à 1h15 e às 4h15). O GitHub pode atrasar ou pular rodadas; a rodada leva uns 10 minutos para publicar. Para coletar na hora, use "Coletar agora".'),
+      A.avisoAtraso ? A.avisoAtraso('pop') : null,  // v3.9.1 · qual coleta prevista não chegou
+      h('p', {class: 'pop-l muted'}, 'Próxima coleta prevista às ' + A.proximaColeta() + '. O robô roda no GitHub aos 7 e aos 37 minutos de cada hora, das 5h07 às 22h37, também aos 22 e aos 52 das 9h22 às 18h52, e à 1h15, 2h07, 3h07 e 4h15. O GitHub pode atrasar ou pular rodadas; a rodada leva uns 10 minutos para publicar. Para coletar na hora, use "Coletar agora".'),
       e.ultimoAviso ? h('p', {class: 'pop-l'}, e.ultimoAviso) : null,
       h('div', {class: 'pop-acts'},
         h('button', {class: 'btn sm', onclick: function () { fecharPop(); A.intelAtualizar(); }}, 'Atualizar agora'),
@@ -8561,6 +8568,117 @@ var INTEL = (function () {
   A.areas.bib = function () {
     if (S.sub.bib !== 'ingles') return origBib.apply(this, arguments);
     var w = h('div'); w.appendChild(A.subnav('bib', A.SUBS.bib)); w.appendChild(pagina()); return w;
+  };
+})(APP, CORE, INTEL);
+
+;
+/* v3.9.1 · aprovado pelo Lucas em 09/11/2026, depois de uma noite em que o GitHub rodou só 2 de 6 coletas agendadas:
+   - agenda do robô com as rodadas extras (02:07, 03:07, 05:07 a 06:37 e aos 22 e 52 minutos das 09:22 às 18:52);
+   - aviso de atraso no topo do Hoje, no detalhe da coleta e no "Atualizar": quando uma coleta prevista passa da hora sem
+     chegar, o painel diz qual foi e destaca o "Coletar agora".
+   A situação da rodada vem da API pública do GitHub (repositório público, sem chave), no máximo uma consulta a cada
+   3 minutos e só quando há atraso. Sem resposta da API, o aviso diz apenas que a coleta ainda não chegou. */
+(function (A, C, I) {
+  'use strict';
+  var h = A.h;
+  var REPO_API = 'https://api.github.com/repos/lucaslimaequity-a11y/robo-oregon/actions/runs?per_page=6';
+  var MARGEM = 25 * 60e3;  // a rodada leva uns 10 minutos e o GitHub atrasa um pouco quase sempre
+  function pad(n) { return ('0' + n).slice(-2); }
+  function E() { return A.intel || {}; }
+
+  /* ---------- agenda (horário de Brasília), igual ao .github/workflows/robo.yml ---------- */
+  var SL = [75, 127, 187, 255, 307, 337, 367, 397], m;
+  for (m = 427; m <= 1357; m += 30) SL.push(m);   // 07:07 a 22:37, aos 7 e aos 37
+  for (m = 562; m <= 1132; m += 30) SL.push(m);   // 09:22 a 18:52, aos 22 e aos 52
+  SL = SL.filter(function (x, i) { return SL.indexOf(x) === i; }).sort(function (a, b) { return a - b; });
+  A.SLOTS_COLETA = SL;
+  function maisDias(d, n) { var x = new Date(d + 'T12:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
+  function ms(dia, min) { return Date.parse(dia + 'T' + pad(Math.floor(min / 60)) + ':' + pad(min % 60) + ':00-03:00'); }
+  function isoBRT(t) { return new Date(t - 3 * 3600e3).toISOString().slice(0, 19) + '-03:00'; }  // a API do GitHub dá UTC; o painel mostra Brasília
+  function hm(t) { return I.horaAbs(isoBRT(t)); }
+  // horários previstos (em ms) no intervalo (de, ate]
+  I.coletasPrevistas = function (de, ate) {
+    var out = [], d0 = I.hojeBRT();
+    [maisDias(d0, -2), maisDias(d0, -1), d0].forEach(function (d) { SL.forEach(function (x) { var t = ms(d, x); if (t > de && t <= ate) out.push(t); }); });
+    return out.sort(function (a, b) { return a - b; });
+  };
+  A.proximaColeta = function () {
+    var agora = Date.now(), d0 = I.hojeBRT();
+    for (var k = 0; k < 2; k++) { var d = maisDias(d0, k); for (var i = 0; i < SL.length; i++) if (ms(d, SL[i]) > agora) return pad(Math.floor(SL[i] / 60)) + ':' + pad(SL[i] % 60); }
+    return '01:15';
+  };
+
+  /* ---------- situação real no GitHub (API pública), só quando há atraso ---------- */
+  var GH = {t: 0, runs: null, erro: null, buscando: false};
+  function checarGitHub() {
+    if (GH.buscando || Date.now() - GH.t < 3 * 60e3 || typeof fetch !== 'function') return;
+    GH.buscando = true;
+    fetch(REPO_API, {headers: {Accept: 'application/vnd.github+json'}, cache: 'no-store'}).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (js) { GH.runs = (js && js.workflow_runs) || []; GH.erro = null; }).catch(function (e) { GH.runs = null; GH.erro = e.message || String(e); })
+      .then(function () { GH.t = Date.now(); GH.buscando = false; if (A.rerender && A.S && A.S.area === 'hoje') A.rerender(); });
+  }
+  A._ghColeta = GH;  // para os testes
+
+  // null quando não há atraso; senão {perdidas, desde, gh: 'rodando' | 'terminou' | 'nada' | null, inicio}
+  A.atrasoColeta = function () {
+    var v = E().versao; if (!v || !v.gerado_em) return null;
+    var ger = Date.parse(v.gerado_em), agora = Date.now();
+    if (!ger) return null;
+    var perdidas = I.coletasPrevistas(ger, agora - MARGEM);
+    if (!perdidas.length) return null;
+    var r = {perdidas: perdidas, desde: ger, gh: null, inicio: null};
+    checarGitHub();
+    if (GH.runs) {
+      var depois = GH.runs.filter(function (x) { return Date.parse(x.created_at) > ger; });
+      var vivo = depois.filter(function (x) { return x.status === 'in_progress' || x.status === 'queued' || x.status === 'waiting' || x.status === 'pending'; })[0];
+      var feito = depois.filter(function (x) { return x.status === 'completed' && x.conclusion === 'success'; })[0];
+      if (vivo) { r.gh = 'rodando'; r.inicio = Date.parse(vivo.run_started_at || vivo.created_at); }
+      else if (feito) { r.gh = 'terminou'; r.inicio = Date.parse(feito.updated_at || feito.created_at); }
+      else r.gh = 'nada';
+    }
+    return r;
+  };
+  I.textoAtraso = function (a, semDesde) {
+    if (!a) return '';
+    var p = a.perdidas, desde = semDesde ? '' : 'nada novo desde a coleta das ' + hm(a.desde) + '.';
+    var lista = p.length === 1 ? 'a coleta prevista das ' + hm(p[0]) : p.length === 2 ? 'as coletas previstas das ' + hm(p[0]) + ' e das ' + hm(p[1]) : p.length + ' coletas previstas desde as ' + hm(a.desde);
+    if (a.gh === 'rodando') return 'Atraso do GitHub: ' + (desde ? desde + ' ' : '') + 'Uma coleta está rodando agora (começou às ' + hm(a.inicio) + '); os dados chegam em uns 10 minutos.';
+    if (a.gh === 'terminou') return 'A coleta terminou no GitHub às ' + hm(a.inicio) + ' e o site publica em poucos minutos: toque em Atualizar.';
+    var fim = ' Para não esperar a próxima, use Coletar agora.';
+    if (p.length > 2) return 'Atraso do GitHub: desde a coleta das ' + hm(a.desde) + ', ' + (a.gh === 'nada' ? 'ele não disparou as ' + p.length + ' coletas previstas.' : 'as ' + p.length + ' coletas previstas ainda não chegaram.') + fim;
+    if (a.gh === 'nada') return 'Atraso do GitHub: ele não disparou ' + lista + (desde ? '; ' + desde : '.') + fim;
+    return 'Atraso do GitHub: ' + lista + ' ainda não ' + (p.length > 1 ? 'chegaram' : 'chegou') + (desde ? '; ' + desde : '.') + fim;
+  };
+  A.avisoAtraso = function (ctx, semDesde) {
+    var a = A.atrasoColeta(); if (!a) return null;
+    var txt = I.textoAtraso(a, semDesde);
+    if (ctx === 'pop') return h('p', {class: 'pop-l warn'}, txt);
+    return h('div', {class: 'aviso-gh', role: 'status'}, h('span', null, txt),
+      a.gh === 'rodando' || a.gh === 'terminou' ? null : h('a', {class: 'btn sm pri', href: A.GH_ACTIONS, target: '_blank', rel: 'noopener', title: 'Abre a página do robô no GitHub: toque em "Run workflow". Usa o seu login do GitHub; nenhuma chave fica no site.'}, 'Coletar agora ↗'));
+  };
+
+  /* ---------- topo do Hoje: aviso logo abaixo do título e "Coletar agora" destacado ---------- */
+  var hoje0 = A.areas.hoje;
+  A.areas.hoje = function () {
+    var w = hoje0.apply(this, arguments), at = w && w.querySelector ? w.querySelector('.aviso-at') : null;
+    // com o "Conferido às…: nada novo desde…" do Atualizar já na tela, o aviso não repete essa frase
+    var av = A.avisoAtraso(null, !!(at && /nada novo/.test(at.textContent)));
+    if (av && w && w.querySelector) {
+      var cab = w.querySelector('.mesa-h');
+      if (cab) cab.insertAdjacentElement('afterend', av); else w.insertBefore(av, w.firstChild);
+      var bt = w.querySelector('.mesa-ctl a[href="' + A.GH_ACTIONS + '"]'); if (bt) bt.classList.add('pri');
+    }
+    return w;
+  };
+
+  /* ---------- "Atualizar": quando nada chegou e há atraso, o aviso rápido diz qual coleta faltou ---------- */
+  var at0 = A.intelAtualizar;
+  A.intelAtualizar = async function () {
+    var msg = await at0.apply(this, arguments), a = A.atrasoColeta();
+    if (a && /nada novo/.test(msg || '') && A.toast) A.toast(I.textoAtraso(a), 9000);
+    return msg;
   };
 })(APP, CORE, INTEL);
 

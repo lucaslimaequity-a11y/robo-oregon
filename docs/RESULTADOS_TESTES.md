@@ -1,3 +1,22 @@
+# Resultados dos testes · v3.9.1 · 09/11/2026 (Brasília)
+
+- **Robô (Python):** 165 testes, todos OK. Continua valendo a regra "coleta sete dias por semana" em todos os crons.
+- **Painel (Node):** 63 de 63. Um teste novo confere que a agenda do painel (60 horários por dia) é a mesma do
+  `robo.yml`.
+- **Navegador:** 220 verificações, todas PASS, em 1440 px e 390 px. A verificação nova, com a API do GitHub simulada,
+  cobre:
+  - o aviso logo abaixo do título do Hoje, com o "Coletar agora" destacado;
+  - os três estados: não disparada, rodando (sem botão) e sem resposta da API;
+  - os textos para 1, 2 e várias coletas;
+  - o aviso sem repetir o "nada novo" quando o "Atualizar" já disse;
+  - o aviso no detalhe da coleta;
+  - o aviso que some quando a coleta chega.
+- **Ajuste em teste antigo:** o "Fechamento da semana" dependia do dia. O fluxo e as cartas do site de teste têm datas
+  fixas (semana de 02/11), e numa segunda-feira a semana atual ainda não tem esses dados. O teste agora confere a semana
+  anterior quando a atual não tem. O painel não mudou.
+- **Dados reais (09/11, 07:30):** pela API do GitHub, a execução nº 24 ("Run workflow", 07:15) estava rodando. A noite
+  teve as execuções 22 (23:56) e 23 (03:10), ambas verdes.
+
 # Resultados dos testes · v3.9 · 08/11/2026 (Brasília)
 
 - **Robô (Python):** 165 testes, todos OK, sendo 12 novos em `testes/test_v39.py`. Eles conferem:

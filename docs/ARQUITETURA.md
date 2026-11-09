@@ -151,7 +151,12 @@ visto_em`. Itens absorvidos como "também em" recebem `agrupado_em` e saem das l
 Permissões zeradas por padrão; o job de coleta tem `contents: write` (ramo `dados`) e o de publicação `pages: write` +
 `id-token: write`. Portão de testes antes de qualquer coisa; `data/` inteira restaurada do ramo `dados`; `git add -f data`
 guarda tudo; o site recebe só os arquivos públicos (nunca `estado.json`). Crons (UTC) `7,37 10-23 * * *`, `7,37 0,1 * * *` e `15 4,7 * * *` (v3.7: fora da hora cheia e da meia hora, que o GitHub
-trata como pico e onde atrasa ou descarta rodadas agendadas). Envio de arquivos (push) e "Run workflow" também rodam.
+trata como pico e onde atrasa ou descarta rodadas agendadas). Envio de arquivos (push) e "Run workflow" também rodam. v3.9.1:
+mais `7 5,6 * * *`, `7,37 8,9 * * *` e `22,52 12-21 * * *` (02:07, 03:07, 05:07 a 06:37 e aos 22 e 52 das 09:22 às 18:52 em
+Brasília), depois de uma noite em que o GitHub disparou só 2 de 6 rodadas. A agenda do painel (`ui_v391.js`, `A.SLOTS_COLETA`)
+é conferida contra o `robo.yml` pelo `testes/painel.test.js`. O aviso de atraso (`A.atrasoColeta`) compara a última
+`versao.gerado_em` com os horários previstos até 25 minutos atrás e, só quando há atraso, consulta a API pública de execuções
+do GitHub (sem chave, no máximo a cada 3 minutos) para dizer se a coleta está rodando, terminou ou não foi disparada.
 
 
 ## Painel · v3.9 (Biblioteca › Inglês)

@@ -1312,3 +1312,9 @@ input[type=search].inp{width:100%;max-width:520px;margin-bottom:8px}
 @media (max-width:760px){.en-frase{font-size:1.18rem}.en-card{padding:12px}.en-pontos i{width:16px}}
 @media print{.en-row,.en-bar{display:none}}
 .a.en-trad,a.btn.en-trad{text-decoration:none}
+
+/* v3.9.1 · aviso de atraso do GitHub no topo do Hoje */
+.aviso-gh{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin:0 0 10px;padding:8px 12px;border-radius:8px;border:1px solid var(--warn);border-left-width:4px;background:var(--panel);font-size:.9rem}
+.aviso-gh span{flex:1 1 320px}
+@media print{.aviso-gh{display:none}}
+.aviso-gh a.btn{text-decoration:none;flex:none}

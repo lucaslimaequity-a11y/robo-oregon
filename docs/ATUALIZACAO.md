@@ -1,3 +1,39 @@
+# Atualização pequena v3.9.1 · menos buracos na coleta (09/11/2026)
+
+O pacote `robo-oregon-v3.9.1-alterados.zip` vale sobre a v3.9 que já está no seu GitHub (commit 630c68c, com o inglês).
+
+**Por quê.** Na noite de 08 para 09/11, o GitHub disparou só 2 das 6 coletas agendadas, às 23:56 e às 03:10, com até
+2 horas de atraso. A das 04:15 e a das 07:07 não vieram. A documentação do GitHub avisa que o disparo agendado "pode atrasar
+em períodos de muita carga" e que execuções na fila "podem ser descartadas". O robô em si não falhou.
+
+**O que entra.**
+- **Mais rodadas:** às 02:07, 03:07, 05:07, 05:37, 06:07 e 06:37 (a manhã chega pronta antes das 7h). Também aos 22 e aos
+  52 minutos das 09:22 às 18:52: se o GitHub pular uma rodada, a seguinte vem em 15 minutos. Vale para todos os dias, como
+  a coleta já era.
+  - Nenhuma rodada saiu. Não há custo, porque o repositório é público.
+  - Cada fonte continua respeitando o próprio intervalo, então os sites não são lidos com mais frequência.
+- **Aviso de atraso no topo do Hoje e no detalhe da coleta** (o ponto com a hora, lá em cima). Quando uma coleta prevista
+  passa 25 minutos da hora sem chegar, o painel diz qual foi e destaca o "Coletar agora". Exemplo: "Atraso do GitHub: ele
+  não disparou a coleta prevista das 04:15; nada novo desde a coleta das 03:11."
+  - O painel confere a situação na página pública de execuções do GitHub, sem chave, só quando há atraso. Se uma coleta
+    estiver rodando, o aviso diz "está rodando agora (começou às 07:15)" e não pede para você coletar.
+- **Hora da próxima coleta:** no detalhe da coleta e no "Atualizar", a hora prevista já considera os horários novos.
+
+**Você não precisa clicar em nada no dia a dia.** O robô roda sozinho; o "Coletar agora" é só para quando o aviso
+aparecer e você não quiser esperar.
+
+**Como subir (dois passos, porque o `robo.yml` muda nesta versão).**
+1. **Primeiro o horário.** No GitHub, abra `.github/workflows/robo.yml` e clique no lápis (Edit). Apague tudo, cole o
+   conteúdo inteiro do arquivo `robo.yml` que vai junto e clique em Commit changes.
+   - A rodada que esse envio dispara vai falhar no teste. É esperado: o teste exige que o `robo.yml` fique igual ao
+     `docs/workflow_robo.yml`, que só chega no passo 2.
+   - Nada se perde: os dados e o site ficam como estavam.
+2. **Depois o pacote.** Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`docs/…`,
+   `painel/…`, `site/…`, `testes/…`) e clique em Commit changes. Essa rodada fica verde e publica.
+   - Se a pasta `.github` também entrar no arrastar, não tem problema: o conteúdo é o mesmo do passo 1.
+
+**Voltar atrás.** Na lista de commits, abra o commit do envio e use Revert.
+
 # Oregon Intelligence v3.9 · inglês do mercado (08/11/2026)
 
 O pacote `robo-oregon-v3.9-alterados.zip` vale sobre a v3.8.2 que já está no seu GitHub (commit 679c852, com o research

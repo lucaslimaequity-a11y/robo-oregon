@@ -1,3 +1,65 @@
+# Oregon Intelligence v3.9 · inglês do mercado (08/11/2026)
+
+O pacote `robo-oregon-v3.9-alterados.zip` vale sobre a v3.8.2 que já está no seu GitHub (commit 679c852, com o research
+das casas). Nada foi retirado, nenhuma chave vai para arquivo e nenhuma API paga entra. O horário do robô (`robo.yml`) não
+muda.
+
+## O que entra
+
+**Biblioteca › Inglês**, uma página nova com cinco partes:
+- **Inglês do dia**, de 15 a 20 minutos. São 5 manchetes reais em inglês que o robô coletou nas últimas 48 horas, de veículos
+  diferentes sempre que possível, escolhidas pelos termos de mercado que trazem.
+  - Primeiro você **ouve sem ler**. Depois mostra o texto, toca nos termos marcados para ver a explicação, traduz e
+    **repete em voz alta**: o navegador marca as palavras que entendeu.
+  - Depois vêm 3 frases para você **falar**. Duas são sobre ações da Carteira Oregon, montadas só com o nome, o setor e
+    o pilar do painel. A terceira usa um termo do glossário.
+  - As manchetes do dia ficam as mesmas até a meia-noite. A página conta os dias seguidos de estudo.
+- **Revisar vocabulário**, em cartões: acertou, o cartão volta em 1, 3, 7, 14 e 30 dias; errou, volta na mesma sessão.
+- **Meu vocabulário**: frases e termos salvos com um toque, nas notícias, no Inglês do dia ou no glossário.
+  - **Exportar para o Anki**: arquivo de texto que abre em Arquivo › Importar, no Anki 2.1.55 ou mais novo.
+  - **Exportar e Importar (JSON)**: leva o vocabulário para outro aparelho.
+- **Glossário do mercado**: 187 termos em inglês e português, com explicação curta, exemplo e pronúncia. Tem busca nas
+  duas línguas.
+- **Podcasts curtos em inglês**: só links oficiais conferidos: Thoughts on the Market, Markets in Motion, The Indicator e
+  Marketplace Morning Report.
+
+**Nas outras telas:**
+- Toda manchete em inglês ganha o botão **▶ EN**, que lê a manchete em voz alta.
+- Ao abrir uma notícia em inglês, aparece a barra com Ouvir, Mais devagar, Ouvir com o resumo, Traduzir, Repetir e
+  conferir, Salvar frase e os termos do glossário.
+
+**Telegram:** o briefing da manhã ganha a seção **Inglês do dia**. Ela traz uma manchete em inglês das últimas 36 horas,
+até 3 termos com a tradução, um link para traduzir a frase e outro para praticar no painel. Para tirar a seção, troque
+`"telegram": true` para `false` em `intel.ingles`, no `robo/config.json`.
+
+**Como funcionam a voz, o microfone e a tradução:**
+- **Voz e microfone:** são do seu navegador, sem custo e sem chave. Funcionam no Chrome (computador e Android) e no Safari
+  do iPhone; no Firefox não há reconhecimento de fala.
+- **Na primeira vez:** o navegador pede licença para usar o microfone.
+- **No iPhone:** o Ditado precisa estar ligado em Ajustes › Geral › Teclado.
+- **No Chrome:** o áudio do microfone é processado pelo serviço de voz do Google. O Oregon não grava nada.
+- **Tradução:** no Chrome do computador, sai a tradução do próprio Chrome, feita no aparelho, quando ela existe. Nos
+  outros casos, abre o Google Tradutor com a frase.
+- **Velocidade da voz:** 0,75× (o padrão) ou 1×, no topo da página. A voz vem do aparelho; se a página disser "sem voz em
+  inglês", instale uma voz em inglês nas configurações do sistema.
+
+## 1. Suba os arquivos (um só envio)
+
+1. Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`robo/…`, `painel/…`, `site/…`,
+   `testes/…`, `docs/…`, `README.md`).
+2. Clique em Commit changes.
+3. A rodada que dispara testa e publica sozinha.
+
+## 2. Conferência (3 minutos)
+
+1. Abra Biblioteca › Inglês, toque em ▶ Ouvir e em Mostrar o texto.
+2. Toque em Repetir e conferir. O navegador pede o microfone; libere e fale a frase.
+3. A seção do Telegram aparece no briefing do dia seguinte, às 7h30.
+
+## 3. Voltar atrás
+
+Na lista de commits, abra o commit do envio e use Revert. O vocabulário salvo fica no navegador e não se perde.
+
 # Atualização pequena v3.8.2 · research das casas (08/11/2026)
 
 O pacote `robo-oregon-v3.8.2-alterados.zip` vale sobre a v3.8.1 que já está no seu GitHub (commit c5c79fe, com as

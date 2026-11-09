@@ -80,7 +80,9 @@
    publicados nunca saem. Saída `biblioteca/fluxo_fundos.json`. Também na v3.8: `biblioteca.falhas_seguidas` e a pausa
    de fonte (3 falhas seguidas → 1 tentativa por dia; `rodada.em_pausa`).
 19. **Telegram** (opcional) — briefing uma vez por dia; desde a v3.7 com "Data-com amanhã" (proventos.json) e "Cartas novas
-   que citam a carteira" (`intel.extras_digesto`). **Saídas** — `status.json`, `versao.json`, `estado.json`, Summary.
+   que citam a carteira" (`intel.extras_digesto`); desde a v3.9 com "Inglês do dia" (`ingles.linhas_telegram`: manchete em
+   inglês das últimas 36 h com mais termos de `robo/glossario_en.json`, até 3 termos, link do Google Tradutor e de
+   Biblioteca › Inglês; desliga com `intel.ingles.telegram: false`). **Saídas** — `status.json`, `versao.json`, `estado.json`, Summary.
 
 Reaproveitados da v2 sem mudança de função: `fontes_macro.py`, `agenda.py`, `resultados.py`, `avisos.py`, `util.py`
 (`Rede` com backoff, disjuntor e prazo; agora com HEAD e cabeçalhos), `calendario.py`, `config.py`. `coletar.py`,
@@ -150,3 +152,15 @@ Permissões zeradas por padrão; o job de coleta tem `contents: write` (ramo `da
 `id-token: write`. Portão de testes antes de qualquer coisa; `data/` inteira restaurada do ramo `dados`; `git add -f data`
 guarda tudo; o site recebe só os arquivos públicos (nunca `estado.json`). Crons (UTC) `7,37 10-23 * * *`, `7,37 0,1 * * *` e `15 4,7 * * *` (v3.7: fora da hora cheia e da meia hora, que o GitHub
 trata como pico e onde atrasa ou descarta rodadas agendadas). Envio de arquivos (push) e "Run workflow" também rodam.
+
+
+## Painel · v3.9 (Biblioteca › Inglês)
+- `painel/src/ui_ingles.js`: página Biblioteca › Inglês e os botões de inglês nas notícias. Embrulha `A.itemRow` (botão
+  "▶ EN" nas manchetes com `idioma: en`) e `A.leituraView` (barra Ouvir · Mais devagar · Traduzir · Repetir e conferir ·
+  Salvar frase e termos do glossário). Funções puras em `INTEL`: `termosEN`, `termosUnicos`, `conferirFala` (maior
+  subsequência comum entre a frase e a fala), `escolherManchetes`, `frasesCarteira`, `proximaRevisao`, `textoAnki`.
+- Voz: `speechSynthesis` do navegador (0,75× ou 1×, `ing-vel`). Fala: `SpeechRecognition`/`webkitSpeechRecognition`
+  (Chrome e Safari). Tradução: `Translator` do Chrome, no aparelho, quando existe; senão, link do Google Tradutor.
+- `GLOSSARIO_EN` é injetado pelo `build.py` a partir de `robo/glossario_en.json` (a mesma fonte do robô, `robo/ingles.py`).
+- Vocabulário: coleção `vocab` do `STORE` (localStorage ou banco do painel), revisão espaçada 1, 3, 7, 14 e 30 dias.
+  Estado do dia em `lsGet`: `ing-dia` (manchetes do dia), `ing-passo`, `ing-feitos` (dias concluídos).

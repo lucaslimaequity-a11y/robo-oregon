@@ -3273,6 +3273,7 @@
   "prazo_min": 12,
   "telegram_digesto": true,
   "telegram_hora": "07:30",
+  "ingles": {"telegram": true, "site": "https://lucaslimaequity-a11y.github.io/robo-oregon/", "_nota": "v3.9 · inglês do mercado: a frase do dia em inglês no briefing do Telegram (manchete coletada com os termos do glossário robo/glossario_en.json, link para o Google Tradutor e para Biblioteca › Inglês). Para tirar do Telegram, troque telegram para false."},
   "ia": {
    "ativo": false,
    "max_itens_dia": 12,

@@ -1,3 +1,30 @@
+# Resultados dos testes · v3.9 · 08/11/2026 (Brasília)
+
+- **Robô (Python):** 165 testes, todos OK, sendo 12 novos em `testes/test_v39.py`. Eles conferem:
+  - a estrutura do glossário: 187 termos, e cada exemplo contém o próprio termo;
+  - a forma mais longa vence ("dividend yield" e não "dividend");
+  - as maiúsculas: "Fed" marca e "fed up" não;
+  - as formas ambíguas que ficam de fora: "BP", "fine", "curve", "board";
+  - a escolha da frase do dia, sem ruído, com até 36 horas e entre 6 e 18 palavras;
+  - o texto do Telegram, escapado, com link de tradução e de prática;
+  - a validação da configuração;
+  - uma rodada inteira simulada com o Telegram ligado, em que o briefing traz "Inglês do dia", e o caso em que a seção
+    está desligada.
+- **Painel (Node):** 61 de 61, com a sintaxe do `ui_ingles.js`.
+- **Navegador:** 218 verificações, todas PASS, em 1440 px e 390 px. A verificação nova, com voz e microfone simulados,
+  cobre:
+  - a sessão do dia: 8 passos, texto escondido, voz a 0,75× e a 0,6×, termos marcados e explicação, link de tradução;
+  - a fala conferida, com a palavra que faltou marcada;
+  - salvar a frase, as 3 frases para falar, a sessão concluída;
+  - a revisão em cartões, o arquivo do Anki, a busca no glossário e os 4 podcasts;
+  - o botão ▶ EN só nas manchetes em inglês e a barra de inglês só na leitura de notícia em inglês;
+  - a página sem "null" e sem rolagem para o lado.
+- **Dados reais (ramo `dados`, 08/11 20:54):** com os itens reais, a sessão escolheu 5 manchetes de 5 veículos, entre eles
+  Bloomberg, CNBC e MarketWatch. A frase do Telegram seria "Gold Holds Decline as US Jobs Data Fan December Rate Hike Bets"
+  (Bloomberg), com gold, jobs report e rate hike.
+- **Ressalvas:** voz e microfone foram simulados; o navegador de teste não tem voz nem reconhecimento de fala. A
+  confirmação real é no seu Chrome ou Safari. Isto não comprova nada no GitHub: lá, a confirmação é a rodada verde.
+
 # Resultados dos testes · v3.8.2 · 08/11/2026 (Brasília)
 
 - **Robô (Python):** 153 testes, todos OK. O robô não mudou.

@@ -1251,3 +1251,64 @@ html.explica .qbtn{display:none}
 .rc-l a{text-decoration:none}.rc-l a:hover{text-decoration:underline}
 @media (max-width:760px){.rc-g{grid-template-columns:minmax(0,1fr)}}
 .rc-n{display:block;font-size:.8rem;margin-top:1px}
+
+/* v3.9 · Biblioteca › Inglês (ouvir, repetir, traduzir, glossário, vocabulário) */
+.en-row{flex:none;border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:6px;font-size:.7rem;line-height:1.4;padding:0 6px;cursor:pointer;align-self:center;font-weight:600;letter-spacing:.02em}
+.en-row:hover,.en-row:focus-visible{color:var(--c-research);border-color:var(--c-research)}
+.en-bar{border:1px solid var(--line);border-left:3px solid var(--c-research);border-radius:8px;padding:8px 10px;margin:4px 0 12px;background:var(--panel2)}
+.en-k{font-size:.78rem;font-weight:600;color:var(--c-research);margin-right:2px}
+.en-acts{gap:6px;flex-wrap:wrap;align-items:center}
+.en-ts{margin:6px 0 0;font-size:.85rem;display:flex;flex-wrap:wrap;gap:4px;align-items:baseline}
+.gl-t{font:inherit;color:inherit;background:none;border:0;padding:0 1px;border-bottom:2px dotted var(--c-research);cursor:pointer;border-radius:0}
+.gl-t:hover,.gl-t:focus-visible{background:var(--atn1,rgba(11,138,166,.10))}
+.en-ts .gl-t{font-size:.85rem}
+.gl-def{margin:8px 0 0;padding:8px 10px;border-radius:8px;background:var(--panel);border:1px solid var(--line);font-size:.9rem}
+.gl-def p{margin:0 0 4px}
+.gl-ex i{color:var(--ink2)}
+.btn.ic{padding:1px 7px;font-size:.72rem;line-height:1.5;vertical-align:middle}
+.en-salvar.on{border-color:var(--up);color:var(--up)}
+.en-out:empty,.en-def:empty{display:none}
+.en-out{margin-top:8px}
+.en-tr{margin:0;font-size:.92rem}
+.en-fb{margin:0;font-size:.88rem}
+.en-conf p{margin:0 0 4px}
+.cf-f{font-size:1.05rem;line-height:1.6}
+.cf-ok{color:var(--up)}
+.cf-x{color:var(--down);text-decoration:underline wavy;text-underline-offset:3px}
+.cf-n{font-weight:600;font-size:.88rem}
+.cf-n.medio{color:var(--warn)}.cf-n.fraco{color:var(--down)}.cf-n.bom{color:var(--up)}
+.en-topo{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;margin:0 0 6px}
+.en-vel{margin:0;align-items:center;gap:6px}
+.en-st{margin:0;font-size:.82rem}
+.en-pontos{display:flex;gap:5px;margin:0 0 10px}
+.en-pontos i{width:22px;height:5px;border-radius:3px;background:var(--line2)}
+.en-pontos i.ok{background:var(--c-research)}
+.en-pontos i.at{background:var(--c-research);opacity:.45}
+.en-card{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--panel);max-width:760px}
+.en-step{margin:0 0 4px;font-size:.82rem;font-weight:600;color:var(--ink2)}
+.en-dica{margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.en-frase{font-family:'IBM Plex Serif',Georgia,serif;font-size:1.32rem;line-height:1.5;margin:12px 0 6px;color:var(--ink)}
+.en-pt{font-size:1.12rem;font-weight:600;margin:0 0 10px}
+.en-src{font-size:.8rem;margin:0 0 10px}
+.en-mod{margin:6px 0}
+.en-nav{justify-content:space-between;margin-top:10px;max-width:760px;gap:8px}
+.en-fim h3{margin:0 0 6px}
+.en-cartao .en-frase{margin-top:2px}
+.en-verso{border-top:1px dashed var(--line2);margin-top:10px;padding-top:8px}
+.en-verso p{margin:0 0 4px}
+.gl-lista .inp,.en-pag .gl-lista{width:100%}
+.gl-g{border-top:1px solid var(--line);padding:6px 0}
+.gl-g>summary{cursor:pointer;font-weight:600;padding:4px 0}
+.gl-ul,.vc-ul{list-style:none;margin:0;padding:0}
+.gl-li{padding:8px 0;border-bottom:1px solid var(--line)}
+.gl-li:last-child{border-bottom:0}
+.gl-l1{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.gl-pt{color:var(--ink2)}
+.gl-exp,.gl-ex{margin:3px 0 0;font-size:.86rem}
+.vc-ul li{padding:6px 0;border-bottom:1px solid var(--line)}
+.vc-l1{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vc-l1 span{font-weight:500}
+input[type=search].inp{width:100%;max-width:520px;margin-bottom:8px}
+@media (max-width:760px){.en-frase{font-size:1.18rem}.en-card{padding:12px}.en-pontos i{width:16px}}
+@media print{.en-row,.en-bar{display:none}}
+.a.en-trad,a.btn.en-trad{text-decoration:none}

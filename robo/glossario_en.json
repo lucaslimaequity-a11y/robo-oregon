@@ -1,0 +1,2381 @@
+{
+ "_nota": "v3.9 · glossário do mercado em inglês (Biblioteca › Inglês e frase do dia no Telegram). Escrito à mão; exemplos genéricos, sem fatos atribuídos a empresas ou casas. Forma toda em minúsculas: a marcação ignora maiúsculas; forma com maiúscula (Fed, AI, SEC): só a grafia exata.",
+ "grupos": {
+  "mercado": "Mercado e bolsa",
+  "empresas": "Empresas e resultados",
+  "research": "Research e recomendações",
+  "juros": "Juros, inflação e economia",
+  "credito": "Dívida e crédito",
+  "commodities": "Commodities e câmbio",
+  "negocios": "Negócios, regulação e gestão"
+ },
+ "termos": [
+  {
+   "g": "mercado",
+   "t": "stock",
+   "f": [
+    "stock",
+    "stocks"
+   ],
+   "pt": "ação",
+   "exp": "Parte do capital de uma empresa negociada em bolsa.",
+   "ex": "Stocks rose after the jobs report.",
+   "ex_pt": "As ações subiram depois do relatório de emprego."
+  },
+  {
+   "g": "mercado",
+   "t": "share",
+   "f": [
+    "share",
+    "shares"
+   ],
+   "pt": "ação (unidade)",
+   "exp": "Cada unidade do capital de uma empresa.",
+   "ex": "The company issued new shares.",
+   "ex_pt": "A empresa emitiu novas ações."
+  },
+  {
+   "g": "mercado",
+   "t": "equities",
+   "f": [
+    "equity",
+    "equities"
+   ],
+   "pt": "ações / patrimônio",
+   "exp": "No plural, o mercado de ações; no singular, também o patrimônio líquido da empresa.",
+   "ex": "Equities were mixed on Monday.",
+   "ex_pt": "As ações fecharam mistas na segunda-feira."
+  },
+  {
+   "g": "mercado",
+   "t": "stock market",
+   "f": [
+    "stock market",
+    "stock markets"
+   ],
+   "pt": "bolsa de valores",
+   "exp": "O mercado onde as ações são negociadas.",
+   "ex": "The stock market closed higher today.",
+   "ex_pt": "A bolsa fechou em alta hoje."
+  },
+  {
+   "g": "mercado",
+   "t": "index",
+   "f": [
+    "index",
+    "indexes",
+    "indices"
+   ],
+   "pt": "índice",
+   "exp": "Cesta de ativos que mede um mercado, como o S&P 500 ou o Ibovespa.",
+   "ex": "The index closed at a record high.",
+   "ex_pt": "O índice fechou na máxima histórica."
+  },
+  {
+   "g": "mercado",
+   "t": "record high",
+   "f": [
+    "record high",
+    "all-time high",
+    "record highs"
+   ],
+   "pt": "máxima histórica",
+   "exp": "O maior nível já registrado.",
+   "ex": "Gold hit a record high this week.",
+   "ex_pt": "O ouro bateu a máxima histórica nesta semana."
+  },
+  {
+   "g": "mercado",
+   "t": "rally",
+   "f": [
+    "rally",
+    "rallies",
+    "rallied",
+    "rallying"
+   ],
+   "pt": "alta forte",
+   "exp": "Sequência de altas de preço.",
+   "ex": "Tech stocks extended their rally.",
+   "ex_pt": "As ações de tecnologia estenderam a alta."
+  },
+  {
+   "g": "mercado",
+   "t": "sell-off",
+   "f": [
+    "sell-off",
+    "selloff",
+    "sell-offs",
+    "selloffs"
+   ],
+   "pt": "onda de vendas",
+   "exp": "Queda forte causada por muitas vendas ao mesmo tempo.",
+   "ex": "The sell-off hit emerging markets.",
+   "ex_pt": "A onda de vendas atingiu os mercados emergentes."
+  },
+  {
+   "g": "mercado",
+   "t": "surge",
+   "f": [
+    "surge",
+    "surges",
+    "surged",
+    "surging"
+   ],
+   "pt": "dispara",
+   "exp": "Alta forte e rápida.",
+   "ex": "Shares surged after the results.",
+   "ex_pt": "As ações dispararam depois do resultado."
+  },
+  {
+   "g": "mercado",
+   "t": "plunge",
+   "f": [
+    "plunge",
+    "plunges",
+    "plunged",
+    "plunging"
+   ],
+   "pt": "despenca",
+   "exp": "Queda muito forte e rápida.",
+   "ex": "Shares plunged after the guidance cut.",
+   "ex_pt": "As ações despencaram depois do corte da projeção."
+  },
+  {
+   "g": "mercado",
+   "t": "slump",
+   "f": [
+    "slump",
+    "slumps",
+    "slumped"
+   ],
+   "pt": "queda forte",
+   "exp": "Queda forte e mais prolongada.",
+   "ex": "Oil prices slumped on weak demand.",
+   "ex_pt": "O petróleo caiu forte com a demanda fraca."
+  },
+  {
+   "g": "mercado",
+   "t": "rebound",
+   "f": [
+    "rebound",
+    "rebounds",
+    "rebounded"
+   ],
+   "pt": "recuperação",
+   "exp": "Volta a subir depois de uma queda.",
+   "ex": "Stocks rebounded in the afternoon.",
+   "ex_pt": "As ações se recuperaram à tarde."
+  },
+  {
+   "g": "mercado",
+   "t": "bullish",
+   "f": [
+    "bullish",
+    "bull market",
+    "bulls"
+   ],
+   "pt": "otimista (com alta)",
+   "exp": "Expectativa de alta de preço; bull market é mercado em alta.",
+   "ex": "Analysts are bullish on the sector.",
+   "ex_pt": "Os analistas estão otimistas com o setor."
+  },
+  {
+   "g": "mercado",
+   "t": "bearish",
+   "f": [
+    "bearish",
+    "bear market",
+    "bears"
+   ],
+   "pt": "pessimista (com queda)",
+   "exp": "Expectativa de queda de preço; bear market é mercado em queda.",
+   "ex": "Investors turned bearish on bonds.",
+   "ex_pt": "Os investidores ficaram pessimistas com os títulos."
+  },
+  {
+   "g": "mercado",
+   "t": "volatility",
+   "f": [
+    "volatility",
+    "volatile"
+   ],
+   "pt": "volatilidade",
+   "exp": "Quanto o preço oscila.",
+   "ex": "Volatility rose ahead of the election.",
+   "ex_pt": "A volatilidade subiu antes da eleição."
+  },
+  {
+   "g": "mercado",
+   "t": "benchmark",
+   "f": [
+    "benchmark",
+    "benchmarks"
+   ],
+   "pt": "referência",
+   "exp": "Índice ou taxa usado para comparar desempenho.",
+   "ex": "The fund beat its benchmark.",
+   "ex_pt": "O fundo superou a sua referência."
+  },
+  {
+   "g": "mercado",
+   "t": "asset",
+   "f": [
+    "asset",
+    "assets"
+   ],
+   "pt": "ativo",
+   "exp": "Qualquer investimento ou bem: ação, título, imóvel.",
+   "ex": "Investors moved into safer assets.",
+   "ex_pt": "Os investidores foram para ativos mais seguros."
+  },
+  {
+   "g": "mercado",
+   "t": "asset manager",
+   "f": [
+    "asset manager",
+    "asset managers",
+    "asset management"
+   ],
+   "pt": "gestora",
+   "exp": "Empresa que administra o dinheiro de fundos e clientes.",
+   "ex": "The asset manager launched a new fund.",
+   "ex_pt": "A gestora lançou um fundo novo."
+  },
+  {
+   "g": "mercado",
+   "t": "portfolio",
+   "f": [
+    "portfolio",
+    "portfolios"
+   ],
+   "pt": "carteira",
+   "exp": "Conjunto de investimentos.",
+   "ex": "We rebalanced the portfolio this month.",
+   "ex_pt": "Rebalanceamos a carteira neste mês."
+  },
+  {
+   "g": "mercado",
+   "t": "allocation",
+   "f": [
+    "allocation",
+    "allocations",
+    "asset allocation"
+   ],
+   "pt": "alocação",
+   "exp": "Como o dinheiro é dividido entre classes de ativos.",
+   "ex": "We increased the allocation to bonds.",
+   "ex_pt": "Aumentamos a alocação em títulos."
+  },
+  {
+   "g": "mercado",
+   "t": "inflows",
+   "f": [
+    "inflow",
+    "inflows"
+   ],
+   "pt": "entrada de recursos",
+   "exp": "Dinheiro novo entrando em fundos ou num mercado.",
+   "ex": "Bond funds saw record inflows.",
+   "ex_pt": "Os fundos de renda fixa tiveram entrada recorde."
+  },
+  {
+   "g": "mercado",
+   "t": "outflows",
+   "f": [
+    "outflow",
+    "outflows"
+   ],
+   "pt": "saída de recursos",
+   "exp": "Dinheiro saindo de fundos ou de um mercado.",
+   "ex": "Equity funds had large outflows.",
+   "ex_pt": "Os fundos de ações tiveram grandes saídas."
+  },
+  {
+   "g": "mercado",
+   "t": "ETF",
+   "f": [
+    "etf",
+    "etfs",
+    "exchange-traded fund",
+    "exchange-traded funds"
+   ],
+   "pt": "ETF (fundo de índice)",
+   "exp": "Fundo negociado em bolsa que costuma replicar um índice.",
+   "ex": "The ETF tracks the S&P 500.",
+   "ex_pt": "O ETF replica o S&P 500."
+  },
+  {
+   "g": "mercado",
+   "t": "hedge fund",
+   "f": [
+    "hedge fund",
+    "hedge funds"
+   ],
+   "pt": "hedge fund",
+   "exp": "Fundo com estratégias livres, como o multimercado, que pode inclusive vender a descoberto.",
+   "ex": "Hedge funds cut their exposure to tech.",
+   "ex_pt": "Os hedge funds reduziram a exposição a tecnologia."
+  },
+  {
+   "g": "mercado",
+   "t": "hedge",
+   "f": [
+    "hedge",
+    "hedges",
+    "hedging"
+   ],
+   "pt": "proteção (hedge)",
+   "exp": "Operação para reduzir um risco.",
+   "ex": "Investors bought gold as a hedge.",
+   "ex_pt": "Os investidores compraram ouro como proteção."
+  },
+  {
+   "g": "mercado",
+   "t": "short selling",
+   "f": [
+    "short selling",
+    "short sellers",
+    "short seller",
+    "short bets",
+    "short position",
+    "short interest"
+   ],
+   "pt": "venda a descoberto",
+   "exp": "Aposta na queda: vender ação alugada para recomprar mais barato.",
+   "ex": "Short sellers targeted the company.",
+   "ex_pt": "Vendidos a descoberto miraram a empresa."
+  },
+  {
+   "g": "mercado",
+   "t": "market cap",
+   "f": [
+    "market cap",
+    "market value",
+    "market capitalization"
+   ],
+   "pt": "valor de mercado",
+   "exp": "Preço da ação vezes o número de ações.",
+   "ex": "Its market cap topped one trillion dollars.",
+   "ex_pt": "O valor de mercado dela passou de um trilhão de dólares."
+  },
+  {
+   "g": "mercado",
+   "t": "small caps",
+   "f": [
+    "small caps",
+    "small-cap",
+    "small cap",
+    "small-caps"
+   ],
+   "pt": "empresas pequenas (small caps)",
+   "exp": "Ações de empresas de menor valor de mercado.",
+   "ex": "Small caps rallied on rate-cut hopes.",
+   "ex_pt": "As small caps subiram com a esperança de corte de juros."
+  },
+  {
+   "g": "mercado",
+   "t": "blue chip",
+   "f": [
+    "blue chip",
+    "blue chips",
+    "blue-chip"
+   ],
+   "pt": "ação de primeira linha",
+   "exp": "Empresa grande, sólida e muito negociada.",
+   "ex": "Blue chips led the gains.",
+   "ex_pt": "As ações de primeira linha lideraram as altas."
+  },
+  {
+   "g": "mercado",
+   "t": "valuation",
+   "f": [
+    "valuation",
+    "valuations"
+   ],
+   "pt": "valuation (preço relativo)",
+   "exp": "Quanto a empresa vale em relação a lucro, caixa ou patrimônio.",
+   "ex": "Valuations look stretched.",
+   "ex_pt": "Os preços parecem esticados."
+  },
+  {
+   "g": "mercado",
+   "t": "multiple",
+   "f": [
+    "multiple",
+    "multiples"
+   ],
+   "pt": "múltiplo",
+   "exp": "Indicador de preço sobre um resultado, como o P/L.",
+   "ex": "The stock trades at a low multiple.",
+   "ex_pt": "A ação negocia a um múltiplo baixo."
+  },
+  {
+   "g": "mercado",
+   "t": "P/E ratio",
+   "f": [
+    "p/e",
+    "p/e ratio",
+    "price-to-earnings",
+    "price/earnings"
+   ],
+   "pt": "preço/lucro (P/L)",
+   "exp": "Preço da ação dividido pelo lucro por ação.",
+   "ex": "Its P/E ratio is below the sector average.",
+   "ex_pt": "O P/L dela está abaixo da média do setor."
+  },
+  {
+   "g": "mercado",
+   "t": "IPO",
+   "f": [
+    "ipo",
+    "ipos",
+    "initial public offering"
+   ],
+   "pt": "abertura de capital (IPO)",
+   "exp": "Primeira venda de ações de uma empresa em bolsa.",
+   "ex": "The IPO was priced at the top of the range.",
+   "ex_pt": "O IPO saiu no topo da faixa de preço."
+  },
+  {
+   "g": "mercado",
+   "t": "share offering",
+   "f": [
+    "share offering",
+    "stock offering",
+    "follow-on",
+    "secondary offering"
+   ],
+   "pt": "oferta de ações",
+   "exp": "Venda de novas ações por uma empresa já listada (follow-on).",
+   "ex": "The company launched a share offering.",
+   "ex_pt": "A empresa lançou uma oferta de ações."
+  },
+  {
+   "g": "mercado",
+   "t": "emerging markets",
+   "f": [
+    "emerging markets",
+    "emerging market",
+    "emerging-market"
+   ],
+   "pt": "mercados emergentes",
+   "exp": "Países em desenvolvimento, como Brasil, China e Índia.",
+   "ex": "Emerging markets stocks rallied on a weaker dollar.",
+   "ex_pt": "As ações de emergentes subiram com o dólar mais fraco."
+  },
+  {
+   "g": "mercado",
+   "t": "safe haven",
+   "f": [
+    "safe haven",
+    "safe-haven",
+    "safe havens"
+   ],
+   "pt": "porto seguro",
+   "exp": "Ativo procurado em crises, como ouro, dólar e Treasuries.",
+   "ex": "Gold gained as a safe haven.",
+   "ex_pt": "O ouro subiu como porto seguro."
+  },
+  {
+   "g": "mercado",
+   "t": "risk appetite",
+   "f": [
+    "risk appetite",
+    "risk-on",
+    "risk on"
+   ],
+   "pt": "apetite por risco",
+   "exp": "Disposição dos investidores de comprar ativos mais arriscados.",
+   "ex": "Risk appetite improved after the data.",
+   "ex_pt": "O apetite por risco melhorou depois dos dados."
+  },
+  {
+   "g": "mercado",
+   "t": "risk-off",
+   "f": [
+    "risk-off",
+    "risk off",
+    "risk aversion"
+   ],
+   "pt": "aversão a risco",
+   "exp": "Momento em que os investidores fogem de ativos arriscados.",
+   "ex": "Markets turned risk-off after the news.",
+   "ex_pt": "Os mercados ficaram avessos a risco depois da notícia."
+  },
+  {
+   "g": "mercado",
+   "t": "trading",
+   "f": [
+    "trading",
+    "traders",
+    "trader"
+   ],
+   "pt": "negociação / operadores",
+   "exp": "Compra e venda no mercado; traders são os operadores.",
+   "ex": "Trading was light before the holiday.",
+   "ex_pt": "O volume de negócios foi baixo antes do feriado."
+  },
+  {
+   "g": "mercado",
+   "t": "futures",
+   "f": [
+    "futures"
+   ],
+   "pt": "mercado futuro",
+   "exp": "Contratos para comprar ou vender no futuro a um preço combinado hoje.",
+   "ex": "Stock futures pointed to a lower open.",
+   "ex_pt": "Os futuros indicaram abertura em queda."
+  },
+  {
+   "g": "mercado",
+   "t": "holdings",
+   "f": [
+    "holdings",
+    "position",
+    "positions"
+   ],
+   "pt": "posições",
+   "exp": "O que um investidor ou fundo tem na carteira.",
+   "ex": "The fund disclosed its holdings.",
+   "ex_pt": "O fundo divulgou as suas posições."
+  },
+  {
+   "g": "mercado",
+   "t": "stake",
+   "f": [
+    "stake",
+    "stakes"
+   ],
+   "pt": "participação",
+   "exp": "Fatia do capital de uma empresa.",
+   "ex": "The fund bought a five percent stake.",
+   "ex_pt": "O fundo comprou uma participação de cinco por cento."
+  },
+  {
+   "g": "mercado",
+   "t": "bets",
+   "f": [
+    "bet",
+    "bets",
+    "wagers"
+   ],
+   "pt": "apostas",
+   "exp": "Posições tomadas esperando um movimento; rate hike bets são apostas em alta de juros.",
+   "ex": "Jobs data fanned rate hike bets.",
+   "ex_pt": "Os dados de emprego alimentaram as apostas de alta de juros."
+  },
+  {
+   "g": "mercado",
+   "t": "upside",
+   "f": [
+    "upside"
+   ],
+   "pt": "potencial de alta",
+   "exp": "Quanto o preço ainda pode subir.",
+   "ex": "We see limited upside from here.",
+   "ex_pt": "Vemos pouco potencial de alta daqui em diante."
+  },
+  {
+   "g": "mercado",
+   "t": "downside",
+   "f": [
+    "downside"
+   ],
+   "pt": "potencial de queda / risco",
+   "exp": "Quanto o preço pode cair; também o lado negativo.",
+   "ex": "The downside risk is higher rates.",
+   "ex_pt": "O risco de queda é juros mais altos."
+  },
+  {
+   "g": "mercado",
+   "t": "headwind",
+   "f": [
+    "headwind",
+    "headwinds"
+   ],
+   "pt": "fator contra",
+   "exp": "Algo que atrapalha o resultado ou o preço.",
+   "ex": "Higher rates are a headwind for growth stocks.",
+   "ex_pt": "Juros mais altos atrapalham as ações de crescimento."
+  },
+  {
+   "g": "mercado",
+   "t": "tailwind",
+   "f": [
+    "tailwind",
+    "tailwinds"
+   ],
+   "pt": "fator a favor",
+   "exp": "Algo que ajuda o resultado ou o preço.",
+   "ex": "A weaker dollar is a tailwind for exporters.",
+   "ex_pt": "O dólar mais fraco ajuda os exportadores."
+  },
+  {
+   "g": "mercado",
+   "t": "outperform",
+   "f": [
+    "outperform",
+    "outperforms",
+    "outperformed",
+    "outperformance"
+   ],
+   "pt": "superar (o mercado)",
+   "exp": "Ir melhor que a referência; também é nome de recomendação de compra.",
+   "ex": "Value stocks outperformed growth this year.",
+   "ex_pt": "As ações de valor foram melhores que as de crescimento neste ano."
+  },
+  {
+   "g": "mercado",
+   "t": "underperform",
+   "f": [
+    "underperform",
+    "underperforms",
+    "underperformed",
+    "underperformance"
+   ],
+   "pt": "ficar abaixo (do mercado)",
+   "exp": "Ir pior que a referência; também é nome de recomendação de venda.",
+   "ex": "Small caps underperformed last month.",
+   "ex_pt": "As small caps ficaram abaixo do mercado no mês passado."
+  },
+  {
+   "g": "mercado",
+   "t": "gains",
+   "f": [
+    "gain",
+    "gains",
+    "gained"
+   ],
+   "pt": "ganhos / alta",
+   "exp": "Alta de preço ou lucro numa operação.",
+   "ex": "Banks led the gains on Friday.",
+   "ex_pt": "Os bancos lideraram as altas na sexta-feira."
+  },
+  {
+   "g": "mercado",
+   "t": "losses",
+   "f": [
+    "losses"
+   ],
+   "pt": "perdas / quedas",
+   "exp": "Queda de preço ou prejuízo.",
+   "ex": "The index extended its losses.",
+   "ex_pt": "O índice ampliou as perdas."
+  },
+  {
+   "g": "empresas",
+   "t": "earnings",
+   "f": [
+    "earnings"
+   ],
+   "pt": "lucro / resultado",
+   "exp": "Lucro da empresa; os balanços trimestrais.",
+   "ex": "Earnings beat expectations.",
+   "ex_pt": "O lucro veio acima do esperado."
+  },
+  {
+   "g": "empresas",
+   "t": "earnings season",
+   "f": [
+    "earnings season",
+    "reporting season"
+   ],
+   "pt": "temporada de balanços",
+   "exp": "Período em que as empresas divulgam os resultados do trimestre.",
+   "ex": "Earnings season starts next week.",
+   "ex_pt": "A temporada de balanços começa na semana que vem."
+  },
+  {
+   "g": "empresas",
+   "t": "revenue",
+   "f": [
+    "revenue",
+    "revenues"
+   ],
+   "pt": "receita",
+   "exp": "Total vendido no período.",
+   "ex": "Revenue grew twelve percent year over year.",
+   "ex_pt": "A receita cresceu doze por cento na comparação anual."
+  },
+  {
+   "g": "empresas",
+   "t": "sales",
+   "f": [
+    "sales"
+   ],
+   "pt": "vendas",
+   "exp": "O que a empresa vendeu no período.",
+   "ex": "Sales slowed in the third quarter.",
+   "ex_pt": "As vendas desaceleraram no terceiro trimestre."
+  },
+  {
+   "g": "empresas",
+   "t": "net income",
+   "f": [
+    "net income",
+    "net profit"
+   ],
+   "pt": "lucro líquido",
+   "exp": "Lucro depois de todos os custos, juros e impostos.",
+   "ex": "Net income rose to a record.",
+   "ex_pt": "O lucro líquido subiu a um recorde."
+  },
+  {
+   "g": "empresas",
+   "t": "profit",
+   "f": [
+    "profit",
+    "profits"
+   ],
+   "pt": "lucro",
+   "exp": "O que sobra da receita depois dos custos.",
+   "ex": "Profit fell on higher costs.",
+   "ex_pt": "O lucro caiu com custos mais altos."
+  },
+  {
+   "g": "empresas",
+   "t": "loss",
+   "f": [
+    "loss",
+    "net loss"
+   ],
+   "pt": "prejuízo",
+   "exp": "Quando os custos superam as receitas.",
+   "ex": "The company reported a quarterly loss.",
+   "ex_pt": "A empresa teve prejuízo no trimestre."
+  },
+  {
+   "g": "empresas",
+   "t": "margin",
+   "f": [
+    "margin",
+    "margins"
+   ],
+   "pt": "margem",
+   "exp": "Quanto da receita vira lucro, em porcentagem.",
+   "ex": "Margins improved on lower costs.",
+   "ex_pt": "As margens melhoraram com custos menores."
+  },
+  {
+   "g": "empresas",
+   "t": "EBITDA",
+   "f": [
+    "ebitda"
+   ],
+   "pt": "Ebitda",
+   "exp": "Lucro antes de juros, impostos, depreciação e amortização.",
+   "ex": "EBITDA came in above estimates.",
+   "ex_pt": "O Ebitda veio acima das estimativas."
+  },
+  {
+   "g": "empresas",
+   "t": "cash flow",
+   "f": [
+    "cash flow",
+    "cash flows"
+   ],
+   "pt": "fluxo de caixa",
+   "exp": "Dinheiro que entra e sai da empresa.",
+   "ex": "Operating cash flow was strong.",
+   "ex_pt": "O fluxo de caixa operacional foi forte."
+  },
+  {
+   "g": "empresas",
+   "t": "free cash flow",
+   "f": [
+    "free cash flow",
+    "fcf"
+   ],
+   "pt": "fluxo de caixa livre",
+   "exp": "Caixa que sobra depois dos investimentos.",
+   "ex": "Free cash flow hit a record.",
+   "ex_pt": "O fluxo de caixa livre bateu recorde."
+  },
+  {
+   "g": "empresas",
+   "t": "guidance",
+   "f": [
+    "guidance"
+   ],
+   "pt": "projeção da empresa",
+   "exp": "Estimativa que a própria empresa divulga para o futuro.",
+   "ex": "The company raised its full-year guidance.",
+   "ex_pt": "A empresa elevou a projeção para o ano."
+  },
+  {
+   "g": "empresas",
+   "t": "outlook",
+   "f": [
+    "outlook",
+    "outlooks"
+   ],
+   "pt": "perspectiva",
+   "exp": "Visão para o futuro, de uma empresa, banco ou economista.",
+   "ex": "The outlook for oil demand weakened.",
+   "ex_pt": "A perspectiva para a demanda de petróleo piorou."
+  },
+  {
+   "g": "empresas",
+   "t": "forecast",
+   "f": [
+    "forecast",
+    "forecasts",
+    "forecasting"
+   ],
+   "pt": "previsão",
+   "exp": "Estimativa para um número futuro.",
+   "ex": "Economists forecast slower growth.",
+   "ex_pt": "Os economistas preveem crescimento menor."
+  },
+  {
+   "g": "empresas",
+   "t": "beat",
+   "f": [
+    "beat",
+    "beats",
+    "beating",
+    "topped"
+   ],
+   "pt": "superar (o esperado)",
+   "exp": "Vir acima do que os analistas esperavam.",
+   "ex": "Profit beat estimates.",
+   "ex_pt": "O lucro superou as estimativas."
+  },
+  {
+   "g": "empresas",
+   "t": "miss",
+   "f": [
+    "miss",
+    "misses",
+    "missed"
+   ],
+   "pt": "ficar abaixo (do esperado)",
+   "exp": "Vir abaixo do que os analistas esperavam.",
+   "ex": "Revenue missed forecasts.",
+   "ex_pt": "A receita ficou abaixo das previsões."
+  },
+  {
+   "g": "empresas",
+   "t": "estimates",
+   "f": [
+    "estimate",
+    "estimates",
+    "consensus"
+   ],
+   "pt": "estimativas / consenso",
+   "exp": "Projeções dos analistas; o consenso é a média delas.",
+   "ex": "Results came in line with consensus.",
+   "ex_pt": "Os resultados vieram em linha com o consenso."
+  },
+  {
+   "g": "empresas",
+   "t": "quarter",
+   "f": [
+    "quarter",
+    "quarterly",
+    "q1",
+    "q2",
+    "q3",
+    "q4"
+   ],
+   "pt": "trimestre",
+   "exp": "Período de três meses; Q3 é o terceiro trimestre.",
+   "ex": "Third-quarter results were strong.",
+   "ex_pt": "Os resultados do terceiro trimestre foram fortes."
+  },
+  {
+   "g": "empresas",
+   "t": "year over year",
+   "f": [
+    "year over year",
+    "year-over-year",
+    "yoy",
+    "year-on-year"
+   ],
+   "pt": "na comparação anual",
+   "exp": "Comparado ao mesmo período do ano anterior.",
+   "ex": "Sales rose five percent year over year.",
+   "ex_pt": "As vendas subiram cinco por cento na comparação anual."
+  },
+  {
+   "g": "empresas",
+   "t": "EPS",
+   "f": [
+    "eps",
+    "earnings per share"
+   ],
+   "pt": "lucro por ação (LPA)",
+   "exp": "Lucro dividido pelo número de ações.",
+   "ex": "EPS rose ten percent.",
+   "ex_pt": "O lucro por ação subiu dez por cento."
+  },
+  {
+   "g": "empresas",
+   "t": "dividend",
+   "f": [
+    "dividend",
+    "dividends"
+   ],
+   "pt": "dividendo",
+   "exp": "Parte do lucro paga aos acionistas.",
+   "ex": "The bank raised its dividend.",
+   "ex_pt": "O banco aumentou o dividendo."
+  },
+  {
+   "g": "empresas",
+   "t": "dividend yield",
+   "f": [
+    "dividend yield",
+    "dividend yields"
+   ],
+   "pt": "dividend yield (DY)",
+   "exp": "Dividendos do ano divididos pelo preço da ação.",
+   "ex": "The stock offers a high dividend yield.",
+   "ex_pt": "A ação paga um dividend yield alto."
+  },
+  {
+   "g": "empresas",
+   "t": "payout",
+   "f": [
+    "payout",
+    "payout ratio",
+    "payouts"
+   ],
+   "pt": "payout (distribuição)",
+   "exp": "Percentual do lucro pago aos acionistas.",
+   "ex": "The payout ratio is close to eighty percent.",
+   "ex_pt": "O payout está perto de oitenta por cento."
+  },
+  {
+   "g": "empresas",
+   "t": "buyback",
+   "f": [
+    "buyback",
+    "buybacks",
+    "share repurchase",
+    "share repurchases",
+    "stock buyback",
+    "repurchase program"
+   ],
+   "pt": "recompra de ações",
+   "exp": "A empresa compra as próprias ações no mercado.",
+   "ex": "The board approved a new buyback.",
+   "ex_pt": "O conselho aprovou uma nova recompra."
+  },
+  {
+   "g": "empresas",
+   "t": "shareholders",
+   "f": [
+    "shareholder",
+    "shareholders"
+   ],
+   "pt": "acionistas",
+   "exp": "Quem tem ações da empresa.",
+   "ex": "Shareholders approved the deal.",
+   "ex_pt": "Os acionistas aprovaram o negócio."
+  },
+  {
+   "g": "empresas",
+   "t": "board",
+   "f": [
+    "board of directors",
+    "board approved",
+    "board approves"
+   ],
+   "pt": "conselho de administração",
+   "exp": "Grupo que supervisiona a diretoria e aprova decisões grandes.",
+   "ex": "The board approved the dividend.",
+   "ex_pt": "O conselho aprovou o dividendo."
+  },
+  {
+   "g": "empresas",
+   "t": "CEO",
+   "f": [
+    "ceo",
+    "chief executive"
+   ],
+   "pt": "presidente-executivo (CEO)",
+   "exp": "Quem comanda a empresa no dia a dia.",
+   "ex": "The CEO stepped down on Friday.",
+   "ex_pt": "O CEO deixou o cargo na sexta-feira."
+  },
+  {
+   "g": "empresas",
+   "t": "CFO",
+   "f": [
+    "cfo",
+    "chief financial officer"
+   ],
+   "pt": "diretor financeiro (CFO)",
+   "exp": "Responsável pelas finanças da empresa.",
+   "ex": "The CFO will present the results.",
+   "ex_pt": "O diretor financeiro vai apresentar os resultados."
+  },
+  {
+   "g": "empresas",
+   "t": "step down",
+   "f": [
+    "step down",
+    "steps down",
+    "stepped down",
+    "resigns",
+    "resigned"
+   ],
+   "pt": "deixar o cargo",
+   "exp": "Sair de uma função de comando.",
+   "ex": "The chairman stepped down.",
+   "ex_pt": "O presidente do conselho deixou o cargo."
+  },
+  {
+   "g": "empresas",
+   "t": "capex",
+   "f": [
+    "capex",
+    "capital expenditure",
+    "capital spending"
+   ],
+   "pt": "investimentos (capex)",
+   "exp": "Gasto com obras, máquinas e expansão.",
+   "ex": "The company cut its capex plan.",
+   "ex_pt": "A empresa cortou o plano de investimentos."
+  },
+  {
+   "g": "empresas",
+   "t": "layoffs",
+   "f": [
+    "layoff",
+    "layoffs",
+    "job cuts"
+   ],
+   "pt": "demissões",
+   "exp": "Cortes de funcionários.",
+   "ex": "The firm announced layoffs.",
+   "ex_pt": "A empresa anunciou demissões."
+  },
+  {
+   "g": "empresas",
+   "t": "supply chain",
+   "f": [
+    "supply chain",
+    "supply chains"
+   ],
+   "pt": "cadeia de suprimentos",
+   "exp": "Rede de fornecedores, produção e transporte.",
+   "ex": "Supply chain problems hurt sales.",
+   "ex_pt": "Problemas na cadeia de suprimentos prejudicaram as vendas."
+  },
+  {
+   "g": "empresas",
+   "t": "demand",
+   "f": [
+    "demand"
+   ],
+   "pt": "demanda",
+   "exp": "Quanto os clientes querem comprar.",
+   "ex": "Demand for chips remains strong.",
+   "ex_pt": "A demanda por chips continua forte."
+  },
+  {
+   "g": "empresas",
+   "t": "supply",
+   "f": [
+    "supply",
+    "oversupply"
+   ],
+   "pt": "oferta",
+   "exp": "Quanto existe à venda de um produto.",
+   "ex": "Tight supply pushed prices higher.",
+   "ex_pt": "A oferta apertada empurrou os preços para cima."
+  },
+  {
+   "g": "empresas",
+   "t": "chipmaker",
+   "f": [
+    "chipmaker",
+    "chipmakers",
+    "semiconductor",
+    "semiconductors"
+   ],
+   "pt": "fabricante de chips",
+   "exp": "Empresa de semicondutores.",
+   "ex": "Chipmakers led the market higher.",
+   "ex_pt": "As fabricantes de chips puxaram o mercado."
+  },
+  {
+   "g": "empresas",
+   "t": "utility",
+   "f": [
+    "utility",
+    "utilities"
+   ],
+   "pt": "empresa de serviço público",
+   "exp": "Empresas de energia, água e saneamento.",
+   "ex": "Utilities are seen as defensive stocks.",
+   "ex_pt": "As empresas de energia e saneamento são vistas como defensivas."
+  },
+  {
+   "g": "empresas",
+   "t": "AI",
+   "f": [
+    "AI",
+    "artificial intelligence"
+   ],
+   "pt": "inteligência artificial (IA)",
+   "exp": "Tecnologia que move boa parte dos investimentos em tecnologia.",
+   "ex": "AI spending keeps growing.",
+   "ex_pt": "Os gastos com IA continuam crescendo."
+  },
+  {
+   "g": "research",
+   "t": "upgrade",
+   "f": [
+    "upgrade",
+    "upgrades",
+    "upgraded"
+   ],
+   "pt": "elevação (de recomendação)",
+   "exp": "O analista melhora a recomendação, ou a agência melhora a nota de crédito.",
+   "ex": "The bank upgraded the stock to buy.",
+   "ex_pt": "O banco elevou a ação para compra."
+  },
+  {
+   "g": "research",
+   "t": "downgrade",
+   "f": [
+    "downgrade",
+    "downgrades",
+    "downgraded"
+   ],
+   "pt": "rebaixamento",
+   "exp": "O analista piora a recomendação, ou a agência corta a nota de crédito.",
+   "ex": "The broker downgraded the stock to neutral.",
+   "ex_pt": "A corretora rebaixou a ação para neutro."
+  },
+  {
+   "g": "research",
+   "t": "price target",
+   "f": [
+    "price target",
+    "price targets",
+    "target price"
+   ],
+   "pt": "preço-alvo",
+   "exp": "Preço que o analista projeta para a ação, em geral em 12 meses.",
+   "ex": "The bank cut its price target.",
+   "ex_pt": "O banco cortou o preço-alvo."
+  },
+  {
+   "g": "research",
+   "t": "buy rating",
+   "f": [
+    "buy rating",
+    "rated buy",
+    "buy-rated"
+   ],
+   "pt": "recomendação de compra",
+   "exp": "O analista acha que a ação vai subir mais que o mercado.",
+   "ex": "The stock has a buy rating.",
+   "ex_pt": "A ação tem recomendação de compra."
+  },
+  {
+   "g": "research",
+   "t": "hold",
+   "f": [
+    "hold rating",
+    "neutral rating",
+    "equal-weight",
+    "market perform"
+   ],
+   "pt": "manter / neutro",
+   "exp": "Recomendação de manter a ação, sem comprar mais.",
+   "ex": "Analysts kept a hold rating.",
+   "ex_pt": "Os analistas mantiveram a recomendação neutra."
+  },
+  {
+   "g": "research",
+   "t": "sell rating",
+   "f": [
+    "sell rating",
+    "rated sell"
+   ],
+   "pt": "recomendação de venda",
+   "exp": "O analista acha que a ação vai cair ou ficar atrás do mercado.",
+   "ex": "Only one analyst has a sell rating.",
+   "ex_pt": "Só um analista recomenda venda."
+  },
+  {
+   "g": "research",
+   "t": "overweight",
+   "f": [
+    "overweight"
+   ],
+   "pt": "acima do peso (overweight)",
+   "exp": "Mais exposição do que o índice; recomendação positiva.",
+   "ex": "We are overweight Brazilian equities.",
+   "ex_pt": "Estamos acima do peso em ações brasileiras."
+  },
+  {
+   "g": "research",
+   "t": "underweight",
+   "f": [
+    "underweight"
+   ],
+   "pt": "abaixo do peso (underweight)",
+   "exp": "Menos exposição do que o índice; recomendação negativa.",
+   "ex": "The bank moved to underweight on the sector.",
+   "ex_pt": "O banco passou para abaixo do peso no setor."
+  },
+  {
+   "g": "research",
+   "t": "coverage",
+   "f": [
+    "coverage",
+    "initiates coverage",
+    "initiated coverage"
+   ],
+   "pt": "cobertura",
+   "exp": "Empresas que o analista acompanha; initiate coverage é começar a cobrir.",
+   "ex": "The broker initiated coverage with a buy.",
+   "ex_pt": "A corretora iniciou a cobertura com compra."
+  },
+  {
+   "g": "research",
+   "t": "analyst",
+   "f": [
+    "analyst",
+    "analysts"
+   ],
+   "pt": "analista",
+   "exp": "Profissional que estuda empresas e mercados e publica recomendações.",
+   "ex": "Analysts expect higher margins.",
+   "ex_pt": "Os analistas esperam margens maiores."
+  },
+  {
+   "g": "research",
+   "t": "strategist",
+   "f": [
+    "strategist",
+    "strategists"
+   ],
+   "pt": "estrategista",
+   "exp": "Quem define a visão de alocação entre mercados e classes de ativos.",
+   "ex": "Strategists see more upside for stocks.",
+   "ex_pt": "Os estrategistas veem mais espaço de alta para as ações."
+  },
+  {
+   "g": "research",
+   "t": "top pick",
+   "f": [
+    "top pick",
+    "top picks"
+   ],
+   "pt": "ação preferida",
+   "exp": "A ação favorita do analista no setor.",
+   "ex": "The stock remains our top pick.",
+   "ex_pt": "A ação continua a nossa preferida."
+  },
+  {
+   "g": "research",
+   "t": "thesis",
+   "f": [
+    "thesis",
+    "investment case"
+   ],
+   "pt": "tese de investimento",
+   "exp": "O motivo para comprar ou vender um ativo.",
+   "ex": "Our thesis is based on lower debt.",
+   "ex_pt": "A nossa tese se baseia em dívida menor."
+  },
+  {
+   "g": "research",
+   "t": "catalyst",
+   "f": [
+    "catalyst",
+    "catalysts"
+   ],
+   "pt": "catalisador",
+   "exp": "Evento que pode fazer o preço andar.",
+   "ex": "The results could be a catalyst.",
+   "ex_pt": "O resultado pode ser um catalisador."
+  },
+  {
+   "g": "juros",
+   "t": "interest rate",
+   "f": [
+    "interest rate",
+    "interest rates",
+    "rates"
+   ],
+   "pt": "taxa de juros",
+   "exp": "O preço do dinheiro; definido pelo banco central na taxa básica.",
+   "ex": "Interest rates remain high.",
+   "ex_pt": "Os juros continuam altos."
+  },
+  {
+   "g": "juros",
+   "t": "rate hike",
+   "f": [
+    "rate hike",
+    "rate hikes",
+    "hikes rates",
+    "hiked rates",
+    "raises rates",
+    "raised rates"
+   ],
+   "pt": "alta de juros",
+   "exp": "Aumento da taxa básica pelo banco central.",
+   "ex": "Markets expect another rate hike.",
+   "ex_pt": "O mercado espera mais uma alta de juros."
+  },
+  {
+   "g": "juros",
+   "t": "rate cut",
+   "f": [
+    "rate cut",
+    "rate cuts",
+    "cuts rates",
+    "cut rates"
+   ],
+   "pt": "corte de juros",
+   "exp": "Redução da taxa básica pelo banco central.",
+   "ex": "The central bank delivered a rate cut.",
+   "ex_pt": "O banco central cortou os juros."
+  },
+  {
+   "g": "juros",
+   "t": "Fed",
+   "f": [
+    "Fed",
+    "federal reserve",
+    "fomc"
+   ],
+   "pt": "Fed (banco central dos EUA)",
+   "exp": "O Federal Reserve define os juros americanos no comitê FOMC.",
+   "ex": "The Fed held rates steady.",
+   "ex_pt": "O Fed manteve os juros."
+  },
+  {
+   "g": "juros",
+   "t": "central bank",
+   "f": [
+    "central bank",
+    "central banks",
+    "ECB",
+    "BOJ"
+   ],
+   "pt": "banco central",
+   "exp": "Autoridade que define os juros e cuida da moeda; ECB é o europeu, BOJ o japonês.",
+   "ex": "Central banks are cutting rates.",
+   "ex_pt": "Os bancos centrais estão cortando juros."
+  },
+  {
+   "g": "juros",
+   "t": "monetary policy",
+   "f": [
+    "monetary policy"
+   ],
+   "pt": "política monetária",
+   "exp": "Decisões do banco central sobre juros e liquidez.",
+   "ex": "Monetary policy remains tight.",
+   "ex_pt": "A política monetária continua apertada."
+  },
+  {
+   "g": "juros",
+   "t": "hawkish",
+   "f": [
+    "hawkish",
+    "hawks"
+   ],
+   "pt": "duro (contra a inflação)",
+   "exp": "Postura a favor de juros altos para conter a inflação.",
+   "ex": "The Fed sounded hawkish.",
+   "ex_pt": "O Fed soou duro."
+  },
+  {
+   "g": "juros",
+   "t": "dovish",
+   "f": [
+    "dovish",
+    "doves"
+   ],
+   "pt": "brando",
+   "exp": "Postura a favor de juros mais baixos.",
+   "ex": "The minutes were more dovish than expected.",
+   "ex_pt": "A ata foi mais branda que o esperado."
+  },
+  {
+   "g": "juros",
+   "t": "pause",
+   "f": [
+    "pause",
+    "pauses",
+    "on hold",
+    "holds rates",
+    "held rates"
+   ],
+   "pt": "pausa",
+   "exp": "Manter os juros sem mudança por um tempo.",
+   "ex": "The Fed signaled a pause.",
+   "ex_pt": "O Fed sinalizou uma pausa."
+  },
+  {
+   "g": "juros",
+   "t": "inflation",
+   "f": [
+    "inflation",
+    "inflationary"
+   ],
+   "pt": "inflação",
+   "exp": "Alta geral dos preços.",
+   "ex": "Inflation slowed in October.",
+   "ex_pt": "A inflação desacelerou em outubro."
+  },
+  {
+   "g": "juros",
+   "t": "CPI",
+   "f": [
+    "cpi",
+    "consumer price index",
+    "consumer prices"
+   ],
+   "pt": "inflação ao consumidor (CPI)",
+   "exp": "Índice de preços ao consumidor; nos EUA, a inflação mais acompanhada.",
+   "ex": "CPI rose more than expected.",
+   "ex_pt": "A inflação ao consumidor subiu mais que o esperado."
+  },
+  {
+   "g": "juros",
+   "t": "core inflation",
+   "f": [
+    "core inflation",
+    "core cpi",
+    "core pce"
+   ],
+   "pt": "núcleo da inflação",
+   "exp": "Inflação sem alimentos e energia, que oscilam muito.",
+   "ex": "Core inflation remains sticky.",
+   "ex_pt": "O núcleo da inflação continua resistente."
+  },
+  {
+   "g": "juros",
+   "t": "GDP",
+   "f": [
+    "gdp",
+    "gross domestic product"
+   ],
+   "pt": "PIB",
+   "exp": "Tudo o que um país produz num período.",
+   "ex": "GDP grew two percent in the quarter.",
+   "ex_pt": "O PIB cresceu dois por cento no trimestre."
+  },
+  {
+   "g": "juros",
+   "t": "growth",
+   "f": [
+    "growth"
+   ],
+   "pt": "crescimento",
+   "exp": "Aumento da economia ou do lucro de uma empresa.",
+   "ex": "Growth is slowing in China.",
+   "ex_pt": "O crescimento está desacelerando na China."
+  },
+  {
+   "g": "juros",
+   "t": "recession",
+   "f": [
+    "recession",
+    "recessions"
+   ],
+   "pt": "recessão",
+   "exp": "Queda da economia por um período, em geral dois trimestres seguidos.",
+   "ex": "Economists see a low risk of recession.",
+   "ex_pt": "Os economistas veem risco baixo de recessão."
+  },
+  {
+   "g": "juros",
+   "t": "slowdown",
+   "f": [
+    "slowdown",
+    "slowing",
+    "slows"
+   ],
+   "pt": "desaceleração",
+   "exp": "A economia ou as vendas crescem mais devagar.",
+   "ex": "The slowdown hit factory orders.",
+   "ex_pt": "A desaceleração atingiu as encomendas da indústria."
+  },
+  {
+   "g": "juros",
+   "t": "jobs report",
+   "f": [
+    "jobs report",
+    "payrolls",
+    "nonfarm payrolls",
+    "jobs data"
+   ],
+   "pt": "relatório de emprego (payroll)",
+   "exp": "Dado mensal de vagas criadas nos EUA.",
+   "ex": "The jobs report came in strong.",
+   "ex_pt": "O relatório de emprego veio forte."
+  },
+  {
+   "g": "juros",
+   "t": "unemployment",
+   "f": [
+    "unemployment",
+    "unemployment rate",
+    "jobless"
+   ],
+   "pt": "desemprego",
+   "exp": "Parcela das pessoas que procuram trabalho e não acham.",
+   "ex": "The unemployment rate fell.",
+   "ex_pt": "A taxa de desemprego caiu."
+  },
+  {
+   "g": "juros",
+   "t": "labor market",
+   "f": [
+    "labor market",
+    "labour market",
+    "job market"
+   ],
+   "pt": "mercado de trabalho",
+   "exp": "Oferta e procura de empregos.",
+   "ex": "The labor market is cooling.",
+   "ex_pt": "O mercado de trabalho está esfriando."
+  },
+  {
+   "g": "juros",
+   "t": "consumer spending",
+   "f": [
+    "consumer spending",
+    "consumers",
+    "retail sales"
+   ],
+   "pt": "consumo das famílias",
+   "exp": "Quanto as pessoas gastam; retail sales são as vendas no varejo.",
+   "ex": "Consumer spending held up well.",
+   "ex_pt": "O consumo das famílias resistiu bem."
+  },
+  {
+   "g": "juros",
+   "t": "fiscal",
+   "f": [
+    "fiscal",
+    "fiscal policy"
+   ],
+   "pt": "fiscal (contas do governo)",
+   "exp": "Tudo o que envolve gastos, impostos e dívida do governo.",
+   "ex": "Fiscal risks weigh on the currency.",
+   "ex_pt": "Os riscos fiscais pesam sobre a moeda."
+  },
+  {
+   "g": "juros",
+   "t": "deficit",
+   "f": [
+    "deficit",
+    "deficits",
+    "budget deficit"
+   ],
+   "pt": "déficit",
+   "exp": "Quando o governo gasta mais do que arrecada.",
+   "ex": "The deficit widened this year.",
+   "ex_pt": "O déficit aumentou neste ano."
+  },
+  {
+   "g": "juros",
+   "t": "budget",
+   "f": [
+    "budget",
+    "budgets"
+   ],
+   "pt": "orçamento",
+   "exp": "Plano de receitas e gastos do governo ou da empresa.",
+   "ex": "Congress approved the budget.",
+   "ex_pt": "O Congresso aprovou o orçamento."
+  },
+  {
+   "g": "juros",
+   "t": "stimulus",
+   "f": [
+    "stimulus"
+   ],
+   "pt": "estímulo",
+   "exp": "Medidas do governo ou do banco central para ativar a economia.",
+   "ex": "China announced new stimulus.",
+   "ex_pt": "A China anunciou novos estímulos."
+  },
+  {
+   "g": "juros",
+   "t": "yield curve",
+   "f": [
+    "yield curve",
+    "yield curves"
+   ],
+   "pt": "curva de juros",
+   "exp": "Taxas de juros por prazo, do curto ao longo.",
+   "ex": "The yield curve steepened.",
+   "ex_pt": "A curva de juros ficou mais inclinada."
+  },
+  {
+   "g": "juros",
+   "t": "basis point",
+   "f": [
+    "basis point",
+    "basis points",
+    "bps"
+   ],
+   "pt": "ponto-base",
+   "exp": "0,01 ponto percentual; 25 pontos-base são 0,25 ponto.",
+   "ex": "The Fed cut rates by 25 basis points.",
+   "ex_pt": "O Fed cortou os juros em 25 pontos-base."
+  },
+  {
+   "g": "juros",
+   "t": "percentage point",
+   "f": [
+    "percentage point",
+    "percentage points"
+   ],
+   "pt": "ponto percentual",
+   "exp": "Diferença absoluta entre duas porcentagens.",
+   "ex": "Rates rose by one percentage point.",
+   "ex_pt": "Os juros subiram um ponto percentual."
+  },
+  {
+   "g": "juros",
+   "t": "tariff",
+   "f": [
+    "tariff",
+    "tariffs"
+   ],
+   "pt": "tarifa de importação",
+   "exp": "Imposto cobrado sobre produtos importados.",
+   "ex": "New tariffs hit exporters.",
+   "ex_pt": "Novas tarifas atingiram os exportadores."
+  },
+  {
+   "g": "juros",
+   "t": "trade war",
+   "f": [
+    "trade war",
+    "trade wars",
+    "trade tensions"
+   ],
+   "pt": "guerra comercial",
+   "exp": "Disputa entre países com tarifas e restrições.",
+   "ex": "The trade war weighed on markets.",
+   "ex_pt": "A guerra comercial pesou nos mercados."
+  },
+  {
+   "g": "juros",
+   "t": "sanctions",
+   "f": [
+    "sanction",
+    "sanctions"
+   ],
+   "pt": "sanções",
+   "exp": "Restrições impostas por um país a outro.",
+   "ex": "New sanctions target oil exports.",
+   "ex_pt": "Novas sanções miram as exportações de petróleo."
+  },
+  {
+   "g": "juros",
+   "t": "geopolitical",
+   "f": [
+    "geopolitical",
+    "geopolitics"
+   ],
+   "pt": "geopolítico",
+   "exp": "Ligado a conflitos e relações entre países.",
+   "ex": "Geopolitical risks lifted oil prices.",
+   "ex_pt": "Os riscos geopolíticos subiram o petróleo."
+  },
+  {
+   "g": "credito",
+   "t": "bond",
+   "f": [
+    "bond",
+    "bonds"
+   ],
+   "pt": "título de dívida",
+   "exp": "Papel em que o investidor empresta dinheiro e recebe juros.",
+   "ex": "Bond prices fell as yields rose.",
+   "ex_pt": "Os preços dos títulos caíram com a alta das taxas."
+  },
+  {
+   "g": "credito",
+   "t": "yield",
+   "f": [
+    "yield",
+    "yields"
+   ],
+   "pt": "taxa / rendimento",
+   "exp": "Retorno de um título em % ao ano; sobe quando o preço do título cai.",
+   "ex": "The ten-year yield climbed to four and a half percent.",
+   "ex_pt": "A taxa de dez anos subiu para quatro e meio por cento."
+  },
+  {
+   "g": "credito",
+   "t": "Treasuries",
+   "f": [
+    "treasury",
+    "treasuries",
+    "t-bills",
+    "treasury yields"
+   ],
+   "pt": "títulos do Tesouro dos EUA",
+   "exp": "Dívida do governo americano, referência de juros no mundo.",
+   "ex": "Treasury yields climbed as the Fed signaled a pause.",
+   "ex_pt": "As taxas dos Treasuries subiram com o Fed sinalizando uma pausa."
+  },
+  {
+   "g": "credito",
+   "t": "spread",
+   "f": [
+    "spreads",
+    "credit spread",
+    "credit spreads",
+    "yield spread",
+    "yield spreads"
+   ],
+   "pt": "spread (diferença de taxa)",
+   "exp": "Diferença entre duas taxas, como a de uma empresa contra a do governo.",
+   "ex": "Credit spreads widened this week.",
+   "ex_pt": "Os spreads de crédito abriram nesta semana."
+  },
+  {
+   "g": "credito",
+   "t": "debt",
+   "f": [
+    "debt",
+    "debts"
+   ],
+   "pt": "dívida",
+   "exp": "Dinheiro que a empresa ou o governo deve.",
+   "ex": "The company plans to cut its debt.",
+   "ex_pt": "A empresa planeja reduzir a dívida."
+  },
+  {
+   "g": "credito",
+   "t": "net debt",
+   "f": [
+    "net debt"
+   ],
+   "pt": "dívida líquida",
+   "exp": "Dívida menos o caixa.",
+   "ex": "Net debt fell to two times EBITDA.",
+   "ex_pt": "A dívida líquida caiu para duas vezes o Ebitda."
+  },
+  {
+   "g": "credito",
+   "t": "leverage",
+   "f": [
+    "leverage",
+    "leveraged",
+    "deleveraging"
+   ],
+   "pt": "alavancagem",
+   "exp": "Quanto a empresa usa dívida; deleveraging é reduzir a dívida.",
+   "ex": "Leverage is still high.",
+   "ex_pt": "A alavancagem ainda está alta."
+  },
+  {
+   "g": "credito",
+   "t": "default",
+   "f": [
+    "default",
+    "defaults",
+    "defaulted"
+   ],
+   "pt": "calote",
+   "exp": "Quando o devedor deixa de pagar.",
+   "ex": "Defaults are rising in private credit.",
+   "ex_pt": "Os calotes estão subindo no crédito privado."
+  },
+  {
+   "g": "credito",
+   "t": "bankruptcy",
+   "f": [
+    "bankruptcy",
+    "bankrupt",
+    "chapter 11"
+   ],
+   "pt": "falência / recuperação judicial",
+   "exp": "Nos EUA, o Chapter 11 é a recuperação judicial.",
+   "ex": "The retailer filed for bankruptcy.",
+   "ex_pt": "A varejista pediu recuperação judicial."
+  },
+  {
+   "g": "credito",
+   "t": "credit rating",
+   "f": [
+    "credit rating",
+    "credit ratings",
+    "sovereign rating"
+   ],
+   "pt": "nota de crédito (rating)",
+   "exp": "Avaliação de risco de agências como S&P, Moody's e Fitch.",
+   "ex": "The agency cut the credit rating.",
+   "ex_pt": "A agência cortou a nota de crédito."
+  },
+  {
+   "g": "credito",
+   "t": "rating",
+   "f": [
+    "rating",
+    "ratings"
+   ],
+   "pt": "nota / recomendação (rating)",
+   "exp": "Pode ser a nota de crédito de uma agência ou a recomendação de um analista; o contexto diz qual.",
+   "ex": "Analysts changed their ratings after the results.",
+   "ex_pt": "Os analistas mudaram as recomendações depois do resultado."
+  },
+  {
+   "g": "credito",
+   "t": "investment grade",
+   "f": [
+    "investment grade",
+    "investment-grade"
+   ],
+   "pt": "grau de investimento",
+   "exp": "Nota de crédito de baixo risco de calote.",
+   "ex": "Brazil lost its investment grade in 2015.",
+   "ex_pt": "O Brasil perdeu o grau de investimento em 2015."
+  },
+  {
+   "g": "credito",
+   "t": "high yield",
+   "f": [
+    "high yield",
+    "high-yield",
+    "junk bonds",
+    "junk"
+   ],
+   "pt": "alto rendimento (high yield)",
+   "exp": "Títulos de maior risco, abaixo do grau de investimento.",
+   "ex": "High-yield bonds rallied.",
+   "ex_pt": "Os títulos de alto rendimento subiram."
+  },
+  {
+   "g": "credito",
+   "t": "private credit",
+   "f": [
+    "private credit",
+    "direct lending"
+   ],
+   "pt": "crédito privado (fora dos bancos)",
+   "exp": "Empréstimos feitos por fundos direto às empresas.",
+   "ex": "Regulators are watching private credit.",
+   "ex_pt": "Os reguladores estão de olho no crédito privado."
+  },
+  {
+   "g": "credito",
+   "t": "private equity",
+   "f": [
+    "private equity"
+   ],
+   "pt": "private equity",
+   "exp": "Fundos que compram participações em empresas fora da bolsa.",
+   "ex": "Private equity firms raised a new fund.",
+   "ex_pt": "Gestoras de private equity captaram um fundo novo."
+  },
+  {
+   "g": "credito",
+   "t": "lender",
+   "f": [
+    "lender",
+    "lenders",
+    "lending"
+   ],
+   "pt": "credor / concessão de crédito",
+   "exp": "Quem empresta dinheiro; lending é a concessão de crédito.",
+   "ex": "Lenders tightened credit standards.",
+   "ex_pt": "Os credores apertaram a concessão de crédito."
+  },
+  {
+   "g": "credito",
+   "t": "borrowing costs",
+   "f": [
+    "borrowing costs",
+    "borrowing",
+    "borrowers"
+   ],
+   "pt": "custo do crédito / tomadores",
+   "exp": "Quanto custa pegar dinheiro emprestado.",
+   "ex": "Higher rates raised borrowing costs.",
+   "ex_pt": "Juros mais altos encareceram o crédito."
+  },
+  {
+   "g": "credito",
+   "t": "mortgage",
+   "f": [
+    "mortgage",
+    "mortgages"
+   ],
+   "pt": "financiamento imobiliário",
+   "exp": "Empréstimo para comprar imóvel, com o imóvel como garantia.",
+   "ex": "Mortgage rates fell this week.",
+   "ex_pt": "As taxas do financiamento imobiliário caíram nesta semana."
+  },
+  {
+   "g": "credito",
+   "t": "liquidity",
+   "f": [
+    "liquidity",
+    "liquid"
+   ],
+   "pt": "liquidez",
+   "exp": "Facilidade de vender sem mexer muito no preço; também o dinheiro disponível.",
+   "ex": "Liquidity dried up in the bond market.",
+   "ex_pt": "A liquidez secou no mercado de títulos."
+  },
+  {
+   "g": "commodities",
+   "t": "commodities",
+   "f": [
+    "commodity",
+    "commodities"
+   ],
+   "pt": "commodities",
+   "exp": "Produtos básicos negociados no mundo todo: petróleo, minério, soja.",
+   "ex": "Commodity prices fell on China worries.",
+   "ex_pt": "As commodities caíram com a preocupação com a China."
+  },
+  {
+   "g": "commodities",
+   "t": "crude",
+   "f": [
+    "crude",
+    "crude oil",
+    "oil"
+   ],
+   "pt": "petróleo (bruto)",
+   "exp": "O petróleo antes de ser refinado.",
+   "ex": "Crude rose on supply cuts.",
+   "ex_pt": "O petróleo subiu com cortes de produção."
+  },
+  {
+   "g": "commodities",
+   "t": "Brent",
+   "f": [
+    "brent",
+    "wti"
+   ],
+   "pt": "Brent / WTI",
+   "exp": "Brent é a referência internacional do petróleo; WTI, a dos EUA.",
+   "ex": "Brent traded near seventy dollars.",
+   "ex_pt": "O Brent negociou perto de setenta dólares."
+  },
+  {
+   "g": "commodities",
+   "t": "OPEC+",
+   "f": [
+    "opec",
+    "opec+"
+   ],
+   "pt": "Opep+",
+   "exp": "Grupo de países produtores de petróleo que define cotas de produção.",
+   "ex": "OPEC+ agreed to raise output.",
+   "ex_pt": "A Opep+ concordou em aumentar a produção."
+  },
+  {
+   "g": "commodities",
+   "t": "output",
+   "f": [
+    "output",
+    "production"
+   ],
+   "pt": "produção",
+   "exp": "Quanto é produzido.",
+   "ex": "Oil output hit a record.",
+   "ex_pt": "A produção de petróleo bateu recorde."
+  },
+  {
+   "g": "commodities",
+   "t": "refinery",
+   "f": [
+    "refinery",
+    "refineries",
+    "refiners",
+    "refining"
+   ],
+   "pt": "refinaria",
+   "exp": "Onde o petróleo vira combustível.",
+   "ex": "Refineries are rethinking what they produce.",
+   "ex_pt": "As refinarias estão repensando o que produzem."
+  },
+  {
+   "g": "commodities",
+   "t": "natural gas",
+   "f": [
+    "natural gas",
+    "lng"
+   ],
+   "pt": "gás natural",
+   "exp": "LNG é o gás natural liquefeito, transportado em navio.",
+   "ex": "Natural gas prices jumped.",
+   "ex_pt": "O gás natural disparou."
+  },
+  {
+   "g": "commodities",
+   "t": "iron ore",
+   "f": [
+    "iron ore"
+   ],
+   "pt": "minério de ferro",
+   "exp": "Matéria-prima do aço; principal produto da Vale.",
+   "ex": "Iron ore fell on weak steel demand.",
+   "ex_pt": "O minério de ferro caiu com a demanda fraca de aço."
+  },
+  {
+   "g": "commodities",
+   "t": "pulp",
+   "f": [
+    "pulp"
+   ],
+   "pt": "celulose",
+   "exp": "Matéria-prima do papel.",
+   "ex": "Pulp prices rose in China.",
+   "ex_pt": "O preço da celulose subiu na China."
+  },
+  {
+   "g": "commodities",
+   "t": "soybeans",
+   "f": [
+    "soybean",
+    "soybeans",
+    "soy"
+   ],
+   "pt": "soja",
+   "exp": "Grão de exportação muito importante para o Brasil.",
+   "ex": "Soybean exports to China grew.",
+   "ex_pt": "As exportações de soja para a China cresceram."
+  },
+  {
+   "g": "commodities",
+   "t": "gold",
+   "f": [
+    "gold"
+   ],
+   "pt": "ouro",
+   "exp": "Metal precioso usado como reserva de valor.",
+   "ex": "Gold held near a record.",
+   "ex_pt": "O ouro ficou perto do recorde."
+  },
+  {
+   "g": "commodities",
+   "t": "copper",
+   "f": [
+    "copper"
+   ],
+   "pt": "cobre",
+   "exp": "Metal usado em energia e construção; termômetro da economia global.",
+   "ex": "Copper rallied on supply fears.",
+   "ex_pt": "O cobre subiu com medo de falta de oferta."
+  },
+  {
+   "g": "commodities",
+   "t": "dollar",
+   "f": [
+    "dollar",
+    "greenback",
+    "u.s. dollar"
+   ],
+   "pt": "dólar",
+   "exp": "Moeda dos EUA; greenback é o apelido.",
+   "ex": "The dollar weakened against major currencies.",
+   "ex_pt": "O dólar perdeu força contra as principais moedas."
+  },
+  {
+   "g": "commodities",
+   "t": "currency",
+   "f": [
+    "currency",
+    "currencies",
+    "fx"
+   ],
+   "pt": "moeda / câmbio",
+   "exp": "Dinheiro de um país; FX é o mercado de câmbio.",
+   "ex": "Emerging market currencies gained.",
+   "ex_pt": "As moedas emergentes se valorizaram."
+  },
+  {
+   "g": "commodities",
+   "t": "exchange rate",
+   "f": [
+    "exchange rate",
+    "exchange rates"
+   ],
+   "pt": "taxa de câmbio",
+   "exp": "Preço de uma moeda em outra.",
+   "ex": "The exchange rate affects exporters.",
+   "ex_pt": "A taxa de câmbio afeta os exportadores."
+  },
+  {
+   "g": "commodities",
+   "t": "exports",
+   "f": [
+    "export",
+    "exports",
+    "exporters"
+   ],
+   "pt": "exportações",
+   "exp": "Vendas para outros países.",
+   "ex": "Exports to China slowed.",
+   "ex_pt": "As exportações para a China desaceleraram."
+  },
+  {
+   "g": "commodities",
+   "t": "imports",
+   "f": [
+    "import",
+    "imports"
+   ],
+   "pt": "importações",
+   "exp": "Compras de outros países.",
+   "ex": "Imports rose in September.",
+   "ex_pt": "As importações subiram em setembro."
+  },
+  {
+   "g": "negocios",
+   "t": "merger",
+   "f": [
+    "merger",
+    "mergers",
+    "m&a",
+    "mergers and acquisitions"
+   ],
+   "pt": "fusão (M&A)",
+   "exp": "Duas empresas viram uma; M&A são fusões e aquisições.",
+   "ex": "The merger created a market leader.",
+   "ex_pt": "A fusão criou uma líder de mercado."
+  },
+  {
+   "g": "negocios",
+   "t": "acquisition",
+   "f": [
+    "acquisition",
+    "acquisitions",
+    "acquire",
+    "acquires",
+    "acquired"
+   ],
+   "pt": "aquisição",
+   "exp": "Uma empresa compra outra.",
+   "ex": "The company agreed to acquire a rival.",
+   "ex_pt": "A empresa fechou a compra de uma concorrente."
+  },
+  {
+   "g": "negocios",
+   "t": "takeover",
+   "f": [
+    "takeover",
+    "takeovers",
+    "takeover bid"
+   ],
+   "pt": "aquisição do controle",
+   "exp": "Compra do controle de uma empresa, às vezes sem o apoio da diretoria.",
+   "ex": "The board rejected the takeover bid.",
+   "ex_pt": "O conselho rejeitou a oferta de aquisição."
+  },
+  {
+   "g": "negocios",
+   "t": "deal",
+   "f": [
+    "deal",
+    "deals"
+   ],
+   "pt": "negócio / acordo",
+   "exp": "Uma transação ou um acordo fechado.",
+   "ex": "The deal is worth two billion dollars.",
+   "ex_pt": "O negócio vale dois bilhões de dólares."
+  },
+  {
+   "g": "negocios",
+   "t": "spin-off",
+   "f": [
+    "spin-off",
+    "spinoff",
+    "spin off",
+    "spins off"
+   ],
+   "pt": "cisão (spin-off)",
+   "exp": "Separar uma área da empresa numa companhia nova.",
+   "ex": "The group plans a spin-off of its unit.",
+   "ex_pt": "O grupo planeja separar a unidade numa nova empresa."
+  },
+  {
+   "g": "negocios",
+   "t": "regulator",
+   "f": [
+    "regulator",
+    "regulators",
+    "regulatory",
+    "SEC"
+   ],
+   "pt": "regulador",
+   "exp": "Órgão que fiscaliza um mercado; a SEC é a CVM dos EUA.",
+   "ex": "Regulators approved the deal.",
+   "ex_pt": "Os reguladores aprovaram o negócio."
+  },
+  {
+   "g": "negocios",
+   "t": "probe",
+   "f": [
+    "probe",
+    "probes",
+    "investigation"
+   ],
+   "pt": "investigação",
+   "exp": "Apuração de uma autoridade ou da própria empresa.",
+   "ex": "Regulators opened a probe.",
+   "ex_pt": "Os reguladores abriram uma investigação."
+  },
+  {
+   "g": "negocios",
+   "t": "antitrust",
+   "f": [
+    "antitrust"
+   ],
+   "pt": "antitruste (concorrência)",
+   "exp": "Regras contra monopólio; no Brasil, o Cade cuida disso.",
+   "ex": "The deal faces antitrust review.",
+   "ex_pt": "O negócio passa por análise antitruste."
+  },
+  {
+   "g": "negocios",
+   "t": "lawsuit",
+   "f": [
+    "lawsuit",
+    "lawsuits",
+    "sues",
+    "sued"
+   ],
+   "pt": "processo judicial",
+   "exp": "Ação na Justiça.",
+   "ex": "Investors filed a lawsuit.",
+   "ex_pt": "Investidores entraram com um processo."
+  },
+  {
+   "g": "negocios",
+   "t": "fine",
+   "f": [
+    "fines",
+    "fined",
+    "penalty",
+    "penalties"
+   ],
+   "pt": "multa",
+   "exp": "Penalidade em dinheiro.",
+   "ex": "The bank was fined by regulators.",
+   "ex_pt": "O banco foi multado pelos reguladores."
+  },
+  {
+   "g": "negocios",
+   "t": "wealth management",
+   "f": [
+    "wealth management",
+    "wealth manager",
+    "wealth managers"
+   ],
+   "pt": "gestão de patrimônio",
+   "exp": "Serviço de investimento para clientes de alta renda.",
+   "ex": "Wealth management fees grew.",
+   "ex_pt": "As receitas de gestão de patrimônio cresceram."
+  },
+  {
+   "g": "negocios",
+   "t": "financial advisor",
+   "f": [
+    "financial advisor",
+    "financial advisors",
+    "advisor",
+    "advisors",
+    "RIA",
+    "RIAs"
+   ],
+   "pt": "consultor / assessor de investimentos",
+   "exp": "RIA é o consultor de investimentos registrado nos EUA.",
+   "ex": "Advisors are seeking scale.",
+   "ex_pt": "Os consultores buscam ganhar escala."
+  },
+  {
+   "g": "negocios",
+   "t": "fees",
+   "f": [
+    "fee",
+    "fees"
+   ],
+   "pt": "taxas (cobradas)",
+   "exp": "Valor cobrado por um serviço, como a taxa de administração.",
+   "ex": "Lower fees attract investors.",
+   "ex_pt": "Taxas menores atraem investidores."
+  },
+  {
+   "g": "negocios",
+   "t": "real estate",
+   "f": [
+    "real estate",
+    "property",
+    "properties"
+   ],
+   "pt": "imóveis",
+   "exp": "O setor imobiliário.",
+   "ex": "Real estate stocks fell.",
+   "ex_pt": "As ações do setor imobiliário caíram."
+  },
+  {
+   "g": "negocios",
+   "t": "REIT",
+   "f": [
+    "reit",
+    "reits"
+   ],
+   "pt": "REIT (fundo imobiliário dos EUA)",
+   "exp": "Empresa americana que tem imóveis e distribui a renda, parecida com os FIIs.",
+   "ex": "REITs benefit from lower rates.",
+   "ex_pt": "Os REITs ganham com juros menores."
+  },
+  {
+   "g": "negocios",
+   "t": "insurer",
+   "f": [
+    "insurer",
+    "insurers",
+    "insurance"
+   ],
+   "pt": "seguradora / seguro",
+   "exp": "Empresa que vende seguros.",
+   "ex": "Insurers reported higher premiums.",
+   "ex_pt": "As seguradoras tiveram prêmios maiores."
+  },
+  {
+   "g": "negocios",
+   "t": "bank",
+   "f": [
+    "bank",
+    "banks",
+    "banking"
+   ],
+   "pt": "banco / setor bancário",
+   "exp": "Instituição que capta e empresta dinheiro.",
+   "ex": "Banks led the market higher.",
+   "ex_pt": "Os bancos puxaram o mercado para cima."
+  },
+  {
+   "g": "negocios",
+   "t": "fintech",
+   "f": [
+    "fintech",
+    "fintechs",
+    "digital bank",
+    "neobank"
+   ],
+   "pt": "fintech / banco digital",
+   "exp": "Empresa de serviços financeiros baseada em tecnologia.",
+   "ex": "The fintech reported record clients.",
+   "ex_pt": "A fintech teve número recorde de clientes."
+  }
+ ]
+}

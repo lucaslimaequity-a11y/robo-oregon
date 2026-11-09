@@ -279,6 +279,69 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       return {n: as.length, casas: s ? s.querySelectorAll('li').length : 0, grupos: grupos.join('|'), https: as.every(a => a.href.indexOf('https://') === 0), fora: as.every(a => a.target === '_blank' && a.rel === 'noopener'),
         xp: as.concat(db).some(a => /xpi\.com|xp\.com\.br|infomoney|rico\.com|clear\.com\.br|conteudos\.xp/i.test(a.href)), deb: db.length, sw}; });
     rep(rc8.casas >= 20 && rc8.n >= rc8.casas && rc8.grupos === 'Brasil|Global' && rc8.https && rc8.fora && !rc8.xp && rc8.deb >= 20 && rc8.sw, vw + ' research das casas: links externos do Brasil e global, sem Grupo XP, em Research global e no Debate (' + JSON.stringify(rc8) + ')');
+    // v3.9 · Biblioteca › Inglês: voz e microfone simulados (o navegador de teste não tem voz nem reconhecimento de fala)
+    const en9 = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms)), r = {};
+      for (const v of STORE.list('vocab')) await STORE.del('vocab', v.id);
+      APP.lsSet('ing-passo', null); APP.lsSet('ing-dia', null); APP.lsSet('ing-feitos', []); APP.lsSet('ing-vel', 0.75);
+      window.__falado = [];
+      Object.defineProperty(window, 'speechSynthesis', {configurable: true, value: {speak: u => window.__falado.push([u.text, u.rate]), cancel: () => {}, getVoices: () => [], addEventListener: () => {}}});
+      window.__fala = 'stocks rally on weaker dollar';
+      window.SpeechRecognition = window.webkitSpeechRecognition = function () { const me = this; me.start = () => setTimeout(() => { me.onresult({results: [[{transcript: window.__fala}]]}); me.onend && me.onend(); }, 20); };
+      APP.go('bib', 'ingles'); await z(500);
+      const main = document.getElementById('main'), card = () => main.querySelector('#en-dia .en-card');
+      r.h1 = /Inglês do mercado/.test(main.querySelector('h1').textContent);
+      r.passos = main.querySelectorAll('.en-pontos i').length === 8;
+      r.passo1 = /Manchete 1 de 5/.test(card().textContent);
+      r.escondido = !card().querySelector('.en-frase');
+      Array.from(card().querySelectorAll('button')).find(b => / Ouvir$/.test(b.textContent)).click();
+      Array.from(card().querySelectorAll('button')).find(b => b.textContent === 'Mais devagar').click();
+      r.voz = window.__falado.length === 2 && Math.abs(window.__falado[0][1] - 0.75) < 0.01 && Math.abs(window.__falado[1][1] - 0.6) < 0.01 && window.__falado[0][0].split(' ').length >= 6;
+      Array.from(card().querySelectorAll('button')).find(b => b.textContent === 'Mostrar o texto').click(); await z(100);
+      const fr = card().querySelector('.en-frase'); r.frase = !!fr && fr.querySelectorAll('.gl-t').length >= 1;
+      fr.querySelector('.gl-t').click(); await z(50);
+      r.def = !!card().querySelector('.gl-def b') && card().querySelector('.gl-def').textContent.length > 20;
+      const tr = card().querySelector('a.en-trad'); r.trad = !!tr && tr.href.indexOf('https://translate.google.com/?sl=en&tl=pt&text=') === 0;
+      window.__fala = fr.textContent.trim().split(' ').slice(0, -1).join(' ');
+      card().querySelector('.en-mic').click(); await z(120);
+      const cf = card().querySelector('.en-conf'); r.conf = !!cf && /% das palavras/.test(cf.textContent) && cf.querySelectorAll('.cf-x').length >= 1 && cf.querySelectorAll('.cf-ok').length >= 3;
+      Array.from(card().querySelectorAll('button')).find(b => b.textContent === 'Salvar frase').click(); await z(100);
+      r.salvo = STORE.list('vocab').length === 1;
+      const prox = () => Array.from(main.querySelectorAll('#en-dia .en-nav button')).find(b => /Próxima|Concluir/.test(b.textContent));
+      for (let i = 0; i < 5; i++) { prox().click(); await z(60); }
+      r.fale = /Fale você · 1 de 3/.test(card().textContent) && /pilar de (Dividendos|Valor)/.test(card().querySelector('.en-pt').textContent);
+      for (let i = 0; i < 3; i++) { prox().click(); await z(60); }
+      r.fim = /Pronto por hoje/.test(card().textContent) && APP.lsGet('ing-feitos', []).length === 1;
+      // conferência da fala e arquivo do Anki (funções puras)
+      const c1 = INTEL.conferirFala('Treasury yields climb to 4.5% as the Fed signals a pause', ['treasury yields climb to 4.5 percent as the fed signals a pause']);
+      const c2 = INTEL.conferirFala('Stocks rally on weaker dollar', ['stocks on a weaker dollar']);
+      r.conferir = c1.pct === 100 && c2.pct === 80 && c2.ok.join() === 'true,false,true,true,true';
+      const anki = INTEL.textoAnki([{en: 'buyback', pt: 'recompra de ações', exp: 'A empresa compra as próprias ações.', ex: 'The board approved a new buyback.', tipo: 'termo'}]);
+      r.anki = anki.indexOf('#separator:tab\n#html:true\n') === 0 && anki.indexOf('buyback\trecompra de ações<br>A empresa compra as próprias ações.<br><i>The board approved a new buyback.</i>\toregon termo') > 0;
+      const rv = INTEL.proximaRevisao({caixa: 2}, true, '2026-11-08'), rv0 = INTEL.proximaRevisao({caixa: 4}, false, '2026-11-08');
+      r.revisao = rv.caixa === 3 && rv.prox === '2026-11-15' && rv0.caixa === 0 && rv0.prox === '2026-11-08';
+      // revisão em cartões com a frase salva
+      APP.rerender(); await z(300);
+      const rev = main.querySelector('#en-rev'); Array.from(rev.querySelectorAll('button')).find(b => b.textContent === 'Mostrar a resposta').click(); await z(50);
+      Array.from(main.querySelector('#en-rev').querySelectorAll('button')).find(b => b.textContent === 'Acertei').click(); await z(100);
+      const v = STORE.list('vocab')[0]; r.cartao = v.caixa === 1 && v.prox > INTEL.hojeBRT() && /Revisão de hoje concluída/.test(main.querySelector('#en-rev').textContent);
+      // glossário: busca em português acha o termo em inglês
+      const inp = main.querySelector('#en-gl input[type=search]'); inp.value = 'recompra'; inp.dispatchEvent(new Event('input')); await z(50);
+      r.glossario = Array.from(main.querySelectorAll('#en-gl .gl-li b')).some(b => b.textContent === 'buyback');
+      r.podcasts = main.querySelectorAll('#en-pod a[target=_blank]').length === 4;
+      r.sw = document.documentElement.scrollWidth <= innerWidth;
+      const nm = main.innerText.match(/.{0,30}(^|\s)(null|undefined|NaN)(\s|$).{0,30}/); r.nul = !nm || nm[0];
+      // listas e leitura: botão de ouvir só nas manchetes em inglês
+      APP.go('mundo', 'agora'); await z(500);
+      const rows = Array.from(document.querySelectorAll('#main article.nr')), por = {}; APP.itens().forEach(x => { por[x.id] = x; });
+      r.linhas = rows.filter(a => a.querySelector('.en-row')).length > 0 && rows.every(a => !!a.querySelector('.en-row') === ((por[a.dataset.id] || {}).idioma === 'en'));
+      const xen = APP.itens().find(x => x.idioma === 'en'), xpt = APP.itens().find(x => x.idioma !== 'en');
+      APP.abrirItem(xen); await z(150); r.leituraEN = !!document.querySelector('.drawer .en-bar .en-mic') && !!document.querySelector('.drawer .en-bar a.en-trad');
+      document.querySelector('.drawer').remove(); APP.abrirItem(xpt); await z(150); r.leituraPT = !document.querySelector('.drawer .en-bar'); document.querySelector('.drawer').remove();
+      for (const v2 of STORE.list('vocab')) await STORE.del('vocab', v2.id);
+      APP.lsSet('ing-passo', null); APP.lsSet('ing-feitos', []);
+      return r; });
+    rep(Object.values(en9).every(v => v === true), vw + ' inglês: sessão do dia (ouvir, texto, glossário, traduzir, conferir a fala, salvar, falar sobre a carteira), revisão, Anki, glossário, podcasts e botão nas manchetes em inglês (' + JSON.stringify(en9) + ')');
     await p.emulateMedia({media: 'print'});
     const pr7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'comite'); await z(400);
       return {top: getComputedStyle(document.querySelector('.top')).display, sug: getComputedStyle(document.querySelector('.cm-g > .no-print')).display, imp: Array.from(document.querySelectorAll('button')).some(b => b.textContent === 'Imprimir')}; });

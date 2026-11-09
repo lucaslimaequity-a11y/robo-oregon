@@ -171,6 +171,8 @@ def validar(cfg):
     for k in ('janela_dias', 'janela_inicial_dias', 'recentes_dias', 'prazo_min'):
         if not isinstance(it.get(k, 1), int) or it.get(k, 1) < 1:
             erros.append('intel: "%s" precisa ser um número inteiro de dias maior que zero' % k)
+    if not isinstance((it.get('ingles') or {}).get('telegram', True), bool):
+        erros.append('intel/ingles: "telegram" precisa ser true ou false, sem aspas')
     for k in ('max_itens_dia', 'max_tokens_dia', 'max_tokens_item'):
         if not isinstance((it.get('ia') or {}).get(k, 1), int) or (it.get('ia') or {}).get(k, 1) < 0:
             erros.append('intel/ia: "%s" precisa ser um número inteiro' % k)

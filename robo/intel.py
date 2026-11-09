@@ -43,6 +43,7 @@ import estante  # noqa: E402  (v3.5 · acervo permanente)
 import cartas  # noqa: E402  (v3.6 · termômetro das cartas)
 import fundos  # noqa: E402  (v3.6 · quem tem a ação)
 import fluxo  # noqa: E402  (v3.8 · fluxo dos fundos)
+import ingles  # noqa: E402  (v3.9 · inglês do mercado: frase do dia no Telegram)
 import proventos  # noqa: E402  (v3.6 · agenda de proventos)
 import pesquisas  # noqa: E402
 import resultados  # noqa: E402
@@ -1040,6 +1041,12 @@ def main():
             linhas += extras_digesto(oregon, estado, agora_, hoje)  # v3.7 · data-com amanhã e cartas novas
         except Exception as e:  # pragma: no cover - proteção: o briefing sai mesmo sem as seções novas
             log('  briefing: seções de proventos e cartas fora (%s)' % type(e).__name__)
+        ig = ic.get('ingles') or {}
+        if ig.get('telegram', True):
+            try:
+                linhas += ingles.linhas_telegram(recentes, agora_, site=ig.get('site'))  # v3.9 · inglês do dia
+            except Exception as e:  # pragma: no cover - proteção: o briefing sai mesmo sem o inglês
+                log('  briefing: inglês do dia fora (%s)' % type(e).__name__)
         okk, m = avisos.enviar('\n'.join(linhas))
         tg = {'ok': okk, 'msg': m or 'briefing enviado'}
         if okk and modo != 'teste_telegram':

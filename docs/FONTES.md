@@ -478,6 +478,19 @@ Fatos relevantes, comunicados ao mercado e avisos aos acionistas das empresas da
 - **Bing Notícias**: RSS público de busca, sem chave e sem custo; não é uma API contratada, pode mudar sem aviso (vira erro visível em Fontes e coleta, nunca item inventado). A ordem é por data, mas o Bing devolve no máximo cerca de 10 manchetes por busca; guardamos só título, link, veículo e data. Portais com assinatura (Valor, Estadão, O Globo) aparecem pela manchete; a matéria abre no site do veículo.
 - **Opiniões de casas**: o sentido (a favor, contra, neutra, mista) vem do título público ou, nas páginas da própria casa e nas opiniões conferidas de 12 meses, da página. Recomendação, preço-alvo, horizonte e analista só aparecem quando estão escritos; nada é deduzido. Documento à CVM ou carta que cita uma agência ou casa ("Fitch eleva o rating") não vira opinião dela. Texto que relata outra casa (comum em Nord e Empiricus) é atribuído à casa citada.
 - **Reddit e X**: sem coleta (ver a seção v3.4). Só links de consulta, abertos fora do Oregon. Comunidades do Reddit na lista (v3.8): investing, stocks, ValueInvesting, SecurityAnalysis, Bogleheads, Economics, dividends, investimentos, finance, wallstreetbets, EconomyCharts, AskEconomics e oil (mais votados da semana).
+- **Inglês do mercado (v3.9)**: não há fonte nova. A página Biblioteca › Inglês usa as manchetes em inglês que o robô
+  já coleta: título, link, data e o resumo público quando a fonte publica, nunca o texto completo.
+  - **Glossário:** `robo/glossario_en.json`, com 187 termos escritos à mão. Os exemplos são genéricos, sem fato atribuído a
+    empresa ou casa.
+  - **Podcasts:** só links oficiais, conferidos em 08/11/2026: Thoughts on the Market (Morgan Stanley, com transcrição),
+    Markets in Motion (RBC), The Indicator (NPR) e Marketplace Morning Report.
+  - **Ficaram de fora porque não deu para conferir a página:** BBC 6 Minute English (bloqueada à leitura automática),
+    Goldman Sachs Exchanges (a página não lista episódios), BlackRock The Bid (não abriu) e J.P. Morgan Research Recap
+    (o endereço leva a outro programa).
+  - **Voz, fala e tradução:** são do navegador de quem usa, sem chave e sem custo. No Chrome, o reconhecimento de fala
+    usa o serviço de voz do Google. A tradução no aparelho é a do próprio Chrome; nos outros casos abre o Google Tradutor
+    no navegador.
+  - **Telegram:** a frase do dia no briefing leva o link de tradução, não um texto traduzido pelo robô.
 - **Research das casas (v3.8.2)**: só links de consulta externa para a página de estudos e publicações de cada casa, sem
   coleta. Ficam em Mundo e Estratégia › Research global (seção no fim da página) e no Debate de mercado. São 8 casas do
   Brasil (BTG Pactual, Itaú, Genial, BB Investimentos, Safra, Santander, Suno e Ágora) e 15 globais (Goldman Sachs,

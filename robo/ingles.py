@@ -79,7 +79,7 @@ def escolher_frase(itens, glos, agora_, horas=36):
     vistos = set()
     for x in itens or []:
         tit = (x.get('titulo') or '').strip()
-        if x.get('idioma') != 'en' or not tit or not x.get('link') or RUIDO.search(tit):
+        if x.get('idioma') != 'en' or not tit or not x.get('link') or RUIDO.search(tit) or x.get('aviso_fonte'):  # v3.10: fonte sinalizada (Grupo XP) não vai ao Telegram
             continue
         n = len(tit.split())
         if n < 6 or n > 18:

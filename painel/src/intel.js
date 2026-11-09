@@ -86,9 +86,10 @@ var INTEL = (function () {
       if (f === 'gestoras' && /^gestora_/.test(x.categoria || '')) { /* cartas e research entram neste filtro */ }
       else if (opt.so_noticias !== false && !(x.categoria === 'veiculo' || x.categoria === 'instituicao' || x.categoria === 'oficial_empresa')) return false;
       if (x.via && x.confiavel === false && !opt.todosVeiculos) return false;
-      if (x.categoria === 'veiculo' && !opt.todosVeiculos && !((x.temas || []).length || (x.ativos || []).length || (x.etfs_tema || []).length || (x.setor_de || []).length)) return false;
+      if (x.categoria === 'veiculo' && !opt.todosVeiculos && !((x.temas || []).length || (x.ativos || []).length || (x.etfs_tema || []).length || (x.setor_de || []).length || (x.macro_br || []).length)) return false;
       var t = Date.parse(x.publicado_em.length <= 10 ? x.publicado_em + 'T12:00:00-03:00' : x.publicado_em); if (!isFinite(t) || agora - t > lim || t - agora > 6 * 3600 * 1000) return false;
       if (f === 'carteira') return I.diretos(x).length > 0;
+      if (f === 'macro') return (x.macro_br || []).length > 0;  // v3.10 · macro do Brasil
       if (f === 'brasil') return (x.regioes || []).indexOf('brasil') >= 0 || x.pais === 'Brasil';
       if (f === 'mundo') return x.pais !== 'Brasil' || (x.regioes || []).some(function (r) { return r !== 'brasil'; }) && (x.regioes || []).indexOf('brasil') < 0;
       if (f === 'casas') return x.natureza === 'opiniao_casa';
@@ -214,9 +215,13 @@ var INTEL = (function () {
   I.hojeBRT = function (d) { d = d || new Date(); try { var s = new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit'}).format(d); if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; } catch (e) {} return d.toISOString().slice(0, 10); };
   I.menosDias = function (iso, n) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - n); return d.toISOString().slice(0, 10); };
   // Junta listas de itens sem repetir (o mesmo id pode estar em recentes e no arquivo do mês), mais recentes primeiro
-  // Veículos do Grupo XP não aparecem em lugar nenhum (decisão da Oregon), nem o histórico gravado antes do bloqueio
-  var XP_RX = /\b(infomoney|expert ?xp|conte[uú]dos xp|xp investimentos|rico investimentos|clear corretora)\b|grupo xp/i;
-  I.bloqueado = function (x) { return XP_RX.test([x.organizacao, x.fonte, x.aviso_fonte].join(' ')); };
+  // Veículos do Grupo XP não aparecem em lugar nenhum (decisão da Oregon), nem o histórico gravado antes do bloqueio.
+  // v3.10 (decisão do Lucas em 09/11/2026): o InfoMoney entra só como notícia no painel, marcado como Grupo XP (I.grupoXP),
+  // e fica fora de pauta da semana, fechamento e sugestões do comitê. Os demais veículos do grupo continuam fora de tudo.
+  var XP_RX = /\b(expert ?xp|conte[uú]dos xp|xp investimentos|rico investimentos|clear corretora)\b/i;
+  I.bloqueado = function (x) { return XP_RX.test([x.organizacao, x.fonte].join(' ')); };
+  I.grupoXP = function (x) { return !!x && (/\binfomoney\b|grupo xp/i.test([x.organizacao, x.fonte, x.aviso_fonte].join(' ')) || I.bloqueado(x)); };
+  I.macroBR = function (x) { return (x && x.macro_br) || []; };  // v3.10 · subtemas de macro do Brasil marcados pelo robô
   I.juntar = function (listas) {
     var vis = {}, out = [];
     listas.forEach(function (l) { (l || []).forEach(function (x) { if (!x || !x.id || vis[x.id] || x.agrupado_em || I.bloqueado(x)) return; vis[x.id] = 1; out.push(x); }); });

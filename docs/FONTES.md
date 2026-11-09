@@ -2,13 +2,47 @@
 
 Cadastro: `robo/fontes.json`. Regras que valem para todas: só conteúdo público e gratuito; `robots.txt` respeitado (um caminho vedado é pulado e contado como rejeitado); nada de login, paywall ou contorno de bloqueio (403 encerra a fonte na rodada); de imprensa guardamos só título, link, data e veículo; de gestoras e instituições, um resumo curto do próprio feed (até 300 caracteres) e o link para o original. Nenhuma data é inventada: item sem data recebe a data de detecção, marcada como tal.
 
-Validação feita em 07–08/11/2026 (217 fontes no cadastro, 152 ativas, depois da v3.4 e do acréscimo da academia brasileira) lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhum veículo do Grupo XP entra, em nenhuma hipótese** (v3.4: `noticias.fontes_bloqueadas` = InfoMoney, XP Investimentos, Expert XP, Conteúdos XP, Rico Investimentos, Clear Corretora; descarta também manchetes agregadas desses veículos e não publica o que foi gravado antes do bloqueio). Opinião da XP noticiada por outro veículo continua, com a casa "XP".
+Validação feita em 07–08/11/2026 (217 fontes no cadastro, 152 ativas, depois da v3.4 e do acréscimo da academia brasileira) lendo cada endereço (`status_validacao`: **ok** = formato e itens recentes confirmados; **parcial** = acessível, com a limitação anotada; demais = desligada, com o motivo). A leitura ao vivo pelo robô acontece no GitHub Actions: a primeira rodada mostra, em **Biblioteca → Fontes e coleta**, o que cada fonte entregou de fato. **Nenhum veículo do Grupo XP entra, em nenhuma hipótese** (v3.4: `noticias.fontes_bloqueadas` = InfoMoney, XP Investimentos, Expert XP, Conteúdos XP, Rico Investimentos, Clear Corretora; descarta também manchetes agregadas desses veículos e não publica o que foi gravado antes do bloqueio). Opinião da XP noticiada por outro veículo continua, com a casa "XP". **Exceção v3.10 (decisão do Lucas em 09/11/2026):** o InfoMoney entra só como notícia no painel, sempre marcado "Grupo XP", e fica fora da pauta da semana, do fechamento, das sugestões do comitê e do Telegram; os demais veículos do grupo continuam bloqueados.
 
 ## Campos do cadastro
 
 `id`, `nome`, `organizacao`, `categoria` (instituicao · gestora_internacional · gestora_brasil · academia · youtube · veiculo), `pais`, `idioma`, `tipo` (carta · research · paper · macro · relatorio · discurso · documento_oficial · dado_oficial · blog · video · noticia), `metodo`, `url_fonte` (página humana), `url_coleta` (`{ano}` vira o ano corrente), `ativo`. Por método: `padrao` (regex sobre os links da página ou do sitemap), `padrao_data` (regex de data no link), `api` (wp_posts · imf_blog_json · bcb_copom · ibge_releases), `filtro_titulo`/`filtro_link` (regex), `campo_link`, `canal_id` (YouTube), `titulo_item` (documento fixo), `guardar_resumo`, `so_oregon` (feed setorial: só manchetes que citem ativo das carteiras), `maximo`. Desde a v3.4: `casa` (a fonte é a página de research da própria casa: o que ela publica sobre um ativo das carteiras é opinião dela, salvo quando o texto relata outra casa), `ler_item` (o robô abre a página de cada item novo, até `ler_item_max` por rodada, para ler data de publicação, data de atualização, autor e, nas casas, recomendação, preço-alvo e horizonte quando escritos; o texto não é guardado) e `debate` (análise de colaboradores, como o Seeking Alpha: vai para Debate de mercado, separada de notícia e de research de banco).
 
 Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública e que o formato bate com o método, acrescente a entrada com `"ativo": true` e rode o workflow à mão; o Summary da rodada mostra recebidos/novos/erro daquela fonte. Para **desligar**: `"ativo": false`.
+
+## v3.10 (09/11/2026): macro do Brasil
+
+O robô já coletava as notícias de macro e mercado do Brasil. Faltava mostrá-las e trazer um pouco mais delas.
+
+**Marcação.** `analise.MACRO_BR` lê só a manchete, sem acento, e marca sete assuntos: agenda do dia, juros, inflação,
+câmbio, bolsa, fiscal e atividade.
+- **Quem é marcado:** notícias de veículo ou de instituição, em português, ou em inglês quando citam o Brasil.
+- **Fica de fora:** manchete só do exterior (Fed, Wall Street, China e outros, sem nada do Brasil), "conselho fiscal",
+  "Bolsa Família", "câmbio automático" e casos parecidos.
+- **Filtro da imprensa:** notícia de macro do Brasil passa no filtro de tema da imprensa geral.
+- **Nota:** ganha +8 ("macro do Brasil"), só quando não cita empresa da carteira. A nota das notícias de empresa não muda.
+
+**Fontes novas.**
+- **InfoMoney**, `https://www.infomoney.com.br/feed/`. Feed geral, porque os de seção vêm vazios. robots.txt sem Disallow
+  (conferido em 09/11/2026). Exceção do Grupo XP descrita acima. O feed mistura esporte, e o filtro de tema deixa entrar só
+  economia, mercados e macro.
+- **IstoÉ Dinheiro**, `https://istoedinheiro.com.br/feed/`. robots.txt libera; o conteúdo do feed não pôde ser lido pela
+  ferramenta de validação, então fica "a validar" até a primeira rodada no GitHub.
+- **Seis buscas de macro do Brasil no Bing Notícias** (`noticias.buscas_macro`): juros, inflação, Ibovespa, dólar, fiscal
+  e agenda do dia.
+  - Usam o mesmo RSS das buscas por empresa; o robots.txt permite `/news/search`.
+  - Rodam a cada 60 minutos, fora do teto das buscas por empresa.
+  - Só entra o que o robô reconhece como macro do Brasil.
+  - Por elas chegam Valor, CNN, Estadão, Poder360 e outros que não têm feed aberto.
+
+**Fontes já existentes.** O Banco Central (notas à imprensa e comunicados do Copom) já estava no cadastro.
+
+**Conferidos em 09/11/2026 e não incluídos.**
+- **Valor, O Globo, Poder360 e Veja:** os sites recusaram a leitura automática, então o robots.txt não pôde ser
+  conferido. Continuam chegando pela busca.
+- **Investing.com Brasil e Metrópoles:** os feeds estão parados há semanas ou meses.
+- **CartaCapital:** o feed de economia é pouco de mercado.
+- **CNN Brasil:** não tem mais feed.
 
 ## v3.8 (08/11/2026): fluxo dos fundos e fontes que falhavam
 

@@ -1,3 +1,49 @@
+# Oregon Intelligence v3.10 · macro do Brasil (09/11/2026)
+
+O pacote `robo-oregon-v3.10-alterados.zip` vale sobre a v3.9.1 que já está no seu GitHub (commit 71ae922, com o
+`robo.yml` novo). **Desta vez o `robo.yml` não muda: é um envio só.** Nada do que existia sobre empresas foi retirado ou
+mudou de nota.
+
+## O que entra
+
+- **Mercado hoje · Brasil**, no Hoje, logo depois do mapa de atenção, em todos os modos (inclusive Rápida).
+  - **"Para começar o dia":** as matérias de agenda do dia.
+  - **Depois:** juros, inflação, câmbio, bolsa, fiscal e atividade das últimas 18 horas, sem repetir o mesmo fato.
+  - **Filtro:** botões por assunto no alto do bloco.
+  - **Atalho:** "Mercado hoje" em "Nesta página".
+- **Filtro "Macro Brasil"** em Todas as notícias.
+- **O robô marca a macro do Brasil** pela manchete.
+  - A notícia de macro pura ganha +8 na nota, com o motivo escrito ("macro do Brasil: …"). Notícia que cita empresa da
+    carteira fica com a nota de antes.
+  - Notícia de macro passa no filtro de tema da imprensa.
+  - Manchete só do exterior não conta: o mundo continua em Mundo e Estratégia.
+- **Mais fontes de macro:**
+  - **InfoMoney**, como exceção (ver abaixo).
+  - **IstoÉ Dinheiro**, a validar na primeira rodada.
+  - **Seis buscas de macro do Brasil** (juros, inflação, Ibovespa, dólar, fiscal, agenda do dia). Trazem Valor, CNN,
+    Estadão, Poder360 e outros que não têm feed aberto, e não diminuem as buscas das empresas.
+- **Telegram:** o resumo da manhã ganha **"Mercado hoje · Brasil"**, com até 5 manchetes das últimas 18 horas e a agenda
+  do dia primeiro. Para tirar a seção, troque `"telegram": true` para `false` em `intel.mercado_hoje`, no
+  `robo/config.json`.
+- **InfoMoney (Grupo XP), exceção que você pediu:**
+  - Entra só como notícia no painel, com o selo **"Grupo XP"** em toda linha.
+  - Fica fora da pauta da semana (Oregon e VIP), do fechamento da semana, das sugestões do comitê e do Telegram.
+  - Os demais veículos do Grupo XP continuam bloqueados.
+
+**Quando aparece.** A marcação vale também para o que já foi coletado: a próxima rodada reclassifica tudo (regras 38).
+Na primeira rodada depois do envio, o bloco já aparece com as notícias de macro dos últimos dias.
+
+## Como subir
+
+1. Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`robo/…`, `painel/…`, `site/…`,
+   `testes/…`, `docs/…`, `README.md`).
+2. Clique em Commit changes.
+3. A rodada que dispara testa e publica sozinha.
+
+## Voltar atrás
+
+Na lista de commits, abra o commit do envio e use Revert.
+
 # Atualização pequena v3.9.1 · menos buracos na coleta (09/11/2026)
 
 O pacote `robo-oregon-v3.9.1-alterados.zip` vale sobre a v3.9 que já está no seu GitHub (commit 630c68c, com o inglês).

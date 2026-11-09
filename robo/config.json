@@ -325,7 +325,6 @@
   "ibge": true,
   "cvm": true,
   "fontes_bloqueadas": [
-   "InfoMoney",
    "XP Investimentos",
    "Expert XP",
    "Conteúdos XP",
@@ -395,6 +394,15 @@
    "ADVFN",
    "Investing.com Brasil"
   ],
+  "buscas_macro": [
+   {"tema": "Juros", "consulta": "Copom OR Selic OR \"juros futuros\""},
+   {"tema": "Inflação", "consulta": "IPCA OR \"Boletim Focus\" OR \"inflação no Brasil\""},
+   {"tema": "Bolsa", "consulta": "Ibovespa"},
+   {"tema": "Câmbio", "consulta": "\"dólar hoje\" OR \"dólar fecha\" OR \"dólar abre\""},
+   {"tema": "Fiscal", "consulta": "\"arcabouço fiscal\" OR \"contas públicas\" OR \"meta fiscal\" OR Haddad"},
+   {"tema": "Agenda do dia", "consulta": "\"o que move os mercados\" OR \"agenda do dia\" mercado OR \"agenda econômica\""}
+  ],
+  "_nota_buscas_macro": "v3.10 · macro do Brasil no RSS do Bing Notícias (o mesmo das buscas por empresa; robots.txt permite /news/search): traz Valor, CNN, Estadão, Poder360 e outros que não têm feed aberto. A cada 60 minutos, fora do teto das buscas por empresa; só entra o que o robô reconhece como macro do Brasil (analise.macro_br).",
   "macro": [
    {
     "tema": "Juros",
@@ -1582,7 +1590,7 @@
    "intervalo_min": 180,
    "_nota": "Fatos relevantes, comunicados ao mercado e avisos aos acionistas das empresas das carteiras (dados.cvm.gov.br, base aberta). Conferidos por CNPJ e nome."
   },
-  "_bloqueio_nota": "fontes_bloqueadas: veículos que o robô descarta por completo e que não são publicados nem do histórico (v3.4: Grupo XP — InfoMoney, XP, Expert XP, Rico, Clear — por decisão da Oregon). Opiniões da XP noticiadas por outros veículos continuam, com a casa \"XP\". fontes_sinalizadas: veículos que entram, com aviso.",
+  "_bloqueio_nota": "fontes_bloqueadas: veículos que o robô descarta por completo e que não são publicados nem do histórico (v3.4: Grupo XP — InfoMoney, XP, Expert XP, Rico, Clear — por decisão da Oregon). Opiniões da XP noticiadas por outros veículos continuam, com a casa \"XP\". fontes_sinalizadas: veículos que entram, com aviso. v3.10 (decisão do Lucas em 09/11/2026): o InfoMoney sai do bloqueio e entra só como notícia no painel, sempre com o aviso \"Grupo XP\"; fica fora da pauta da semana, do fechamento, das sugestões do comitê e do Telegram. Os demais veículos do Grupo XP continuam bloqueados.",
   "fontes_sinalizadas": {
    "InfoMoney": "Grupo XP — não citar em material de cliente",
    "XP Investimentos": "Grupo XP — não citar em material de cliente",
@@ -3273,6 +3281,7 @@
   "prazo_min": 12,
   "telegram_digesto": true,
   "telegram_hora": "07:30",
+  "mercado_hoje": {"telegram": true, "horas": 18, "maximo": 5, "_nota": "v3.10 · macro do Brasil no briefing do Telegram: até 5 manchetes das últimas 18 horas, agenda do dia primeiro, sem repetir o mesmo fato e sem veículo do Grupo XP. Para tirar do Telegram, troque telegram para false."},
   "ingles": {"telegram": true, "site": "https://lucaslimaequity-a11y.github.io/robo-oregon/", "_nota": "v3.9 · inglês do mercado: a frase do dia em inglês no briefing do Telegram (manchete coletada com os termos do glossário robo/glossario_en.json, link para o Google Tradutor e para Biblioteca › Inglês). Para tirar do Telegram, troque telegram para false."},
   "ia": {
    "ativo": false,

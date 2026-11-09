@@ -203,7 +203,7 @@
     return {de: seg.toISOString().slice(0, 10), ate: new Date(seg.getTime() + 6 * 864e5).toISOString().slice(0, 10)};
   }
   A.fechamentoSemana = function (off) {
-    var s = semanaDe(off || 0), todos = (A.itensAtivo ? A.itensAtivo() : []).filter(function (x) { var d = I.pub(x).slice(0, 10); return !x.acervo && !x.agrupado_em && d >= s.de && d <= s.ate && !I.baixaRelevancia(x); });
+    var s = semanaDe(off || 0), todos = (A.itensAtivo ? A.itensAtivo() : []).filter(function (x) { var d = I.pub(x).slice(0, 10); return !x.acervo && !x.agrupado_em && d >= s.de && d <= s.ate && !I.baixaRelevancia(x) && !(I.grupoXP && I.grupoXP(x)); });
     function ord(l) { return l.sort(function (a, b) { return I.pub(b).localeCompare(I.pub(a)); }); }
     var emp = function (x) { return I.diretos(x).length || (x.ativos_vip || []).length; };
     var fatos = ord(todos.filter(function (x) { var k = I.marca(x).k; return emp(x) && (k === 'fato' || k === 'resultado'); }));

@@ -269,7 +269,7 @@
     return CARTS.map(function (c) {
       var ls = (c.ativos || []).map(function (a) {
         var t = a.ticker, n = tkN(t), vis = {};
-        var its = conteudo(t).direto.filter(function (x) { var q = ts(x); if (!q || q < lim || q > Date.now() + 6 * 3600e3 || x.acervo) return false; var k = x.titulo.toLowerCase().slice(0, 60); if (vis[k]) return false; vis[k] = 1; return true; });
+        var its = conteudo(t).direto.filter(function (x) { var q = ts(x); if (!q || q < lim || q > Date.now() + 6 * 3600e3 || x.acervo || (I.grupoXP && I.grupoXP(x))) return false; var k = x.titulo.toLowerCase().slice(0, 60); if (vis[k]) return false; vis[k] = 1; return true; });
         var rel = its.filter(function (x) { return !I.baixaRelevancia(x); });
         return {t: t, nome: a.empresa, itens: selecionar(I.agruparFatos(rel).map(function (g) { return g.x; }), n), baixas: its.filter(I.baixaRelevancia), n: n};
       });

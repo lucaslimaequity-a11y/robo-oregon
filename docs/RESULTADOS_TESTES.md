@@ -1,3 +1,29 @@
+# Resultados dos testes · v3.10 · 09/11/2026 (Brasília)
+
+- **Robô (Python):** 173 testes, todos OK, sendo 8 novos em `testes/test_v310.py`. Eles conferem:
+  - a marcação de macro do Brasil com manchetes reais de hoje (Money Times, Exame);
+  - os casos que ficam de fora: Fed, bolsas da Ásia, conselho fiscal, Paraguai, Bolsa Família, câmbio de carro;
+  - a nota +8 só para macro pura, e que a nota da notícia de empresa (Oregon e VIP) não muda com a marcação;
+  - as 6 buscas de macro (intervalo, exigência de macro, cadastro válido);
+  - o InfoMoney fora do bloqueio, com o aviso, e o resto do Grupo XP bloqueado;
+  - a escolha do Mercado hoje: agenda primeiro, o mesmo fato uma vez, sem Grupo XP, janela de 18 h;
+  - uma rodada inteira simulada com o Telegram. "Ibovespa fecha em alta" passa no filtro, o InfoMoney entra com o aviso
+    e o briefing traz "Mercado hoje · Brasil" sem o InfoMoney.
+- **Testes antigos atualizados pela decisão do InfoMoney:** em `test_intel.py` e em `painel/src/tests.js`, o InfoMoney
+  pode entrar; XP Investimentos e Expert XP continuam bloqueados.
+- **Painel (Node):** 64 de 64.
+- **Navegador:** 222 verificações, todas PASS, em 1440 px e 390 px. A nova confere:
+  - o bloco no modo Rápida e no Briefing, logo depois do mapa de atenção, com o atalho;
+  - a agenda do dia em "Para começar o dia", sem notícia do exterior;
+  - o filtro por assunto;
+  - o selo Grupo XP na linha do InfoMoney;
+  - o filtro "Macro Brasil" em Todas as notícias;
+  - a página sem "null" e sem rolagem para o lado.
+- **Dados reais (coleta das 07:50 de 09/11, com a marcação aplicada fora do robô):** 80 manchetes de macro do Brasil nos
+  10 dias publicados e 18 nas últimas 18 horas. Em "Para começar o dia" ficaram "o que move os mercados nesta segunda"
+  (Exame) e "Mercado digere discurso de Lula…" (Money Times).
+- **Ressalva:** isto não prova nada no GitHub. A confirmação é a rodada verde e o bloco no site publicado.
+
 # Resultados dos testes · v3.9.1 · 09/11/2026 (Brasília)
 
 - **Robô (Python):** 165 testes, todos OK. Continua valendo a regra "coleta sete dias por semana" em todos os crons.

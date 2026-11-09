@@ -56,7 +56,7 @@
     var itens = (A.todosItensAtivo ? A.todosItensAtivo() : A.itensAtivo()).concat(A.itensResearch ? A.itensResearch() : []);
     var vis = {}, por = {macro: [], dividendos: [], valor: [], fundos: [], global: [], riscos: [], estudos: []};
     itens.forEach(function (x) {
-      if (vis[x.id] || ja[x.id] || x.acervo || x.agrupado_em || !x.publicado_em || I.pub(x).slice(0, 7) !== mes || (I.baixaRelevancia && I.baixaRelevancia(x))) return; vis[x.id] = 1;
+      if (vis[x.id] || ja[x.id] || x.acervo || x.agrupado_em || !x.publicado_em || I.pub(x).slice(0, 7) !== mes || (I.baixaRelevancia && I.baixaRelevancia(x)) || (I.grupoXP && I.grupoXP(x))) return; vis[x.id] = 1;
       var d = I.diretos(x).filter(function (t) { return C.ATV[t]; }), pts = (x.prioridade || {}).pontos || 0;
       if (d.length && (x.categoria === 'oficial_empresa' || x.natureza === 'opiniao_casa' || d.some(function (t) { return I.vinculo(x, t).evento === 'resultado'; }))) pts += 4;
       if ((x.tambem_em || []).length) pts += x.tambem_em.length;

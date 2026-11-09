@@ -78,6 +78,25 @@ vip_itens += [
     {'id': 'op_new', 'titulo': 'Itaú BBA corta preço-alvo da Klabin (KLBN4) para R$ 22 e rebaixa para neutro', 'link': 'https://veiculo.teste/klabin-itau-nov', 'fonte': 'Money Times', 'organizacao': 'Money Times', 'categoria': 'veiculo',
      'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'noticia', 'publicado_em': '2026-11-06T11:00-03:00', 'detectado_em': '2026-11-06T11:20-03:00', 'ativos': ['KLBN4'], 'vinculos': _dir('KLBN4', 'recomendacao'),
      'natureza': 'opiniao_casa', 'casas': ['Itaú BBA'], 'posicao': 'contraria', 'recomendacao': 'Neutro', 'preco_alvo': 'R$ 22,00', 'temas': [], 'regras': 37}]
+# v3.10 · macro do Brasil com horários relativos a agora (o bloco Mercado hoje olha as últimas 18 a 36 horas)
+import datetime as _dt
+_agora = _dt.datetime.now(_dt.timezone(_dt.timedelta(hours=-3)))
+_h = lambda hs: (_agora - _dt.timedelta(hours=hs)).isoformat(timespec='minutes')
+_ag = (_agora.replace(hour=6, minute=30) if _agora.hour * 60 + _agora.minute > 6 * 60 + 40 else _agora - _dt.timedelta(minutes=10)).isoformat(timespec='minutes')
+def _mb(i, tit, fonte, quando, mb, **kw):
+    d = {'id': i, 'titulo': tit, 'link': 'https://veiculo.teste/' + i, 'fonte': fonte, 'organizacao': fonte, 'categoria': 'veiculo', 'pais': 'Brasil', 'idioma': 'pt', 'tipo': 'noticia',
+         'publicado_em': quando, 'detectado_em': quando, 'ativos': [], 'macro_br': mb, 'temas': [], 'natureza': 'noticia', 'regras': 38,
+         'prioridade': {'pontos': 24, 'nivel': 'baixa', 'porque': ['Notícia (+8)', 'macro do Brasil (+8)']}}
+    d.update(kw)
+    return d
+vip_itens += [
+    _mb('mb_ag', 'Agenda desta segunda-feira: mercado acompanha Focus, inflação e discurso do presidente do BC', 'Money Times', _ag, ['agenda', 'inflacao']),
+    _mb('mb1', 'Dólar fecha em queda a R$ 5,30 com fluxo estrangeiro na bolsa', 'Valor Econômico', _h(2), ['cambio', 'bolsa']),
+    _mb('mb2', 'Ata do Copom reforça juros altos por mais tempo e DI futuro recua', 'Estadão · Economia', _h(5), ['juros']),
+    _mb('mb3', 'Haddad promete cumprir a meta fiscal e detalhar corte de gastos', 'InfoMoney', _h(3), ['fiscal'], aviso_fonte='Grupo XP — não citar em material de cliente'),
+    _mb('mb4', 'Ibovespa fecha em alta de 1,2% puxado por bancos', 'veronoticias', _h(4), ['bolsa'], via='Bing Notícias', confiavel=False),
+    _mb('mb5', 'IPCA de outubro desacelera e fica abaixo do esperado', 'Folha de S.Paulo · Mercado', _h(20), ['inflacao']),
+]
 rec['itens'] = vip_itens + rec['itens']
 rec['n'] = len(rec['itens'])
 with open(os.path.join(dados, 'recentes.json'), 'w', encoding='utf-8') as f:

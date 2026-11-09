@@ -15,7 +15,7 @@
     Object.keys(faltam).forEach(function (m) { if (!E().meses[m]) A.carregarMes(m); });
     return out;
   }
-  var FILTROS = [['tudo', 'Tudo', 36], ['carteira', 'Na carteira', 72], ['brasil', 'Brasil', 36], ['mundo', 'Mundo', 36], ['gestoras', 'Gestoras e casas', 168], ['ri', 'RI e CVM', 168]];
+  var FILTROS = [['tudo', 'Tudo', 36], ['carteira', 'Na carteira', 72], ['macro', 'Macro Brasil', 36], ['brasil', 'Brasil', 36], ['mundo', 'Mundo', 36], ['gestoras', 'Gestoras e casas', 168], ['ri', 'RI e CVM', 168]];  // v3.10: Macro Brasil
   var DIAS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
   var MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
   var PROF = [['rapida', 'Rápida', 'Só o que mudou na carteira e o que vem pela frente'], ['briefing', 'Briefing', 'As quatro áreas da mesa e as notícias do dia'], ['aprofundada', 'Aprofundada', 'Tudo, com listas completas e o estudo do dia']];

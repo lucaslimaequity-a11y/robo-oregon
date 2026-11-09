@@ -169,3 +169,30 @@ do GitHub (sem chave, no máximo a cada 3 minutos) para dizer se a coleta está 
 - `GLOSSARIO_EN` é injetado pelo `build.py` a partir de `robo/glossario_en.json` (a mesma fonte do robô, `robo/ingles.py`).
 - Vocabulário: coleção `vocab` do `STORE` (localStorage ou banco do painel), revisão espaçada 1, 3, 7, 14 e 30 dias.
   Estado do dia em `lsGet`: `ing-dia` (manchetes do dia), `ing-passo`, `ing-feitos` (dias concluídos).
+
+
+## v3.10 · macro do Brasil
+- **Robô, `analise.py`:**
+  - `MACRO_BR` (sete subtemas), `MACRO_BR_FORA`, `MACRO_BR_EN` e `macro_br(titulo, idioma)`.
+  - `classificar` grava `item['macro_br']` (só veículo e instituição).
+  - `prioridade` soma +8 só quando não há ativo da Oregon nem da VIP.
+  - Manchete de índice e câmbio sem empresa da carteira deixa de ser "só movimento de preço".
+  - `REGRAS_VERSAO` 38: o que já está publicado é reclassificado na próxima rodada.
+- **Robô, `intel.py`:**
+  - `fontes_de_busca` cria `busca-macro-*` a partir de `noticias.buscas_macro`, com `exigir_macro`, `busca_macro` e
+    intervalo de 60 min.
+  - As buscas de macro vêm primeiro e não contam no teto das buscas por empresa.
+  - O filtro de tema da imprensa aceita `macro_br`.
+  - O briefing ganha `mercado_hoje.linhas_telegram`, de `robo/mercado_hoje.py`: até 5 manchetes das últimas 18 h, agenda
+    do dia primeiro, sem repetir o fato e sem Grupo XP.
+- **InfoMoney:** sai de `noticias.fontes_bloqueadas` e mantém o aviso de `fontes_sinalizadas`.
+- **Painel, `intel.js`:**
+  - `I.bloqueado` não inclui mais o InfoMoney.
+  - `I.grupoXP` marca o InfoMoney, e esses itens ficam fora de pauta da semana (Oregon e VIP), fechamento da semana e
+    sugestões do comitê.
+  - Novos `I.macroBR` e filtro `macro` em `I.ultimas`.
+- **Painel, `ui_v310.js`:**
+  - Bloco "Mercado hoje · Brasil" logo depois do mapa de atenção, em todos os modos, com atalho em "Nesta página".
+  - Filtro "Macro Brasil" em Todas as notícias.
+  - Selo "Grupo XP" nas linhas do InfoMoney.
+  - `TAXON.macro_br` traz os nomes dos subtemas, injetados pelo `build.py`.

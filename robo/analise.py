@@ -330,6 +330,54 @@ EVENTOS_FORA = {
 }
 _EVENTOS_RE = [(k, re.compile(rx), re.compile(EVENTOS_FORA[k]) if k in EVENTOS_FORA else None) for k, _n, rx in EVENTOS]
 
+# v3.10 · macro do Brasil (pedido do Lucas em 09/11/2026): manchetes de agenda do dia, juros, inflação, câmbio, bolsa,
+# fiscal e atividade. Só pela manchete, sem acento; vale para veículo e instituição, em português ou em inglês citando o
+# Brasil. Manchete só do exterior (Fed, Wall Street, China...) sem nada do Brasil fica de fora: o mundo já tem a sua área.
+MACRO_BR = [
+    ('agenda', 'Agenda do dia', r'\bagenda (d[oa]s? |desta |dessa |de hoje|economica|do dia|da semana|do mercado)|\bo que (move|mexe com|esperar|acompanhar|vai mexer)|\bcalendario (economico|da semana)|\bindicadores (da semana|desta semana|que movimentam)|\bradar do mercado|\bmercados? (hoje|agora|nesta|digere|reage|acompanha|aguarda|espera|repercute|monitora)\b|\babertura de mercado|\bfechamento de mercado'),
+    ('juros', 'Juros', r'\bcopom\b|\bselic\b|\bjuros futuros|\bdi futuro|\bcurva de juros|\btaxa (basica|de juros)|\bjuros (no brasil|altos|reais|sobem|caem|recuam|avancam|longos|curtos)|\bbanco central\b|\bbc (eleva|corta|mantem|sinaliza|deve)|\bgalipolo\b|\bata do copom|\bpolitica monetaria'),
+    ('inflacao', 'Inflação', r'\bipca\b|\bipca-15\b|\bigp-?m\b|\binpc\b|\binflacao\b|\bboletim focus\b|\bfocus\b|\bexpectativas? de inflacao|\bdeflacao\b'),
+    ('cambio', 'Câmbio', r'\bdolar\b|\bcambio\b|\breal (se )?(valoriza|desvaloriza|sobe|cai|recua|avanca|ganha|perde)|\bmoeda brasileira'),
+    ('bolsa', 'Bolsa', r'\bibovespa\b|\bibov\b|\bbolsa brasileira\b|\bbolsa (sobe|cai|fecha|abre|renova|bate|opera)|\bsmall caps\b|\bestrangeiros? na bolsa|\bfluxo estrangeiro|\bcapital estrangeiro'),
+    ('fiscal', 'Fiscal', r'\bfiscal\b|\barcabouco\b|\bdivida publica\b|\borcamento (de 20\d\d|federal|da uniao|do governo|publico)|\blei orcamentaria|\bmeta (fiscal|de primario)|\bdeficit (primario|fiscal|nominal|publico|do governo|das contas)|\bsuperavit (primario|fiscal)|\bhaddad\b|\btesouro nacional\b|\bcontas publicas\b|\bgastos? public|\breforma tributaria\b|\bisencao (do|de) (ir|imposto de renda)'),
+    ('atividade', 'Atividade', r'\bpib\b|\bcaged\b|\bdesemprego\b|\bpnad\b|\bibc-?br\b|\bproducao industrial\b|\bvendas no varejo\b|\bvolume de servicos\b|\bmassa salarial\b|\bconfianca (do consumidor|da industria|empresarial)|\bbalanca comercial|\b(superavit|deficit) comercial|\bdeficit em conta corrente|\bconta corrente\b'),
+]
+MACRO_BR_FORA = {
+    'fiscal': r'conselho fiscal|notas? fisca|cupom fiscal|ano fiscal|paraiso fiscal|beneficio fiscal da empresa',
+    'bolsa': r'bolsa (familia|de estudos|de valores de (nova york|londres|toquio))',
+    'juros': r'juros (do cartao|do rotativo|do cheque especial)|banco central (europeu|americano|dos eua|da china|do japao)',
+    'cambio': r'cambio (automatico|manual|cvt)',
+}
+MACRO_BR_EN = [  # notícia em inglês que cita o Brasil
+    ('juros', r'\bcentral bank\b|\bselic\b|\binterest rates?\b|\brate (cut|hike)s?\b|\bcopom\b'),
+    ('inflacao', r'\binflation\b|\bipca\b'),
+    ('cambio', r'\breal\b|\bcurrency\b|\bfx\b'),
+    ('bolsa', r'\bbovespa\b|\bstocks?\b|\bequities\b|\bstock market\b'),
+    ('fiscal', r'\bfiscal\b|\bbudget\b|\bpublic debt\b|\bhaddad\b'),
+    ('atividade', r'\bgdp\b|\bunemployment\b|\bretail sales\b|\bindustrial output\b'),
+]
+MACRO_NOMES = {k: n for k, n, _ in MACRO_BR}
+_MACRO_RE = [(k, re.compile(rx), re.compile(MACRO_BR_FORA[k]) if k in MACRO_BR_FORA else None) for k, _n, rx in MACRO_BR]
+_MACRO_EN_RE = [(k, re.compile(rx)) for k, rx in MACRO_BR_EN]
+_SO_FORA = re.compile(r'\b(eua|estados unidos|fed|federal reserve|wall street|s&p|nasdaq|dow jones|china|chines[ae]?s?|europa|europeias?|bce|japao|asia|asiatic[oa]s|trump|treasur\w*|payroll|argentina|milei|reino unido|alemanha|nvidia|paraguai|mexic\w*|chile|colombia|peru|uruguai|india|russia|ucrania|israel|oriente medio|canada|franca|italia|espanha)\b')
+_BRASIL = re.compile(r'\b(brasil|brasileir\w*|ibovespa|copom|selic|ipca|haddad|lula|galipolo|b3|focus|caged|ibge|tesouro nacional|real|governo)\b')
+
+
+def macro_br(titulo, idioma='pt'):
+    """Subtemas de macro do Brasil na manchete (chaves de MACRO_BR, na ordem da tabela). Lista vazia quando não é macro do
+    Brasil ou quando a manchete é só do exterior."""
+    t = sem_acento(titulo or '').lower()
+    if idioma == 'en':
+        if 'brazil' not in t:
+            return []
+        return [k for k, rx in _MACRO_EN_RE if rx.search(t)]
+    if idioma not in ('pt', None, ''):
+        return []
+    out = [k for k, rx, fora in _MACRO_RE if rx.search(t) and not (fora and fora.search(t))]
+    if out and _SO_FORA.search(t) and not _BRASIL.search(t):
+        return []
+    return out
+
 
 def eventos_de(titulo):
     """Tipos de evento corporativo citados na manchete (lista de chaves de EVENTOS, na ordem da tabela)."""
@@ -421,8 +469,8 @@ def classificar(item, oregon, hoje):
         natureza = 'recomendacao'
     elif _casa(txt, SENSACIONAL):
         natureza = 'sensacionalista'
-    elif item.get('categoria') == 'veiculo' and _casa(txt, MOVIMENTO) and not temas:
-        natureza = 'movimento'
+    elif item.get('categoria') == 'veiculo' and _casa(txt, MOVIMENTO) and not temas and (ativos or not macro_br(item.get('titulo'), item.get('idioma'))):
+        natureza = 'movimento'  # v3.10: Ibovespa, dólar e juros andando (sem empresa da carteira) são notícia de mercado; manchete de empresa segue a regra de antes
     elif item.get('categoria') == 'veiculo':
         natureza = 'noticia'
     item.update({'temas': temas[:6], 'regioes': regioes[:4], 'ativos': ativos[:14], 'setores': setores[:4], 'fatores': fatores[:4], 'natureza': natureza, 'ativos_porque': porque_at,
@@ -450,6 +498,11 @@ def classificar(item, oregon, hoje):
         item['eventos'] = ev
     else:
         item.pop('eventos', None)
+    mb = macro_br(item.get('titulo'), item.get('idioma')) if item.get('categoria') in ('veiculo', 'instituicao') else []
+    if mb:
+        item['macro_br'] = mb  # v3.10 · macro do Brasil
+    else:
+        item.pop('macro_br', None)
     item['prioridade'] = prioridade(item, hoje)
     return item
 
@@ -500,6 +553,9 @@ def prioridade(item, hoje):
         porque.append('toca fator de risco (+4)')
     if item.get('temas'):
         p += min(6, 2 * len(item['temas']))
+    if item.get('macro_br') and not item.get('ativos') and not item.get('ativos_vip'):  # v3.10: só macro pura; a nota das notícias de empresa não muda
+        p += 8
+        porque.append('macro do Brasil: %s (+8)' % ', '.join(MACRO_NOMES.get(k, k).lower() for k in item['macro_br'][:3]))
     q = item.get('publicado_em')
     if q:
         try:
@@ -539,7 +595,7 @@ def prioridade(item, hoje):
     return {'pontos': p, 'nivel': nivel, 'porque': porque}
 
 
-REGRAS_VERSAO = 37  # itens classificados por regras anteriores são reclassificados na publicação (biblioteca.atualizar_leitura)
+REGRAS_VERSAO = 38  # v3.10: macro do Brasil · itens classificados por regras anteriores são reclassificados na publicação (biblioteca.atualizar_leitura)
 
 
 # ------------------------------------------------------------------ vínculo do item com cada ativo citado

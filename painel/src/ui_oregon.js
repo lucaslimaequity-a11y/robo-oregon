@@ -644,7 +644,7 @@
     PILARES_OREGON.forEach(function (p) {
       var emp = Object.keys(C.ATV).filter(function (t) { var a = C.ATV[t]; return a.pilar === p[0] && a.classe === 'Ações' && a.status !== 'placeholder'; }).sort();
       var linhas = emp.map(function (t) {
-        var c = conteudoDe(t), vis = {}, its = c.direto.filter(function (x) { var p0 = I.pub(x), q = Date.parse(p0.length <= 10 ? p0 + 'T12:00:00-03:00' : p0); if (!isFinite(q) || q < lim || q > Date.now() + 6 * 3600e3 || x.acervo) return false; var k = x.titulo.toLowerCase().slice(0, 60); if (vis[k]) return false; vis[k] = 1; return true; });
+        var c = conteudoDe(t), vis = {}, its = c.direto.filter(function (x) { var p0 = I.pub(x), q = Date.parse(p0.length <= 10 ? p0 + 'T12:00:00-03:00' : p0); if (!isFinite(q) || q < lim || q > Date.now() + 6 * 3600e3 || x.acervo || (I.grupoXP && I.grupoXP(x))) return false; var k = x.titulo.toLowerCase().slice(0, 60); if (vis[k]) return false; vis[k] = 1; return true; });
         var rel = its.filter(function (x) { return !I.baixaRelevancia(x); });
         return {t: t, nome: (C.ATV[t] || {}).nome || t, itens: selecionarPauta(I.agruparFatos(rel).map(function (g) { return g.x; }), t), baixas: its.filter(I.baixaRelevancia)};
       });

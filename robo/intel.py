@@ -44,6 +44,7 @@ import cartas  # noqa: E402  (v3.6 · termômetro das cartas)
 import fundos  # noqa: E402  (v3.6 · quem tem a ação)
 import fluxo  # noqa: E402  (v3.8 · fluxo dos fundos)
 import ingles  # noqa: E402  (v3.9 · inglês do mercado: frase do dia no Telegram)
+import mercado_hoje  # noqa: E402  (v3.10 · macro do Brasil no Telegram)
 import proventos  # noqa: E402  (v3.6 · agenda de proventos)
 import pesquisas  # noqa: E402
 import resultados  # noqa: E402
@@ -130,6 +131,14 @@ def fontes_de_busca(cfg):
             out.append(dict(base, id='busca-etf-' + _slug(te['tema']), nome='Busca do tema · ' + te['tema'], pais='Brasil' if mkt == 'pt-BR' else 'Global', idioma='pt' if mkt == 'pt-BR' else 'en',
                             url_fonte=url(te['busca'], mkt).replace('&format=rss', ''), url_coleta=url(te['busca'], mkt), etfs=list(te.get('etfs') or []),
                             termos_exigidos=list(te.get('termos_busca') or []), consulta=te['busca'], tema_etf=te['tema']))
+        # v3.10 · macro do Brasil: Ibovespa, dólar, juros, inflação, fiscal e agenda do dia (traz Valor, CNN, Estadão e outros
+        # que não têm feed aberto); só entra o que o robô reconhece como macro do Brasil (exigir_macro)
+        for mc in n.get('buscas_macro') or []:
+            if not mc.get('ativo', True) or not mc.get('consulta'):
+                continue
+            out.append(dict(base, id='busca-macro-' + _slug(mc['tema']), nome='Busca macro Brasil · ' + mc['tema'], pais='Brasil', idioma='pt',
+                            url_fonte=url(mc['consulta'], 'pt-BR').replace('&format=rss', ''), url_coleta=url(mc['consulta'], 'pt-BR'), consulta=mc['consulta'],
+                            busca_macro=True, exigir_macro=True, intervalo_min=int(mc.get('intervalo_min', 60))))
     cv = n.get('cvm_ipe') or {}
     if n.get('cvm') and cv.get('ativo', True):
         emp = {a['cnpj']: [a['id'], a.get('cvm_nome') or ''] for a in cfg.get('ativos') or [] if a.get('ativo', True) and a.get('cnpj')}
@@ -337,7 +346,7 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
     n_cfg = cfg.get('noticias') or {}
     manual = bool(os.environ.get('ROBO_TUDO') or os.environ.get('ROBO_MANUAL', '').lower() == 'true')
     # buscas: as mais atrasadas primeiro, no máximo N por rodada (as demais ficam para a próxima, meia hora depois)
-    buscas = sorted([f for f in fontes_cfg if f.get('busca')], key=lambda f: leituras.get(f['id']) or '')
+    buscas = sorted([f for f in fontes_cfg if f.get('busca')], key=lambda f: (0 if f.get('busca_macro') else 1, leituras.get(f['id']) or ''))  # v3.10: macro do Brasil primeiro
     fontes_cfg = [f for f in fontes_cfg if not f.get('busca')] + buscas
     teto_busca, n_busca = int((n_cfg.get('busca') or {}).get('max_por_rodada', 14)), 0
     empresas = {a['id']: (a.get('noticias') or {}) for a in cfg.get('ativos') or []}
@@ -369,7 +378,7 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
                     continue
             except ValueError:
                 pass
-        if f.get('busca') and not manual:
+        if f.get('busca') and not f.get('busca_macro') and not manual:  # v3.10: as poucas buscas de macro não gastam o teto das buscas por empresa
             if n_busca >= teto_busca:
                 adiadas.append(f['id'])
                 continue
@@ -492,7 +501,11 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
                 rej['sem_ativo_oregon'] = rej.get('sem_ativo_oregon', 0) + 1
                 ineditos.remove(x)
                 continue
-            if f.get('categoria') == 'veiculo' and f.get('filtro_tema', True) and not (x.get('temas') or x.get('ativos') or x.get('etfs_tema')):
+            if f.get('exigir_macro') and not x.get('macro_br'):  # v3.10 · busca de macro do Brasil: só o que é macro do Brasil
+                rej['fora_do_tema'] = rej.get('fora_do_tema', 0) + 1
+                ineditos.remove(x)
+                continue
+            if f.get('categoria') == 'veiculo' and f.get('filtro_tema', True) and not (x.get('temas') or x.get('ativos') or x.get('etfs_tema') or x.get('macro_br')):
                 # imprensa geral: só entra o que trata de economia, mercados ou de um ativo das carteiras (o resto é contado)
                 rej['fora_do_tema'] = rej.get('fora_do_tema', 0) + 1
                 ineditos.remove(x)
@@ -1041,6 +1054,12 @@ def main():
             linhas += extras_digesto(oregon, estado, agora_, hoje)  # v3.7 · data-com amanhã e cartas novas
         except Exception as e:  # pragma: no cover - proteção: o briefing sai mesmo sem as seções novas
             log('  briefing: seções de proventos e cartas fora (%s)' % type(e).__name__)
+        mh = ic.get('mercado_hoje') or {}
+        if mh.get('telegram', True):
+            try:
+                linhas += mercado_hoje.linhas_telegram(recentes, agora_, horas=float(mh.get('horas', 18)), maximo=int(mh.get('maximo', 5)))  # v3.10
+            except Exception as e:  # pragma: no cover - proteção: o briefing sai mesmo sem a macro
+                log('  briefing: mercado hoje fora (%s)' % type(e).__name__)
         ig = ic.get('ingles') or {}
         if ig.get('telegram', True):
             try:

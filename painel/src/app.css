@@ -1318,3 +1318,18 @@ input[type=search].inp{width:100%;max-width:520px;margin-bottom:8px}
 .aviso-gh span{flex:1 1 320px}
 @media print{.aviso-gh{display:none}}
 .aviso-gh a.btn{text-decoration:none;flex:none}
+
+/* v3.10 · Mercado hoje · Brasil (macro do Brasil no Hoje) */
+:root{--c-macro:#17784A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c-macro:#4CC38A}}
+:root[data-theme="dark"]{--c-macro:#4CC38A}
+.a-macro{--ac:var(--c-macro);margin:0 0 14px}
+.a-macro>header{display:flex;align-items:baseline;gap:8px;padding:10px 14px 0}
+.a-macro>header h2{margin:0;font-size:1.02rem}
+.a-macro>.ar-b{padding:6px 14px 12px}
+.a-macro .mb-h{margin:4px 14px 0}
+.mb-f{margin:4px 0 6px;flex-wrap:wrap}
+.mb-tags{display:block;font-size:.76rem;color:var(--muted);margin-top:1px}
+.a-macro .mb-h{display:none}
+.a-macro .mb-h.mostra,html.explica .a-macro .mb-h{display:block}
+.xp-b{flex:none;align-self:center;font-size:.68rem;font-weight:600;line-height:1.4;padding:0 6px;border-radius:6px;border:1px solid var(--warn);color:var(--warn);white-space:nowrap}

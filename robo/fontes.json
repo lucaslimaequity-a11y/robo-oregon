@@ -2624,6 +2624,57 @@
    "verificar_na_rodada": true
   },
   {
+   "id": "imprensa-infomoney",
+   "nome": "InfoMoney",
+   "organizacao": "InfoMoney",
+   "categoria": "veiculo",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "noticia",
+   "metodo": "rss",
+   "url_fonte": "https://www.infomoney.com.br",
+   "url_coleta": "https://www.infomoney.com.br/feed/",
+   "ativo": true,
+   "status_validacao": "ok",
+   "validado_em": "2026-11-09",
+   "robots": "permitido",
+   "guardar_resumo": false,
+   "maximo": 60,
+   "filtro_tema": true,
+   "observacoes": "v3.10 · exceção pedida pelo Lucas em 09/11/2026: Grupo XP, entra só como notícia no painel, sempre com o aviso de fonte sinalizada (noticias.fontes_sinalizadas), e fica fora da pauta da semana, do fechamento, das sugestões do comitê e do Telegram. RSS público do próprio veículo (feed geral; os feeds de seção vêm vazios); robots.txt sem nenhum Disallow para User-agent: * (conferido em 09/11/2026). O feed mistura esporte e entretenimento: só entra o que trata de economia, mercados, macro do Brasil ou ativo das carteiras. Guarda só título, link, data e veículo.",
+   "evidencia": [
+    {
+     "titulo": "Lula reafirma compromisso fiscal, mas evita detalhar medidas para reduzir juros",
+     "data": "2026-11-09"
+    },
+    {
+     "titulo": "Kassab espera corte nas contas públicas para balizar apoio do PSD a Lula 4",
+     "data": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "id": "imprensa-istoe-dinheiro",
+   "nome": "IstoÉ Dinheiro",
+   "organizacao": "IstoÉ Dinheiro",
+   "categoria": "veiculo",
+   "pais": "Brasil",
+   "idioma": "pt",
+   "tipo": "noticia",
+   "metodo": "rss",
+   "url_fonte": "https://istoedinheiro.com.br",
+   "url_coleta": "https://istoedinheiro.com.br/feed/",
+   "ativo": true,
+   "status_validacao": "a_validar",
+   "validado_em": "2026-11-09",
+   "robots": "permitido",
+   "guardar_resumo": false,
+   "maximo": 60,
+   "filtro_tema": true,
+   "verificar_na_rodada": true,
+   "observacoes": "v3.10 · macro do Brasil. robots.txt libera /feed/ para User-agent: * (conferido em 09/11/2026); o conteúdo do feed não pôde ser lido pela ferramenta de validação (resposta comprimida): a primeira rodada no GitHub confirma. Se falhar, aparece como \"a validar\" em Fontes e coleta e entra em pausa depois de 3 falhas, sem marcar a rodada como parcial. Guarda só título, link, data e veículo."
+  },
+  {
    "id": "imprensa-cnn-brasil-economia",
    "nome": "CNN Brasil · Economia",
    "organizacao": "CNN Brasil",

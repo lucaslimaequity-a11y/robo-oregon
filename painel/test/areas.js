@@ -370,6 +370,31 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       v.gerado_em = g0; window.fetch = f0; APP._ghColeta.t = 0; APP._ghColeta.runs = null; APP.rerender(); await z(100);
       return r; });
     rep(Object.values(gh9).every(v => v === true), vw + ' atraso do GitHub: aviso no topo do Hoje e no detalhe da coleta, com o Coletar agora destacado; some quando a coleta chega (' + JSON.stringify(gh9) + ')');
+    // v3.10 · Mercado hoje · Brasil (macro do Brasil), filtro Macro Brasil e InfoMoney marcado como Grupo XP e fora da pauta
+    const mh10 = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms)), r = {}, p0 = APP.prof();
+      const ver = async (prof) => { APP.setProf(prof); APP.go('hoje'); await z(400); const s = document.getElementById('mercado-hoje'); if (s && s.classList.contains('fechada')) s.querySelector('header').click(); await z(50); return s; };
+      let s = await ver('rapida');
+      r.rapida = !!s;
+      s = await ver('briefing');
+      r.depoisDoMapa = !!s && s.previousElementSibling && s.previousElementSibling.id === 'atencao';
+      r.nav = !!document.querySelector('nav.sumario a[href="#mercado-hoje"]');
+      const t = s.innerText;
+      r.agenda = /Para começar o dia[\s\S]*Agenda desta segunda-feira/.test(t);
+      r.itens = /Dólar fecha em queda/.test(t) && /Ata do Copom/.test(t) && /Haddad promete/.test(t);
+      r.semMundo = !/Treasury|Fed signals/.test(t);
+      r.xp = Array.from(s.querySelectorAll('article.nr')).some(a => /Haddad promete/.test(a.textContent) && a.querySelector('.xp-b') && /Grupo XP/.test(a.querySelector('.xp-b').textContent));
+      const bj = Array.from(s.querySelectorAll('.mb-f button')).find(b => /^Juros/.test(b.textContent)); bj.click(); await z(250);
+      const s2 = document.getElementById('mercado-hoje'), t2 = s2.innerText; r.filtro = /Ata do Copom/.test(t2) && !/Dólar fecha em queda/.test(t2);
+      Array.from(s2.querySelectorAll('.mb-f button')).find(b => /^Juros/.test(b.textContent)).click(); await z(200);
+      r.dica = getComputedStyle(document.querySelector('#mercado-hoje .mb-h')).display === 'none';
+      const fm = Array.from(document.querySelectorAll('#ultimas .filt button')).find(b => /Macro Brasil/.test(b.textContent)); r.filtroTodas = !!fm && !fm.disabled;
+      r.funcoes = INTEL.grupoXP({organizacao: 'InfoMoney'}) && !INTEL.bloqueado({organizacao: 'InfoMoney'}) && INTEL.bloqueado({organizacao: 'XP Investimentos'}) && INTEL.MACRO_NOMES.juros === 'Juros';
+      r.sw = document.documentElement.scrollWidth <= innerWidth;
+      const nm = document.getElementById('main').innerText.match(/.{0,30}(^|\s)(null|undefined|NaN)(\s|$).{0,30}/); r.nul = !nm || nm[0];
+      APP.setProf(p0); await z(100);
+      return r; });
+    rep(Object.values(mh10).every(v => v === true), vw + ' mercado hoje · Brasil: em todos os modos, depois do mapa, com a agenda do dia, filtro por assunto, InfoMoney marcado Grupo XP e filtro Macro Brasil (' + JSON.stringify(mh10) + ')');
     await p.emulateMedia({media: 'print'});
     const pr7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'comite'); await z(400);
       return {top: getComputedStyle(document.querySelector('.top')).display, sug: getComputedStyle(document.querySelector('.cm-g > .no-print')).display, imp: Array.from(document.querySelectorAll('button')).some(b => b.textContent === 'Imprimir')}; });

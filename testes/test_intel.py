@@ -502,7 +502,8 @@ class TestSemanalEConfig(Base):
         for f in fontes:
             txt = json.dumps(f, ensure_ascii=False).lower()
             self.assertNotIn('xp investimentos', txt, f['id'])
-            self.assertNotIn('infomoney', txt, f['id'])
+            if f['id'] != 'imprensa-infomoney':  # v3.10: exceção pedida pelo Lucas (só no painel, sempre com o aviso Grupo XP)
+                self.assertNotIn('infomoney', txt, f['id'])
             if f.get('ativo'):
                 if f.get('verificar_na_rodada'):  # endereço oficial que a ferramenta de validação não acessa: o robô confirma na 1ª rodada
                     self.assertEqual(f.get('status_validacao'), 'a_validar', f['id'])

@@ -256,9 +256,11 @@ var TESTS = (function () {
     });
     t('v3.4: Grupo XP fora de tudo; opiniões da XP em outros veículos continuam; resultado exige período ou valor', function () {
       var IN = typeof INTEL !== 'undefined' ? INTEL : null; if (!IN) { ok(true); return; }
-      ok(IN.bloqueado({organizacao: 'InfoMoney'}) && IN.bloqueado({fonte: 'x', aviso_fonte: 'Grupo XP — não citar em material de cliente'}), 'InfoMoney deveria ser bloqueado');
+      // v3.10 · exceção pedida pelo Lucas: InfoMoney entra no painel marcado como Grupo XP; os demais do grupo continuam bloqueados
+      ok(!IN.bloqueado({organizacao: 'InfoMoney'}) && IN.grupoXP({organizacao: 'InfoMoney'}) && IN.grupoXP({fonte: 'x', aviso_fonte: 'Grupo XP — não citar em material de cliente'}), 'InfoMoney deveria entrar marcado como Grupo XP');
+      ok(IN.bloqueado({organizacao: 'XP Investimentos'}) && IN.bloqueado({fonte: 'Expert XP'}), 'XP Investimentos e Expert XP deveriam continuar bloqueados');
       ok(!IN.bloqueado({organizacao: 'Money Times', titulo: 'XP revela suas 11 ações favoritas'}), 'opinião da XP em outro veículo foi bloqueada');
-      var L = IN.juntar([[{id: 'a', organizacao: 'InfoMoney', publicado_em: '2026-11-07'}, {id: 'b', organizacao: 'Money Times', publicado_em: '2026-11-07'}]]);
+      var L = IN.juntar([[{id: 'a', organizacao: 'XP Investimentos', publicado_em: '2026-11-07'}, {id: 'b', organizacao: 'Money Times', publicado_em: '2026-11-07'}]]);
       ok(L.length === 1 && L[0].id === 'b', 'juntar não removeu o veículo bloqueado');
       var R = new RegExp(TAXON.vinculo.resultado, 'i');
       ok(R.test('lucro dos bancoes cresce no 3t26') && R.test('klabin tem lucro 20% maior'), 'resultado não reconhecido');

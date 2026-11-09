@@ -478,6 +478,19 @@ Fatos relevantes, comunicados ao mercado e avisos aos acionistas das empresas da
 - **Bing Notícias**: RSS público de busca, sem chave e sem custo; não é uma API contratada, pode mudar sem aviso (vira erro visível em Fontes e coleta, nunca item inventado). A ordem é por data, mas o Bing devolve no máximo cerca de 10 manchetes por busca; guardamos só título, link, veículo e data. Portais com assinatura (Valor, Estadão, O Globo) aparecem pela manchete; a matéria abre no site do veículo.
 - **Opiniões de casas**: o sentido (a favor, contra, neutra, mista) vem do título público ou, nas páginas da própria casa e nas opiniões conferidas de 12 meses, da página. Recomendação, preço-alvo, horizonte e analista só aparecem quando estão escritos; nada é deduzido. Documento à CVM ou carta que cita uma agência ou casa ("Fitch eleva o rating") não vira opinião dela. Texto que relata outra casa (comum em Nord e Empiricus) é atribuído à casa citada.
 - **Reddit e X**: sem coleta (ver a seção v3.4). Só links de consulta, abertos fora do Oregon. Comunidades do Reddit na lista (v3.8): investing, stocks, ValueInvesting, SecurityAnalysis, Bogleheads, Economics, dividends, investimentos, finance, wallstreetbets, EconomyCharts, AskEconomics e oil (mais votados da semana).
+- **Research das casas (v3.8.2)**: só links de consulta externa para a página de estudos e publicações de cada casa, sem
+  coleta. Ficam em Mundo e Estratégia › Research global (seção no fim da página) e no Debate de mercado. São 8 casas do
+  Brasil (BTG Pactual, Itaú, Genial, BB Investimentos, Safra, Santander, Suno e Ágora) e 15 globais (Goldman Sachs,
+  J.P. Morgan, Morgan Stanley, BofA, Citi, UBS, Barclays, Deutsche Bank, HSBC, Jefferies, Nomura, Société Générale,
+  BNP Paribas, RBC Capital Markets e Wells Fargo).
+  - **Conferência em 08/11/2026:** os endereços foram abertos, com três exceções.
+  - **Não abertos:** os links "Insights" do HSBC e "Estratégia e economia" da RBC saíram das próprias páginas dessas
+    casas e não foram abertos. A Société Générale barra leitura automática (Incapsula); o link é a página de
+    apresentação do research, achada em busca, porque a SG não tem lista pública de publicações.
+  - **Itaú:** Consenso de Mercado, Cockpit do Copom, Carta do Gestor e Radar de Preferências não têm página própria;
+    saem em Análises.
+  - **Login:** "login" marca as casas cujos relatórios completos pedem conta de cliente.
+  - **Grupo XP:** nenhum veículo do grupo entra, por regra do Lucas.
 - **Datas**: o painel distingue data de publicação (da fonte), data de atualização (da fonte) e data de detecção (do robô). Quando a fonte só mostra a atualização (InvesTalk), a tela diz isso. Página sem data entra com a data de detecção, marcada; cartas antigas de páginas de arquivo vão para o acervo (Biblioteca), fora das novidades.
 - **Dados macro**: os indicadores (Selic, IPCA, dólar, curvas, Treasuries) foram desligados (`intel.indicadores_macro: false`) e saíram do painel. Fica só a agenda oficial (IBGE, Copom, Fed, Focus). Para religar, troque para `true`.
 - **Resultados da CVM** (`resultados.json`): lidos dos dados abertos da CVM (ITR/DFP) na rodada da noite, a cada 3 dias (ou em execução manual), para as fichas das empresas na seção Oregon. FIIs e empresas sem CNPJ cadastrado ficam em `fora`. Um arquivo que falha não apaga o que já estava lido.

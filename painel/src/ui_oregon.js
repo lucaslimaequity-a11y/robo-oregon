@@ -429,7 +429,7 @@
     var f7 = lst.filter(function (x) { return idadeDias(x) <= 7; }), f30 = lst.filter(function (x) { var d = idadeDias(x); return d > 7 && d <= 30; }), f90 = lst.filter(function (x) { return idadeDias(x) > 30; });
     // sumário da página e filtros
     wrap.appendChild(h('nav', {class: 'sumario', 'aria-label': 'Nesta página'}, h('span', {class: 'muted'}, 'Nesta página:'), h('a', {href: '#rs-7'}, 'Últimos 7 dias (' + f7.length + ')'), h('a', {href: '#rs-30'}, '8 a 30 dias (' + f30.length + ')'),
-      h('a', {href: '#rs-90'}, 'Ainda relevante, 31 a 90 dias (' + f90.length + ')'), semData.length ? h('a', {href: '#rs-sem'}, 'Sem data na fonte (' + semData.length + ')') : null, h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({grupo: 'cartas'}); }}, 'Biblioteca histórica ↗')));
+      h('a', {href: '#rs-90'}, 'Ainda relevante, 31 a 90 dias (' + f90.length + ')'), semData.length ? h('a', {href: '#rs-sem'}, 'Sem data na fonte (' + semData.length + ')') : null, A.researchCasas ? h('a', {href: '#rs-casas'}, 'Research das casas') : null, h('button', {class: 'btn link', onclick: function () { A.go('bib', 'busca'); A.bibFiltro({grupo: 'cartas'}); }}, 'Biblioteca histórica ↗')));
     var cont = {}; CATS.forEach(function (c) { cont[c[0]] = itens.filter(function (x) { var d = idadeDias(x); return !x.acervo && !x.agrupado_em && c[2].indexOf(x.categoria) >= 0 && daOrigem(x, RS.orig) && d != null && d <= 90; }).length; });
     // v3.5: origem das publicações (Brasil, com a academia brasileira, ou internacionais)
     var contO = {}; ORIGENS.forEach(function (o) { contO[o[0]] = itens.filter(function (x) { var d = idadeDias(x); return !x.acervo && !x.agrupado_em && cat[2].indexOf(x.categoria) >= 0 && daOrigem(x, o[0]) && d != null && d <= 90; }).length; });
@@ -476,6 +476,7 @@
     var co = A.intel.coleta && A.intel.coleta.fontes, paradas = 0;
     if (co) Object.keys(co).forEach(function (k) { var u = co[k].ultimo_publicado; if (u && Date.now() - Date.parse(u) > 90 * 864e5) paradas++; });
     if (paradas) col.appendChild(h('p', {class: 'muted rs-paradas'}, paradas + (paradas > 1 ? ' fontes estão' : ' fonte está') + ' sem publicação nova há mais de 90 dias: nada delas é reciclado aqui. ', h('button', {class: 'btn link', onclick: function () { A.go('bib', 'fontes'); }}, 'Ver diagnóstico das fontes')));
+    var rcs = A.researchCasas ? A.researchCasas() : null; if (rcs) wrap.appendChild(rcs);  // v3.8.2 · research das casas: consulta externa (só link)
     return wrap;
   }
 
@@ -500,6 +501,7 @@
     return h('div', {class: 'ext'},
       h('div', {class: 'ext-g'}, h('h3', null, 'Reddit · comunidades'), h('ul', {class: 'ext-ul'}, REDDIT.map(function (r) { return h('li', null, h('a', {href: 'https://www.reddit.com/r/' + r[0] + '/top/?t=week', target: '_blank', rel: 'noopener'}, 'r/' + r[0]), h('span', {class: 'muted'}, ' · ' + r[1] + ' · mais votados da semana')); })),
         tks.length ? h('p', {class: 'ext-l'}, h('span', {class: 'ext-k'}, 'Buscar no Reddit'), tks.map(function (t) { return h('a', {href: 'https://www.reddit.com/search/?q=' + encodeURIComponent(t) + '&sort=new', target: '_blank', rel: 'noopener'}, t); })) : null),
+      A.researchCasas ? A.researchCasas(true) : null,
       h('div', {class: 'ext-g'}, h('h3', null, 'X · buscas em tempo real'), h('ul', {class: 'ext-ul'}, xs.map(function (x0) { return h('li', null, h('a', {href: x0[1], target: '_blank', rel: 'noopener'}, x0[0])); }))),
       h('p', {class: 'hint'}, 'Por que não há coleta automática: o Reddit veda robôs no robots.txt, encerra o RSS em 13/11/2026 e passou a exigir acordo para a API; a API do X é paga por post lido. Discussões são percepções de participantes, não fatos nem consenso.'));
   };

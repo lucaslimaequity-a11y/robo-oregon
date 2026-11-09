@@ -1,3 +1,32 @@
+# Atualização pequena v3.8.2 · research das casas (08/11/2026)
+
+O pacote `robo-oregon-v3.8.2-alterados.zip` vale sobre a v3.8.1 que já está no seu GitHub (commit c5c79fe, com as
+comunidades do Reddit). Só o painel muda. O robô, o horário e os segredos ficam como estão.
+
+**O que entra.**
+- **Mundo e Estratégia › Research global** ganhou, no fim da página, a seção **Research das casas · consulta externa**.
+  São 23 casas: 8 do Brasil e 15 globais. Cada link leva à página de estudos e publicações da casa e abre no seu
+  navegador. O sumário "Nesta página" tem o atalho para ela.
+- **Mundo e Estratégia › Debate de mercado**: em "Onde o mercado discute", uma linha curta com um link por casa.
+- **Brasil:** BTG Pactual, Itaú (Análises e Análises econômicas do Itaú BBA), Genial, BB Investimentos, Safra,
+  Santander, Suno e Ágora.
+- **Global:** Goldman Sachs, J.P. Morgan, Morgan Stanley, BofA, Citi, UBS, Barclays, Deutsche Bank, HSBC, Jefferies,
+  Nomura, Société Générale, BNP Paribas, RBC Capital Markets e Wells Fargo.
+- **Itaú:** Consenso de Mercado, Cockpit do Copom, Carta do Gestor e Radar de Preferências não têm página própria. Saem
+  dentro de Análises, e a tela avisa isso.
+- **Login:** a marca "login" indica que os relatórios completos pedem conta de cliente. A página pública abre
+  normalmente.
+- **Grupo XP:** nenhum veículo do grupo entra (XP Conteúdos, InfoMoney, Rico, Clear).
+- **Sem coleta:** o Oregon não coleta, não guarda e não confere esse conteúdo. São só links, como os do Reddit.
+
+**Como subir.**
+1. Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`painel/…`, `docs/…`).
+2. Clique em Commit changes.
+3. A rodada que dispara testa e publica sozinha. Em uns 5 minutos, abra Mundo e Estratégia › Research global e role até
+   o fim.
+
+**Voltar atrás.** Na lista de commits, abra o commit do envio e use Revert. Ou suba de novo os arquivos da v3.8.1.
+
 # Atualizar para o Oregon Intelligence v3.8 e como voltar atrás
 
 O pacote `robo-oregon-v3.8-alterados.zip` atualiza o que está hoje no seu GitHub, a **v3.5** (commit "Add files via

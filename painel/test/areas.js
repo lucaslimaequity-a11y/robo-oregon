@@ -270,6 +270,15 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       return {sem: document.querySelectorAll('.fx-t')[0] ? document.querySelectorAll('.fx-t')[0].querySelectorAll('tbody tr').length : 0, meses: document.querySelectorAll('.fx-t').length, barras: document.querySelectorAll('.fx-bar i.pos, .fx-bar i.neg').length,
         res: /Semana de \d\d\/\d\d a \d\d\/\d\d/.test(t), neg: /−R\$ 8 mi/.test(t), sw: document.documentElement.scrollWidth <= innerWidth}; });
     rep(fx8.sem >= 2 && fx8.meses === 2 && fx8.barras >= 2 && fx8.res && fx8.neg && fx8.sw, vw + ' fluxo dos fundos: semana a semana e mês a mês, com barras (' + JSON.stringify(fx8) + ')');
+    // v3.8.2 · research das casas: só links externos (Brasil e global), nenhum do Grupo XP, em Research global e no Debate
+    const rc8 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('mundo', 'cartas'); await z(450);
+      const s = document.getElementById('rs-casas'); if (s && s.tagName === 'DETAILS') s.open = true;
+      const as = s ? Array.from(s.querySelectorAll('a')) : [], sw = document.documentElement.scrollWidth <= innerWidth;
+      const grupos = s ? Array.from(s.querySelectorAll('h3')).map(e => e.textContent) : [];
+      APP.go('mundo', 'debate'); await z(450); const db = Array.from(document.querySelectorAll('#db-ext a')).filter(a => /Research das casas/.test(a.closest('.ext-g') ? a.closest('.ext-g').textContent : ''));
+      return {n: as.length, casas: s ? s.querySelectorAll('li').length : 0, grupos: grupos.join('|'), https: as.every(a => a.href.indexOf('https://') === 0), fora: as.every(a => a.target === '_blank' && a.rel === 'noopener'),
+        xp: as.concat(db).some(a => /xpi\.com|xp\.com\.br|infomoney|rico\.com|clear\.com\.br|conteudos\.xp/i.test(a.href)), deb: db.length, sw}; });
+    rep(rc8.casas >= 20 && rc8.n >= rc8.casas && rc8.grupos === 'Brasil|Global' && rc8.https && rc8.fora && !rc8.xp && rc8.deb >= 20 && rc8.sw, vw + ' research das casas: links externos do Brasil e global, sem Grupo XP, em Research global e no Debate (' + JSON.stringify(rc8) + ')');
     await p.emulateMedia({media: 'print'});
     const pr7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('cart', 'comite'); await z(400);
       return {top: getComputedStyle(document.querySelector('.top')).display, sug: getComputedStyle(document.querySelector('.cm-g > .no-print')).display, imp: Array.from(document.querySelectorAll('button')).some(b => b.textContent === 'Imprimir')}; });

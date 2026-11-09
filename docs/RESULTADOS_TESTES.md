@@ -1,3 +1,16 @@
+# Resultados dos testes · v3.8.2 · 08/11/2026 (Brasília)
+
+- **Robô (Python):** 153 testes, todos OK. O robô não mudou.
+- **Painel (Node):** 60 de 60.
+- **Navegador:** 216 verificações, todas PASS, no site de teste em 1440 px e 390 px.
+- **Nova verificação, nas duas larguras:** a seção "Research das casas" tem 23 casas (Brasil e Global) e 29 links.
+  - Todos usam https, abrem em nova aba e têm rel=noopener.
+  - Nenhum endereço é do Grupo XP.
+  - A linha curta aparece no Debate de mercado.
+  - A página não rola para o lado.
+- **Ressalva:** isto é o site de teste com dados simulados, não a comprovação no GitHub. Lá, a confirmação é a rodada
+  verde depois do envio e a seção visível no site publicado.
+
 # Resultados dos testes · v3.8 · 08/11/2026 (Brasília)
 
 Simulado = rede e arquivos de mentira; os formatos seguem o que foi conferido (metadado do informe diário da CVM,

@@ -1244,3 +1244,10 @@ html.explica .qbtn{display:none}
 @media (max-width:640px){.fx-bar{width:70px}.fx-v{min-width:0}.fx-t td.fx-ac{min-width:0}}
 .fx-t{max-width:960px}
 .fx-t td,.fx-t th{white-space:nowrap}
+
+/* v3.8.2 · research das casas (consulta externa) */
+.rc-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 24px}
+.rc-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:.9rem}
+.rc-l a{text-decoration:none}.rc-l a:hover{text-decoration:underline}
+@media (max-width:760px){.rc-g{grid-template-columns:minmax(0,1fr)}}
+.rc-n{display:block;font-size:.8rem;margin-top:1px}

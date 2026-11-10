@@ -12,7 +12,7 @@ Roda no GitHub Actions (.github/workflows/robo.yml), sete dias por semana, e tam
      com ANTHROPIC_API_KEY e intel.ia.ativo, leitura por IA dos itens prioritários dentro de um teto diário;
   4. biblioteca persistente por mês (nada é apagado), deduplicação, contadores por fonte e briefing do dia;
   5. aos sábados (ou em modo "semanal"), o resumo da semana.
-Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json (meses, índice, opinioes.json e, desde a v4.0.1, assuntos.json)
+Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json (meses, índice, opinioes.json e, desde a v4.0.1, assuntos.json; desde a v4.1, empresas.json)
 (publicados no site) e estado.json (interno, só no ramo "dados").
 
 Modos (ROBO_MODO): normal | semanal | teste_telegram.
@@ -51,6 +51,7 @@ import pesquisas  # noqa: E402
 import resultados  # noqa: E402
 import semanal  # noqa: E402
 import assuntos  # noqa: E402  (v4.0.1 · assuntos do momento no Hoje)
+import empresas  # noqa: E402  (v4.1 · o que o mercado está falando, tela Brasil)
 from util import ErroFonte, Rede, agora, dados_dir, gravar, ler, log, sem_acento  # noqa: E402
 from util import num as util_num  # noqa: E402
 
@@ -955,6 +956,12 @@ def main():
             log('  assuntos do momento: ' + assuntos.resumo(ass))
         except Exception as e:
             log('  assuntos do momento não publicados: %s' % type(e).__name__)
+        try:  # v4.1 · o que o mercado está falando (biblioteca/empresas.json): acessório; uma falha mantém o arquivo anterior
+            emp = empresas.publicar(agora_, ler('biblioteca/empresas.json', {}) or {}, _itens_dias, cfg)
+            gravar('biblioteca/empresas.json', emp)
+            log('  o que o mercado está falando: ' + empresas.resumo(emp))
+        except Exception as e:
+            log('  o que o mercado está falando não publicado: %s' % type(e).__name__)
         hoje_js = semanal.briefing(recentes, macro, hoje, agora_, estado)
         gravar('hoje.json', hoje_js)
         log('  briefing: %d prioridades (janela de %s), %d itens recentes, %d na biblioteca' % (len(hoje_js['prioridades']), hoje_js['janela'], len(recentes), idx['total']))

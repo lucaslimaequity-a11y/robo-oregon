@@ -41,7 +41,7 @@ for _st in (_cfg.get('noticias') or {}).get('buscas_setor') or []:
 taxon = {'eventos': [[k, n, rx, analise.EVENTOS_FORA.get(k)] for k, n, rx in analise.EVENTOS], 'lentes': _lentes, 'temas': analise.TEMA_NOME, 'regioes': analise.REGIAO_NOME, 'fatores': analise.FATOR_NOME, 'tipos': analise.TIPO_NOME, 'roteiro': analise.ROTEIRO,
          'buscas': _buscas, 'cvm': _cvm, 'vinculo': analise.VINCULO, 'macro_br': [[k, n] for k, n, _rx in analise.MACRO_BR]}  # v3.10: nomes dos subtemas de macro do Brasil
 taxon['assuntos'] = _assuntos.carregar_definicoes()  # v4.0.1 · usada no painel quando o robô ainda não publicou biblioteca/assuntos.json
-js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'ui_vip.js', 'ui_comite.js', 'ui_br36.js', 'ui_estudo36.js', 'ui_v37.js', 'ui_v38.js', 'ui_ingles.js', 'ui_v391.js', 'ui_v310.js', 'ui_v311.js', 'ui_v4.js', 'ui_v401.js', 'main.js']
+js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'ui_vip.js', 'ui_comite.js', 'ui_br36.js', 'ui_estudo36.js', 'ui_v37.js', 'ui_v38.js', 'ui_ingles.js', 'ui_v391.js', 'ui_v310.js', 'ui_v311.js', 'ui_v4.js', 'ui_v401.js', 'ui_v41.js', 'main.js']
 # v3.5 · carteiras VG VIP (aba separada): números do print enviado pelo Lucas; publicação autorizada por ele em 08/11/2026
 _vip_p = os.path.join(B, 'src', 'vip.json')
 vip = json.load(open(_vip_p, encoding='utf-8')) if os.path.exists(_vip_p) else {'carteiras': []}

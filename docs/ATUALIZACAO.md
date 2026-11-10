@@ -1,3 +1,66 @@
+# Oregon Intelligence v4.1 · melhorias visuais e "O que o mercado está falando" (10/11/2026)
+
+O pacote `robo-oregon-v4.1-alterados.zip` vale sobre a v4.0.1 que já está no seu GitHub. **O `robo.yml` não muda: um envio
+só.** Nenhuma chave nova, nenhuma API paga, nenhuma fonte nova. Você aprovou as propostas 3 a 14 ("pode seguir,
+autorizado"); o tema claro ficou como estava. Nada foi retirado: muda a aparência e a organização. No visual antigo,
+tudo continua como antes.
+
+## O que muda
+
+- **Brasil › "O que o mercado está falando"** (no alto de Ativos brasileiros). Botões 24 h | 7 dias | 30 dias, com a
+  mesma seta dos Assuntos do momento. Tocar numa linha abre as notícias ali mesmo.
+  - **Empresas mais citadas nas manchetes**, de qualquer empresa da bolsa.
+    - As da carteira e da VG VIP usam os termos e as exclusões que o robô já usa. O código delas aparece em
+      verde-azulado.
+    - As outras o robô aprende das próprias manchetes: "Embraer (EMBJ3)" ensina que "Embraer" é a EMBJ3. Nada sai de
+      lista feita de memória.
+    - Nomes que também são palavra comum (Vale fora da carteira, Brava, Vamos…) só contam pelo código.
+    - "Bradesco BBI" e "Itaú BBA" citados como fonte da opinião não contam como notícia do banco.
+    - BDRs de empresas de fora e contratos futuros ficam de fora.
+  - **Macro do Brasil:** atividade, juros, inflação, câmbio, fiscal, bolsa e agenda do dia. É a marcação do Mercado
+    hoje, agora com contagem e seta.
+  - **Atenção:** nesta semana a macro aparece toda "acima do normal" porque as buscas de macro começaram em 09/11. A
+    seta se acerta em algumas semanas, quando o período de comparação já tiver essas buscas.
+- **Ficha da empresa ou do ETF (Brasil):**
+  - **Cabeçalho:**
+    - um quadrado com as letras do código;
+    - nome grande;
+    - pilar e setor em selos;
+    - pesos nas carteiras em chips;
+    - os números (preço-teto, proventos, retorno, taxa, patrimônio…) em quadros iguais lado a lado;
+    - "Por que manter" com aspas.
+  - **Coluna de notícias:** ganha um índice no alto (Notícias, Opiniões, CVM, Tema do ETF, Juros e inflação, Setor,
+    Mundo, Menções, com a contagem de cada bloco); tocar leva ao bloco. Hora, tipo e veículo no estilo do Hoje.
+  - **Lista de ativos à esquerda:** a coluna "Última" não fica mais cortada.
+- **Hoje:**
+  - o Radar das teses vira uma grade contínua, com o dia ("Hoje 08:00", "Ontem 21:49") dentro de cada cartão;
+  - a temporada de resultados ganha uma barra "7 de 13" e separa "Entregaram" de "Faltam";
+  - o Debate ganha uma barra a favor, contra e neutras;
+  - no celular, as três contagens do alto ficam lado a lado.
+- **Carregamento:** enquanto os dados chegam, aparecem blocos cinza no formato das seções.
+- **Tabelas** (Pauta, Proventos, Quem tem a ação, Mudanças de recomendação, Fluxo dos fundos…):
+  - linhas alternadas;
+  - números alinhados;
+  - entrada em verde e saída em vermelho.
+- **Mundo e Estratégia:**
+  - temas dos ETFs globais em cartões com a contagem em destaque;
+  - "Últimas do mundo" com o quadro **"De onde vêm as notícias"** ao lado, com barras por região; tocar filtra a lista;
+  - Debate de mercado com a barra a favor, contra e neutras.
+- **Biblioteca:** as linhas da pesquisa no mesmo estilo do Hoje.
+- **Carteiras:** os gráficos (carteira em camadas, pilar a pilar) nas cores da Oregon (verde-azulado para renda fixa,
+  azul-marinho para ações, dourado para FIIs). Os dados são os mesmos; no visual antigo, as cores de antes.
+
+## Como subir (um passo)
+
+Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`docs/…`, `painel/…`, `robo/…`, `site/…`,
+`testes/…`, `README.md`) e clique em Commit changes. A rodada desse envio fica verde. Ela publica o painel e o primeiro
+`empresas.json`, relendo 95 dias da biblioteca uma vez. Até essa rodada terminar, o quadro "O que o mercado está falando"
+não aparece.
+
+## Voltar atrás
+
+Na lista de commits, abra o commit do envio e use Revert. Para ver o painel como era, "Voltar ao visual antigo".
+
 # Oregon Intelligence v4.0.1 · Assuntos do momento, Hoje mais fácil de achar e ETFs de renda fixa (10/11/2026)
 
 O pacote `robo-oregon-v4.0.1-alterados.zip` vale sobre a v4.0 que já está no seu GitHub. **O `robo.yml` não muda: um

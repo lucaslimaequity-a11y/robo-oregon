@@ -516,6 +516,35 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       const t = document.querySelector('.toast'); if (t) t.remove();
       return r; });
     rep(Object.values(v40).every(v => v === true), vw + ' visual novo: moldura, assuntos do momento (abre as notícias, filtra o Hoje), mapa filtra, títulos e contagens, busca com atalhos, tipos por extenso, nada sumiu, sem rolagem lateral e volta ao antigo (' + JSON.stringify(v40) + ')');
+    // v4.1 · melhorias visuais (propostas 3 a 14): Brasil com "O que o mercado está falando", ficha, tabelas, Mundo, cores, carregamento
+    const v41 = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms)), r = {}, larg = innerWidth >= 1024;
+      APP.go('hoje'); await z(400);
+      r.esqueleto = APP.v4Esqueleto().classList.contains('v4-sk');
+      r.radarGrade = !document.querySelector('#radar .nr-day') || !!document.querySelector('#radar .nrl.v4-grade .v4-dd');
+      r.temporada = !document.querySelector('#agenda-decisiva .tmp') || (!!document.querySelector('.v4-tmp-bar') && document.querySelectorAll('.v4-tmp-g').length === 2);
+      r.barraOpinioes = !document.querySelector('#debate .deb-h .pol') || !!document.querySelector('#debate .v4-op-bar');
+      if (!larg) r.numerosLadoALado = getComputedStyle(document.querySelector('.v4-dia .v4-st')).display === 'grid';
+      APP.go('brasil', 'ativos'); await z(700);
+      const mf = document.querySelector('.v4-mf'); const lin = mf ? mf.querySelectorAll('.v4-as-r') : [];
+      r.mercadoFala = !!mf && lin.length >= 1 && /Empresas mais citadas/.test(mf.textContent) && /Macro do Brasil/.test(mf.textContent);
+      if (lin.length) { lin[0].click(); await z(300); r.abreEmpresa = !!document.querySelector('.v4-mf .v4-as-det'); document.querySelector('.v4-mf .v4-as-x').click(); await z(200); }
+      const tr = Array.from(document.querySelectorAll('.lista-at tbody tr')).find(x => /PETR4/.test(x.textContent)); if (tr) { tr.click(); await z(500); }
+      r.cabecalho = !!document.querySelector('.ficha-head .v4-mono') && document.querySelectorAll('.ficha-head .v4-cc').length >= 2 && document.querySelectorAll('.ficha-head .v4-pesos .v4-pc').length >= 1;
+      r.indiceNoticias = document.querySelectorAll('.ficha-news .v4-np-idx button').length >= 2;
+      const tw = document.querySelector('.lista-at .tw'); r.listaSemCorte = !larg || !tw || tw.scrollWidth <= tw.clientWidth + 2;
+      APP.go('brasil', 'fluxo'); await z(600);
+      r.tabelas = document.querySelectorAll('table.t td.v4-sg').length > 0;
+      APP.go('mundo', 'agora'); await z(600);
+      r.mundoRegioes = !document.querySelector('#mundo-ultimas .sub.filt') || !!document.querySelector('.v4-mw .v4-rg .v4-rg-r');
+      APP.go('cart', 'ref'); await z(500);
+      r.cores = APP.PC.P1 === '#A8D8D3' && APP.CC['Ações Brasil'] === '#1C3548';
+      APP.setVisual('antigo'); await z(300); r.coresAntigas = APP.PC.P1 === '#8DB8FA' && APP.CC['Ações Brasil'] === '#1D8C0F' && !document.querySelector('.v4-mf');
+      APP.setVisual('novo'); await z(300); const t = document.querySelector('.toast'); if (t) t.remove();
+      r.sw = document.documentElement.scrollWidth <= innerWidth;
+      APP.go('hoje'); await z(200);
+      return r; });
+    rep(Object.values(v41).every(v => v === true), vw + ' v4.1: mercado falando em Brasil, cabeçalho e índice da ficha, lista sem corte, tabelas, Mundo, radar, temporada, opiniões, cores e carregamento (' + JSON.stringify(v41) + ')');
     if (errs.length) rep(false, 'erros de JavaScript: ' + errs.join(' | '));
     await p.close();
   }

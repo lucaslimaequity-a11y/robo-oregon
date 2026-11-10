@@ -288,3 +288,33 @@ horário (`ui_v311.js`, `I.proximaCorrente`).
   - `intel.no_pregao` (dias úteis, 9h às 19h de Brasília) troca o intervalo.
   - `fora_do_teto` ordena junto das buscas de macro e não gasta o teto das buscas por empresa.
 
+
+## v4.1 · melhorias visuais e "O que o mercado está falando"
+- **Robô, `robo/empresas.py`.**
+  - **Empresas da carteira e da VIP:** `da_carteira` usa as ações (`classe: acao`) com `noticias.termos` e `excluir`
+    de `robo/config.json` e conta com `noticias.pertence`.
+  - **As demais:** `aprender` lê pares "Nome (CÓDIGO)" nas manchetes (tira "Lucro da", "Ações da", "CEO da"…; deixa
+    de fora BDRs 34/35 e contratos futuros). `definicoes` junta os códigos da mesma raiz (SANB3/SANB11). O nome conta
+    com maiúscula exata, menos as palavras comuns de `COMUNS`, que contam só pelo código.
+  - **Bancos como fonte da opinião:** `CASAS` tira "Bradesco BBI", "Itaú BBA"… antes de procurar o banco.
+  - **Contagem e seta:** `calcular` usa a regra de `assuntos.py` (24 h × 7 dias; 7 × 28; 30 × 60) para empresas (top
+    20) e macro (`x.macro_br`).
+  - **Histórico:** fica no arquivo e cada rodada recalcula 10 dias. A `marca` olha só a carteira: nome novo aprendido
+    não refaz o histórico, carteira nova refaz (95 dias).
+  - **Publicação:** `intel.py` grava `biblioteca/assuntos.json` e depois `biblioteca/empresas.json`, cada um no seu
+    `try`. O site já copia a pasta.
+- **Painel, `ui_v41.js` + `v4.css`** (só com `html.v4`; cada bloco marcado [P3]…[P14]):
+  - **[P3] carregamento:** `A.v4Esqueleto` no lugar do Hoje vazio enquanto `intel.carregando`.
+  - **Hoje, depois da montagem:** [P5] dia dentro do cartão do Radar (`.v4-dd`); [P6] barra e grupos da temporada
+    (move os botões existentes).
+  - **[P8] coluna de notícias da ficha:** `A.noticiasPainel` embrulhado com o índice `.v4-np-idx` e âncoras
+    `.v4-npb`.
+  - **[P9] cabeçalho da ficha:** `fichaCab`, depois de cada `A.render`: monograma, selos `.v4-cc`, chips `.v4-pc`.
+  - **[P10] tabelas:** `td.num/.r` com sinal ganham `.v4-up/.v4-down`.
+  - **[P11] "O que o mercado está falando":** `A.areas.brasil` embrulhado (Ativos brasileiros), lendo
+    `biblioteca/empresas.json`.
+  - **[P13] Mundo:** `A.areas.mundo` embrulhado; `mundoRegioes` monta o quadro de regiões a partir dos botões do
+    filtro (tocar = clicar no botão); `opBarra` monta a barra de opiniões a partir dos botões ou dos selos.
+  - **[P14] cores:** `A.PC`/`A.CC` trocam para a paleta da Oregon no visual novo e voltam no antigo.
+  - **[P4], [P7], [P12] e o resto:** só CSS.
+

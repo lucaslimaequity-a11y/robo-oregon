@@ -389,3 +389,138 @@ html.v4 .sumario .v4-sf{display:inline-flex;align-items:center;gap:6px;border:1p
 
 /* impressão: sem a moldura */
 @media print{html.v4 .ov{display:block}.v4-subs,.v4-col,.v4-volta,.v4-rod,.v4-ir-wrap{display:none!important}.v4-dia{background:none;color:#000;border:1px solid #999}}
+
+/* ====================================================================================================================
+   v4.1 · melhorias visuais aprovadas pelo Lucas em 10/11/2026 (propostas 3 a 14; o tema claro fica como está)
+   ==================================================================================================================== */
+/* [P3] carregamento: blocos no formato das seções */
+html.v4 .v4-sk{display:flex;flex-direction:column;gap:22px}
+html.v4 .v4-sk i{display:block;border-radius:8px;background:linear-gradient(90deg,var(--line) 0%,var(--panel2) 50%,var(--line) 100%);background-size:200% 100%;animation:v4Sk 1.4s ease-in-out infinite}
+html.v4 .v4-sk-hero{background:var(--v4-navy);border-radius:18px;padding:24px 26px;display:flex;flex-direction:column;gap:16px}
+html.v4 .v4-sk-hero i{background:linear-gradient(90deg,#1C3548 0%,#26445A 50%,#1C3548 100%);background-size:200% 100%}
+html.v4 .v4-sk-t{width:220px;height:22px}
+html.v4 .v4-sk-rs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 30px}
+html.v4 .v4-sk-r{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center}
+html.v4 .v4-sk-r i{height:12px}
+html.v4 .v4-sk-g{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:22px}
+html.v4 .v4-sk-g>div{display:flex;flex-direction:column;gap:22px}
+html.v4 .v4-sk-c{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+html.v4 .v4-sk-b{height:12px}
+@keyframes v4Sk{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@media (max-width:1100px){html.v4 .v4-sk-g,html.v4 .v4-sk-rs{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){html.v4 .v4-sk i{animation:none}}
+/* [P4] celular: as três contagens lado a lado */
+@media (max-width:640px){
+  html.v4 .v4-dia .v4-dia-h{flex-direction:column;align-items:stretch;gap:12px}
+  html.v4 .v4-dia .v4-st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  html.v4 .v4-dia .v4-st>span,html.v4 .v4-dia .fxd-i{flex-direction:column;align-items:flex-start;gap:2px;font-size:.72rem;line-height:1.3;background:rgba(255,255,255,.05);border-radius:10px;padding:8px 9px;text-align:left}
+  html.v4 .v4-dia .v4-st b,html.v4 .v4-dia .fxd-i b{font-size:1.3rem;line-height:1.1}
+}
+/* [P5] Radar em grade contínua: o dia dentro do cartão */
+html.v4 #radar .nrl.v4-grade>.nr-day{display:none}
+html.v4 .v4-dd{font-weight:600;color:var(--blue-ink);margin-right:2px}
+/* [P6] temporada de resultados: barra e dois grupos */
+html.v4 .v4-tmp-bar{height:10px;border-radius:5px;background:var(--chip);overflow:hidden;margin:8px 0 12px}
+html.v4 .v4-tmp-bar i{display:block;height:100%;border-radius:5px;background:var(--blue)}
+html.v4 .v4-tmp-gs{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+html.v4 .v4-tmp-k{margin:0 0 5px;font:500 .8rem var(--v4-t);color:var(--ink2)}
+/* [P7] lista de ativos de Brasil sem coluna cortada */
+html.v4 .lista-at table.t{table-layout:fixed;width:100%}
+html.v4 .lista-at .t th:nth-child(2),html.v4 .lista-at .t td:nth-child(2){width:40px;padding-left:4px;padding-right:6px}
+html.v4 .lista-at .t th:nth-child(3),html.v4 .lista-at .t td:nth-child(3){width:70px;padding-left:4px;padding-right:12px;font-size:.74rem;white-space:normal;line-height:1.3}
+html.v4 .lista-at .t td:first-child{overflow:hidden}
+html.v4 .lista-at .at-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.v4 .lista-at .t td:nth-child(3) .nw-when{font:500 .74rem var(--v4-t);color:var(--ink2)}
+/* [P8] coluna de notícias da ficha: índice no alto e blocos com título */
+html.v4 .np-h h3{font:500 1.2rem var(--v4-t);color:var(--v4-title)}
+html.v4 .v4-np-idx{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+html.v4 .v4-np-idx button{display:inline-flex;align-items:baseline;gap:5px;border:1px solid var(--line2);border-radius:999px;background:var(--panel);padding:3px 10px;font:500 .8rem var(--sans);color:var(--ink);cursor:pointer}
+html.v4 .v4-np-idx button small{color:var(--muted);font-size:.72rem}
+html.v4 .v4-np-idx button:hover{border-color:var(--blue);color:var(--blue-ink)}
+html.v4 .np .np-sub{font:600 .98rem var(--v4-t);color:var(--v4-title);margin:20px 0 6px}
+html.v4 .v4-npb{scroll-margin-top:8px}
+html.v4 .np .nl{padding:9px 0}
+html.v4 .np .nl .nw-when{font:500 .78rem var(--v4-t);color:var(--ink2)}
+html.v4 .np .nl .nwl{font:400 .95rem/1.42 var(--sans);color:var(--ink)}
+html.v4 .np .nl-src{font-size:.78rem;color:var(--muted)}
+/* [P9] cabeçalho da ficha: monograma, nome grande, selos, pesos em chips e números em quadros iguais */
+html.v4 .ficha-head{background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0;padding:22px 24px 4px}
+html.v4 .ficha-head.so{border-bottom:1px solid var(--line);border-radius:16px;margin-bottom:16px}
+html.v4 .ficha-kpi{background:var(--panel);border:1px solid var(--line);border-top:0;border-radius:0 0 16px 16px;padding:4px 24px 18px;margin-bottom:16px}
+html.v4 .v4-fh{display:flex;gap:18px;align-items:flex-start}
+html.v4 .v4-fh>.tv{flex:1;min-width:0}
+html.v4 .v4-mono{flex:none;width:58px;height:58px;border-radius:14px;background:var(--v4-navy);color:var(--v4-teal-l);font:600 1.15rem var(--v4-t);display:inline-flex;align-items:center;justify-content:center;letter-spacing:.02em}
+html.v4 .ficha-head .tv-nome{font:500 1.9rem/1.15 var(--v4-t);color:var(--v4-title);display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:4px 0 6px}
+html.v4 .ficha-head .tv-tk{background:var(--v4-navy);color:#FFFFFF;border-radius:6px;font:600 .82rem var(--v4-t);padding:3px 9px}
+html.v4 .ficha-head .tv-peso{font:600 .78rem var(--v4-t);background:var(--amber-soft);color:var(--warn);border:0;padding:3px 10px}
+html.v4 .ficha-head .chip{font-size:.78rem;padding:2px 10px}
+html.v4 .ficha-head .tv-crumb{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+html.v4 .v4-cc{display:inline-block;border-radius:999px;padding:2px 10px;background:var(--blue-soft);color:var(--blue-ink);font:500 .78rem var(--v4-t);letter-spacing:0;text-transform:none}
+html.v4 .v4-pesos{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+html.v4 .v4-pesos .k{font:500 .8rem var(--v4-t);color:var(--ink2)}
+html.v4 .v4-pc{border:1px solid var(--line2);border-radius:999px;padding:2px 10px;font-size:.84rem;background:var(--panel);color:var(--ink2)}
+html.v4 .v4-pc b{color:var(--ink)}
+html.v4 .ficha-kpi .vbox{grid-template-columns:repeat(auto-fit,minmax(min(100%,118px),1fr));border-radius:12px;margin:8px 0 10px}
+html.v4 .ficha-kpi .vbox>div{padding:14px 16px}
+html.v4 .ficha-kpi .vbox .k{font:500 .8rem var(--v4-t);color:var(--muted)}
+html.v4 .ficha-kpi .vbox b{font:600 1.55rem/1.2 var(--v4-t)!important;color:var(--v4-title);display:block;margin:4px 0 4px}
+html.v4 .ficha-kpi .vbox b.up{color:var(--blue-ink)}
+html.v4 .ficha-kpi .tv-lead{border-left:0;padding:4px 0 0 34px;position:relative;font-size:1rem}
+html.v4 .ficha-kpi .tv-lead::before{content:"\201C";position:absolute;left:2px;top:-6px;font:600 2.2rem var(--v4-t);color:var(--v4-teal-l)}
+@media (max-width:640px){html.v4 .ficha-head{padding:16px 14px 4px}html.v4 .ficha-kpi{padding:4px 14px 14px}html.v4 .v4-mono{width:46px;height:46px;font-size:1rem}html.v4 .ficha-head .tv-nome{font-size:1.4rem}html.v4 .ficha-kpi .vbox{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* [P10] tabelas: linhas alternadas, números alinhados, alta e queda */
+html.v4 .t tbody tr:nth-child(even) td{background:var(--panel2)}
+html.v4 .t tbody tr:hover td{background:var(--blue-soft)}
+html.v4 .t td.num,html.v4 .t td.r{font-family:var(--sans);font-variant-numeric:tabular-nums}
+html.v4 .t thead th{font:600 .72rem var(--v4-t);letter-spacing:.03em;color:var(--muted)}
+html.v4 .t td.v4-up{color:var(--up)}
+html.v4 .t td.v4-down{color:var(--down)}
+/* [P11] Brasil: "O que o mercado está falando" */
+html.v4 .v4-mf{margin:0 0 20px}
+html.v4 .v4-mf-sub{margin:0;font-size:.86rem;color:#A9BAC6}
+html.v4 .v4-mf-g{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px 34px}
+html.v4 .v4-mf-col h3{margin:0 0 6px;font:500 .95rem var(--v4-t);color:var(--v4-teal-l)}
+html.v4 .v4-mf-l{display:flex;flex-direction:column;gap:2px}
+html.v4 .v4-mf .v4-as-r{grid-template-columns:minmax(0,190px) minmax(0,1fr) 70px}
+html.v4 .v4-mf-tk{margin-left:8px;font:600 .7rem var(--v4-t);color:#8FA3B1;letter-spacing:.02em}
+html.v4 .v4-mf-tk.cart{color:var(--v4-teal-l)}
+@media (max-width:1100px){html.v4 .v4-mf-g{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){html.v4 .v4-mf .v4-as-r{grid-template-columns:minmax(0,130px) minmax(0,1fr) 62px}}
+/* [P12] Biblioteca (e demais listas de cartões): mesmo estilo das linhas do Hoje */
+html.v4 #main article.nw:not(.nr){border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:14px 6px}
+html.v4 #main article.nw:not(.nr):hover{background:var(--row)}
+html.v4 #main article.nw:not(.nr) .nw-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+html.v4 #main article.nw:not(.nr) .nw-when{font:500 .8rem var(--v4-t);color:var(--ink2);font-variant-numeric:tabular-nums}
+html.v4 #main article.nw:not(.nr) .nw-src{font:400 .8rem var(--sans);color:var(--muted)}
+html.v4 #main article.nw:not(.nr) .nw-t{margin:4px 0 4px}
+html.v4 #main article.nw:not(.nr) .nw-t .nwl{font:500 1.04rem/1.42 var(--sans);color:var(--ink)}
+html.v4 #main article.nw:not(.nr) .nw-r{color:var(--ink2);font-size:.9rem}
+/* [P13] Mundo e Estratégia: temas em cartões, "De onde vêm as notícias", opiniões em barra */
+html.v4 .tt{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+html.v4 .tt-h{align-items:baseline;padding-bottom:10px;margin-bottom:10px;border-bottom:3px solid var(--v4-teal-l)}
+html.v4 .tt-h b{font:500 1rem var(--v4-t);color:var(--v4-title)}
+html.v4 .tt-h .muted{font:600 1.15rem var(--v4-t);color:var(--blue-ink)}
+html.v4 .tt p .nwl{font:500 .95rem/1.4 var(--sans)}
+html.v4 .tt .nw-when{font:500 .78rem var(--v4-t);color:var(--ink2)}
+html.v4 .v4-mw{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+html.v4 .v4-mw>.sec{margin:0}
+html.v4 .v4-rg{position:sticky;top:16px}
+html.v4 .v4-rg-l{display:flex;flex-direction:column;gap:4px;margin:6px 0 10px}
+html.v4 .v4-rg-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;border:0;background:transparent;padding:6px 8px;border-radius:10px;text-align:left;cursor:pointer;color:var(--ink)}
+html.v4 .v4-rg-r:hover{background:var(--row)}
+html.v4 .v4-rg-r[aria-pressed="true"]{background:var(--blue-soft)}
+html.v4 .v4-rg-r span{font:500 .92rem var(--v4-t)}
+html.v4 .v4-rg-r b{font:600 .92rem var(--v4-t);font-variant-numeric:tabular-nums}
+html.v4 .v4-rg-r i{grid-column:1/-1;display:block;height:8px;border-radius:4px;background:var(--blue)}
+html.v4 .v4-op-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin:10px 0 6px;background:var(--chip)}
+html.v4 .v4-op-bar i{display:block;height:100%}
+html.v4 .v4-op-bar .f{background:var(--blue)}html.v4 .v4-op-bar .c{background:var(--down)}html.v4 .v4-op-bar .n{background:var(--line2)}
+@media (max-width:1100px){html.v4 .v4-mw{grid-template-columns:minmax(0,1fr)}html.v4 .v4-rg{position:static}}
+html.v4 .lista-at .t td:nth-child(3) .nw-when{white-space:normal}
+html.v4 .lista-at .search{box-sizing:border-box}
+@media (min-width:1281px){html.v4 .grid-emp:not(.recolhida){grid-template-columns:minmax(0,240px) minmax(0,1fr)}html.v4 .ficha-grid{grid-template-columns:minmax(0,1fr) minmax(290px,330px)}}
+html.v4 .ficha-kpi .vbox>div{padding:12px 14px}
+html.v4 .ficha-kpi .vbox b{font-size:1.4rem!important;white-space:nowrap}
+html.v4 .lista-at .search{width:calc(100% - 28px)!important;max-width:calc(100% - 28px)!important;min-width:0!important}
+html.v4 .tt-h .muted{font-size:.95rem;white-space:nowrap}
+html.v4 .ficha-head .chip{white-space:normal;max-width:100%;overflow-wrap:anywhere;line-height:1.4}

@@ -1,3 +1,43 @@
+# Resultados dos testes · v4.1 · 10/11/2026 (Brasília)
+
+- **Robô (Python):** 230 testes, todos OK (`ROBO_PORTAO=1`: OK, com o mesmo 1 teste pulado de antes). São 9 novos em
+  `testes/test_v41.py`, que conferem:
+  - **A carteira usa os termos do robô:** Bradesco sem o "ON", sem fundos imobiliários e sem ETFs.
+  - **Os nomes aprendidos nas manchetes:**
+    - "Lucro da Embraer (EMBJ3)" ensina "Embraer";
+    - Nvidia (BDR) e mini-índice ficam de fora;
+    - SANB3 e SANB11 viram uma linha só;
+    - "Brava" conta só pelo código.
+  - **Quem é citado:**
+    - "Embraer fecha contrato" conta para a EMBJ3, e "embraer" em minúsculas não;
+    - "diz Bradesco BBI" não conta para o Bradesco;
+    - "Centro Cultural Banco do Brasil" não conta para o BBAS3;
+    - "Vale a pena investir" não conta para a Vale.
+  - **A contagem e a macro nas três janelas, e o histórico:** a primeira vez relê 95 dias, depois 10; o dia antigo
+    vem do arquivo e o nome aprendido continua valendo.
+  - **A rodada simulada inteira:** grava `biblioteca/empresas.json`. Uma falha só vai para o log.
+  - **O painel montado:** ordem dos arquivos, as peças novas no site e as cores só no visual novo.
+- **Painel (Node):** 69 de 69 (a conferência de sintaxe inclui `ui_v41.js`).
+- **Navegador (dados de teste, 1440 px e 390 px):** 228 verificações, 226 PASS. A verificação nova da v4.1 passa nas duas
+  larguras. Ela confere:
+  - **Brasil:** "O que o mercado está falando" com empresas e macro, e tocar abre as notícias.
+  - **Ficha:** cabeçalho com monograma, selos e pesos em chips; índice da coluna de notícias; lista de ativos sem
+    corte.
+  - **Tabelas e Mundo:** tabelas com alta e queda; quadro de regiões no Mundo.
+  - **Hoje:** grade do Radar, barra da temporada, barra de opiniões, números lado a lado no celular, carregamento.
+  - **Cores:** as da Oregon no visual novo e as de antes no antigo.
+  - **Largura:** nenhuma rolagem para o lado.
+- **As 2 falhas não vêm desta entrega.** São as mesmas de antes: a notícia de teste da VALE3, de 06/11, saiu da janela de
+  72 horas do radar VIP.
+- **Dados reais (biblioteca até a coleta das 08:38 de 10/11, conta feita aqui com o `empresas.py`):**
+  - Empresas mais citadas em 24 h: Petrobras 19, Itaúsa 10 (▲ 3,8×), Grupo SBF 7, Vale 6, Bradesco 5.
+  - Em 7 dias: Petrobras 66, Bradesco 40, Axia 33, Energisa 33, Sabesp 31.
+  - A Embraer aparece pelo nome aprendido nas manchetes.
+- **Larguras olhadas em 390 px:** Hoje, Brasil, Mundo, Carteiras, Biblioteca e VG VIP, sem rolagem para o lado.
+  - Na ficha de ETF com nome de gestora muito longo, o chip passava da tela. Isso já acontecia na v4.0.1; agora o chip
+    quebra a linha.
+- **Ressalva:** "O que o mercado está falando" aparece no site depois da primeira rodada do robô após o envio.
+
 # Resultados dos testes · v4.0.1 · 10/11/2026 (Brasília)
 
 - **Robô (Python):** 221 testes, todos OK (`ROBO_PORTAO=1`: OK, com o mesmo 1 teste pulado de antes). São 19 novos em

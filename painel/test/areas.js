@@ -226,7 +226,11 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     const av7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); const b = Array.from(document.querySelectorAll('.mesa-ctl button')).find(x => /Atualizar/.test(x.textContent)); b.click(); await z(1200);
       const a = document.querySelector('.aviso-at'); return {aviso: a ? a.textContent : null, coletar: !!document.querySelector('.mesa-ctl a[href*="actions/workflows/robo.yml"]')}; });
     rep(av7.aviso && /^Conferido às \d\d:\d\d: (nada novo desde a coleta (das \d|de )|chegou)/.test(av7.aviso) && av7.coletar, vw + ' aviso depois do Atualizar e "Coletar agora" no Hoje (' + JSON.stringify(av7) + ')');
-    const hj7 = await p.evaluate(() => { const cols = document.querySelectorAll('.mesa > .mesa-col'); const fx = document.querySelector('.fxd');
+    const hj7 = await p.evaluate(() => { const cols = document.querySelectorAll('.mesa > .mesa-col'); const fx = document.querySelector('.fxd'); const ids = s => Array.from(document.querySelectorAll(s)).map(x => x.id).filter(Boolean).join(',');
+      if (document.documentElement.classList.contains('v4')) return Object.assign(hj7v4(), {fxd: fx ? fx.querySelectorAll('.fxd-i').length : -1, alertas: !!document.getElementById('alertas'), fila: !!document.getElementById('fila'),
+        vz1: document.querySelectorAll('#agenda-decisiva .vz1').length, sticky: getComputedStyle(document.querySelector('.sumario')).position, tp: document.querySelectorAll('#ultimas .mt').length, leg: !!document.querySelector('#ultimas .mt-leg'),
+        ev: Array.from(document.querySelectorAll('.mk.evc')).map(x => x.textContent).join('|'), evf: !!document.querySelector('.ev-f button'), divVip: INTEL.eventosDe(APP.itemPorId('vip3')).join() === 'divida'});
+      function hj7v4() { return {cols: 2, colA: ids('.v4-main > section') === 'mercado-hoje,radar' && /^atencao,agenda-decisiva/.test(ids('.v4-side > *')) && ids('.v4-baixo > section') === 'research,debate' ? 'radar,research' : 'v4:' + ids('.v4-main > section') + '|' + ids('.v4-side > *') + '|' + ids('.v4-baixo > section')}; }
       return {cols: cols.length, colA: cols[0] ? Array.from(cols[0].children).map(x => x.id).join(',') : '', fxd: fx ? fx.querySelectorAll('.fxd-i').length : -1, alertas: !!document.getElementById('alertas'), fila: !!document.getElementById('fila'),
         vz1: document.querySelectorAll('#agenda-decisiva .vz1').length, sticky: getComputedStyle(document.querySelector('.sumario')).position, tp: document.querySelectorAll('#ultimas .mt').length, leg: !!document.querySelector('#ultimas .mt-leg'),
         ev: Array.from(document.querySelectorAll('.mk.evc')).map(x => x.textContent).join('|'), evf: !!document.querySelector('.ev-f button'), divVip: INTEL.eventosDe(APP.itemPorId('vip3')).join() === 'divida'}; });
@@ -254,9 +258,9 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     rep(tc7.trecho && /Petrobras/.test(tc7.trecho) && tc7.meses >= 2 && tc7.petr, vw + ' termômetro: trecho literal da carta e grade empresa × mês (' + JSON.stringify(tc7) + ')');
     if (vw === 1440) {
       const fl7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.go('brasil', 'ativos'); await z(400); const b = document.querySelector('.rec-l'); b.click(); await z(300);
-        const g = document.querySelector('.grid-emp'), r = {rec: g.classList.contains('recolhida'), lista: getComputedStyle(document.querySelector('.lista-at')).display, strip: getComputedStyle(document.querySelector('.tk-strip')).display, larg: document.querySelector('.ficha-at').offsetWidth};
+        const g = document.querySelector('.grid-emp'), r = {rec: g.classList.contains('recolhida'), lista: getComputedStyle(document.querySelector('.lista-at')).display, strip: getComputedStyle(document.querySelector('.tk-strip')).display, larg: document.querySelector('.ficha-at').offsetWidth, cheia: document.querySelector('.ficha-at').offsetWidth >= document.getElementById('main').clientWidth - 40, v4: document.documentElement.classList.contains('v4')};
         document.querySelector('.rec-a').click(); await z(300); r.volta = !document.querySelector('.grid-emp').classList.contains('recolhida'); return r; });
-      rep(fl7.rec && fl7.lista === 'none' && fl7.strip === 'flex' && fl7.larg > 1200 && fl7.volta, vw + ' ficha mais larga: a lista recolhe e volta (' + JSON.stringify(fl7) + ')');
+      rep(fl7.rec && fl7.lista === 'none' && fl7.strip === 'flex' && (fl7.v4 ? fl7.cheia && fl7.larg > 1000 : fl7.larg > 1200) && fl7.volta, vw + ' ficha mais larga: a lista recolhe e volta (' + JSON.stringify(fl7) + ')');
     } else {
       const ce7 = await p.evaluate(async () => { const z = ms => new Promise(r => setTimeout(r, ms)); APP.lsSet('area-research', false); APP.go('hoje'); await z(500); const nav = document.getElementById('nav').getBoundingClientRect();
         const r = {navBaixo: Math.abs(nav.bottom - window.innerHeight) < 2, radar: !document.getElementById('radar').classList.contains('fechada'), research: document.getElementById('research').classList.contains('fechada')};
@@ -377,7 +381,8 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       let s = await ver('rapida');
       r.rapida = !!s;
       s = await ver('briefing');
-      r.depoisDoMapa = !!s && s.previousElementSibling && s.previousElementSibling.id === 'atencao';
+      r.depoisDoMapa = !!s && (document.documentElement.classList.contains('v4') ? s.parentElement.classList.contains('v4-main') && !s.previousElementSibling && !!document.querySelector('.v4-g > .v4-side > #atencao:first-child')
+        : !!s.previousElementSibling && s.previousElementSibling.id === 'atencao');
       r.nav = !!document.querySelector('nav.sumario a[href="#mercado-hoje"]');
       const t = s.innerText;
       r.agenda = /Para começar o dia[\s\S]*Agenda desta segunda-feira/.test(t);
@@ -443,6 +448,48 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       return {top: getComputedStyle(document.querySelector('.top')).display, sug: getComputedStyle(document.querySelector('.cm-g > .no-print')).display, imp: Array.from(document.querySelectorAll('button')).some(b => b.textContent === 'Imprimir')}; });
     await p.emulateMedia({media: 'screen'});
     rep(pr7.top === 'none' && pr7.sug === 'none' && pr7.imp, vw + ' comitê: botão Imprimir e folha limpa na impressão (' + JSON.stringify(pr7) + ')');
+    // v4.0 · visual novo: moldura (menu lateral no computador), "O dia até agora", tipos por extenso, nada sumiu, e a volta ao visual antigo
+    const v40 = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms)), r = {}, de = document.documentElement, larg = innerWidth >= 1024;
+      const vis = el => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0;
+      APP.go('hoje'); await z(400);
+      r.padrao = de.classList.contains('v4');
+      const bars = document.querySelectorAll('.v4-dia .v4-bars button'), agH = new Date(Date.now() - 3 * 3600e3).getUTCHours();
+      r.barras = bars.length === 24 && Array.from(bars).every((b, i) => b.disabled === (i > agH));
+      const alvo = Array.from(bars).filter(b => !b.disabled)[0]; alvo.click(); await z(50);
+      r.detalhe = alvo.getAttribute('aria-pressed') === 'true' && document.querySelector('.v4-det-h b').textContent === '00h';
+      const d = INTEL.diaPorHora([{publicado_em: '2026-11-10T09:15:00-03:00'}, {publicado_em: '2026-11-10T09:40:00-03:00'}, {publicado_em: '2026-11-09T23:00:00-03:00'}, {publicado_em: '2026-11-10'}],
+        [{id: 'a', organizacao: 'InfoMoney', publicado_em: '2026-11-10T09:05:00-03:00'}, {id: 'b', organizacao: 'Valor Econômico', publicado_em: '2026-11-10T09:30:00-03:00'}, {id: 'c', organizacao: 'InfoMoney', publicado_em: '2026-11-10T11:00:00-03:00'}], '2026-11-10');
+      r.porHora = d.cont[9] === 2 && d.cont[23] === 0 && d.cont.reduce((a, b) => a + b, 0) === 2 && d.dest[9].id === 'b' && d.dest[11].id === 'c' && !d.dest[10];
+      const ids = ['atencao', 'mercado-hoje', 'radar', 'agenda-decisiva', 'research', 'debate', 'ultimas', 'alertas', 'fila'];
+      r.nadaSumiu = ids.every(i => !!document.getElementById(i)) && !!document.querySelector('.desde') && !!document.querySelector('nav.sumario') && document.querySelectorAll('.prof [role=radio]').length === 3 && !!document.querySelector('.v4-dia .fxd');
+      const pal = Array.from(document.querySelectorAll('#ultimas .mt.v4mt')).map(m => m.getAttribute('data-w'));
+      r.tipos = pal.length > 5 && pal.every(w => /^(Notícia|Resultado|Opinião|Carta|Estudo|Documento à CVM|Fato relevante|Comunicado|[A-ZÀ-Ú].+)$/.test(w)) && pal.some(w => w === 'Notícia');
+      r.marca = /^oreg.?n$/.test(document.querySelector('.top .brand b').textContent) && !!document.querySelector('.top .brand .v4-o');
+      if (larg) {
+        r.lateral = getComputedStyle(document.querySelector('.ov')).display === 'grid' && document.querySelector('.top').getBoundingClientRect().width === 252;
+        APP.go('brasil', 'ativos'); await z(400);
+        const sb = Array.from(document.querySelectorAll('.v4-subs button')); r.subs = vis(document.querySelector('.v4-subs')) && sb.length === APP.SUBS.brasil.length && sb[0].getAttribute('aria-current') === 'page';
+        sb[1].click(); await z(400); r.subsVai = APP.S.sub.brasil === APP.SUBS.brasil[1][0] && document.querySelectorAll('.v4-subs button')[1].getAttribute('aria-current') === 'page';
+        r.coleta = vis(document.querySelector('.v4-col')) && /^(\d\d:\d\d|\dh\d\d|···|··)$/.test(document.querySelector('.v4-ring text').textContent) && !!document.querySelector('.v4-col-b a[href*="actions/workflows/robo.yml"]');
+        r.volta = vis(document.querySelector('.v4-volta'));
+        document.querySelector('.dstat').click(); await z(80); const pp = document.querySelector('body > .pop'), pr = pp && pp.getBoundingClientRect();
+        r.detalheColeta = !!pp && pr.left >= 252 && pr.top >= 0 && pr.bottom <= innerHeight + 1; document.body.click(); await z(50); const p2 = document.querySelector('body > .pop'); if (p2) p2.remove();
+      } else {
+        r.semLateral = !vis(document.querySelector('.v4-subs')) && !vis(document.querySelector('.v4-col')) && vis(document.querySelector('#nav'));
+        r.rodape = vis(document.querySelector('.v4-rod button'));
+      }
+      let sw = true; for (const a of ['hoje', 'brasil', 'mundo', 'cart', 'bib', 'vip']) { APP.go(a); await z(350); if (de.scrollWidth > innerWidth) sw = a; } r.semRolagemLateral = sw;
+      APP.go('hoje'); await z(300);
+      APP.setVisual('antigo'); await z(400);
+      r.antigo = !de.classList.contains('v4') && document.querySelectorAll('.mesa > .mesa-col').length === 2 && !document.querySelector('.v4-dia') && document.querySelector('.top .brand b').textContent === 'Oregon' && !!document.querySelector('.fxd-slot .fxd')
+        && (larg ? vis(document.querySelector('.v4-ir')) : true) && vis(document.querySelector('.v4-rod button')) && /Usar o visual novo/.test(document.querySelector('.v4-rod button').textContent) && APP.lsGet('visual') === 'antigo';
+      const tp = Array.from(document.querySelectorAll('#ultimas .mt')); r.antigoLetras = tp.length > 5 && tp.every(m => !m.classList.contains('v4mt'));
+      document.querySelector('.v4-rod button').click(); await z(400);
+      r.novoDeVolta = de.classList.contains('v4') && !!document.querySelector('.v4-dia') && APP.lsGet('visual') === 'novo';
+      const t = document.querySelector('.toast'); if (t) t.remove();
+      return r; });
+    rep(Object.values(v40).every(v => v === true), vw + ' visual novo: moldura, o dia em barras, tipos por extenso, nada sumiu, sem rolagem lateral e volta ao antigo (' + JSON.stringify(v40) + ')');
     if (errs.length) rep(false, 'erros de JavaScript: ' + errs.join(' | '));
     await p.close();
   }

@@ -230,3 +230,26 @@ horário (`ui_v311.js`, `I.proximaCorrente`).
   - Embrulha `A.atrasoColeta` e `I.textoAtraso`: rodada "em andamento" há mais de 25 min vira `demorando` (a coleta
     falhou e a etapa `seguinte` espera) e rodada concluída com falha vira `falhou`. Nos dois casos o aviso mostra o
     "Coletar agora".
+
+
+## v4.0 · visual novo (moldura e Hoje)
+- **Camada, não reescrita.** `painel/src/v4.css` (somado ao `app.css` pelo `build.py`) e `painel/src/ui_v4.js` (antes do
+  `main.js`). Toda regra do CSS começa por `html.v4`, `html:not(.v4)` ou uma classe `.v4-*`; `testes/test_v4.py`
+  confere. Sem a classe `v4` no `<html>`, o painel é o da v3.11.
+- **Troca:** `A.setVisual('novo'|'antigo')`, guardada em `localStorage` (`A.lsSet('visual')`); padrão `novo`.
+- **Moldura (`moldura()`, depois de cada `A.render`):**
+  - a ≥1024 px, `.ov` vira grade de 252 px + conteúdo e `.top` vira o menu lateral (fixo, 100vh);
+  - `ui_v4.js` acrescenta `.v4-subs` (as páginas de `A.SUBS[área]`, que no conteúdo ficam escondidas a ≥1024 px),
+    `.v4-col` (anel da próxima rodada: o menor entre `I.proximaCorrente` e `I.coletasPrevistas`, atualizado a cada
+    segundo; Atualizar = `A.intelAtualizar`; Coletar agora = página do robô no GitHub) e `.v4-volta`;
+  - `#ctx` vai para o alto do conteúdo e o rodapé `.v4-rod` traz a troca de visual;
+  - `A.dadosPill` é embrulhado para abrir o detalhe da coleta ao lado do menu.
+- **Hoje (`A.areas.hoje` embrulhado):** só reorganiza o DOM que `ui_hoje.js` já monta.
+  - `.v4-dia` ("O dia até agora") recebe a `.fxd` da faixa do topo e usa `I.diaPorHora(itens, macro, hoje)`: contagem
+    por hora de Brasília e a manchete de macro do Brasil de cada hora, sem Grupo XP primeiro.
+  - `.v4-g` = `.v4-main` (`#mercado-hoje`, `#radar`) + `.v4-side` (`#atencao`, `#agenda-decisiva`, `.hx-g`).
+  - `.v4-baixo` = `#research` + `#debate`; `#ultimas` no fim.
+  - Abaixo de 1100 px, `display:contents` e `order` refazem a coluna única com o mapa primeiro.
+- **Tipos:** `A.marcaEl` embrulhado põe `data-w` com o nome por extenso; `A.itemRow` leva a marca para a linha do
+  veículo. As letras continuam no DOM (e no visual antigo).
+

@@ -39,7 +39,7 @@ for _st in (_cfg.get('noticias') or {}).get('buscas_setor') or []:
             _lentes.setdefault(_t, []).append({'nome': _st['nome'], 'pares': _st.get('pares') or []})
 taxon = {'eventos': [[k, n, rx, analise.EVENTOS_FORA.get(k)] for k, n, rx in analise.EVENTOS], 'lentes': _lentes, 'temas': analise.TEMA_NOME, 'regioes': analise.REGIAO_NOME, 'fatores': analise.FATOR_NOME, 'tipos': analise.TIPO_NOME, 'roteiro': analise.ROTEIRO,
          'buscas': _buscas, 'cvm': _cvm, 'vinculo': analise.VINCULO, 'macro_br': [[k, n] for k, n, _rx in analise.MACRO_BR]}  # v3.10: nomes dos subtemas de macro do Brasil
-js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'ui_vip.js', 'ui_comite.js', 'ui_br36.js', 'ui_estudo36.js', 'ui_v37.js', 'ui_v38.js', 'ui_ingles.js', 'ui_v391.js', 'ui_v310.js', 'ui_v311.js', 'main.js']
+js_order = ['quant.js', 'core.js', 'store.js', 'tests.js', 'ui_base.js', 'intel.js', 'ui_mesa.js', 'ui_teses.js', 'ui_mapa.js', 'ui_oregon.js', 'ui_bib.js', 'ui_hoje.js', 'ui_vip.js', 'ui_comite.js', 'ui_br36.js', 'ui_estudo36.js', 'ui_v37.js', 'ui_v38.js', 'ui_ingles.js', 'ui_v391.js', 'ui_v310.js', 'ui_v311.js', 'ui_v4.js', 'main.js']
 # v3.5 · carteiras VG VIP (aba separada): números do print enviado pelo Lucas; publicação autorizada por ele em 08/11/2026
 _vip_p = os.path.join(B, 'src', 'vip.json')
 vip = json.load(open(_vip_p, encoding='utf-8')) if os.path.exists(_vip_p) else {'carteiras': []}
@@ -49,7 +49,7 @@ _glos = {'grupos': _glos.get('grupos') or {}, 'termos': _glos.get('termos') or [
 parts = [js_const('DATA', data), js_const('TAXON', taxon), js_const('VIP_DATA', vip), js_const('GLOSSARIO_EN', _glos)]
 for f in js_order:
     parts.append(rd(f))
-css = rd('app.css')
+css = rd('app.css') + '\n' + rd('v4.css')  # v4.0 · novo visual (vale só com html.v4; o visual antigo continua em app.css)
 # v3.11 · identidade do painel: muda só quando o código, o visual ou os dados embutidos mudam (nada de data e hora).
 # Vai no próprio painel (PAINEL_BUILD) e em site/painel.json; o Atualizar compara as duas e recarrega quando o GitHub publica outro.
 BUILD = hashlib.sha256(('\n;\n'.join(parts) + css).encode('utf-8')).hexdigest()[:12]
@@ -57,7 +57,7 @@ parts.insert(0, js_const('PAINEL_BUILD', BUILD))
 js = '\n;\n'.join(parts)
 for bad in ['</script', '<!--']:
     assert bad not in js, bad
-fonts = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600&display=swap" rel="stylesheet">'
+fonts = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600&family=Lexend+Deca:wght@400;500;600;700&display=swap" rel="stylesheet">'
 body = '''<div class="ov">
 <header class="top">
   <div class="top-in">

@@ -1,3 +1,58 @@
+# Oregon Intelligence v4.0 · visual novo: moldura e Hoje (10/11/2026)
+
+O pacote `robo-oregon-v4.0-alterados.zip` vale sobre a v3.11 que já está no seu GitHub. **Só o painel muda.** O robô,
+as fontes, os horários e o `robo.yml` ficam como estão. Nenhuma chave nova e nenhuma API paga entram. **Um envio só.**
+
+**O que você autorizou.** Mudar a aparência e a organização sem retirar nenhuma função, informação ou fonte, seguindo o
+modelo aprovado no quadro de design. Esta é a primeira entrega: a moldura de todas as telas e a tela Hoje. A ficha da
+empresa e Mundo e Estratégia vêm na v4.1.
+
+## O que muda na tela
+
+- **Menu lateral no computador** (telas a partir de 1024 px de largura):
+  - a marca, a busca e as seis seções com ícones;
+  - embaixo das seções, as páginas da seção aberta (em Brasil: Ativos brasileiros, Pauta da semana, Agenda de
+    proventos…). É a mesma lista que antes ficava em botões no alto da página;
+  - no pé, o cartão da coleta: a hora da última coleta (toque para o detalhe, a aparência e o "Coletar agora"), um anel
+    com quanto falta para a próxima rodada, e os botões **Atualizar** e **Coletar agora**.
+  - No celular e no tablet, a barra de seções continua como estava (embaixo no celular), agora com ícones.
+- **Cores e letras da Oregon:** azul-marinho e verde-azulado das lâminas, títulos em Lexend Deca, texto em IBM Plex Sans.
+  Tema escuro e claro continuam (detalhe da coleta › Aparência).
+- **Hoje:**
+  - **"O dia até agora"** no alto: quantas notícias chegaram em cada hora de hoje, em barras. As horas com manchete de
+    macro do Brasil têm um ponto amarelo. Toque numa barra para ver a hora e a manchete; toque na manchete para abrir.
+    Os números de antes (acontecimentos nas carteiras, opiniões de casas) ficam ao lado e continuam abrindo as listas.
+  - Duas colunas: **Mercado hoje** e **Radar das teses** na principal; **Mapa de atenção**, **Agenda decisiva**,
+    **Alertas** e **Fila de leitura** na lateral. **Research global** e **Debate de mercado** lado a lado embaixo.
+    **Todas as notícias** no fim, como antes.
+  - "Para começar o dia" e o Radar das teses em cartões.
+  - No celular e em telas estreitas fica tudo numa coluna, com o mapa da carteira primeiro (como antes).
+- **Tipo de cada notícia por extenso** (Notícia, Resultado, Opinião, Carta, Estudo, Fato relevante ou Documento à
+  CVM) no lugar das letras N, R, O, C, E, F. As cores de cada tipo continuam.
+- **As outras telas** (Brasil, Mundo e Estratégia, Carteiras, Biblioteca, VG VIP) ganham a moldura, as cores e as letras
+  novas, com o mesmo conteúdo e a mesma ordem. O redesenho delas vem nas próximas entregas.
+
+**Nada foi retirado.** Todas as seções, listas, filtros, botões, links e fontes de antes estão na tela; os testes conferem
+isso. O que mudou de lugar: os botões das páginas da seção (para o menu lateral, no computador) e os dois números da faixa
+do topo (para dentro de "O dia até agora").
+
+## Voltar ao visual antigo
+
+- No computador: "Voltar ao visual antigo", no pé do menu lateral.
+- No celular: o mesmo botão no fim de cada página.
+- Para voltar ao novo: "Visual novo", no topo, ou "Usar o visual novo", no fim da página.
+- A escolha fica guardada só neste navegador. O visual antigo é exatamente o de antes.
+
+## Como subir (um passo)
+
+Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`docs/…`, `painel/…`, `site/…`, `testes/…`,
+`README.md`) e clique em Commit changes. O `robo.yml` não muda, então a rodada desse envio fica verde e publica o
+painel novo. Quem estiver com a aba aberta recebe a faixa "O painel foi atualizado no GitHub" com o botão Recarregar.
+
+## Voltar atrás
+
+Na lista de commits, abra o commit do envio e use Revert. Para só usar o visual antigo, o botão acima basta.
+
 # Oregon Intelligence v3.11 · corrente de rodadas e painel novo no Atualizar (09/11/2026)
 
 O pacote `robo-oregon-v3.11-alterados.zip` vale sobre a v3.10 que já está no seu GitHub (commit d92a447). Nada foi

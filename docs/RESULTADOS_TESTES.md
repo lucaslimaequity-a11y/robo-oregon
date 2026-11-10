@@ -1,3 +1,42 @@
+# Resultados dos testes · v4.0 · 10/11/2026 (Brasília)
+
+- **Robô (Python):** 202 testes, todos OK (`ROBO_PORTAO=1`: OK, com o mesmo 1 teste pulado de antes). São 9 novos em
+  `testes/test_v4.py`. Eles conferem:
+  - que toda regra de `painel/src/v4.css` só vale com o visual novo ligado (ou só pega peças novas). Assim o visual
+    antigo continua exatamente como era;
+  - que as peças novas ficam escondidas no visual antigo;
+  - a ordem de montagem e a fonte Lexend Deca;
+  - a troca de visual nos dois sentidos, com o visual novo como padrão;
+  - que o Hoje novo só tira do lugar a faixa do topo (o conteúdo dela vai para "O dia até agora") e a caixa que ficou
+    vazia;
+  - que a manchete de macro de cada hora prefere veículo fora do Grupo XP;
+  - que o `painel.json` traz a identidade do painel publicado e que o `robo.yml` não muda.
+- **Painel (Node):** 67 de 67 (a conferência de sintaxe passa a incluir `ui_v4.js`).
+- **Navegador (dados de teste, 1440 px e 390 px):** 226 verificações. 224 PASS e 2 FAIL.
+  - As 3 verificações de disposição do Hoje e da ficha foram ajustadas ao visual novo. No visual antigo continuam
+    exigindo a disposição de antes.
+  - A verificação nova roda nas duas larguras. Ela confere:
+    - visual novo por padrão;
+    - 24 barras, com as horas que ainda não chegaram desligadas;
+    - o toque na barra;
+    - a contagem por hora;
+    - que todas as seções do Hoje continuam lá;
+    - os tipos por extenso e a marca;
+    - no computador: menu lateral, páginas da seção (e o toque nelas), cartão da coleta e o detalhe da coleta inteiro
+      na tela;
+    - no celular: barra embaixo e botão de troca no fim;
+    - nenhuma das seis seções com rolagem para o lado;
+    - a volta ao visual antigo (duas colunas de antes, letras, "Oregon") e de novo ao novo.
+  - **As 2 falhas não vêm do visual.** São a mesma verificação, "Hoje VIP… VALE3 no radar", nas duas larguras. A
+    notícia de teste da VALE3 é de 06/11 às 19:10 e saiu da janela de 72 horas do radar na noite de 09/11. Conferido:
+    o painel antigo (v3.11), com os mesmos dados de teste, também não mostra a VALE3 hoje. Os dados de teste têm datas
+    fixas; a correção é atualizar essa data, numa entrega à parte, se você quiser.
+- **Dados reais (coleta das 08:38 de 10/11, montada aqui):** sem erros de JavaScript e sem rolagem para o lado nas seis
+  seções. Telas olhadas uma a uma em 1440 px, 1060 px, 820 px e 390 px, nos temas claro e escuro. Prints de antes e
+  depois vão junto.
+- **Ressalva:** os prints são deste ambiente, com as fontes servidas localmente. No GitHub Pages as fontes vêm do Google
+  Fonts. Se a Lexend Deca não carregar, os títulos saem em IBM Plex Sans, sem perder nada.
+
 # Resultados dos testes · v3.11 · 09/11/2026 (Brasília)
 
 - **Robô (Python):** 193 testes, todos OK, sendo 20 novos em `testes/test_v311.py`. Eles conferem:

@@ -180,7 +180,7 @@
     var abas = vistas.length > 1 ? h('div', {class: 'fv', role: 'tablist', 'aria-label': 'Ficha de ' + t}, vistas.map(function (x) {
       return h('button', {role: 'tab', 'aria-selected': v === x[0] ? 'true' : 'false', 'data-v': x[0], onclick: function () { FV.v = x[0]; A.rerender(); }}, x[1], x[2] ? h('small', null, String(x[2])) : null);
     })) : null;
-    return h('div', {class: 'ficha-grid'}, h('div', {class: 'ficha-head'}, cab), h('aside', {class: 'ficha-news'}, noticiasPainel(t)), kpi ? h('div', {class: 'ficha-kpi'}, kpi) : null,
+    return h('div', {class: 'ficha-grid'}, h('div', {class: 'ficha-head'}, cab), h('aside', {class: 'ficha-news'}, A.noticiasPainel(t)), kpi ? h('div', {class: 'ficha-kpi'}, kpi) : null,
       h('div', {class: 'ficha-main'}, abas, h('div', {class: 'fv-body', role: abas ? 'tabpanel' : null}, corpo)));
   }
   function li(x) { return h('li', null, x); }

@@ -1,3 +1,51 @@
+# Resultados dos testes · v4.0.1 · 10/11/2026 (Brasília)
+
+- **Robô (Python):** 221 testes, todos OK (`ROBO_PORTAO=1`: OK, com o mesmo 1 teste pulado de antes). São 19 novos em
+  `testes/test_v401.py`, que conferem:
+  - **A lista de assuntos e as palavras.**
+    - "Irã" conta e "irá" não; "IA" conta e "ia" não.
+    - "chin*" pega "chinesa".
+    - "USD" sozinho não é dólar, "superávit comercial" não é fiscal e FedEx não é o Fed.
+  - **O mesmo resultado no robô e no painel.** O JavaScript do painel roda no Node com os mesmos títulos e as amostras
+    reais guardadas nos testes, e os assuntos achados são os mesmos do Python.
+  - **A contagem e as setas, com números montados no teste:**
+    - petróleo com 15% contra 5% antes sobe (3,0×);
+    - China com 4% contra 10% cai;
+    - agro sem nada antes aparece como "novo";
+    - com menos de 300 itens na comparação, fica sem seta.
+  - **As datas:** só a data vale meio-dia de Brasília; o que é de amanhã e o que não tem data ficam fora.
+  - **O histórico:**
+    - dias antigos vêm do arquivo anterior;
+    - lista de palavras nova refaz tudo;
+    - a primeira vez relê 95 dias e depois só 10.
+  - **A rodada simulada inteira:** grava `biblioteca/assuntos.json`, e o site copia essa pasta. Uma falha nos assuntos
+    não derruba a rodada.
+  - **ETFs de renda fixa:**
+    - busca do tema a cada hora no pregão e fora do teto;
+    - ata do Copom e risco fiscal nos termos e na busca;
+    - horário do pregão (13h UTC = 10h em Brasília, 19h fora, sábado fora).
+  - **O painel montado:** ordem dos arquivos, a lista de assuntos no site e as barras por hora fora.
+- **Painel (Node):** 68 de 68 (a conferência de sintaxe inclui `ui_v401.js`).
+- **Navegador (dados de teste, 1440 px e 390 px):** 226 verificações, 224 PASS. A verificação do visual novo foi
+  refeita e passa nas duas larguras. Ela confere:
+  - **Assuntos do momento:** os 12 assuntos aparecem, tocar abre as notícias do assunto e a regra de palavras funciona.
+  - **Filtro pelo assunto:** só ficam itens do assunto, a faixa e o "Filtro: …" aparecem, e o "Limpar" volta tudo.
+  - **Mapa de atenção:** o quadrado do ativo filtra sem abrir a ficha, e o botão da ficha fica na faixa.
+  - **Títulos e contagens:** títulos maiores com a linha de cada seção, contagens no "Nesta página" e a linha do modo
+    de leitura.
+  - **Renda fixa:** o bloco de juros, inflação e fiscal aparece no 5PRE11 e não aparece no PETR4.
+  - **Busca:** abre com os atalhos e esconde quando você digita.
+  - **E o que já era conferido:** nada sumiu, sem rolagem para o lado, e a volta ao visual antigo.
+- **As 2 falhas são as mesmas da v4.0 e não vêm desta entrega.** A notícia de teste da VALE3 é de 06/11 e saiu da janela
+  de 72 horas do radar VIP.
+- **Dados reais (biblioteca até a coleta das 08:38 de 10/11, conta feita aqui com o `assuntos.py`):** 757 itens em 24 h.
+  - Mais falados: Inteligência artificial (128), China (58), Petróleo (55), Inflação (50).
+  - Acima do normal: Inflação 2,7×, Guerra e Oriente Médio 2,2×, Dólar e câmbio 2,1×, IA 2,1×, China 1,9×.
+  - Abaixo: Eleições 0,6× e Minério de ferro 0,5×.
+  - Na ficha do 5PRE11, o bloco novo traz 101 notícias de juros, inflação e fiscal das últimas 72 horas.
+- **Ressalva:** a conta dos assuntos no site depende da primeira rodada do robô depois do envio. Até lá, o painel mostra
+  as 24 h contadas no navegador, sem setas.
+
 # Resultados dos testes · v4.0 · 10/11/2026 (Brasília)
 
 - **Robô (Python):** 202 testes, todos OK (`ROBO_PORTAO=1`: OK, com o mesmo 1 teste pulado de antes). São 9 novos em

@@ -311,10 +311,10 @@ var INTEL = (function () {
     return '';
   }
   I.parseBusca = function (txt) {
-    var o = {frases: [], termos: [], fora: [], fonte: [], ativo: [], evento: [], tipo: [], de: '', ate: '', ops: false};
+    var o = {frases: [], termos: [], fora: [], fonte: [], ativo: [], evento: [], tipo: [], assunto: [], de: '', ate: '', ops: false};
     String(txt || '').replace(/(-?)(?:([A-Za-zÀ-ÿ]+):)?"([^"]+)"|(\S+)/g, function (all, neg, op, frase, palavra) {
       var k = op, v = frase;
-      if (palavra) { var m = /^(-?)([A-Za-zÀ-ÿ]+):(.+)$/.exec(palavra); if (m && /^(fonte|veiculo|desde|de|ate|ativo|evento|tipo)$/.test(norm(m[2]))) { k = m[2]; v = m[3]; neg = m[1]; } else { k = null; v = palavra; } }
+      if (palavra) { var m = /^(-?)([A-Za-zÀ-ÿ]+):(.+)$/.exec(palavra); if (m && /^(fonte|veiculo|desde|de|ate|ativo|evento|tipo|assunto)$/.test(norm(m[2]))) { k = m[2]; v = m[3]; neg = m[1]; } else { k = null; v = palavra; } }
       k = k ? norm(k) : null;
       if (k === 'veiculo') k = 'fonte';
       if (k === 'de') k = 'desde';
@@ -348,9 +348,27 @@ var INTEL = (function () {
       if (pb.fonte.length) { var fo = norm((x.fonte || '') + ' ' + (x.organizacao || '')); if (!pb.fonte.some(function (w) { return fo.indexOf(w) >= 0; })) return false; }
       if (pb.ativo.length) { var at = (x.ativos || []).concat(x.ativos_vip || []); if (!pb.ativo.some(function (t) { return at.indexOf(t) >= 0; })) return false; }
       if (pb.evento.length) { var ev = I.eventosDe(x); if (!pb.evento.some(function (w) { return ev.some(function (k) { return k === w || norm(I.eventoNome(k)).indexOf(w) >= 0 || (EV_SIN[k] || []).indexOf(w) >= 0; }); })) return false; }
+      if (pb.assunto.length) { var as = I.assuntosDe(x.titulo); if (!pb.assunto.some(function (w) { return as.indexOf(w) >= 0; })) return false; }  // v4.0.1 · assunto:petroleo
       if (pb.tipo.length) { var mk = I.marca(x).k; if (!pb.tipo.some(function (w) { return mk === w || norm(I.MARCAS[mk][1]).indexOf(w) >= 0; })) return false; }
       return true;
     });
+  };
+  /* v4.0.1 · Assuntos do momento: a mesma regra de robo/assuntos.py. Título sem acento, em minúsculas, só letras e números;
+     palavra inteira; '*' no fim pega o começo da palavra; 'exatas' valem como escritas (IA, AI, Irã). */
+  function normAss(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+  I.normAssunto = normAss;
+  I.compilarAssuntos = function (defs) {
+    return (defs || []).map(function (a) {
+      var alts = (a.palavras || []).map(function (p) { var st = /\*$/.test(p), b = normAss(st ? p.slice(0, -1) : p); return b ? b + (st ? '[a-z0-9]*' : '') : null; }).filter(Boolean);
+      return {id: a.id, nome: a.nome, rx: alts.length ? new RegExp(' (?:' + alts.join('|') + ')(?= )') : null, ex: a.exatas || []};
+    });
+  };
+  var ASS_D = null, ASS_C = [];
+  I.assuntosDefs = function () { return I.ASSUNTOS_DEF || (typeof TAXON !== 'undefined' && TAXON.assuntos) || []; };
+  I.assuntosDe = function (titulo, comp) {
+    if (!comp) { var d = I.assuntosDefs(); if (d !== ASS_D) { ASS_D = d; ASS_C = I.compilarAssuntos(d); } comp = ASS_C; }
+    var alvo = ' ' + normAss(titulo) + ' ', tok = String(titulo || '').split(/[^0-9A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F]+/);
+    return comp.filter(function (c) { return (c.rx && c.rx.test(alvo)) || c.ex.some(function (e) { return tok.indexOf(e) >= 0; }); }).map(function (c) { return c.id; });
   };
   I.contagens = function (itens, campo) { var o = {}; itens.forEach(function (x) { var v = x[campo]; (Array.isArray(v) ? v : [v]).forEach(function (k) { if (k) o[k] = (o[k] || 0) + 1; }); }); return o; };
   // Ordem para o briefing local, quando hoje.json não existe: pontos, depois data

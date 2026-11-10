@@ -454,14 +454,40 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       const vis = el => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0;
       APP.go('hoje'); await z(400);
       r.padrao = de.classList.contains('v4');
-      const bars = document.querySelectorAll('.v4-dia .v4-bars button'), agH = new Date(Date.now() - 3 * 3600e3).getUTCHours();
-      r.barras = bars.length === 24 && Array.from(bars).every((b, i) => b.disabled === (i > agH));
-      const alvo = Array.from(bars).filter(b => !b.disabled)[0]; alvo.click(); await z(50);
-      r.detalhe = alvo.getAttribute('aria-pressed') === 'true' && document.querySelector('.v4-det-h b').textContent === '00h';
-      const d = INTEL.diaPorHora([{publicado_em: '2026-11-10T09:15:00-03:00'}, {publicado_em: '2026-11-10T09:40:00-03:00'}, {publicado_em: '2026-11-09T23:00:00-03:00'}, {publicado_em: '2026-11-10'}],
-        [{id: 'a', organizacao: 'InfoMoney', publicado_em: '2026-11-10T09:05:00-03:00'}, {id: 'b', organizacao: 'Valor Econômico', publicado_em: '2026-11-10T09:30:00-03:00'}, {id: 'c', organizacao: 'InfoMoney', publicado_em: '2026-11-10T11:00:00-03:00'}], '2026-11-10');
-      r.porHora = d.cont[9] === 2 && d.cont[23] === 0 && d.cont.reduce((a, b) => a + b, 0) === 2 && d.dest[9].id === 'b' && d.dest[11].id === 'c' && !d.dest[10];
+      // v4.0.1 · "Assuntos do momento" no lugar das barras por hora
+      const linhas = Array.from(document.querySelectorAll('.v4-ass .v4-as-r'));
+      r.assuntos = linhas.length === INTEL.assuntosDefs().length && linhas.length >= 10 && !!document.querySelector('.v4-ass .v4-as-seg') && !document.querySelector('.v4-bars');
+      const comN = linhas.find(b => +b.querySelector('.v4-as-n').textContent > 0) || linhas[0]; const nomeA = comN.querySelector('.v4-as-nm').textContent;
+      comN.click(); await z(250);
+      const det = document.querySelector('.v4-as-det');
+      r.abreNoticias = !!det && det.querySelector('h3').textContent === nomeA && (det.querySelectorAll('[data-id]').length > 0 || det.querySelectorAll('.v4-as-ult li').length > 0 || !!det.querySelector('.v4-as-vz')) && /Palavras procuradas/.test(det.textContent);
+      const pc = (t, defs) => INTEL.assuntosDe(t, INTEL.compilarAssuntos(defs || INTEL.assuntosDefs()));
+      r.palavras = pc('Petróleo cai após Trump sinalizar moderação em relação ao Irã').join() === 'petroleo,guerra' && pc('Petrobras irá pagar dividendos').length === 0 && pc('IA generativa e a China').join() === 'china,ia' && pc('ia ficar para depois').length === 0
+        && pc('Chinesa compra soja do Brasil').join() === 'china,agro' && INTEL.parseBusca('assunto:petroleo').assunto[0] === 'petroleo';
+      // filtro do Hoje pelo assunto e "Limpar"
+      det.querySelector('.v4-as-bf').click(); await z(400);
+      const fx = document.querySelector('.v4-filtro');
+      r.filtra = !!fx && fx.textContent.indexOf(nomeA) >= 0 && !!document.querySelector('.sumario .v4-sf') && APP.v4Filtro().nome === nomeA
+        && Array.from(document.querySelectorAll('#ultimas [data-id], #radar [data-id]')).every(el => { const x = APP.itemPorId(el.getAttribute('data-id')); return !x || INTEL.assuntosDe(x.titulo).indexOf(APP.v4Filtro().id) >= 0; });
+      Array.from(fx.querySelectorAll('button')).find(b => /Limpar/.test(b.textContent)).click(); await z(400);
+      r.limpa = !document.querySelector('.v4-filtro') && !APP.v4Filtro() && !!document.getElementById('radar');
+      // ativo do mapa filtra o Hoje; a ficha fica na faixa
+      const tile = document.querySelector('#atencao .atn-t');
+      if (tile) { const tk = tile.querySelector('b').textContent; tile.click(); await z(400); const f2 = document.querySelector('.v4-filtro');
+        r.mapaFiltra = !!f2 && APP.v4Filtro().t === tk && !document.querySelector('.drawer') && Array.from(f2.querySelectorAll('button')).some(b => b.textContent === 'Ficha de ' + tk); APP.v4Filtrar(null); await z(300); }
+      // títulos, linha do que tem, contagem no "Nesta página", modo de leitura
+      r.titulos = parseFloat(getComputedStyle(document.querySelector('#radar > header h2')).fontSize) >= (larg ? 23 : 19) && !!document.querySelector('#radar > header .v4-desc') && !!document.querySelector('#debate > header .v4-desc');
+      r.contagem = document.querySelectorAll('nav.sumario .v4-sn').length >= 3 && !!document.querySelector('.mesa-h .v4-prof-d');
+      // ETFs de renda fixa do Brasil: juros, inflação e fiscal na coluna de notícias (ações não mudam)
+      const rf = APP.noticiasPainel('5PRE11'), ac = APP.noticiasPainel('PETR4');
+      r.etfRendaFixa = !!rf.querySelector('.np-rf') && /Juros, inflação e fiscal no Brasil/.test(rf.textContent) && !ac.querySelector('.np-rf') && APP.v4RendaFixaBR('IRFM11') && !APP.v4RendaFixaBR('PETR4');
+      // busca: assuntos, ativos e últimas buscas
+      APP.busca(); await z(150);
+      const ck = document.querySelector('.cmdk .v4-ck'); r.busca = !!ck && ck.querySelectorAll('button').length >= 3;
+      const inp = document.querySelector('.cmdk input'); inp.value = 'copom'; inp.dispatchEvent(new Event('input')); await z(50);
+      r.buscaEsconde = ck.hidden === true; inp.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true})); await z(50); const bgx = document.querySelector('.cmdk-bg'); if (bgx) bgx.remove();
       const ids = ['atencao', 'mercado-hoje', 'radar', 'agenda-decisiva', 'research', 'debate', 'ultimas', 'alertas', 'fila'];
+      APP.go('hoje'); await z(300);
       r.nadaSumiu = ids.every(i => !!document.getElementById(i)) && !!document.querySelector('.desde') && !!document.querySelector('nav.sumario') && document.querySelectorAll('.prof [role=radio]').length === 3 && !!document.querySelector('.v4-dia .fxd');
       const pal = Array.from(document.querySelectorAll('#ultimas .mt.v4mt')).map(m => m.getAttribute('data-w'));
       r.tipos = pal.length > 5 && pal.every(w => /^(Notícia|Resultado|Opinião|Carta|Estudo|Documento à CVM|Fato relevante|Comunicado|[A-ZÀ-Ú].+)$/.test(w)) && pal.some(w => w === 'Notícia');
@@ -489,7 +515,7 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       r.novoDeVolta = de.classList.contains('v4') && !!document.querySelector('.v4-dia') && APP.lsGet('visual') === 'novo';
       const t = document.querySelector('.toast'); if (t) t.remove();
       return r; });
-    rep(Object.values(v40).every(v => v === true), vw + ' visual novo: moldura, o dia em barras, tipos por extenso, nada sumiu, sem rolagem lateral e volta ao antigo (' + JSON.stringify(v40) + ')');
+    rep(Object.values(v40).every(v => v === true), vw + ' visual novo: moldura, assuntos do momento (abre as notícias, filtra o Hoje), mapa filtra, títulos e contagens, busca com atalhos, tipos por extenso, nada sumiu, sem rolagem lateral e volta ao antigo (' + JSON.stringify(v40) + ')');
     if (errs.length) rep(false, 'erros de JavaScript: ' + errs.join(' | '));
     await p.close();
   }

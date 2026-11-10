@@ -1,0 +1,31 @@
+{
+  "_leia": "v4.0.1 · Assuntos do momento (Hoje). Cada assunto conta os itens publicados (notícias, opiniões, cartas, estudos, documentos) que têm no TÍTULO uma das palavras abaixo. 'palavras': sem acento e em minúsculas, palavra inteira; '*' no fim pega o começo da palavra (chin* = china, chinesa, chineses...); expressões com espaço valem como expressão inteira. 'exatas': como estão escritas, com maiúscula e acento (IA, AI, Irã), para não confundir com palavras comuns (ia, irá). Para incluir ou tirar um assunto ou uma palavra, edite esta lista: o robô recalcula o histórico na rodada seguinte.",
+  "assuntos": [
+    {"id": "petroleo", "nome": "Petróleo",
+     "palavras": ["petroleo", "petroleos", "petroleira*", "brent", "wti", "opep", "opec", "oil", "crude", "barril", "barris", "pre sal", "combustive*", "gasolina", "diesel", "refinaria*", "refino"]},
+    {"id": "minerio", "nome": "Minério de ferro",
+     "palavras": ["minerio*", "iron ore", "mineradora*", "mineracao"]},
+    {"id": "china", "nome": "China",
+     "palavras": ["chin*", "pequim", "beijing", "xi jinping", "yuan", "iuan"]},
+    {"id": "copom", "nome": "Copom e Selic",
+     "palavras": ["copom", "selic", "juro basico", "juros basicos", "banco central do brasil", "bcb"]},
+    {"id": "fed", "nome": "Fed e juros dos EUA",
+     "palavras": ["fed", "fomc", "federal reserve", "treasury", "treasuries", "juros americanos", "juros dos eua", "juros nos eua"]},
+    {"id": "dolar", "nome": "Dólar e câmbio",
+     "palavras": ["dolar", "dolares", "cambio", "cambial", "dxy", "real brasileiro"]},
+    {"id": "inflacao", "nome": "Inflação",
+     "palavras": ["inflac*", "ipca*", "igp*", "inpc", "cpi", "pce", "inflation*", "deflac*", "deflation"]},
+    {"id": "fiscal", "nome": "Fiscal",
+     "palavras": ["fiscal", "fiscais", "arcabouco", "orcament*", "divida publica", "gasto publico", "gastos publicos", "contas publicas", "deficit primario", "superavit primario", "deficit publico", "rombo fiscal", "budget", "tesouro nacional"]},
+    {"id": "eleicoes", "nome": "Eleições",
+     "palavras": ["eleic*", "eleitor*", "election*", "midterm*", "candidat*", "pesquisa eleitoral", "segundo turno", "primeiro turno", "urna*", "tse"]},
+    {"id": "guerra", "nome": "Guerra e Oriente Médio",
+     "palavras": ["guerra*", "war", "wars", "conflito*", "israel*", "iran*", "irao", "gaza", "hamas", "hezbollah", "houthi*", "ucrania*", "ukrain*", "russia", "kremlin", "oriente medio", "middle east", "missil", "misseis", "cessar fogo", "ceasefire", "otan", "nato"],
+     "exatas": ["Irã"]},
+    {"id": "ia", "nome": "Inteligência artificial",
+     "palavras": ["inteligencia artificial", "artificial intelligence", "openai", "chatgpt", "nvidia", "data center*", "datacenter*", "llm*", "anthropic"],
+     "exatas": ["IA", "AI"]},
+    {"id": "agro", "nome": "Agro",
+     "palavras": ["agro*", "agricola*", "agricultura", "soja", "milho", "safra*", "cafe", "acucar", "etanol", "boi gordo", "arroba", "trigo", "algodao", "fertilizante*", "pecuaria", "frigorifico*", "soybean*", "corn", "wheat", "coffee", "sugar", "cattle", "grain*", "crop*"]}
+  ]
+}

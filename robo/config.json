@@ -500,10 +500,20 @@
      "NTN-B",
      "Tesouro IPCA+",
      "juro real",
-     "juros reais"
+     "juros reais",
+     "ata do Copom",
+     "Copom",
+     "risco fiscal",
+     "riscos fiscais",
+     "arcabouço fiscal",
+     "inflação implícita",
+     "expectativas de inflação"
     ],
-    "busca": "NTN-B juro real",
-    "mkt": "pt-BR"
+    "busca": "\"NTN-B\" OR \"juro real\" OR \"ata do Copom\" OR \"risco fiscal\"",
+    "mkt": "pt-BR",
+    "intervalo_pregao_min": 60,
+    "fora_do_teto": true,
+    "_nota_v401": "v4.0.1 (pedido do Lucas em 10/11/2026): busca do tema a cada hora no pregão (dias úteis, 9h às 19h), fora do teto das buscas por empresa; ata do Copom e riscos fiscais também ligam a notícia ao tema."
    },
    {
     "tema": "Prefixados (IRF-M)",
@@ -520,10 +530,18 @@
      "DI futuro",
      "juros futuros",
      "curva de juros",
-     "curva prefixada"
+     "curva prefixada",
+     "ata do Copom",
+     "Copom",
+     "risco fiscal",
+     "riscos fiscais",
+     "arcabouço fiscal"
     ],
-    "busca": "DI futuro juros",
-    "mkt": "pt-BR"
+    "busca": "\"juros futuros\" OR \"DI futuro\" OR \"ata do Copom\" OR \"risco fiscal\"",
+    "mkt": "pt-BR",
+    "intervalo_pregao_min": 60,
+    "fora_do_teto": true,
+    "_nota_v401": "v4.0.1 (pedido do Lucas em 10/11/2026): busca do tema a cada hora no pregão (dias úteis, 9h às 19h), fora do teto das buscas por empresa; ata do Copom e riscos fiscais também ligam a notícia ao tema."
    },
    {
     "tema": "Tesouro Selic",
@@ -537,10 +555,15 @@
      "Tesouro Selic",
      "LFT",
      "taxa Selic",
-     "Copom"
+     "Copom",
+     "ata do Copom",
+     "decisão do Copom"
     ],
-    "busca": "Tesouro Selic",
-    "mkt": "pt-BR"
+    "busca": "\"Tesouro Selic\" OR \"ata do Copom\" OR \"decisão do Copom\"",
+    "mkt": "pt-BR",
+    "intervalo_pregao_min": 60,
+    "fora_do_teto": true,
+    "_nota_v401": "v4.0.1 (pedido do Lucas em 10/11/2026): busca do tema a cada hora no pregão (dias úteis, 9h às 19h), fora do teto das buscas por empresa; ata e decisão do Copom também ligam a notícia ao tema."
    },
    {
     "tema": "Crédito privado no Brasil",
@@ -564,7 +587,10 @@
      "spread de crédito"
     ],
     "busca": "debêntures crédito privado",
-    "mkt": "pt-BR"
+    "mkt": "pt-BR",
+    "intervalo_pregao_min": 60,
+    "fora_do_teto": true,
+    "_nota_v401": "v4.0.1 (pedido do Lucas em 10/11/2026): busca do tema a cada hora no pregão (dias úteis, 9h às 19h), fora do teto das buscas por empresa."
    },
    {
     "tema": "Treasuries",

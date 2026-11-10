@@ -2,7 +2,7 @@
    Mesmas telas, mesmas funções e mesmos dados: muda a aparência e a organização. Nada é retirado.
    - moldura: no computador, menu lateral com as seções, as páginas da seção aberta, a busca e o cartão da coleta
      (quanto falta para a próxima rodada, Atualizar e Coletar agora); no celular, a barra de seções continua embaixo;
-   - Hoje: "O dia até agora" (notícias por hora; ponto amarelo nas horas com manchete de macro do Brasil), Mercado hoje e
+   - Hoje: no alto, "Assuntos do momento" (v4.0.1, ui_v401.js; na v4.0 eram as barras por hora), Mercado hoje e
      Radar na coluna principal, carteira, agenda e alertas na lateral, Research e Debate lado a lado, Todas as notícias
      no fim; "Para começar o dia" e o Radar em cartões;
    - tipo de cada notícia por extenso (Notícia, Resultado, Opinião, Carta, Estudo, Documento à CVM) no lugar das letras;
@@ -137,53 +137,11 @@
   var r0 = A.render;
   A.render = function () { r0.apply(this, arguments); try { moldura(); } catch (e) { console.error(e); } };
 
-  /* ---------- Hoje: "O dia até agora" ---------- */
-  var HSEL = null;
-  function brt(x) {
-    var p = I.pub(x); if (!p || p.length <= 10) return null;
-    var t = Date.parse(p); if (!t) return null;
-    var d = new Date(t - 3 * 3600e3); return {dia: d.toISOString().slice(0, 10), h: d.getUTCHours(), t: t};
-  }
-  // contagem de notícias por hora de hoje e a manchete de macro do Brasil de cada hora (Grupo XP só se não houver outra)
-  I.diaPorHora = function (itens, macro, hoje) {
-    var cont = [], dest = {}, i;
-    for (i = 0; i < 24; i++) cont.push(0);
-    (itens || []).forEach(function (x) { var b = brt(x); if (b && b.dia === hoje) cont[b.h]++; });
-    [false, true].forEach(function (aceitaXP) {
-      (macro || []).forEach(function (x) { var b = brt(x); if (!b || b.dia !== hoje || dest[b.h]) return; if (!aceitaXP && I.grupoXP && I.grupoXP(x)) return; dest[b.h] = x; });
-    });
-    return {cont: cont, dest: dest};
-  };
-  function heroDia(fx) {
-    var itens = A.itens ? A.itens() : []; if (!itens.length) return null;
-    var hoje = I.hojeBRT(), agoraH = new Date(Date.now() - 3 * 3600e3).getUTCHours();
-    var mh = A.mercadoHoje ? A.mercadoHoje() : {todos: [], agenda: []};
-    var d = I.diaPorHora(itens, (mh.agenda || []).concat(mh.todos || []), hoje), cont = d.cont, dest = d.dest;
-    var mx = 1; for (var i = 0; i <= agoraH; i++) mx = Math.max(mx, cont[i]);
-    if (HSEL == null || HSEL > agoraH) { HSEL = agoraH; for (var j = agoraH; j >= 0; j--) if (dest[j]) { HSEL = j; break; } }
-    var n24 = I.ultimas(itens, {horas: 24}).length;
-    var det = h('div', {class: 'v4-det', 'aria-live': 'polite'});
-    function detalhe() {
-      var x = dest[HSEL], hora = pad(HSEL) + 'h', b = x ? brt(x) : null;
-      det.replaceChildren(h('div', {class: 'v4-det-h'}, h('b', null, hora), h('span', null, cont[HSEL] + (cont[HSEL] === 1 ? ' notícia' : ' notícias') + (HSEL === agoraH ? ' até agora' : ''))),
-        h('div', {class: 'v4-det-d'}, x ? [h('small', null, 'Macro do Brasil · ' + (x.organizacao || x.fonte || '') + ', ' + hm(b.t)), h('button', {type: 'button', onclick: function () { A.abrirItem(x); }}, x.titulo)]
-          : h('p', null, 'Nenhuma manchete de macro do Brasil nesta hora. Os pontos amarelos marcam as horas que tiveram.')),
-        h('span', {class: 'v4-det-a'}, 'Agora ' + hm(Date.now())));
-    }
-    var botoes = [], barras = h('div', {class: 'v4-bars', role: 'group', 'aria-label': 'Notícias por hora de hoje'});
-    for (var k = 0; k < 24; k++) (function (hh) {
-      var fut = hh > agoraH, alt = fut ? 3 : Math.max(5, Math.round(cont[hh] / mx * 92));
-      var b = h('button', {type: 'button', disabled: fut ? true : null, 'aria-pressed': hh === HSEL ? 'true' : 'false', 'aria-label': pad(hh) + 'h: ' + (fut ? 'ainda não chegou' : cont[hh] + ' notícias' + (dest[hh] ? ', com manchete de macro do Brasil' : '')),
-        onclick: function () { HSEL = hh; botoes.forEach(function (o, n) { o.setAttribute('aria-pressed', n === hh ? 'true' : 'false'); }); detalhe(); }},
-        dest[hh] && !fut ? h('span', {class: 'v4-pin', 'aria-hidden': 'true'}) : null,
-        h('span', {class: 'v4-b' + (fut ? ' fut' : hh === agoraH ? ' agora' : ''), style: 'height:' + alt + 'px;animation-delay:' + (hh * 35) + 'ms'}));
-      botoes.push(b); barras.appendChild(b);
-    })(k);
-    var rot = h('div', {class: 'v4-hl', 'aria-hidden': 'true'});
-    for (var m = 0; m < 24; m++) rot.appendChild(h('span', null, m % 3 === 0 ? pad(m) + 'h' : ''));
-    detalhe();
-    var st = h('div', {class: 'v4-st'}, h('span', null, h('b', null, String(n24)), 'notícias em 24 h'), fx || null);
-    return h('section', {class: 'v4-dia', 'aria-labelledby': 'v4-dia-t'}, h('div', {class: 'v4-dia-h'}, h('h2', {id: 'v4-dia-t'}, 'O dia até agora'), st), barras, rot, det);
+  /* ---------- Hoje: o bloco do alto ----------
+     v4.0.1: as barras por hora ("O dia até agora") saíram a pedido do Lucas; no lugar, "Assuntos do momento" (ui_v401.js). */
+  function heroPadrao(fx) {
+    if (!fx) return null;
+    return h('section', {class: 'v4-dia'}, h('div', {class: 'v4-dia-h'}, h('h2', null, 'Hoje em números'), h('div', {class: 'v4-st'}, fx)));
   }
 
   /* ---------- Hoje: nova organização da página ---------- */
@@ -192,7 +150,7 @@
     function q(s) { return w.querySelector(s); }
     var fx = q('.fxd-slot'), desde = q('.desde'), hx = q('.hx-g'), sum = q('nav.sumario'), atn = q('#atencao'), mh = q('#mercado-hoje'),
       radar = q('#radar'), ag = q('#agenda-decisiva'), res = q('#research'), deb = q('#debate'), ult = q('#ultimas'), mesa = q('.mesa');
-    var hero = heroDia(fx ? fx.querySelector('.fxd') : null);
+    var hero = (A.v4Hero || heroPadrao)(fx ? fx.querySelector('.fxd') : null);
     if (fx) fx.remove();
     var ancora = desde || sum || null;
     if (hero) { if (ancora) w.insertBefore(hero, ancora); else w.appendChild(hero); }

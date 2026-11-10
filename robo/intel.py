@@ -12,7 +12,7 @@ Roda no GitHub Actions (.github/workflows/robo.yml), sete dias por semana, e tam
      com ANTHROPIC_API_KEY e intel.ia.ativo, leitura por IA dos itens prioritários dentro de um teto diário;
   4. biblioteca persistente por mês (nada é apagado), deduplicação, contadores por fonte e briefing do dia;
   5. aos sábados (ou em modo "semanal"), o resumo da semana.
-Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json (meses, índice e opinioes.json)
+Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json (meses, índice, opinioes.json e, desde a v4.0.1, assuntos.json)
 (publicados no site) e estado.json (interno, só no ramo "dados").
 
 Modos (ROBO_MODO): normal | semanal | teste_telegram.
@@ -50,6 +50,7 @@ import proventos  # noqa: E402  (v3.6 · agenda de proventos)
 import pesquisas  # noqa: E402
 import resultados  # noqa: E402
 import semanal  # noqa: E402
+import assuntos  # noqa: E402  (v4.0.1 · assuntos do momento no Hoje)
 from util import ErroFonte, Rede, agora, dados_dir, gravar, ler, log, sem_acento  # noqa: E402
 from util import num as util_num  # noqa: E402
 
@@ -82,6 +83,13 @@ def antigo_sem_data(x, hoje, primeira_leitura=False, lote_arquivo=False):
     if (x.get('posicao_pagina') or 0) > 5:
         return 'link no fim da listagem da página, sem data'
     return None
+
+
+def no_pregao(quando):
+    """v4.0.1 · horário do pregão de juros e ações na B3 (dias úteis, 9h às 19h de Brasília), para as buscas que ficam mais
+    frequentes nesse horário. Feriado conta como dia útil: no máximo algumas buscas a mais."""
+    q = quando.astimezone(dt.timezone(dt.timedelta(hours=-3))) if quando.tzinfo else quando
+    return q.weekday() < 5 and 9 <= q.hour < 19
 
 
 def fontes_de_busca(cfg):
@@ -131,7 +139,10 @@ def fontes_de_busca(cfg):
             mkt = te.get('mkt', 'pt-BR')
             out.append(dict(base, id='busca-etf-' + _slug(te['tema']), nome='Busca do tema · ' + te['tema'], pais='Brasil' if mkt == 'pt-BR' else 'Global', idioma='pt' if mkt == 'pt-BR' else 'en',
                             url_fonte=url(te['busca'], mkt).replace('&format=rss', ''), url_coleta=url(te['busca'], mkt), etfs=list(te.get('etfs') or []),
-                            termos_exigidos=list(te.get('termos_busca') or []), consulta=te['busca'], tema_etf=te['tema']))
+                            termos_exigidos=list(te.get('termos_busca') or []), consulta=te['busca'], tema_etf=te['tema'],
+                            # v4.0.1 · ETFs de renda fixa do Brasil: intervalo próprio no pregão e fora do teto das buscas por empresa
+                            intervalo_min=int(te.get('intervalo_min') or base['intervalo_min']), intervalo_pregao_min=te.get('intervalo_pregao_min'),
+                            fora_do_teto=bool(te.get('fora_do_teto'))))
         # v3.10 · macro do Brasil: Ibovespa, dólar, juros, inflação, fiscal e agenda do dia (traz Valor, CNN, Estadão e outros
         # que não têm feed aberto); só entra o que o robô reconhece como macro do Brasil (exigir_macro)
         for mc in n.get('buscas_macro') or []:
@@ -347,7 +358,7 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
     n_cfg = cfg.get('noticias') or {}
     manual = bool(os.environ.get('ROBO_TUDO') or os.environ.get('ROBO_MANUAL', '').lower() == 'true')
     # buscas: as mais atrasadas primeiro, no máximo N por rodada (as demais ficam para a próxima, meia hora depois)
-    buscas = sorted([f for f in fontes_cfg if f.get('busca')], key=lambda f: (0 if f.get('busca_macro') else 1, leituras.get(f['id']) or ''))  # v3.10: macro do Brasil primeiro
+    buscas = sorted([f for f in fontes_cfg if f.get('busca')], key=lambda f: (0 if (f.get('busca_macro') or f.get('fora_do_teto')) else 1, leituras.get(f['id']) or ''))  # v3.10: macro do Brasil primeiro (v4.0.1: e os temas de renda fixa)
     fontes_cfg = [f for f in fontes_cfg if not f.get('busca')] + buscas
     teto_busca, n_busca = int((n_cfg.get('busca') or {}).get('max_por_rodada', 14)), 0
     empresas = {a['id']: (a.get('noticias') or {}) for a in cfg.get('ativos') or []}
@@ -359,6 +370,8 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
         nome = f.get('nome') or f['id']
         # intervalo por fonte: imprensa e instituições a cada rodada; páginas de gestoras e canais, com mais espaço
         intervalo = int(f.get('intervalo_min', INTERVALO_PADRAO.get(f.get('metodo'), 0)))
+        if f.get('intervalo_pregao_min') and no_pregao(agora_):  # v4.0.1 · ex.: tema dos ETFs de renda fixa a cada hora no pregão
+            intervalo = int(f['intervalo_pregao_min'])
         ult = leituras.get(f['id'])
         if intervalo and ult and not manual:  # execução manual lê tudo
             try:
@@ -379,7 +392,7 @@ def coletar_conteudo(cfg, fontes_cfg, oregon, rede, hoje, agora_, estado, chaves
                     continue
             except ValueError:
                 pass
-        if f.get('busca') and not f.get('busca_macro') and not manual:  # v3.10: as poucas buscas de macro não gastam o teto das buscas por empresa
+        if f.get('busca') and not f.get('busca_macro') and not f.get('fora_do_teto') and not manual:  # v3.10: as poucas buscas de macro (v4.0.1: e de renda fixa) não gastam o teto das buscas por empresa
             if n_busca >= teto_busca:
                 adiadas.append(f['id'])
                 continue
@@ -934,6 +947,14 @@ def main():
             research_90 = biblioteca.publicar_research(hoje, agora_, oregon=oregon)
         except Exception as e:  # idem para o research de 90 dias
             log('  research de 90 dias não publicado: %s' % e)
+        try:  # v4.0.1 · assuntos do momento (biblioteca/assuntos.json): acessório; uma falha mantém o arquivo anterior
+            def _itens_dias(dias):
+                return [x for x in biblioteca.carregar_recentes(hoje, dias) if not x.get('agrupado_em') and not x.get('acervo') and not biblioteca.bloqueado(x)]
+            ass = assuntos.publicar(agora_, ler('biblioteca/assuntos.json', {}) or {}, _itens_dias)
+            gravar('biblioteca/assuntos.json', ass)
+            log('  assuntos do momento: ' + assuntos.resumo(ass))
+        except Exception as e:
+            log('  assuntos do momento não publicados: %s' % type(e).__name__)
         hoje_js = semanal.briefing(recentes, macro, hoje, agora_, estado)
         gravar('hoje.json', hoje_js)
         log('  briefing: %d prioridades (janela de %s), %d itens recentes, %d na biblioteca' % (len(hoje_js['prioridades']), hoje_js['janela'], len(recentes), idx['total']))

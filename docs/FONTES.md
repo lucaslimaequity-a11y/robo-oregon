@@ -460,10 +460,10 @@ O Google Notícias veda a busca a robôs no `robots.txt` (`/rss/search`), e o ro
 | Busca setorial · Shoppings e varejo | `shoppings vendas varejo` | pt-BR | ALOS3, XPML11 |
 | Busca setorial · Agronegócio e biodiesel | `agronegócio soja biodiesel` | pt-BR | TTEN3, KNCA11 |
 | Busca setorial · Fundos imobiliários | `fundos imobiliários IFIX` | pt-BR | BTLG11, XPML11, TRXF11, KNHF11, HGCR11, KNCA11, CDII11, JURO11 |
-| Busca do tema · Juro real (IMA-B e NTN-B) | `NTN-B juro real` | pt-BR | IMAB11, B5P211, IB5M11 |
-| Busca do tema · Prefixados (IRF-M) | `DI futuro juros` | pt-BR | IRFM11, 5PRE11, IDKA11 |
-| Busca do tema · Tesouro Selic | `Tesouro Selic` | pt-BR | LFTB11 |
-| Busca do tema · Crédito privado no Brasil | `debêntures crédito privado` | pt-BR | DEBB11, GICP11, LFIN11 |
+| Busca do tema · Juro real (IMA-B e NTN-B) | `"NTN-B" OR "juro real" OR "ata do Copom" OR "risco fiscal"` (v4.0.1; a cada hora no pregão) | pt-BR | IMAB11, B5P211, IB5M11 |
+| Busca do tema · Prefixados (IRF-M) | `"juros futuros" OR "DI futuro" OR "ata do Copom" OR "risco fiscal"` (v4.0.1; a cada hora no pregão) | pt-BR | IRFM11, 5PRE11, IDKA11 |
+| Busca do tema · Tesouro Selic | `"Tesouro Selic" OR "ata do Copom" OR "decisão do Copom"` (v4.0.1; a cada hora no pregão) | pt-BR | LFTB11 |
+| Busca do tema · Crédito privado no Brasil | `debêntures crédito privado` (v4.0.1: a cada hora no pregão) | pt-BR | DEBB11, GICP11, LFIN11 |
 | Busca do tema · Treasuries | `Treasury yields` | en-US | IB01, DTLA, IUAA |
 | Busca do tema · Inflação americana (TIPS) | `TIPS inflation-protected Treasury` | en-US | IDTP |
 | Busca do tema · High yield nos EUA | `high yield bonds` | en-US | IHYA, SDHA |

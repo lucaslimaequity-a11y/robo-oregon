@@ -55,7 +55,7 @@ class TestCamada(unittest.TestCase):
 
     def test_ordem_e_fonte(self):
         b = ler('painel', 'build.py')
-        self.assertIn("'ui_v311.js', 'ui_v4.js', 'main.js'", b)
+        self.assertIn("'ui_v311.js', 'ui_v4.js', 'ui_v401.js', 'main.js'", b)  # v4.0.1: ui_v401.js depois do ui_v4.js
         self.assertIn("rd('app.css') + '\\n' + rd('v4.css')", b)
         self.assertIn('family=Lexend+Deca', b)
 
@@ -74,10 +74,11 @@ class TestCamada(unittest.TestCase):
         for i in ('#atencao', '#mercado-hoje', '#radar', '#agenda-decisiva', '#research', '#debate', '#ultimas', '.hx-g', 'nav.sumario', '.desde'):
             self.assertIn(i, js)
 
-    def test_dia_por_hora_sem_grupo_xp_primeiro(self):
+    def test_bloco_do_alto_e_os_assuntos(self):
+        # v4.0.1: as barras por hora saíram a pedido do Lucas; o bloco do alto vem de ui_v401.js (Assuntos do momento)
         js = ler('painel', 'src', 'ui_v4.js')
-        self.assertIn('[false, true].forEach(function (aceitaXP)', js)
-        self.assertIn('I.grupoXP(x)', js)
+        self.assertIn('(A.v4Hero || heroPadrao)', js)
+        self.assertIn('A.v4Hero = function (fx)', ler('painel', 'src', 'ui_v401.js'))
 
 
 class TestSiteGerado(unittest.TestCase):

@@ -253,3 +253,38 @@ horário (`ui_v311.js`, `I.proximaCorrente`).
 - **Tipos:** `A.marcaEl` embrulhado põe `data-w` com o nome por extenso; `A.itemRow` leva a marca para a linha do
   veículo. As letras continuam no DOM (e no visual antigo).
 
+
+## v4.0.1 · Assuntos do momento, filtro do Hoje, ETFs de renda fixa
+- **Robô, `robo/assuntos.py` + `robo/assuntos.json`.**
+  - **Lista conferível:** `palavras` sem acento, palavra inteira, `*` = prefixo; `exatas` com caixa e acento.
+  - **Contagem por título:** `calcular` conta por janela.
+    - 24 h, pela hora de publicação, contra as 7 × 24 h anteriores;
+    - 7 e 30 dias, pelos dias de Brasília, contra 28 e 60 dias.
+  - **Seta, pela razão das fatias:** sobe ≥ 1,5 com 5 itens; cai ≤ 2/3 com 5 esperados; sem base com menos de 300
+    itens na comparação.
+  - **Histórico diário dentro do próprio arquivo:** cada rodada recalcula os últimos 10 dias. Se a `marca` (hash da
+    lista) muda ou é a primeira vez, relê 95 dias.
+  - **Os 20 mais recentes por assunto** vão em `ultimos`, com os campos mínimos.
+  - **Publicação:** `intel.py` grava `biblioteca/assuntos.json` depois do research de 90 dias; uma falha só registra
+    no log e mantém o arquivo anterior. O site já copia `data/biblioteca/*.json`, então o `robo.yml` não muda.
+- **Painel.**
+  - **Mesma regra de palavras em `intel.js`:** `I.compilarAssuntos`, `I.assuntosDe` e `I.assuntosDefs`. A lista vem
+    de `TAXON.assuntos`, que o `build.py` lê do robô, ou do arquivo publicado. `testes/test_v401.py` roda o JavaScript
+    no Node e compara com o Python.
+  - **Busca:** `I.parseBusca`/`I.filtrar` aceitam `assunto:id`.
+  - **`ui_v401.js`:**
+    - **`A.v4Hero`:** o bloco do alto, que o `ui_v4.js` chama no lugar das barras por hora, que saíram.
+    - **Carga do arquivo:** lê `biblioteca/assuntos.json` a cada versão nova e depois do Atualizar.
+    - **Filtro do Hoje:** embrulha `A.itens`, `A.itensAtivo` e `A.itensResearch`, que filtram só durante a montagem do
+      Hoje (`DENTRO`). O estado é `A.v4Filtrar` e `A.v4Filtro`; sai do filtro ao trocar de seção.
+    - **Mapa de atenção:** um clique em captura no quadrado filtra o Hoje pelo ativo.
+    - **`posHoje`:** monta a faixa do filtro, a linha de cada seção, as contagens do "Nesta página" e a linha do modo
+      de leitura.
+    - **Busca:** `A.busca` embrulhado; as últimas buscas ficam em `localStorage` (`buscas-recentes`).
+    - **ETFs de renda fixa:** `A.noticiasPainel` embrulhado nos ETFs dos pilares P1 a P4 com o bloco `.np-rf` (Mercado
+      hoje: juros, inflação, fiscal; 72 h). O `ui_oregon.js` passou a chamar `A.noticiasPainel(t)` pela propriedade.
+- **Buscas de tema de ETF.**
+  - `fontes_de_busca` passa `intervalo_min`, `intervalo_pregao_min` e `fora_do_teto`.
+  - `intel.no_pregao` (dias úteis, 9h às 19h de Brasília) troca o intervalo.
+  - `fora_do_teto` ordena junto das buscas de macro e não gasta o teto das buscas por empresa.
+

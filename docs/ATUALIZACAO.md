@@ -1,3 +1,85 @@
+# Oregon Intelligence v4.0.1 · Assuntos do momento, Hoje mais fácil de achar e ETFs de renda fixa (10/11/2026)
+
+O pacote `robo-oregon-v4.0.1-alterados.zip` vale sobre a v4.0 que já está no seu GitHub. **O `robo.yml` não muda: um
+envio só.** Nenhuma chave nova, nenhuma API paga, nenhuma fonte nova (só a busca de notícias do Bing que o robô já usa).
+
+## O que entra (pedidos de 10/11)
+
+- **Assuntos do momento** no alto do Hoje, no lugar das barras por hora.
+  - Barras com os assuntos mais falados: Petróleo, Minério de ferro, China, Copom e Selic, Fed e juros dos EUA, Dólar e
+    câmbio, Inflação, Fiscal, Eleições, Guerra e Oriente Médio, Inteligência artificial e Agro.
+  - Em cada assunto aparece quantas notícias saíram e uma seta de tendência. A seta compara a fatia do assunto no total
+    de notícias com a fatia no período anterior:
+    - ▲ quando a fatia é 1,5 vez a de antes ou mais;
+    - ▼ quando é dois terços ou menos;
+    - "estável" no resto.
+  - Usa a fatia, e não o número de notícias, porque o robô coleta mais do que antes. Pelo número, tudo pareceria subir.
+  - Botões 24 h | 7 dias | 30 dias. Cada um compara com um período anterior:
+    - 24 h com os 7 dias anteriores;
+    - 7 dias com as 4 semanas anteriores;
+    - 30 dias com os 60 dias anteriores.
+  - Enquanto o período anterior não tem notícias suficientes, aparece "—" no lugar da seta. Com a coleta que começou em
+    outubro, é o caso dos 30 dias por enquanto.
+  - **Tocar num assunto abre as notícias dele ali mesmo**, junto com:
+    - a fatia de cada um dos últimos 14 dias;
+    - as palavras procuradas;
+    - "Filtrar o Hoje por …";
+    - "Ver todas na Biblioteca".
+  - **Como conta:** o assunto vale quando o título tem uma das palavras da lista `robo/assuntos.json`, que dá para
+    conferir e editar. Alguns exemplos de como a regra lida com palavras parecidas:
+    - "Irã" conta e "irá" não;
+    - "IA" conta e "ia" não;
+    - "Petrobras" sozinha não conta como petróleo, porque é empresa e entra pelo filtro de ativo.
+  - Quem faz a conta é o robô a cada rodada (arquivo `biblioteca/assuntos.json`). Antes da primeira rodada depois do
+    envio, o painel conta sozinho as últimas 24 h e espera a rodada para as setas.
+- **Achar mais rápido no Hoje.**
+  - **Filtrar o Hoje por um assunto:**
+    - O Hoje inteiro mostra só o que fala do assunto: Mercado hoje, Radar, Research, Debate e Todas as notícias.
+    - Uma faixa avisa "Mostrando só o que fala de …", e o filtro também aparece no "Nesta página", que fica preso no
+      alto ao rolar.
+    - Seções sem nada do assunto ficam fora da vista enquanto o filtro está ligado.
+    - "Limpar filtro" volta tudo.
+  - **Tocar num ativo do Mapa de atenção** filtra o Hoje pela empresa. A ficha dela fica a um toque, na faixa do filtro.
+  - **A busca** (lupa ou tecla /) abre com os assuntos do momento, os ativos da carteira e as suas últimas buscas.
+  - **"Nesta página"** mostra quantos itens tem cada seção.
+  - **Na Biblioteca**, a busca aceita `assunto:petroleo` (ou china, inflacao…).
+- **Títulos maiores.** Os títulos das seções passam para uns 24 px no computador.
+  - Embaixo de cada um, uma linha diz o que tem ali.
+  - Os links do cabeçalho (Pauta da semana, Ativos, Research, Debate) viram botões.
+  - Nas outras telas, os títulos também crescem.
+- **Rápida | Briefing | Aprofundada.** Embaixo dos botões, uma linha diz o que o modo escolhido mostra. Passando o mouse,
+  aparecem os números de cada lista. Nada é apagado; o resto continua na Biblioteca.
+- **ETFs de renda fixa do Brasil** (5PRE11, IRFM11, IDKA11, IMAB11, B5P211, LFTB11, DEBB11 e os demais dos pilares
+  P1 a P4):
+  - A coluna de notícias da ficha ganha o bloco **"Juros, inflação e fiscal no Brasil"**, com as notícias do Mercado
+    hoje desses assuntos nas últimas 72 horas. Antes só entrava o que citava o índice ou a curva ("juros futuros",
+    "DI futuro"), e por isso a lateral parecia parada.
+  - A busca do tema passa a rodar **a cada hora no pregão** (dias úteis, das 9h às 19h). Fica fora do teto das buscas
+    por empresa, então não atrasa as outras.
+  - **Ata do Copom e riscos fiscais** passam a ligar a notícia ao tema dos ETFs de prefixado, IPCA+ e Selic, e entram
+    na busca desses temas.
+
+**O que saiu:** as barras por hora ("O dia até agora"), a seu pedido. Os números que ficavam ao lado delas continuam no
+bloco dos assuntos.
+
+## Como subir (um passo)
+
+Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`docs/…`, `painel/…`, `robo/…`, `site/…`,
+`testes/…`, `README.md`) e clique em Commit changes. A rodada desse envio fica verde. Ela publica o painel e o primeiro
+`assuntos.json`, relendo 95 dias da biblioteca uma vez.
+
+## Para mexer nos assuntos
+
+Edite `robo/assuntos.json` pelo lápis do GitHub. Cada assunto tem:
+- `palavras`, sem acento e em minúsculas, com `*` no fim para pegar o começo da palavra;
+- `exatas`, como escritas.
+
+Na rodada seguinte o robô refaz o histórico com a lista nova.
+
+## Voltar atrás
+
+Na lista de commits, abra o commit do envio e use Revert.
+
 # Oregon Intelligence v4.0 · visual novo: moldura e Hoje (10/11/2026)
 
 O pacote `robo-oregon-v4.0-alterados.zip` vale sobre a v3.11 que já está no seu GitHub. **Só o painel muda.** O robô,

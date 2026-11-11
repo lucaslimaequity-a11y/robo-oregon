@@ -318,3 +318,36 @@ horário (`ui_v311.js`, `I.proximaCorrente`).
   - **[P14] cores:** `A.PC`/`A.CC` trocam para a paleta da Oregon no visual novo e voltam no antigo.
   - **[P4], [P7], [P12] e o resto:** só CSS.
 
+
+## v4.2 · Pautas da semana, do mês e do ano
+- **Robô, `robo/pautas.py`** (chamado por `intel.py` depois de `empresas.py`, no seu próprio `try`): publica
+  `biblioteca/pautas.json`.
+  - **Escopos:** `carregar_carteiras` lê `painel/src/data.json` (P5 Dividendos, P6 Valor, P7 FIIs) e `vip.json`
+    (Dividendos, Valor, Smallcaps). Os temas de ETF exterior/renda fixa vêm de `noticias.etfs` + o pilar dos ETFs.
+  - **Seleção, só com marcações que o robô já faz:**
+    - `tipo` usa `vinculos` / `vinculos_vip`, `categoria` oficial_empresa, `natureza` opiniao_casa (+ `RX_MUDANCA`),
+      `analise.eventos_de`, `prioridade`;
+    - setor por `setor_de` / `setor_de_vip`;
+    - macro por `macro_br`, `temas`, `regioes`, `temas_etf`.
+  - **Fora da pauta:** acervo, agrupados, Grupo XP, fonte bloqueada e data futura.
+  - **Agrupamento e limites:** `agrupar` junta o mesmo fato (regra de `I.agruparFatos`; casas diferentes nunca se juntam).
+    Os limites por tipo estão em `TETO`.
+  - **Períodos:**
+    - semana = 7 dias, refeita a cada rodada;
+    - meses do ano: o corrente refeito, o anterior também até o dia 10, os outros guardados;
+    - `VERSAO` refaz tudo quando o método mudar.
+  - **Itens:** `itens` guarda a forma curta de cada manchete usada (título, link, veículo, data, casas, recomendação, alvo).
+  - **Ano, rede no máximo uma vez por dia (`rede_em`), com uma falha mantendo o anterior:**
+    - `focus_ano` traz a primeira divulgação do Focus no ano (Olinda, guardada para sempre) e a mais recente
+      (`fontes_macro.focus`);
+    - `fatos_do_ano` traz os fatos relevantes desde 1º de janeiro (`conteudo.cvm_ipe` com a fonte `cvm-ipe`).
+    - O robô não chama o SGS (`intel.indicadores_macro = false` continua valendo).
+  - **Teses:** `teses` guarda uma versão nova quando a tese muda (Oregon: rec, teto, justo, ponto, tese; VIP: sugestão,
+    teto, justo, alocação, risco).
+- **Painel, `ui_v42.js` + `v4.css`** (peças `.v4-pt-*`, nos dois visuais):
+  - **Menu:** entra em `A.AREAS` logo depois de Hoje; a rota `#pautas` vai em `main.js`.
+  - **Dados:** lê `pautas.json`, `assuntos.json` (assuntos acima do normal) e `fluxo_fundos.json`.
+  - **Ano:** Selic, IPCA, PTAX e CDI vêm direto do SGS no navegador (como em `mercado.js`). O lucro por trimestre
+    contra o ano anterior vem de `A.resultadosDe` (CVM, ITR) e o retorno no ano de `C.ATV[t].ret_ano`.
+  - **Texto para copiar:** `A.v42Texto`.
+

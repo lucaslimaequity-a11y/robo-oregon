@@ -142,6 +142,19 @@ _dq = estante.destaque_semana(est, ['Cost of capital and discount rates', 'Equit
 if _dq:
     with open(os.path.join(dados, 'biblioteca', 'estante_destaque.json'), 'w', encoding='utf-8') as f:
         json.dump(_dq, f, ensure_ascii=False)
+# v4.2 · pautas pelas funções do robô, com os itens de teste (inclusive os da VIP) e o Banco Central e a CVM de mentira do teste
+import test_v42 as T42  # noqa: E402
+import pautas as _pautas  # noqa: E402
+import fontes_macro as _fm  # noqa: E402
+import biblioteca as _bib  # noqa: E402
+_cart = _pautas.carregar_carteiras(cfg_real)
+def _mes_teste(m):
+    l = list(_bib.ler_mes(m).get('itens') or [])
+    vis = {x['id'] for x in l}
+    return l + [x for x in rec['itens'] if x['id'] not in vis and (x.get('publicado_em') or '')[:7] == m]
+_pau = _pautas.publicar(util.agora(), {}, _mes_teste, lambda: rec['itens'], cfg_real, _cart, rede=T42.RedeBC(), fontes_macro=_fm, conteudo=T42.ConteudoFalso(), fonte_cvm={'url_coleta': 'https://cvm.teste/{ano}.zip'})
+with open(os.path.join(dados, 'biblioteca', 'pautas.json'), 'w', encoding='utf-8') as f:
+    json.dump(_pau, f, ensure_ascii=False)
 os.remove(os.path.join(dados, 'estado.json'))  # o site nunca recebe o estado interno
 shutil.copy(os.path.join(RAIZ, 'site', 'index.html'), os.path.join(saida, 'index.html'))
 shutil.copy(os.path.join(RAIZ, 'site', 'painel.json'), os.path.join(saida, 'painel.json'))  # v3.11 · identidade do painel publicado

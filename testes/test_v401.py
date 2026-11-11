@@ -255,7 +255,7 @@ class TestPainel(unittest.TestCase):
     def test_build(self):
         with open(os.path.join(RAIZ, 'painel', 'build.py'), encoding='utf-8') as f:
             b = f.read()
-        self.assertIn("'ui_v4.js', 'ui_v401.js', 'ui_v41.js', 'main.js'", b)
+        self.assertIn("'ui_v4.js', 'ui_v401.js', 'ui_v41.js', 'ui_v42.js', 'main.js'", b)
         self.assertIn("taxon['assuntos'] = _assuntos.carregar_definicoes()", b)
         with open(os.path.join(RAIZ, 'site', 'index.html'), encoding='utf-8') as f:
             html = f.read()

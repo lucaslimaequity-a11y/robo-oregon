@@ -103,11 +103,12 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
     const ref = await p.evaluate(() => { const b = Array.from(document.querySelectorAll('.seg button')).find(x => /Arrojado/.test(x.textContent)); b.click(); const t = document.getElementById('main').innerText; return APP.S.cart + '|' + (/inválida/.test(t) ? 'mostra inválida' : 'NÃO mostra inválida') + '|' + (/Cenários|Risco estatístico/.test(t) ? 'tem simulador' : 'sem simulador'); });
     rep(ref === 'cresc-arr|mostra inválida|sem simulador', vw + ' carteiras de referência (' + ref + ')');
     const menu = await p.evaluate(() => { const bs = Array.from(document.querySelectorAll('#nav button')); return bs.length + '|' + (bs.find(b => b.getAttribute('aria-selected') === 'true') || {}).dataset.a; });
-    rep(menu === '6|cart', vw + ' menu com seis seções, a sexta é a VG VIP (' + menu + ')');
+    const ordem = await p.evaluate(() => Array.from(document.querySelectorAll('#nav button')).map(b => b.dataset.a).join(','));
+    rep(menu === '7|cart' && ordem === 'hoje,pautas,brasil,mundo,cart,bib,vip', vw + ' menu com sete seções: Pautas logo depois de Hoje (v4.2) e a VG VIP por último (' + menu + ' · ' + ordem + ')');
     // as cinco seções e a busca ficam visíveis sem rolagem escondida, inclusive no celular; a hora da coleta não some
     const topo = await p.evaluate(() => { const bs = Array.from(document.querySelectorAll('#nav button')), q = document.querySelector('.qbox'), ds = document.querySelector('.dstat b');
       return {nav: bs.every(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= window.innerWidth + 1 && r.width > 30; }), busca: !!q && q.getBoundingClientRect().width > 80, hora: !!ds && /\d{2}:\d{2}/.test(ds.textContent) && ds.getBoundingClientRect().width > 0}; });
-    rep(topo.nav && topo.busca && topo.hora, vw + ' topo: seis seções, busca e hora da coleta à vista (' + JSON.stringify(topo) + ')');
+    rep(topo.nav && topo.busca && topo.hora, vw + ' topo: sete seções, busca e hora da coleta à vista (' + JSON.stringify(topo) + ')');
     // ---- v3.4: mesa em quatro áreas, profundidade de leitura, sumário, desde a última visita
     await p.evaluate(() => APP.go('hoje')); await p.waitForTimeout(300);
     const mesa = await p.evaluate(() => ({areas: ['radar', 'agenda-decisiva', 'research', 'debate'].filter(id => document.getElementById(id)).length, sumario: document.querySelectorAll('nav.sumario a[href^="#"]').length,
@@ -545,6 +546,35 @@ const DESTINO = {'oregon/ativos': 'brasil/ativos', 'oregon/carteiras': 'cart/', 
       APP.go('hoje'); await z(200);
       return r; });
     rep(Object.values(v41).every(v => v === true), vw + ' v4.1: mercado falando em Brasil, cabeçalho e índice da ficha, lista sem corte, tabelas, Mundo, radar, temporada, opiniões, cores e carregamento (' + JSON.stringify(v41) + ')');
+    // v4.2 · Pautas da semana, do mês e do ano: item no menu, Oregon e VIP separadas, períodos, ano com Focus e fatos relevantes, copiar
+    const v42 = await p.evaluate(async () => {
+      const z = ms => new Promise(r => setTimeout(r, ms)), r = {}, P = APP.v42Pautas ? APP.v42Pautas() : null;
+      const bt = document.querySelector('.nav button[data-a="pautas"]');
+      r.menu = !!bt && bt.previousElementSibling && bt.previousElementSibling.dataset.a === 'hoje';
+      if (!bt || !P) return r;
+      bt.click(); for (let i = 0; i < 30 && !P.js; i++) await z(200); await z(300);
+      r.carregou = !!P.js && !!document.querySelector('.v4-pt .v4-pt-tiles');
+      const emps = () => Array.from(document.querySelectorAll('.v4-pt-emp .v4-pt-tk')).map(b => b.textContent);
+      r.oregonSemVip = emps().indexOf('VALE3') < 0 && emps().indexOf('PETR4') >= 0;
+      r.macro = /Macro do Brasil/.test(document.querySelector('#main').textContent);
+      Array.from(document.querySelectorAll('.v4-pt-seg button')).find(b => b.textContent === 'VG VIP').click(); await z(300);
+      r.vip = emps().indexOf('VALE3') >= 0 && !/Alocação de ativos/.test(document.querySelector('#main').textContent);
+      Array.from(document.querySelectorAll('.v4-pt-seg button')).find(b => b.textContent === 'Mês').click(); await z(300);
+      r.mes = document.querySelectorAll('.v4-pt-meses button').length >= 2 && !!document.querySelector('.v4-pt-tiles');
+      Array.from(document.querySelectorAll('.v4-pt-seg button')).find(b => b.textContent === 'Carteira Oregon').click(); await z(200);
+      Array.from(document.querySelectorAll('.v4-pt-seg button')).find(b => b.textContent === 'Ano').click(); await z(800);
+      const txt = document.querySelector('#main').textContent;
+      r.ano = /Como o ano começou/.test(txt) && /O que o mercado esperava em janeiro/.test(txt) && document.querySelectorAll('.v4-pt-ic').length >= 4 && document.querySelectorAll('.v4-pt-ano').length >= 5;
+      r.mesAMes = document.querySelectorAll('.v4-pt-mm-c').length >= 2;
+      const ab = Array.from(document.querySelectorAll('.v4-pt-ano')).find(a => /PETR4/.test(a.textContent)); ab.querySelector('.v4-pt-abre').click(); await z(300);
+      r.fatosDoAno = /Fatos relevantes do ano/.test(document.querySelector('.v4-pt-ano.aberto').textContent);
+      r.texto = /pauta do ano/.test(APP.v42Texto()) && !/InfoMoney/.test(APP.v42Texto());
+      P.per = 'semana'; APP.rerender(); await z(200);
+      r.textoSemana = /pauta da semana/.test(APP.v42Texto()) && !/InfoMoney/.test(APP.v42Texto());
+      r.sw = document.documentElement.scrollWidth <= innerWidth;
+      APP.go('hoje'); await z(200);
+      return r; });
+    rep(Object.values(v42).every(v => v === true), vw + ' v4.2: Pautas no menu, Oregon e VIP separadas, semana, mês e ano (Focus, mês a mês, fatos relevantes), texto para copiar sem Grupo XP (' + JSON.stringify(v42) + ')');
     if (errs.length) rep(false, 'erros de JavaScript: ' + errs.join(' | '));
     await p.close();
   }

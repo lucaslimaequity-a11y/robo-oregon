@@ -3,7 +3,7 @@
   'use strict';
   C.init(DATA);
   var S = A.S;
-  var RX = /^#(hoje|brasil|mundo|bib|oregon|cart|res|global|sala|mesa|cons|risco)(?:\/(\w+))?/;
+  var RX = /^#(hoje|pautas|brasil|mundo|bib|oregon|cart|res|global|sala|mesa|cons|risco)(?:\/(\w+))?/;  // v4.2: + pautas
   var m = location.hash.match(RX);
   if (m) { var tr = A.traduz(m[1], m[2] || null); S.area = tr[0]; if (tr[1]) S.sub[tr[0]] = tr[1]; }
   // link colado ou endereço digitado com outra seção: troca de seção sem recarregar

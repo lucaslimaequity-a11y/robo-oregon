@@ -1,3 +1,87 @@
+# Resultados dos testes · v4.2 · 11/11/2026 (Brasília)
+
+## Robô (Python)
+
+244 testes, todos OK. Com `ROBO_PORTAO=1` também passa, com o mesmo 1 teste pulado de antes. São 14 testes novos em
+`testes/test_v42.py`, que conferem:
+
+- **Tipos:**
+  - fato relevante, documento à CVM e resultado;
+  - mudança de recomendação ("rebaixa", "agora é venda") × opinião;
+  - evento e notícia de prioridade alta;
+  - notícia comum fica fora.
+- **Fora da pauta:** InfoMoney, aviso Grupo XP, acervo, agrupados e data futura.
+- **Oregon e VIP separadas:**
+  - empresa só da VIP não entra na Oregon;
+  - a que está nas duas aparece nas duas;
+  - menção numa lista fica fora;
+  - notícia do setor entra como setor.
+- **Mesmo fato:**
+  - vários veículos viram uma linha, com o veículo conhecido na frente;
+  - casas diferentes continuam separadas;
+  - o limite por tipo vale.
+- **Macro:**
+  - a decisão do Copom vem na frente;
+  - blog fica fora;
+  - na macro do mundo, estudo e documento administrativo de banco central ficam fora, e manchete do Brasil fica na macro
+    do Brasil.
+- **Exterior e alocação:**
+  - manchete do Brasil com tema de ETF lá fora fica fora;
+  - manchete que só casou a palavra da busca fica fora;
+  - uma carta por gestora.
+- **Meses, semana e ano:**
+  - a primeira vez lê todos os meses do ano; depois, só o corrente (e o anterior até o dia 10);
+  - Focus de janeiro e o atual;
+  - fatos relevantes do ano pela CVM, uma busca por dia;
+  - nenhum pedido ao SGS do Banco Central.
+- **Falhas:** mês que não pôde ser lido, Focus fora do ar, valor anterior mantido.
+- **Teses:** versão nova só quando a tese muda; a antiga fica.
+- **Rodada simulada inteira:** grava `biblioteca/pautas.json`; uma falha só vai para o log.
+- **Painel montado:**
+  - ordem dos arquivos, menu e endereço `#pautas`;
+  - a Pauta da semana de Brasil e a do VIP continuam lá.
+
+## Painel (Node)
+
+70 de 70. A conferência de sintaxe inclui `ui_v42.js`.
+
+## Navegador (dados de teste, 1440 px e 390 px)
+
+230 verificações, 223 PASS.
+
+- **A verificação nova da v4.2 passa nas duas larguras.** Ela confere:
+  - Pautas no menu, logo depois de Hoje;
+  - Oregon sem as empresas só da VIP, e a VIP com elas;
+  - semana, mês com a escolha dos meses e ano com Focus, mês a mês e empresas;
+  - "Ver o ano" com os fatos relevantes da CVM;
+  - texto para copiar sem Grupo XP;
+  - nenhuma rolagem para o lado.
+- **Menu:** a verificação foi atualizada de seis para sete seções.
+- **As 7 falhas não vêm desta entrega.** Os dados de teste são de 06 e 07/11 e o teste rodou em 11/11, então as janelas de
+  24 a 72 horas ficam vazias:
+  - Mundo × 2;
+  - Hoje VIP × 2;
+  - inglês × 2;
+  - celular × 1.
+  As mesmas 7 falham com a v4.1 e os mesmos dados.
+
+## Dados reais
+
+Biblioteca até a coleta das 08:38 de 10/11, conta feita aqui com o `pautas.py`, sem rede.
+
+- **Semana:**
+  - Oregon com 21 de 21 empresas: 25 resultados, 4 fatos relevantes, 4 mudanças de recomendação e 13 opiniões;
+  - VIP com 35 empresas;
+  - macro do Brasil com o Copom do Banco Central na frente.
+- **Meses:** de janeiro a setembro só aparecem as opiniões de 12 meses; outubro e novembro estão completos.
+- **Arquivo:** cerca de 200 KB.
+
+## Ressalvas
+
+- O Focus e os fatos relevantes do ano aparecem depois da primeira rodada do robô com a v4.2.
+- Selic, IPCA, dólar e CDI aparecem quando a página consegue ler o Banco Central. Aqui, sem internet, a página mostra o
+  aviso "O Banco Central não respondeu agora".
+
 # Resultados dos testes · v4.1 · 10/11/2026 (Brasília)
 
 - **Robô (Python):** 230 testes, todos OK (`ROBO_PORTAO=1`: OK, com o mesmo 1 teste pulado de antes). São 9 novos em

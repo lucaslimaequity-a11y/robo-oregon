@@ -12,7 +12,7 @@ Roda no GitHub Actions (.github/workflows/robo.yml), sete dias por semana, e tam
      com ANTHROPIC_API_KEY e intel.ia.ativo, leitura por IA dos itens prioritários dentro de um teto diário;
   4. biblioteca persistente por mês (nada é apagado), deduplicação, contadores por fonte e briefing do dia;
   5. aos sábados (ou em modo "semanal"), o resumo da semana.
-Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json (meses, índice, opinioes.json e, desde a v4.0.1, assuntos.json; desde a v4.1, empresas.json)
+Arquivos em data/: macro.json, recentes.json, hoje.json, coleta.json, semanal.json, versao.json, biblioteca/*.json (meses, índice, opinioes.json e, desde a v4.0.1, assuntos.json; desde a v4.1, empresas.json; desde a v4.2, pautas.json)
 (publicados no site) e estado.json (interno, só no ramo "dados").
 
 Modos (ROBO_MODO): normal | semanal | teste_telegram.
@@ -52,6 +52,7 @@ import resultados  # noqa: E402
 import semanal  # noqa: E402
 import assuntos  # noqa: E402  (v4.0.1 · assuntos do momento no Hoje)
 import empresas  # noqa: E402  (v4.1 · o que o mercado está falando, tela Brasil)
+import pautas  # noqa: E402  (v4.2 · pautas da semana, do mês e do ano)
 from util import ErroFonte, Rede, agora, dados_dir, gravar, ler, log, sem_acento  # noqa: E402
 from util import num as util_num  # noqa: E402
 
@@ -962,6 +963,16 @@ def main():
             log('  o que o mercado está falando: ' + empresas.resumo(emp))
         except Exception as e:
             log('  o que o mercado está falando não publicado: %s' % type(e).__name__)
+        try:  # v4.2 · pautas da semana, do mês e do ano (biblioteca/pautas.json): acessório; uma falha mantém o arquivo anterior
+            cart_p = pautas.carregar_carteiras(cfg)
+            fonte_cvm = next((f for f in fontes_cfg if f.get('id') == 'cvm-ipe'), None)
+            pau = pautas.publicar(agora_, ler('biblioteca/pautas.json', {}) or {}, lambda m: biblioteca.ler_mes(m).get('itens') or [],
+                                  lambda: biblioteca.carregar_recentes(hoje, pautas.SEMANA + 1), cfg, cart_p, rede=Rede(prazo_seg=150),
+                                  fontes_macro=fontes_macro, conteudo=conteudo, fonte_cvm=fonte_cvm, bloqueado=biblioteca.bloqueado)
+            gravar('biblioteca/pautas.json', pau)
+            log('  pautas: ' + pautas.resumo(pau))
+        except Exception as e:
+            log('  pautas não publicadas: %s' % type(e).__name__)
         hoje_js = semanal.briefing(recentes, macro, hoje, agora_, estado)
         gravar('hoje.json', hoje_js)
         log('  briefing: %d prioridades (janela de %s), %d itens recentes, %d na biblioteca' % (len(hoje_js['prioridades']), hoje_js['janela'], len(recentes), idx['total']))

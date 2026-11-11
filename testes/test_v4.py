@@ -55,7 +55,7 @@ class TestCamada(unittest.TestCase):
 
     def test_ordem_e_fonte(self):
         b = ler('painel', 'build.py')
-        self.assertIn("'ui_v311.js', 'ui_v4.js', 'ui_v401.js', 'ui_v41.js', 'main.js'", b)  # v4.0.1: ui_v401.js depois do ui_v4.js
+        self.assertIn("'ui_v311.js', 'ui_v4.js', 'ui_v401.js', 'ui_v41.js', 'ui_v42.js', 'main.js'", b)  # v4.0.1: ui_v401.js depois do ui_v4.js
         self.assertIn("rd('app.css') + '\\n' + rd('v4.css')", b)
         self.assertIn('family=Lexend+Deca', b)
 

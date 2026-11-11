@@ -121,7 +121,7 @@ class TestRodada(Base):
 class TestPainel(unittest.TestCase):
     def test_build_e_site(self):
         with open(os.path.join(RAIZ, 'painel', 'build.py'), encoding='utf-8') as f:
-            self.assertIn("'ui_v4.js', 'ui_v401.js', 'ui_v41.js', 'main.js'", f.read())
+            self.assertIn("'ui_v4.js', 'ui_v401.js', 'ui_v41.js', 'ui_v42.js', 'main.js'", f.read())
         with open(os.path.join(RAIZ, 'site', 'index.html'), encoding='utf-8') as f:
             html = f.read()
         for t in ('O que o mercado está falando', 'De onde vêm as notícias', 'v4-mono', 'v4-np-idx', 'v4-tmp-bar', 'v4-sk'):

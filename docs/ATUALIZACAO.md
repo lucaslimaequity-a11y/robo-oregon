@@ -1,3 +1,88 @@
+# Oregon Intelligence v4.2 · Pautas da semana, do mês e do ano (11/11/2026)
+
+O pacote `robo-oregon-v4.2-alterados.zip` vale sobre a v4.1 que já está no seu GitHub. **O `robo.yml` não muda: é um envio
+só.** Nenhuma chave nova, nenhuma API paga, nenhuma fonte nova. Nada foi retirado: a Pauta da semana de Brasil e a do
+VG VIP continuam como estão.
+
+## O que muda
+
+### Onde fica e como se escolhe
+
+- **Item novo "Pautas" no menu lateral**, logo abaixo de Hoje, no visual novo e no antigo; no celular, no rodapé.
+- **Carteira Oregon | VG VIP:** as duas nunca se misturam. A Oregon mostra os pilares Dividendos, Valor e FIIs; a VIP
+  mostra as carteiras Dividendos, Valor e Smallcaps. Empresa que está nas duas aparece nas duas.
+- **Semana | Mês | Ano:**
+  - Semana são os últimos 7 dias.
+  - Mês é o mês do calendário, e dá para escolher meses anteriores.
+  - Ano vai de janeiro até hoje.
+- **Copiar pauta:** copia o texto com título, veículo, data e link, para o deck semanal, a carta mensal ou o material do ano.
+  O InfoMoney (Grupo XP) fica fora, como na pauta que já existia.
+
+### O que entra na pauta
+
+Só o que importa; a notícia comum continua na ficha do ativo.
+
+- **Empresas:**
+  - fato relevante e documentos à CVM;
+  - resultado;
+  - mudança de recomendação ("rebaixa", "eleva", "agora é venda", "inicia cobertura") e opinião de casa, sempre com a
+    casa que a fonte cita;
+  - evento corporativo (recompra, fusão, guidance, gestão, dívida, oferta);
+  - notícia do setor que mexe com a empresa;
+  - notícia de prioridade alta.
+- **Macro do Brasil:** juros, inflação, fiscal, câmbio, atividade e bolsa. Decisão e dado oficial vêm na frente: o
+  "Copom mantém a Selic" do Banco Central aparece antes das matérias sobre o Copom.
+- **Macro do mundo:** juros e bancos centrais, China, commodities e petróleo, geopolítica, tecnologia e IA, atividade e
+  mercados. Estudos, discursos e documentos administrativos de banco central ficam na Biblioteca.
+- **Só na Oregon:**
+  - Empresas e ETFs no exterior: os temas dos ETFs lá fora e resultados de empresas no exterior.
+  - Alocação de ativos: fluxo dos fundos da CVM, cartas de gestoras (uma por gestora), estudos sobre alocação e renda fixa.
+- **Mesmo fato, vários veículos:** vira uma linha, com "+3 veículos". Duas casas diferentes falando da mesma empresa
+  continuam como duas linhas.
+
+### No alto de cada pauta
+
+Os números do período: resultados, fatos relevantes, mudanças de recomendação, opiniões, eventos, empresas com algo na
+pauta e fatos da macro. Ao lado, os assuntos que estão acima do normal.
+
+### A pauta do ano conta a história
+
+- **Como o ano começou × como está:** Selic, IPCA em 12 meses, dólar e CDI no fim de 2025 e hoje, com a variação no
+  ano. A página lê esses números direto do Banco Central, como o Mercado hoje já faz.
+- **O que o mercado esperava em janeiro × o que espera agora:** a mediana do Focus da primeira divulgação do ano e a
+  mais recente, para IPCA, Selic, PIB e dólar.
+- **Mês a mês:** barras com fatos relevantes, resultados, mudanças de recomendação e opiniões de cada mês. Tocar num
+  mês abre a pauta dele.
+- **Empresa por empresa:**
+  - o retorno no ano, o mesmo que já está na ficha;
+  - o lucro de cada trimestre de 2026 contra o mesmo trimestre de 2025, pelos números da CVM;
+  - quantos fatos relevantes, resultados, mudanças de recomendação e opiniões teve;
+  - "Nossa leitura": recomendação e preço-teto atuais e, quando mudarem, como eram antes.
+  - "Ver o ano" abre a linha do tempo da empresa e os fatos relevantes do ano inteiro (CVM).
+- **A macro, mês a mês:** o fato principal de cada tema em cada mês.
+
+## O que ainda não está completo
+
+- **Notícias:** o arquivo do robô só está completo desde outubro de 2026. Antes disso ele tem as opiniões de casas dos
+  últimos 12 meses (desde novembro de 2025) e alguns estudos. Os fatos relevantes do ano inteiro vêm da CVM, e o Focus de
+  janeiro vem do Banco Central.
+- **"O que a gente achava × o que acha":** começa a contar no primeiro dia em que o robô rodar a v4.2. A partir daí, cada
+  vez que a tese mudar (nas Teses de Investimento da Oregon ou no print das carteiras VIP), a versão anterior fica
+  guardada com a data. Se você mandar o material de teses de janeiro, ele pode virar a primeira versão do ano.
+
+## Como subir (um passo)
+
+1. Em Add file › Upload files, arraste as pastas do pacote mantendo a estrutura (`docs/…`, `painel/…`, `robo/…`, `site/…`,
+   `testes/…`, `README.md`).
+2. Clique em Commit changes.
+
+A rodada desse envio monta o primeiro `pautas.json`, lendo os meses do ano uma vez. O Focus e os fatos relevantes do ano
+são buscados no máximo uma vez por dia. Até essa rodada terminar, a página Pautas avisa que ainda não foi publicada.
+
+## Voltar atrás
+
+Na lista de commits, abra o commit do envio e use Revert.
+
 # Oregon Intelligence v4.1 · melhorias visuais e "O que o mercado está falando" (10/11/2026)
 
 O pacote `robo-oregon-v4.1-alterados.zip` vale sobre a v4.0.1 que já está no seu GitHub. **O `robo.yml` não muda: um envio

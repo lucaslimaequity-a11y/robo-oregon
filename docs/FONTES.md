@@ -10,6 +10,16 @@ Validação feita em 07–08/11/2026 (217 fontes no cadastro, 152 ativas, depois
 
 Para **ligar uma fonte nova**: abra a URL no navegador, confirme que é pública e que o formato bate com o método, acrescente a entrada com `"ativo": true` e rode o workflow à mão; o Summary da rodada mostra recebidos/novos/erro daquela fonte. Para **desligar**: `"ativo": false`.
 
+## v4.2 (11/11/2026): Pautas da semana, do mês e do ano
+Nenhuma fonte nova. As Pautas usam o que o robô já coleta e, para a história do ano:
+- **Focus (Banco Central, Olinda, `ExpectativasMercadoAnuais`).** A primeira divulgação do ano e a mais recente. O robô
+  busca no máximo uma vez por dia; a de janeiro fica guardada para sempre.
+- **Fatos relevantes do ano (CVM, dados abertos, IPE).** O mesmo arquivo e a mesma conferência de CNPJ e nome da fonte
+  `cvm-ipe`, desde 1º de janeiro, uma vez por dia.
+- **Selic, IPCA, PTAX e CDI (Banco Central, SGS 432, 13522, 1 e 4389).** Lidos pelo navegador na página Pautas, como o
+  Mercado hoje já faz; o robô continua sem chamar o SGS.
+- **Fora das Pautas, porque elas vão para material de cliente:** InfoMoney (Grupo XP) e as fontes bloqueadas.
+
 ## v3.10 (09/11/2026): macro do Brasil
 
 O robô já coletava as notícias de macro e mercado do Brasil. Faltava mostrá-las e trazer um pouco mais delas.
